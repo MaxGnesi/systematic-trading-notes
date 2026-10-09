@@ -24,7 +24,7 @@ Two bars with identical $O,H,L,C$ can come from completely different paths insid
 
 ### 1.3 The window itself is a choice, not a law of nature
 
-A fixed *time* window (one day, one hour) is the default convention and the one this course mostly uses, but it is not the only way to decide where one bar ends and the next begins. A bar can instead close once cumulative traded volume, cumulative dollar volume, or cumulative realised variance crosses a threshold — producing bars that are short during fast, active markets and long during quiet ones, rather than bars that are always the same length in wall-clock time. These are a different design decision about the data layer itself, not an aggregation technique over bars, and are out of scope here; they are worth knowing exist before assuming "daily bar" is the only option.
+A fixed *time* window (one day, one hour) is the default convention, and a good starting point: it is simple, universally available, and a solid foundation for a wide range of strategy types, which is why this lecture builds on it. It is not, however, the only way to decide where one bar ends and the next begins. A bar can instead close once cumulative traded volume, cumulative dollar volume, or cumulative realised variance crosses a threshold — producing bars that are short during fast, active markets and long during quiet ones, rather than bars that are always the same length in wall-clock time. This is a different design decision about the data layer itself, not an aggregation technique over bars, and it is the subject of a later lecture on tick data and its aggregation; it is worth knowing these alternatives exist before assuming "daily bar" is the only option.
 
 ## 2. From a bar to a single price
 
