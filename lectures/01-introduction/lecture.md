@@ -35,7 +35,7 @@ The boundary is blurrier than the table suggests. A discretionary manager typica
 
 | Dimension | Discretionary | Systematic |
 |---|---|---|
-| Consistency | The same inputs can lead to different decisions, as the manager reinterprets them or adds context | Same inputs give the same decisions |
+| Consistency | A person can read the same data differently over time or bring in extra information | Same inputs give the same decisions |
 | Breadth | Limited by what one team can follow | Many markets and signals monitored at once |
 | Novel events | Can reason about situations never seen before | Only as good as what the model has seen; needs human override |
 | Cost per decision | Slower and more expensive | Cheap once built, but costly to build and maintain |
@@ -46,7 +46,17 @@ The boundary is blurrier than the table suggests. A discretionary manager typica
 
 The usual claim is that systematic trading removes emotion and bias from execution. That is true of day-to-day decisions: a model does not panic after a drawdown or hold a loser to avoid regret.
 
-The bias does not disappear, though. It moves upstream into model design, the choice of data and sample period, parameter selection, and the decision to switch a model off. A backtest that was tuned until it looked good embeds the researcher's bias, and it does so invisibly. Much of this course is about controlling that risk.
+The bias does not disappear, though. It moves upstream into research, starting with which hypotheses get tested at all: researchers tend to test ideas they already believe in, or ideas they test because everyone else does. It continues through the choice of data and sample period, the model, its parameters, how far to trust optimised results over simpler ones, and the decision to switch a model off. A backtest tuned until it looked good embeds the researcher's bias, and it does so invisibly.
+
+A short checklist, kept in mind while developing any systematic model:
+
+- [ ] **Hypothesis.** Is there an economic reason to expect this to work, written down before testing? Am I testing it because I believe it, or because others do?
+- [ ] **Data.** Is it point-in-time and free of survivorship bias? Was the sample period fixed before seeing results?
+- [ ] **Model and parameters.** How many variants did I try? Would a simpler version do almost as well?
+- [ ] **Robustness.** Does performance survive small parameter changes, other markets and data the model has never seen?
+- [ ] **Switching off.** Are the rules for scaling down or stopping the model set in advance?
+
+Much of this course is about controlling these risks; §3.1 and §5 return to them in detail.
 
 ### 1.3 Why it matters
 
