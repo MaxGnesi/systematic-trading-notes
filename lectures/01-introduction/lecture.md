@@ -14,9 +14,9 @@ Two complementary definitions.
 
 The first definition says how the machine is built; the second says why it should make money. A strategy needs both: a sound architecture with no economic reason behind it is a well-engineered guess. In compact form, the first view is a function from information to positions:
 
-$$
+```math
 w_t = f(\mathcal{I}_t;\,\theta), \qquad \mathcal{I}_t = \{\text{data available at time } t\}
-$$
+```
 
 Here $w_t$ is the target portfolio, $f$ is the rule set, and $\theta$ are parameters estimated or chosen in research. Two properties matter for everything that follows: $f$ uses only information available at $t$, and the same inputs always produce the same outputs.
 
@@ -80,17 +80,17 @@ A systematic strategy is a chain of five stages, each with its own inputs, outpu
 
 Presenting risk management as a stage after allocation is a teaching simplification. In practice the two are solved together. A common formulation maximises expected return net of risk and cost:
 
-$$
+```math
 \max_{w}\; \mu^{\top} w \;-\; \frac{\lambda}{2}\, w^{\top}\Sigma\, w \;-\; c(w - w_{t-1})
-$$
+```
 
 where $\mu$ is the vector of signal-based forecasts, $\Sigma$ the covariance matrix, $\lambda$ the risk aversion, and $c(\cdot)$ the transaction-cost penalty on the trade from the previous holdings $w_{t-1}$. Constraints on leverage, concentration or drawdown enter as additional restrictions on $w$.
 
 The simplest example is volatility targeting, which scales each position so that it contributes a chosen amount of risk:
 
-$$
+```math
 w_{i,t} = s_{i,t}\cdot\frac{\sigma^{*}}{\hat{\sigma}_{i,t}}
-$$
+```
 
 with $\sigma^{*}$ the target volatility and the denominator a forecast of asset $i$'s volatility. Risk control is therefore built into position sizing, not bolted on at the end.
 
@@ -144,9 +144,9 @@ Trend followers go long assets that have risen and short those that have fallen,
 
 A standard time-series momentum signal takes the sign of the past return, then scales the position to a risk target:
 
-$$
+```math
 s_{i,t} = \mathrm{sign}\big(r_{i,t-L:t}\big), \qquad w_{i,t} = s_{i,t}\cdot\frac{\sigma^{*}}{\hat{\sigma}_{i,t}}
-$$
+```
 
 Variants use moving-average crossovers or breakout channels; the lookback $L$, commonly from one month to a year, is the key parameter. Trend following has often performed well in sustained crises, which is why it is marketed as "crisis alpha". The record is not uniform: sharp reversals, such as 2009 and parts of 2022-23, hurt the strategy, so the claim should be presented as a tendency, not a guarantee.
 
@@ -158,9 +158,9 @@ StatArb exploits short-term deviations between related securities while keeping 
 
 The classic pairs version models the spread between two stocks and trades its standardised deviation:
 
-$$
+```math
 z_t = \frac{S_t - \mu_S}{\sigma_S}, \qquad S_t = \log P^{A}_t - \beta \log P^{B}_t
-$$
+```
 
 Open a position when $|z_t|$ exceeds an entry threshold and close it as $z_t$ returns toward zero. Modern implementations generalise pairs to baskets and to factor residuals: regress each stock on common factors and trade the idiosyncratic residual, whose mean reversion is modelled directly (Avellaneda and Lee, 2010).
 
@@ -177,9 +177,9 @@ Factor strategies hold diversified portfolios sorted on characteristics that hav
 
 A factor portfolio is typically built by ranking assets on a score and going long the top group and short the bottom group:
 
-$$
+```math
 r^{\text{factor}}_t = \bar r_t^{\,\text{top}} - \bar r_t^{\,\text{bottom}}
-$$
+```
 
 The debate is over why factors pay: as compensation for bearing risk, or as the result of persistent investor behaviour. The answer affects how much a factor should be trusted to survive.
 
@@ -209,9 +209,9 @@ The research process is where most of the value, and most of the damage, happens
 
 The usual summary statistic is the annualised Sharpe ratio of excess returns:
 
-$$
+```math
 \text{SR} = \frac{\mathbb{E}[r - r_f]}{\sigma(r)}\sqrt{T}
-$$
+```
 
 with $T$ the number of return periods per year. A high backtest Sharpe ratio is evidence of a good fit, not of a good strategy.
 

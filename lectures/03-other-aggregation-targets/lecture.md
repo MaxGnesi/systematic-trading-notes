@@ -250,7 +250,7 @@ OBV's level is meaningless and cannot be compared across assets; its change over
 ### 7.1 On-balance volume
 
 ```math
-\mathrm{OBV}_t = \mathrm{OBV}_{t-1} + \operatorname{sign}(C_t - C_{t-1})\, v_t
+\mathrm{OBV}_t = \mathrm{OBV}_{t-1} + \mathrm{sign}(C_t - C_{t-1})\, v_t
 ```
 
 OBV (Granville, 1963) has **no decay at all**: not rolling, not expanding-with-decay, but a plain running sum. That is a third memory pattern beside Lecture 2's two: *cumulative*.
@@ -267,7 +267,7 @@ The spike adds its entire 4,800 because OBV reads only the sign of the move, nev
 OBV's level depends on the start date and on each asset's typical volume, so only its changes carry information. The order-flow literature summarises buyer- and seller-initiated volume as **order imbalance**, (V_buy − V_sell) / (V_buy + V_sell) ∈ [−1, 1] (Chordia, Roll and Subrahmanyam, 2002). OBV's sign rule is a daily version of the **tick rule** used to classify trades as buys or sells (Lee and Ready, 1991). Applying it over a window turns the change in OBV into an order imbalance:
 
 ```math
-\mathrm{OIB}^{\text{tick}}_t = \frac{\sum_{k=0}^{N-1}\operatorname{sign}(\Delta C_{t-k})\,v_{t-k}}{\sum_{k=0}^{N-1}v_{t-k}} = \frac{\mathrm{OBV}_t-\mathrm{OBV}_{t-N}}{\sum_{k=0}^{N-1}v_{t-k}}
+\mathrm{OIB}^{\text{tick}}_t = \frac{\sum_{k=0}^{N-1}\mathrm{sign}(\Delta C_{t-k})\,v_{t-k}}{\sum_{k=0}^{N-1}v_{t-k}} = \frac{\mathrm{OBV}_t-\mathrm{OBV}_{t-N}}{\sum_{k=0}^{N-1}v_{t-k}}
 ```
 
 On SPY over the 27 bars to 16 March 2020: signed volume −2.25bn / total 4.90bn = **−0.46**, the same number computed either way.
