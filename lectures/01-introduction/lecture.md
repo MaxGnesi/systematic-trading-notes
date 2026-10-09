@@ -35,7 +35,7 @@ The boundary is blurrier than the table suggests. A discretionary manager typica
 
 | Dimension | Discretionary | Systematic |
 |---|---|---|
-| Consistency | Varies with the manager's judgment and state of mind | Same inputs give the same decisions |
+| Consistency | The same inputs can lead to different decisions, as the manager reinterprets them or adds context | Same inputs give the same decisions |
 | Breadth | Limited by what one team can follow | Many markets and signals monitored at once |
 | Novel events | Can reason about situations never seen before | Only as good as what the model has seen; needs human override |
 | Cost per decision | Slower and more expensive | Cheap once built, but costly to build and maintain |
