@@ -1,6 +1,6 @@
-# Systematic Trading: Lecture Notes (MSc)
+# Lecture 1: Introduction to Systematic Trading
 
-*Oct 9, 2026 · @Max Gnesi*
+*Systematic Trading: Lecture Notes (MSc) · Oct 9, 2026 · Max Gnesi*
 
 ## 1. Introduction and definition
 
@@ -14,9 +14,9 @@ Two complementary definitions.
 
 The first definition says how the machine is built; the second says why it should make money. A strategy needs both: a sound architecture with no economic reason behind it is a well-engineered guess. In compact form, the first view is a function from information to positions:
 
-$$
+```math
 w_t = f(\mathcal{I}_t;\,\theta), \qquad \mathcal{I}_t = \{\text{data available at time } t\}
-$$
+```
 
 Here $w_t$ is the target portfolio, $f$ is the rule set, and $\theta$ are parameters estimated or chosen in research. Two properties matter for everything that follows: $f$ uses only information available at $t$, and the same inputs always produce the same outputs.
 
@@ -35,7 +35,7 @@ The boundary is blurrier than the table suggests. A discretionary manager typica
 
 | Dimension | Discretionary | Systematic |
 |---|---|---|
-| Consistency | Varies with the manager's judgment and state of mind | Same inputs give the same decisions |
+| Consistency | A person can read the same data differently over time or bring in extra information | Same inputs give the same decisions |
 | Breadth | Limited by what one team can follow | Many markets and signals monitored at once |
 | Novel events | Can reason about situations never seen before | Only as good as what the model has seen; needs human override |
 | Cost per decision | Slower and more expensive | Cheap once built, but costly to build and maintain |
@@ -46,7 +46,17 @@ The boundary is blurrier than the table suggests. A discretionary manager typica
 
 The usual claim is that systematic trading removes emotion and bias from execution. That is true of day-to-day decisions: a model does not panic after a drawdown or hold a loser to avoid regret.
 
-The bias does not disappear, though. It moves upstream into model design, the choice of data and sample period, parameter selection, and the decision to switch a model off. A backtest that was tuned until it looked good embeds the researcher's bias, and it does so invisibly. Much of this course is about controlling that risk.
+The bias does not disappear, though. It moves upstream into research, starting with which hypotheses get tested at all: researchers tend to test ideas they already believe in, or ideas they test because everyone else does. It continues through the choice of data and sample period, the model, its parameters, how far to trust optimised results over simpler ones, and the decision to switch a model off. A backtest tuned until it looked good embeds the researcher's bias, and it does so invisibly.
+
+A short checklist, kept in mind while developing any systematic model:
+
+- [ ] **Hypothesis.** Is there an economic reason to expect this to work, written down before testing? Am I testing it because I believe it, or because others do?
+- [ ] **Data.** Is it point-in-time and free of survivorship bias? Was the sample period fixed before seeing results?
+- [ ] **Model and parameters.** How many variants did I try? Would a simpler version do almost as well?
+- [ ] **Robustness.** Does performance survive small parameter changes, other markets and data the model has never seen?
+- [ ] **Switching off.** Are the rules for scaling down or stopping the model set in advance?
+
+Much of this course is about controlling these risks; §3.1 and §5 return to them in detail.
 
 ### 1.3 Why it matters
 
@@ -70,17 +80,17 @@ A systematic strategy is a chain of five stages, each with its own inputs, outpu
 
 Presenting risk management as a stage after allocation is a teaching simplification. In practice the two are solved together. A common formulation maximises expected return net of risk and cost:
 
-$$
+```math
 \max_{w}\; \mu^{\top} w \;-\; \frac{\lambda}{2}\, w^{\top}\Sigma\, w \;-\; c(w - w_{t-1})
-$$
+```
 
 where $\mu$ is the vector of signal-based forecasts, $\Sigma$ the covariance matrix, $\lambda$ the risk aversion, and $c(\cdot)$ the transaction-cost penalty on the trade from the previous holdings $w_{t-1}$. Constraints on leverage, concentration or drawdown enter as additional restrictions on $w$.
 
 The simplest example is volatility targeting, which scales each position so that it contributes a chosen amount of risk:
 
-$$
+```math
 w_{i,t} = s_{i,t}\cdot\frac{\sigma^{*}}{\hat{\sigma}_{i,t}}
-$$
+```
 
 with $\sigma^{*}$ the target volatility and the denominator a forecast of asset $i$'s volatility. Risk control is therefore built into position sizing, not bolted on at the end.
 
@@ -118,7 +128,7 @@ Alternative and unstructured data carry real costs: licensing, storage, cleaning
 
 ## 4. Strategy styles, grouped by source of return
 
-A strategy is only as credible as its answer to one question: who is on the other side of the trade, and why are they willing to lose? The three families below answer it differently.
+A strategy is only as credible as its answer to one question: who is on the other side of the trade, and why are they willing to lose? The three families below are the classic examples, and each answers it differently.
 
 | Family | Source of return | Who pays | Return profile |
 |---|---|---|---|
@@ -126,15 +136,17 @@ A strategy is only as credible as its answer to one question: who is on the othe
 | Statistical arbitrage | Liquidity provision, mean reversion | Impatient liquidity demanders | Negative skew, market neutral |
 | Factor and quantitative macro | Risk premia, behavioural mispricing | Investors who avoid risk or overreact | Slow, cyclical, regime-dependent |
 
+These families are examples, not the boundary of the field. Almost any decision that can be written as a rule and fed with data can be systematised: market making that earns the bid-ask spread, arbitrage of the same asset priced differently on two venues, trading news and data releases faster than others, or estimating an event's expected value with a domain model. The data need not be prices either: sentiment scraped from news and social media, the text of earnings calls, and company filings all feed systematic strategies. The question above applies to every one of them.
+
 ### 4.1 Trend following (managed futures, CTA)
 
 Trend followers go long assets that have risen and short those that have fallen, across equities, bonds, currencies and commodities. Return comes from the tendency of prices to adjust gradually to news, and from the payoff shape of a rule that cuts losses and lets winners run.
 
 A standard time-series momentum signal takes the sign of the past return, then scales the position to a risk target:
 
-$$
-s_{i,t} = \operatorname{sign}\!\big(r_{i,t-L:t}\big), \qquad w_{i,t} = s_{i,t}\cdot\frac{\sigma^{*}}{\hat{\sigma}_{i,t}}
-$$
+```math
+s_{i,t} = \mathrm{sign}\big(r_{i,t-L:t}\big), \qquad w_{i,t} = s_{i,t}\cdot\frac{\sigma^{*}}{\hat{\sigma}_{i,t}}
+```
 
 Variants use moving-average crossovers or breakout channels; the lookback $L$, commonly from one month to a year, is the key parameter. Trend following has often performed well in sustained crises, which is why it is marketed as "crisis alpha". The record is not uniform: sharp reversals, such as 2009 and parts of 2022-23, hurt the strategy, so the claim should be presented as a tendency, not a guarantee.
 
@@ -146,9 +158,9 @@ StatArb exploits short-term deviations between related securities while keeping 
 
 The classic pairs version models the spread between two stocks and trades its standardised deviation:
 
-$$
+```math
 z_t = \frac{S_t - \mu_S}{\sigma_S}, \qquad S_t = \log P^{A}_t - \beta \log P^{B}_t
-$$
+```
 
 Open a position when $|z_t|$ exceeds an entry threshold and close it as $z_t$ returns toward zero. Modern implementations generalise pairs to baskets and to factor residuals: regress each stock on common factors and trade the idiosyncratic residual, whose mean reversion is modelled directly (Avellaneda and Lee, 2010).
 
@@ -165,9 +177,9 @@ Factor strategies hold diversified portfolios sorted on characteristics that hav
 
 A factor portfolio is typically built by ranking assets on a score and going long the top group and short the bottom group:
 
-$$
+```math
 r^{\text{factor}}_t = \bar r_t^{\,\text{top}} - \bar r_t^{\,\text{bottom}}
-$$
+```
 
 The debate is over why factors pay: as compensation for bearing risk, or as the result of persistent investor behaviour. The answer affects how much a factor should be trusted to survive.
 
@@ -197,9 +209,9 @@ The research process is where most of the value, and most of the damage, happens
 
 The usual summary statistic is the annualised Sharpe ratio of excess returns:
 
-$$
+```math
 \text{SR} = \frac{\mathbb{E}[r - r_f]}{\sigma(r)}\sqrt{T}
-$$
+```
 
 with $T$ the number of return periods per year. A high backtest Sharpe ratio is evidence of a good fit, not of a good strategy.
 
