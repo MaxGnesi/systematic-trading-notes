@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trading-models"
+version = "0.1.0"
+description = "Minimal trading_models package needed to run notebooks/11 and 12 -- the subset of a larger private research project that accompanies Lectures 2-3."
+requires-python = ">=3.11"
+# Third-party dependencies are pinned in requirements.txt.
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["trading_models*"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "NPY", "PD"]
+
+[tool.ruff.lint.per-file-ignores]
+"notebooks/*.ipynb" = ["E501", "E402"]
