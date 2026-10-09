@@ -197,10 +197,15 @@ gives an "effective window" purely as a basis for comparison with §4.1–4.4 �
 
 ## 7. Worked illustration
 
-Ten clean, gently rising bars, then one bar with a sharp +7% move on roughly 4–5× normal volume, then a return to a calm uptrend. $N=5$ throughout. Bars 0–4 (used to seed the window but not shown): prices $100.0, 100.3, 100.5, 100.8, 101.0$, volumes $1000, 1020, 980, 1010, 1040$.
+Ten clean, gently rising bars, then one bar with a sharp +7% move on roughly 4–5× normal volume, then a return to a calm uptrend. $N=5$ throughout, so SMA and VWAP have nothing to report until $t=4$ (the first full 5-bar window) and KAMA until $t=5$ (it also needs one prior bar to measure its first efficiency ratio); EMA and the Kalman filter, both expanding, produce a number from the very first bar.
 
 | $t$ | Price | Volume | SMA(5) | EMA(5) | VWAP(5) | KAMA(5) | Kalman |
 |---|---|---|---|---|---|---|---|
+| 0 | 100.0 | 1000 | — | 100.00 | — | — | 100.00 |
+| 1 | 100.3 | 1020 | — | 100.10 | — | — | 100.30 |
+| 2 | 100.5 | 980 | — | 100.23 | — | — | 100.52 |
+| 3 | 100.8 | 1010 | — | 100.42 | — | — | 100.79 |
+| 4 | 101.0 | 1040 | 100.52 | 100.61 | 100.52 | — | 101.02 |
 | 5 | 101.3 | 990 | 100.78 | 100.84 | 100.78 | 101.30 | 101.29 |
 | 6 | 101.5 | 1030 | 101.02 | 101.06 | 101.02 | 101.39 | 101.52 |
 | **7** | **108.5** | **4800** | 102.62 | 103.54 | **105.13** | 104.55 | 104.88 |
