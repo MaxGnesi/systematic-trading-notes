@@ -1,6 +1,6 @@
-# Systematic Trading: Lecture Notes (MSc)
+# Lecture 1: Introduction to Systematic Trading
 
-*Oct 9, 2026 · @Max Gnesi*
+*Systematic Trading: Lecture Notes (MSc) · Oct 9, 2026 · Max Gnesi*
 
 ## 1. Introduction and definition
 
