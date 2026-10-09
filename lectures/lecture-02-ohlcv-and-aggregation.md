@@ -54,15 +54,18 @@ None of these is more "correct" than the others; they encode different judgments
 
 A single bar's price — whichever of the seven above is chosen — is still one noisy observation. Section 2 answers "what number represents *this* bar"; it says nothing about the slower-moving thing the bar is evidence of: the price level or trend the market is actually converging toward, net of the bar-to-bar jitter around it.
 
-### 3.1 A bar's price as a noisy read of a slower state
+### 3.1 Compression and filtering are two different operations
 
-Treat each bar's price as
+It is tempting to describe Section 1's bar construction and this section's bar aggregation with the same word — both turn many numbers into fewer. They are not the same operation, and conflating them hides what each one is actually for.
+
+- **Section 1 is compression.** A tick-by-tick trade stream becomes five numbers per bar: strictly less data, with specific information thrown away on purpose (the path inside the bar, the buy/sell split). The goal is data volume.
+- **This section is filtering.** One input bar still produces one output number — the data does not shrink at all. The goal is to treat each bar's price as a noisy observation of some slower, less noisy quantity, and recover an estimate of that quantity:
 
 $$
 p_t = \text{(a slower-moving "true" level)} + \text{(bar-specific noise)}.
 $$
 
-A single $p_t$ cannot separate the two terms. Combining several bars can, *if* the noise is less persistent than the level — which is the working assumption behind every technique below. Aggregation is therefore a filtering problem: recovering an estimate of the slow-moving term from a sequence of noisy observations of it.
+A single $p_t$ cannot separate the two terms on the right. Combining several bars can, *if* the noise is less persistent than the level — which is the working assumption behind every technique below. This is precisely the lineage the term "filter" comes from in signal processing and statistics (and, later in this lecture, from the Kalman filter by name): separating a persistent signal from transient noise, not reducing how much data there is.
 
 ### 3.2 The general form
 
@@ -76,16 +79,39 @@ for some window length $N$ and parameters $\theta$. This is a special case of Le
 
 ### 3.3 The real design choice
 
-Given that template, the only real degree of freedom across the whole family is: **how much should each of the $N$ past bars count?** Equal weight, recent bars weighted more, bars with more trading activity weighted more, or something that adapts automatically — each answer is a different named technique, not a different problem.
+Given that template, the only real degree of freedom across the whole family is: **how much should each of the $N$ past bars count?**
+
+In a nutshell, a weighting rule can lean on any of several things: treat every bar the same (equal weight); lean on *recency* (newer bars count more); lean on *trading activity* (bars with more volume count more); lean on *how much the price itself moved* in a bar (its range or realised variance — a volatility-weighted scheme); or adapt automatically between these based on recent behaviour. Every one of these is a legitimate, named technique, not a variation on a single "right" one — the point of this section is that there are genuinely many ways to answer "how much should this bar count," each emphasising a different kind of evidence.
+
+This lecture works through one example each of equal weight, recency and trading activity (§4.1–4.3), an adaptive scheme that blends recency with a measure of trend quality (§4.4), and a structurally different recursive estimator (§5). Volatility- and range-weighted schemes — where a bar's own size of move, rather than its volume, sets its weight — exist in the same family and are left to a later lecture, so as not to overload this one; §4 is not the complete list, only a representative cross-section of it.
+
+**What this whole family is trying to do, and what to call it.** Every method below is an answer to the same single question: *net of bar-to-bar noise, where is price actually heading?* Each produces a smoothed estimate of the same kind of thing — a price level — meant to be read as a trend direction, not (yet) a position. That shared purpose is also what distinguishes this family from the volatility-, strength-, flow- and relationship-based aggregations named in §3.4 below: those estimate something other than price, by design. Generically this family is called a **moving average** (loosely, even for a non-averaging method like Kalman) or, more precisely, a **low-pass filter** — a filter that lets the slow-moving component of a series through and suppresses the fast one. In this course's own code it is called a **Baseline**: a raw trend estimate, deliberately on its own scale, kept separate from the later step that turns it into a sized position (an *Envelope*, outside the scope of this lecture).
+
+### 3.4 A map of what else aggregation can target
+
+The same causal-window idea from §3.2, $\hat x_t = g(x_{t-N+1:t};\theta)$, works for inputs and targets other than price. A short map, each left to a later lecture:
+
+| Target | What it represents | Example statistics |
+|---|---|---|
+| Price level (this lecture) | Where price is heading, net of noise | SMA, EMA, VWAP, KAMA, Kalman |
+| Volatility / dispersion | How much price is moving | ATR, realised variance, Parkinson/Garman-Klass range estimators |
+| Trend strength / quality | How trustworthy a direction is, not what it is | ADX, efficiency ratio (used on its own), rolling $R^2$, Hurst exponent |
+| Flow / participation | Buying vs. selling pressure over time | On-balance volume, cumulative volume delta |
+| Relationship between series | Co-movement between two or more assets | Rolling correlation, rolling beta, a cointegration spread's $z$-score |
+| Distribution shape | Tail risk, not level or direction | Rolling skewness, rolling kurtosis of returns |
+
+Confusing these is a real failure mode: feeding a trend-strength statistic into a position-sizing formula that expects a volatility estimate, or reading a flow indicator as if it were a price level, produces a number that is well-defined but means the wrong thing for the use it is put to.
 
 ## 4. A taxonomy of weighting schemes
 
-| Method | Weighted by | Needs | Formula |
-|---|---|---|---|
-| SMA | Equal weight | Price only | $\mathrm{SMA}_t = \dfrac{1}{N}\sum_{k=0}^{N-1} p_{t-k}$ |
-| EMA / EWMA | Recency (exponential decay) | Price only | $\mathrm{EMA}_t = \alpha p_t + (1-\alpha)\mathrm{EMA}_{t-1},\ \ \alpha = \dfrac{2}{N+1}$ |
-| VWAP | Trading activity (volume) | Price **and** volume | $\mathrm{VWAP}_t = \dfrac{\sum_{k=0}^{N-1} p_{t-k}\,v_{t-k}}{\sum_{k=0}^{N-1} v_{t-k}}$ |
-| KAMA | Trend-efficiency (adaptive) | Price only | see §4.4 |
+| Method | Weighted by | Needs | Memory | Formula |
+|---|---|---|---|---|
+| SMA | Equal weight | Price only | Rolling (fixed $N$) | $\mathrm{SMA}_t = \dfrac{1}{N}\sum_{k=0}^{N-1} p_{t-k}$ |
+| EMA / EWMA | Recency (exponential decay) | Price only | Expanding (recursive) | $\mathrm{EMA}_t = \alpha p_t + (1-\alpha)\mathrm{EMA}_{t-1},\ \ \alpha = \dfrac{2}{N+1}$ |
+| VWAP | Trading activity (volume) | Price **and** volume | Rolling (fixed $N$) | $\mathrm{VWAP}_t = \dfrac{\sum_{k=0}^{N-1} p_{t-k}\,v_{t-k}}{\sum_{k=0}^{N-1} v_{t-k}}$ |
+| KAMA | Trend-efficiency (adaptive) | Price only | Hybrid (see §4.4) | see §4.4 |
+
+The **Memory** column is worth reading carefully before the formulas: "rolling" means a literal buffer of the last $N$ bars, each one dropped the instant it ages past $N$; "expanding" means a recursive running number that folds in the *entire* history, with old bars' influence fading smoothly rather than being cut off. This distinction matters more than it looks — §6 and §7 both turn on it.
 
 ### 4.1 SMA: equal weight
 
@@ -127,6 +153,8 @@ $$
 
 with $\alpha_{\text{fast}}, \alpha_{\text{slow}}$ fixed EMA-style constants (Kaufman's own recommendation corresponds to a 2-bar and a 30-bar EMA). The result: KAMA tracks price tightly while a trend is clean, and goes nearly flat once the market turns choppy — the weighting rule is not fixed at all, it is itself a function of recent price behaviour.
 
+KAMA's memory is a genuine hybrid, and worth being precise about. $\mathrm{ER}_t$ is read from a strict rolling $N$-bar window, exactly like SMA — go back more than $N$ bars and it has no effect on today's ratio at all. But the $\mathrm{KAMA}_t$ recursion itself is expanding, exactly like EMA — $\mathrm{KAMA}_{t-1}$ folds in the entire history before it, geometrically discounted. A rolling-window diagnostic sets the decay rate of an otherwise-expanding recursive update.
+
 ## 5. A different kind of estimator: the Kalman filter
 
 Sections 4.1–4.4 all share one shape: pick $N$, pick a weight for each of the $N$ bars, take a weighted average. **The Kalman filter is not that**, and treating it as a fifth entry in the same table would be misleading.
@@ -134,6 +162,8 @@ Sections 4.1–4.4 all share one shape: pick $N$, pick a weight for each of the 
 ### 5.1 Why it does not fit the table above
 
 A Kalman filter keeps a running *belief* about the current level and trend — a mean and an uncertainty — and updates that one belief with each new bar, then discards the raw bar. It never re-reads $p_{t-5}$ or $p_{t-50}$ directly the way SMA or VWAP do; its memory of the past is compressed entirely into its current state and uncertainty, not held as a buffer of past prices. There is consequently no $N$ to set.
+
+In the rolling-vs-expanding language from §4: the Kalman filter is **expanding**, same category as EMA, not rolling like SMA and VWAP. Every bar it has ever seen still has some (geometrically shrinking) influence on today's estimate; none is ever cut off at a fixed age the way a rolling window cuts a bar off at exactly $N$ periods.
 
 ### 5.2 The recursion
 
@@ -157,17 +187,17 @@ gives an "effective window" purely as a basis for comparison with §4.1–4.4 �
 
 ## 6. Comparing the five, side by side
 
-| Method | Literal window? | Needs volume? | Decay shape | What breaks it |
+| Method | Memory | Needs volume? | Decay shape | What breaks it |
 |---|---|---|---|---|
-| SMA | Yes, hard edge at $N$ | No | Flat, then a cliff at $N$ | A bar's full influence vanishes all at once $N$ periods later, producing a level jump with no price move behind it |
-| EMA/EWMA | No (calibrated by $\alpha$) | No | Smooth geometric decay | Reacts to every move by the same fixed proportion — cannot tell a real trend from one noisy bar |
-| VWAP | Yes, hard edge at $N$ | Yes | Flat within the window, weighted by size | A high-volume bar can dominate the average long after price itself has moved on, and still disappears abruptly at the same cliff as SMA |
-| KAMA | Yes, for the efficiency ratio only | No | Adaptive: fast in a trend, flat in chop | A sharp one-bar move surrounded by calm bars lowers the efficiency ratio (little net progress relative to the size of the move), so KAMA can under-react to the move itself and then coast well after price has already settled down |
-| Kalman filter | No | No (an extension could weight by it) | Smooth, set by $Q,R$, not by age directly | A sustained shift in volatility that the fixed $Q,R$ don't reflect — the filter keeps using a noise model estimated for calmer (or wilder) conditions than currently apply |
+| SMA | Rolling, hard edge at $N$ | No | Flat, then a cliff at $N$ | A bar's full influence vanishes all at once $N$ periods later, producing a level jump with no price move behind it |
+| EMA/EWMA | Expanding (calibrated by $\alpha$) | No | Smooth geometric decay | Reacts to every move by the same fixed proportion — cannot tell a real trend from one noisy bar |
+| VWAP | Rolling, hard edge at $N$ | Yes | Flat within the window, weighted by size | A high-volume bar can dominate the average long after price itself has moved on, and still disappears abruptly at the same cliff as SMA |
+| KAMA | Hybrid: rolling ER, expanding recursion | No | Adaptive: fast when $\mathrm{ER}\to 1$, flat when $\mathrm{ER}\to 0$ | A single sharp move *in the same direction as the recent run* pushes $\mathrm{ER}$ toward its maximum, so KAMA reacts as fast as a 2-bar EMA to what may be a one-off spike, not a genuine trend — and once the path reverses afterward, $\mathrm{ER}$ can collapse just as fast, freezing KAMA near a level only that one anomalous bar ever supported |
+| Kalman filter | Expanding (set by $Q,R$, not by age directly) | No (an extension could weight by it) | Smooth, set by $Q,R$ | A sustained shift in volatility that the fixed $Q,R$ don't reflect — the filter keeps using a noise model estimated for calmer (or wilder) conditions than currently apply |
 
 ## 7. Worked illustration
 
-Ten clean, gently rising bars, then one bar with a sharp +7% move on roughly 4–5× normal volume, then a return to a calm uptrend. $N=5$ throughout.
+Ten clean, gently rising bars, then one bar with a sharp +7% move on roughly 4–5× normal volume, then a return to a calm uptrend. $N=5$ throughout. Bars 0–4 (used to seed the window but not shown): prices $100.0, 100.3, 100.5, 100.8, 101.0$, volumes $1000, 1020, 980, 1010, 1040$.
 
 | $t$ | Price | Volume | SMA(5) | EMA(5) | VWAP(5) | KAMA(5) | Kalman |
 |---|---|---|---|---|---|---|---|
@@ -181,28 +211,49 @@ Ten clean, gently rising bars, then one bar with a sharp +7% move on roughly 4�
 | **12** | 103.5 | 1010 | **103.02** | 103.25 | **102.96** | 104.20 | 103.97 |
 | 13 | 103.8 | 1040 | 103.28 | 103.43 | 103.27 | 104.02 | 104.11 |
 
-Four things to read off this table:
+### 7.1 Where the $t=7$ numbers actually come from
 
-- **At $t=7$**, VWAP reacts hardest (105.13) because the spike bar also carries by far the most volume — the two effects (big price move, big size) compound. KAMA reacts least (104.55): a single sharp move surrounded by five calm bars gives a middling efficiency ratio, not a high one.
-- **Between $t=8$ and $t=11$**, price is already calm again, but SMA and VWAP keep *rising* — the spike bar is still inside their 5-bar window, pulling the average up even though nothing unusual is currently happening.
-- **At $t=12$**, the spike bar finally exits the 5-bar window (it was at $t=7$; the window is now $t=8\ldots12$) and both SMA and VWAP drop sharply — 104.02→103.02 and 105.63→102.96 — with no corresponding move in price itself. This is the "cliff" from §6, made concrete.
-- **EMA and the Kalman filter** show nothing resembling a cliff at $t=12$; both decay smoothly throughout, which is exactly the trade-off a hard window avoids — at the cost of never fully forgetting the spike either (compare EMA at $t=13$, 103.43, to the actual 5-bar-ago-unaffected level around 103.5–103.8).
+The 5-bar window ending at $t=7$ is bars $3$–$7$: prices $100.8,\,101.0,\,101.3,\,101.5,\,108.5$; volumes $1010,\,1040,\,990,\,1030,\,4800$.
+
+**SMA(5):** $\dfrac{100.8+101.0+101.3+101.5+108.5}{5} = \dfrac{513.1}{5} = 102.62$.
+
+**EMA(5):** $\alpha = 2/6 = 0.3333$. Using $\mathrm{EMA}_6=101.06$ from the row above, $\mathrm{EMA}_7 = 0.3333\times 108.5 + 0.6667\times 101.06 = 36.17 + 67.37 = 103.54$.
+
+**VWAP(5):** price$\times$volume for each bar: $100.8{\times}1010=101{,}808$; $101.0{\times}1040=105{,}040$; $101.3{\times}990=100{,}287$; $101.5{\times}1030=104{,}545$; $108.5{\times}4800=520{,}800$. Sum $=932{,}480$. Sum of volumes $=1010+1040+990+1030+4800=8870$. $\mathrm{VWAP}_7 = 932{,}480/8870 = 105.13$ — note how the spike bar's volume (4800, roughly 4–5$\times$ a normal bar) accounts for $520{,}800/932{,}480 \approx 56\%$ of the numerator on its own, despite being only one of five bars.
+
+**KAMA(5):** first the efficiency ratio. Net change over the window: $\lvert p_7-p_2\rvert = \lvert 108.5-100.5\rvert = 8.0$. Sum of each bar's absolute move, bar 3 through bar 7: $\lvert 100.8-100.5\rvert+\lvert101.0-100.8\rvert+\lvert101.3-101.0\rvert+\lvert101.5-101.3\rvert+\lvert108.5-101.5\rvert = 0.3+0.2+0.3+0.2+7.0=8.0$. So $\mathrm{ER}_7 = 8.0/8.0 = 1.0$ exactly — every one of these five bars moved in the *same* direction, spike included, so the net move and the total move are identical. With $\alpha_{\text{fast}}=2/3,\ \alpha_{\text{slow}}=2/31$: $\mathrm{sc}_7 = \big(1.0\times(0.6667-0.0645)+0.0645\big)^2 = 0.6667^2 = 0.4444$ — at $\mathrm{ER}=1$ the formula collapses to exactly $\alpha_{\text{fast}}$, the fastest setting KAMA can ever use. $\mathrm{KAMA}_7 = \mathrm{KAMA}_6 + \mathrm{sc}_7\,(p_7-\mathrm{KAMA}_6) = 101.39 + 0.4444\times(108.5-101.39) = 101.39+3.16=104.55$.
+
+This is worth sitting with, because it contradicts the intuitive guess: KAMA is reacting with its **fastest possible** setting here, not a damped one — it actually moves more than EMA(5) does at this exact bar (104.55 vs. 103.54). KAMA's efficiency ratio cannot distinguish "a clean trend" from "a clean trend plus one anomalous spike in the same direction"; both score $\mathrm{ER}=1$.
+
+The more interesting break comes one bar later. At $t=8$: net change $=\lvert102.5-100.8\rvert=1.7$; total move $=0.2+0.3+0.2+7.0+\lvert102.5-108.5\rvert=0.2+0.3+0.2+7.0+6.0=13.7$ (the window now includes both the spike up *and* the reversal back down, so the total-move denominator roughly doubles while net change collapses). $\mathrm{ER}_8 = 1.7/13.7 = 0.124$, and $\mathrm{sc}_8 = (0.124\times0.6022+0.0645)^2 = 0.139^2=0.0194$ — about $1/23$ of the previous bar's setting. $\mathrm{KAMA}_8 = 104.55+0.0194\times(102.5-104.55)=104.55-0.04=104.51$: KAMA has gone from its fastest possible reaction to very nearly frozen in a single bar, and stays close to $104.5$ for several bars afterward even as price has already settled back to the $102.5$–$103.3$ range.
+
+**Kalman filter:** working in $\log$ price. $\mathrm{EMA}$-style predict/update, from the state after $t=6$ ($\ell_6=4.6203$, i.e. $\exp(\ell_6)=101.52$): predicted level $\hat\ell_{7} = \ell_6+\tau_6 = 4.6228$ (the trend term $\tau_6$ is tiny, so this is close to $\ell_6$ itself). Observation: $\log(108.5)=4.6868$. Innovation (observation minus prediction): $4.6868-4.6228=0.0640$. At this point in the run the filter's gain is $g_0\approx 0.470$ (just under half — it has accumulated enough history to trust its own running estimate about as much as a new bar). Updated level: $4.6228+0.470\times0.0640=4.6528$, and $\exp(4.6528)=104.88$.
+
+### 7.2 What the table shows, corrected
+
+- **At $t=7$**, VWAP reacts hardest (105.13) because the spike bar also carries by far the most volume — the two effects compound, as the 56%-of-numerator figure above makes concrete. **KAMA does not react least** — at $\mathrm{ER}=1$ it is at its fastest possible setting and actually moves more than EMA(5) does. The real KAMA story is the bar *after* the spike, not the spike itself.
+- **At $t=8$**, KAMA's efficiency ratio collapses from $1.0$ to $0.124$ the instant the window includes the reversal back down, and its smoothing constant falls by a factor of roughly 23. KAMA then coasts near $104.5$ for several bars while price has already returned to normal — a concrete case of "trend-efficiency" being fooled by a single large bar that was never really a trend.
+- **Between $t=8$ and $t=11$**, price is calm again, but SMA and VWAP keep *rising* regardless — the spike bar is still inside their rolling 5-bar window, pulling the average up even though nothing unusual is currently happening.
+- **At $t=12$**, the spike bar finally exits the 5-bar window (it was at $t=7$; the window is now $t=8\ldots12$), and both SMA and VWAP drop sharply — $104.02\to103.02$ and $105.63\to102.96$ — with no corresponding move in price itself. This is the rolling-window "cliff" from §6, made concrete: a bar's influence does not fade, it disappears all at once.
+- **EMA and the Kalman filter**, both expanding, show nothing resembling a cliff at $t=12$; they decay smoothly throughout, at the cost of never fully forgetting the spike either. Re-running EMA(5) on the same series with the spike bar replaced by a normal one (102.0 instead of 108.5) gives $\mathrm{EMA}_{13}=103.24$ versus the actual $103.44$ — a real, if modest, $+0.19$ that the spike is still contributing six bars later, with no sign of it ever reaching exactly zero.
 
 ## 8. Summary, exercises and reading
 
-### 8.1 Three takeaways
+### 8.1 Four takeaways
 
-- OHLCV is a lossy, deliberate summary of the underlying trade tape; everything built on top of it inherits what it discards.
-- A bar's "price" (Section 2) and the aggregation of several bars' prices (Sections 3–5) are two separate design choices, not one — each answers a different question.
-- Four of the five techniques here differ only in *how much weight each past bar gets*; the Kalman filter answers the same underlying question (what is the price doing, net of noise) through a structurally different mechanism, with no literal window at all.
+- OHLCV construction (§1) is *compression*: the data genuinely shrinks, and specific information is thrown away on purpose. Aggregating bars into a smoothed price (§3–5) is *filtering*: the data does not shrink at all, the goal is separating a persistent signal from transient noise. They are easy to describe with the same words ("many numbers into fewer") but are not the same operation.
+- A bar's single price (§2) and the aggregation of several bars' prices (§3–5) are two separate design choices, not one — each answers a different question.
+- Four of the five techniques here differ only in *how much weight each past bar gets*, and in whether that weight comes from a rolling, fixed-size window (SMA, VWAP) or an expanding recursive one (EMA). KAMA mixes both: a rolling window for its efficiency-ratio diagnostic, an expanding recursion for the price estimate it drives. The Kalman filter is also expanding, but structurally different again — a running belief updated each step, not a weighted sum of raw bars at all.
+- Every method in this lecture targets the same thing: a smoothed estimate of price level, what this course's own code calls a **Baseline**. Aggregation is just as capable of targeting volatility, trend strength, flow, correlation between series, or distribution shape instead (§3.4) — using an estimator built for one of these as if it answered a different one is a well-defined mistake, not a stylistic choice.
 
 ### 8.2 Exercises
 
 - [ ] For a single bar, construct an example where Median Price and Body Midpoint differ by more than 1% of the close. What kind of trading session produces that?
 - [ ] Reproduce the worked table in Section 7 and extend it to $N=10$. Does the SMA/VWAP cliff at $t=12$ disappear, move, or just get smaller?
 - [ ] Derive $N_{\text{eff}}$ (§5.3) for a filter with $Q$ ten times larger than the one used here. Is the filter faster or slower, and does that match your intuition about what a larger $Q$ means?
-- [ ] Using the data and volume from Section 7, compute KAMA with $N=3$ instead of 5 and compare its reaction at $t=7$. Explain the difference in terms of the efficiency ratio.
+- [ ] §7.1 showed $\mathrm{ER}_t=1$ exactly when every bar in the window moves in the same direction. Construct a 5-bar window containing one large reversal and find its efficiency ratio. Can you make it arbitrarily close to zero? Arbitrarily close to one?
 - [ ] Pick one method from Section 4 and describe a market condition where its specific weighting rule would give a *worse* estimate of the "true" price than plain SMA would.
+- [ ] Pick one target from the §3.4 map (volatility, trend strength, flow, relationship, distribution shape) and propose one statistic for it, classified the same way Section 4's table classifies SMA/EMA/VWAP/KAMA: what it is weighted by, what data it needs, and whether its memory is rolling or expanding.
 
 ### 8.3 Reading list
 
