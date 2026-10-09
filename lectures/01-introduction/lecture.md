@@ -128,13 +128,15 @@ Alternative and unstructured data carry real costs: licensing, storage, cleaning
 
 ## 4. Strategy styles, grouped by source of return
 
-A strategy is only as credible as its answer to one question: who is on the other side of the trade, and why are they willing to lose? The three families below answer it differently.
+A strategy is only as credible as its answer to one question: who is on the other side of the trade, and why are they willing to lose? The three families below are the classic examples, and each answers it differently.
 
 | Family | Source of return | Who pays | Return profile |
 |---|---|---|---|
 | Trend following | Underreaction, herding, convexity | Late or forced trend-chasers, hedgers | Positive skew, frequent small losses |
 | Statistical arbitrage | Liquidity provision, mean reversion | Impatient liquidity demanders | Negative skew, market neutral |
 | Factor and quantitative macro | Risk premia, behavioural mispricing | Investors who avoid risk or overreact | Slow, cyclical, regime-dependent |
+
+These families are examples, not the boundary of the field. Almost any decision that can be written as a rule and fed with data can be systematised: market making that earns the bid-ask spread, arbitrage of the same asset priced differently on two venues, trading news and data releases faster than others, or estimating an event's expected value with a domain model. The data need not be prices either: sentiment scraped from news and social media, the text of earnings calls, and company filings all feed systematic strategies. The question above applies to every one of them.
 
 ### 4.1 Trend following (managed futures, CTA)
 
@@ -143,7 +145,7 @@ Trend followers go long assets that have risen and short those that have fallen,
 A standard time-series momentum signal takes the sign of the past return, then scales the position to a risk target:
 
 $$
-s_{i,t} = \operatorname{sign}\!\big(r_{i,t-L:t}\big), \qquad w_{i,t} = s_{i,t}\cdot\frac{\sigma^{*}}{\hat{\sigma}_{i,t}}
+s_{i,t} = \mathrm{sign}\big(r_{i,t-L:t}\big), \qquad w_{i,t} = s_{i,t}\cdot\frac{\sigma^{*}}{\hat{\sigma}_{i,t}}
 $$
 
 Variants use moving-average crossovers or breakout channels; the lookback $L$, commonly from one month to a year, is the key parameter. Trend following has often performed well in sustained crises, which is why it is marketed as "crisis alpha". The record is not uniform: sharp reversals, such as 2009 and parts of 2022-23, hurt the strategy, so the claim should be presented as a tendency, not a guarantee.
