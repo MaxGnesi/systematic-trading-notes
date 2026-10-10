@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 10, 2026 · Max Gnesi*
 
-Volatility, flow, correlation and tails. The same bars and the same causal window that smooth price can also estimate volatility, trend strength, order flow, co-movement and distribution shape. This lecture works through each on a toy series and on 30 years of SPY, QQQ, GLD and AGG. Companion notebook: [12_other_aggregation_targets.ipynb](12_other_aggregation_targets.ipynb).
+Volatility, flow, correlation and tails. The same bars and the same causal window that smooth price can also estimate volatility, trend strength, order flow, co-movement and distribution shape. This lecture works through each on a toy series and on 30 years of SPY, QQQ, GLD and AGG. Companion notebook: [12_same_bars_different_questions.ipynb](12_same_bars_different_questions.ipynb).
 
 ## 1. Recap: same bars, different questions
 
@@ -524,7 +524,7 @@ atr_wilder = tr.ewm(alpha=1 / 14, adjust=False).mean()  # Wilder's smoothing, se
 
 ## Appendix: main charts
 
-From the companion notebook, [12_other_aggregation_targets.ipynb](12_other_aggregation_targets.ipynb), where every real-data number in this lecture is computed and each formula is checked against the library on a real date.
+From the companion notebook, [12_same_bars_different_questions.ipynb](12_same_bars_different_questions.ipynb), where every real-data number in this lecture is computed and each formula is checked against the library on a real date.
 
 ### B.1 The same volatility in two units (§2)
 
