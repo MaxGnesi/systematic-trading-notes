@@ -97,6 +97,10 @@ Headings must match what follows them. A heading that promises "three" of someth
 - Define a term the first time it is used; reuse the same term afterwards (e.g. *rolling*, *expanding*, *cumulative* memory).
 - Cross-reference with section numbers: "Lecture 2, §6.3".
 - No hype, no "key takeaways" boxes beyond the summary, no repetition of a table's numbers in prose.
+- **Cite at the point of the claim.** Put the reference in the sentence that uses it, e.g. "(Durbin and Koopman, 2012, ch. 5)", with a chapter when known, so a reader interested in one point can go straight to the source. Every inline citation also appears in the reading list, with a note on what it is used for (e.g. "— starting a Kalman filter (§9.1)").
+- **Say what is ours.** Results derived or measured for these notes are labelled as such: "the calculation is ours", "our measurement for these notes". Such numbers must be reproducible in the companion notebook.
+- **Justify specific examples.** When naming one tool, library, dataset or vendor out of many, say in a clause why that one (e.g. TA-Lib: the long-standing open-source reference implementation that documents the issue).
+- **No constant columns.** If every row of a table column has the same value, drop the column and state the fact once, with the reason.
 
 ## 5. Formula conventions
 
