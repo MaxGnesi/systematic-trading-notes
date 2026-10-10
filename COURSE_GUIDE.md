@@ -68,7 +68,7 @@ Lecture 3, §11 promises that Part III returns to risk measures beyond clock-tim
 
 ### 1.4 Lecture 4 plan (Kalman filter): design choices, charts, references
 
-Status: written (doc and GitHub), companion notebook 13_tracking_hidden_states. Next: remove the Kalman material from Lecture 2 and re-run notebook 11 without it.
+Status: written (doc and GitHub), companion notebook 04_tracking_hidden_states. Next: remove the Kalman material from Lecture 2 and re-run notebook 02 without it.
 
 **Purpose of a trend filter.** Find structural, long-horizon trends that are robust to daily noise. No filter is best: each captures different behaviour, so filters are profiled (what each captures, in which market conditions, at what cost), not ranked. Predicting tomorrow's price is not the goal and one-step forecast error is not used.
 

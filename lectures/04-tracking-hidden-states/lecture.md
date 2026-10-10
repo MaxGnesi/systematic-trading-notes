@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 10, 2026 · Max Gnesi*
 
-Lecture 2 smoothed prices from the bottom up, by averaging past bars. The Kalman filter works from the top down: it keeps an explicit model of the hidden quantities behind prices and revises it as each new bar arrives. This lecture builds the linear filter from a single level up to trend speed and acceleration, examines the information each hidden state carries, and covers the nonlinear extensions, the extended and unscented filters, for tracking unobserved volatility. Companion notebook: [13_tracking_hidden_states.ipynb](13_tracking_hidden_states.ipynb).
+Lecture 2 smoothed prices from the bottom up, by averaging past bars. The Kalman filter works from the top down: it keeps an explicit model of the hidden quantities behind prices and revises it as each new bar arrives. This lecture builds the linear filter from a single level up to trend speed and acceleration, examines the information each hidden state carries, and covers the nonlinear extensions, the extended and unscented filters, for tracking unobserved volatility. Companion notebook: [04_tracking_hidden_states.ipynb](04_tracking_hidden_states.ipynb).
 
 ## 1. Bottom-up versus top-down
 
@@ -445,6 +445,8 @@ The linear filter requires the state to enter the model linearly. When it does n
 
 Let the hidden state be the log daily variance $`h_t`$, following a random walk. For a driftless Brownian motion with variance $`e^{h_t}`$ over the day, the high-low range in log terms is $`e^{h_t/2}\,\rho`$, where $`\rho`$ is the range of a standard Brownian motion over unit time. Simulated on a fine grid, $`\rho`$ has mean 1.572, 1.6% below $`\sqrt{8/\pi} = 1.596`$, which is the discrete-sampling shortfall of Lecture 3, §4.4 for 2,000 steps. Two routes follow:
 
+**Table 8.1. Two routes to hidden volatility from the range**
+
 | Route | Measurement equation | Filter |
 |---|---|---|
 | Nonlinear | $`\text{range}_t = e^{h_t/2}\,\mathbb{E}[\rho] + \text{noise}`$ | EKF or UKF |
@@ -456,19 +458,25 @@ The second route works because the log range is close to normal: simulated, $`\l
 
 Both filters face the same problem. The filter's belief about the hidden log variance is a normal distribution, with a mean (the estimate) and a variance (its uncertainty). To forecast the next range it must pass this whole distribution through the curve $`e^{h/2}`$, and a curved function of a normal variable is no longer normal: its mean is not the function of the mean. Because the exponential bends upward, an uncertain estimate implies a higher expected range than the estimate alone suggests (Jensen's inequality). The two filters differ in how they handle this bend:
 
+**Table 8.2. How the two filters handle the curve**
+
 | Filter | How it forecasts the range | What it misses |
 |---|---|---|
 | EKF | Replaces the curve by its tangent at the current estimate, then applies the linear filter to the tangent | The bend: the forecast mean is the curve evaluated at the estimate, with no allowance for uncertainty |
 | UKF | Places $`2n+1`$ sample points (*sigma points*) around the estimate, three for one state (the estimate and one point either side), passes each through the exact curve, and recombines them with weights into a forecast mean and variance | Only features of the distribution beyond its mean and variance |
 
-The difference can be checked exactly, because the forecast of a lognormal quantity has a known mean and variance ([chart C.10](#c10-linearisation-versus-sigma-points-82); our calculation). Relative to the curve evaluated at the estimate:
+The difference can be checked exactly, because the forecast of a lognormal quantity has a known mean and variance ([chart C.10](#c10-linearisation-versus-sigma-points-82); our calculation). Table 8.3 compares them:
+
+**Table 8.3. Forecast of the range, relative to the curve at the estimate** (our calculation)
 
 | Uncertainty about the log variance | Exact forecast mean | EKF | UKF ($`\alpha = 0.1`$) | UKF ($`\alpha = 1`$) |
 |---|---|---|---|---|
 | Typical for the filter of §8.1 ($`P = 0.28`$) | 1.036 | 1.000 (3.4% low) | 1.035 | 1.035 |
 | High, as early in a warm-up ($`P = 1`$) | 1.133 | 1.000 (12% low) | 1.125 | 1.128 |
 
-The EKF systematically under-forecasts the range, and more so the less certain it is; the UKF recovers almost all of the bend without computing any derivative. The same three steps apply whatever the curve, which is why the UKF generalises to models where the tangent is hard to derive. Its three parameters are often misunderstood:
+The EKF systematically under-forecasts the range, and more so the less certain it is; the UKF recovers almost all of the bend without computing any derivative. Both comparisons assume that the state moves little relative to its uncertainty; a single extreme observation is a different matter (§8.3). The same three steps apply whatever the curve, which is why the UKF generalises to models where the tangent is hard to derive. Its three parameters are often misunderstood:
+
+**Table 8.4. The parameters of the unscented filter**
 
 | Parameter | What it controls | Usual value |
 |---|---|---|
@@ -480,7 +488,22 @@ None of them reaches into fat tails: the UKF still assumes normally distributed 
 
 ### 8.3 Results on SPY, and what neither fixes
 
-The three filters agree closely: the EKF and UKF estimates correlate 0.95 and 0.94 with the linear filter on log range, with mean absolute differences of about one volatility point ([chart C.11](#c11-hidden-volatility-from-daily-ranges-83)). The exception is instructive. On 6 May 2010, the flash crash, the EKF and UKF, which read the raw range, spike to about 210% annualised volatility for a day, while the linear filter on the log range barely moves, because the logarithm compresses extremes. Transforming first therefore made the model linear and also robust to an outlier. The rule is to transform first and to use the UKF only when no transformation linearises the model. Neither filter fixes fat tails or regime breaks; those require a different noise model, not a different way of propagating a normal one.
+Most of the time the filters agree closely: the EKF, the UKF and the iterated EKF introduced below correlate 0.95, 0.94 and 0.97 with the linear filter on log range, with mean absolute differences of about one volatility point (chart C.11). The exception is instructive.
+
+**Table 8.5. The flash crash, 6 May 2010** (SPY, annualised volatility; that day's range of 10.8% implies 103% on its own, by Parkinson's estimator of Lecture 3)
+
+| Filter | 5 May | 6 May, after the update | 7 May |
+|---|---|---|---|
+| Linear filter on log range | 16% | 39% | 40% |
+| EKF on range | 16% | 206% | 145% |
+| UKF on range | 15% | 212% | 146% |
+| Iterated EKF on range | 16% | 103% | 89% |
+
+The EKF and UKF report twice the volatility the day itself implies. That is not a market fact but a failure of the update. Both approximate the curve $`e^{h/2}`$ around the estimate held before the crash, where the curve is flat. To explain a range seven times larger than expected along that flat approximation, the update pushes the log variance far past what the observation supports. The UKF fails in the same way: its sigma points are spread by the prior uncertainty, about ±0.5 in log variance, and never reach the region the observation points to, whatever $`\alpha`$.
+
+The remedy is to re-linearise at the updated estimate and repeat until it settles. This *iterated EKF* is a Gauss–Newton search for the most likely state given the prior and the observation (Bell and Cathey, 1993), and it gives 103%, consistent with the day's range. The linear filter on log range reacts least (39%): in logs, a range seven times larger than expected is a surprise of ln 7 ≈ 1.9, and its normal noise model treats part of that as noise, so volatility rises about 2.4-fold.
+
+Two rules follow. Transform first where a transformation makes the model linear. Where none does, iterate the update whenever a single observation can move the state far from where the approximation was made. Neither filter fixes fat tails or regime breaks; those require a different noise model, not a different way of propagating a normal one.
 
 ## 9. What each design captures
 
@@ -567,7 +590,7 @@ The same machinery with a different hidden state gives volatility (§8, from Lec
 3. The design decides which motion is followed with no lasting gap and whether jumps are overshot, at every setting; tuning sets the speed.
 4. Each state gives its own reading: position, slope, acceleration. They capture different layers of the same price and agree only about half to three-quarters of the time across states.
 5. Warm-up is fixed by design and settings and can be computed in advance. A diffuse start removes the starting guess at once. With the trend memory placed on the slope, a burn-in of one to two trend horizons is enough, as for an EMA.
-6. The extended and unscented filters are for genuinely nonlinear models; transform first where possible.
+6. The extended and unscented filters are for genuinely nonlinear models. Transform first where possible; otherwise iterate the update when one observation can move the state far.
 7. No design is best. Each is a bet about what the market is doing; the 2000–2002 and 2020 episodes reward opposite designs.
 
 ### 11.2 Exercises
@@ -585,6 +608,7 @@ The same machinery with a different hidden state gives volatility (§8, from Lec
 - Alizadeh, S., Brandt, M. and Diebold, F. (2002). Range-based estimation of stochastic volatility models. *Journal of Finance* 57(3), 1047–1091. — range-based volatility and the near-normality of the log range (§8).
 - Benhamou, E. (2018). Kalman filter demystified: from intuition to probabilistic graphical model to real case in financial markets. arXiv:1811.11618. — level + slope model with estimated noise and starting uncertainty; prediction above the close read as an up-trend (§4.3, §6.2).
 - Bocquet, M. and Farchi, A. (2025). *Introduction to the principles and methods of data assimilation in the geosciences.* Lecture notes, École des Ponts ParisTech, revision 0.52. — the Kalman filter from the data-assimilation side; the steady-state uncertainty of a random walk (§2.3).
+- Bell, B.M. and Cathey, F.W. (1993). The iterated Kalman filter update as a Gauss-Newton method. *IEEE Transactions on Automatic Control* 38(2), 294–297. — the iterated EKF (§8.3).
 - Chan, E. (2013). *Algorithmic Trading: Winning Strategies and Their Rationale.* Wiley. — a Kalman-filter hedge ratio for an ETF pair, traded on the forecast error scaled by its standard deviation (§4.3, §9.4).
 - Durbin, J. and Koopman, S.J. (2012). *Time Series Analysis by State Space Methods* (2nd ed.). Oxford University Press. — ch. 5, starting a filter, including the diffuse start (§6).
 - Fama, E. and French, K. (1988). Permanent and temporary components of stock prices. *Journal of Political Economy* 96(2), 246–273. — a slowly reverting component of prices (§2.1).
@@ -601,7 +625,7 @@ The same machinery with a different hidden state gives volatility (§8, from Lec
 
 ## Appendix: main charts
 
-From the companion notebook, [13_tracking_hidden_states.ipynb](13_tracking_hidden_states.ipynb), where every number in this lecture is computed and each formula is checked against the code.
+From the companion notebook, [04_tracking_hidden_states.ipynb](04_tracking_hidden_states.ipynb), where every number in this lecture is computed and each formula is checked against the code.
 
 ### C.1 Predict, compare, correct (§2)
 
@@ -665,9 +689,9 @@ With an uncertain estimate (shaded), the exact forecast of the range lies above 
 
 ### C.11 Hidden volatility from daily ranges (§8.3)
 
-![Annualised volatility of SPY from daily ranges, 2007–2010: linear filter on log range, EKF and UKF on the range](figures/c11_volatility_filters.png)
+![Annualised volatility of SPY from daily ranges, 2007–2010: linear filter on log range; EKF, UKF and iterated EKF on the range](figures/c11_volatility_filters.png)
 
-The three estimates move together through the financial crisis. On 6 May 2010 the EKF and UKF spike to about 210% while the linear filter on log range does not.
+The estimates move together through the financial crisis. On 6 May 2010 the EKF and UKF spike to about 210%, twice what that day's range implies, because a single linearisation at the pre-crash estimate overshoots; the iterated EKF, which re-linearises at the updated estimate, reads 103%, and the linear filter on log range 39% (Table 8.5).
 
 ### C.12 The 2000 top (§9.2)
 
