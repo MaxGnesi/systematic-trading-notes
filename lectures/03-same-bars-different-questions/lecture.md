@@ -85,6 +85,8 @@ The **Average True Range** (Wilder, 1978) smooths it with Wilder's recursion:
 
 This is an EMA with $\alpha = 1/n$, so ATR is **expanding**, not a window of recent ranges, even though "period" looks like a window size. Its average age is $n-1$ bars, against $(N-1)/2$ for a rolling window of $N$ bars (Lecture 2, §6.1), so ATR($n$) carries the memory of a $2n-1$ bar average: ATR(14) looks back like a 27-bar window, not a 14-bar one. It also needs a warm-up of about $7n$ bars, roughly 93 for ATR(14), by the rule in Lecture 2, §9.1. Both effects come from Wilder's smoothing, not from the true range: averaging the same true ranges with a plain $n$-bar mean (an SMA) gives an ATR whose memory is exactly $n$ bars and which is exact after $n-1$ bars. Wilder's choice is one of the weighting schemes Lecture 2 compares. It suited 1978, when indicators were computed by hand and a recursion needed only yesterday's value, but it scales badly: ATR(100) remembers about 199 bars and needs about 690 bars, nearly three years of daily data, to warm up. For long horizons a plain mean of true ranges, or an EMA with its span stated, is the better choice; the reason to keep Wilder's version is comparability with platforms and published values that use it.
 
+**Does the choice matter?** On SPY the two versions are 0.98 correlated, with a median gap of 6%, but they part company around volatility spikes. In March 2020 the plain mean peaked at 8.4% of price and Wilder's version at 6.6%, about 21% lower; through April and May Wilder's version stayed about 25% higher as it forgot the spike slowly ([chart B.7](#b7-atr-two-ways-31)). For a strategy that sizes positions on ATR, that is a 20–25% difference in position size at exactly the moments that matter.
+
 ### 3.2 Toy series ($n = 5$)
 
 $\mathrm{ATR}_4$ is seeded with the simple average of the first five true ranges, (0.40 + 0.50 + 0.40 + 0.50 + 0.40) / 5 = 0.440. At the spike, $\mathrm{ATR}_7 = 0.442 + (7.50 - 0.442)/5 = 1.853$.
@@ -552,6 +554,16 @@ Shaded: the 90% block-bootstrap band. Most of the wandering sits inside it. The 
 
 ![SPY, its 27-bar efficiency ratio and ADX(14), November 2019 to September 2020](figures/12_03_trend_strength.png)
 
+The efficiency ratio drops as soon as the path turns choppy; ADX stays high while one direction dominates, however violent the moves.
+
 ### B.6 From OBV to a comparable order imbalance (§7)
 
 ![On-balance volume and 27-bar tick-rule order imbalance for SPY, GLD and AGG](figures/12_04_flow.png)
+
+OBV's scale depends on each asset's volume, so its levels cannot be compared; the order imbalance is bounded in $[-1, 1]$ and can.
+
+### B.7 ATR two ways (§3.1)
+
+![SPY ATR(14) as a percent of price, February to June 2020, from a plain 14-bar mean and from Wilder's smoothing of the same true ranges](figures/12_07_atr_two_ways.png)
+
+Same true ranges, two smoothings. The plain mean reacts to the spike faster and drops back faster; Wilder's version peaks lower and stays above the plain mean for about two months.
