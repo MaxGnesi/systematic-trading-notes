@@ -184,7 +184,7 @@ Inline TeX does not render in the doc: never leave `_` or `^` notation in runnin
 | Use | Write |
 |---|---|
 | Display formula | A ```` ```math ```` fenced block. Never `$$ … $$`, because Markdown eats backslashes such as `\!` and `\,` |
-| Inline symbol or expression | `$…$`, in prose and in table cells: `$w_t$`, `$\sigma_o^2$`, `$\ln(C_t/C_{t-1})$` |
+| Inline symbol or expression | ``$`…`$`` (dollar-backtick), in prose and in table cells: ``$`w_t`$``, ``$`\sigma_o^2`$``. The backticks stop Markdown from reading underscores as italics before the maths is parsed; plain `$…$` breaks on lines with several subscripts |
 | Multi-letter names used as variables | `\mathrm{}`: `$\mathrm{ATR}_t$`, `$\mathrm{ER}_t$`, `$\mathrm{EMA}_{13}$`. As plain words in prose ("ATR keeps rising", "SMA(20)") they stay plain text |
 | Absolute value in a table | `\lvert … \rvert`, never a raw `|` |
 | Money | "USD 50,000", never a literal `$` |

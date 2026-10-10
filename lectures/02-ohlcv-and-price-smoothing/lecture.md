@@ -10,21 +10,21 @@ A price series is not a sequence of prices. Underneath it is a stream of individ
 
 ### 1.1 A bar as a lossy summary of the tape
 
-Compression throws information away on purpose. A daily bar cannot tell you whether the high came before the low, how many trades built the volume, or whether buyers or sellers dominated inside the window. It only says that price was somewhere in $[L, H]$ and ended at $C$. Five numbers per period are enough for almost every signal and risk calculation in this course, at a tiny fraction of the storage cost of every trade.
+Compression throws information away on purpose. A daily bar cannot tell you whether the high came before the low, how many trades built the volume, or whether buyers or sellers dominated inside the window. It only says that price was somewhere in $`[L, H]`$ and ended at $`C`$. Five numbers per period are enough for almost every signal and risk calculation in this course, at a tiny fraction of the storage cost of every trade.
 
 ### 1.2 The five fields
 
 | Field | What it captures | What it does not capture |
 |---|---|---|
-| Open ($O$) | The first traded price in the window | Anything before the window started |
-| High ($H$) | The highest traded price in the window | When it happened, or how long price stayed there |
-| Low ($L$) | The lowest traded price in the window | Same as High |
-| Close ($C$) | The last traded price in the window | Everything earlier in the window |
-| Volume ($V$) | Total size traded in the window | The buyer/seller split (most feeds omit it; some crypto venues report "taker buy volume") |
+| Open ($`O`$) | The first traded price in the window | Anything before the window started |
+| High ($`H`$) | The highest traded price in the window | When it happened, or how long price stayed there |
+| Low ($`L`$) | The lowest traded price in the window | Same as High |
+| Close ($`C`$) | The last traded price in the window | Everything earlier in the window |
+| Volume ($`V`$) | Total size traded in the window | The buyer/seller split (most feeds omit it; some crypto venues report "taker buy volume") |
 
-Two bars with identical $O$, $H$, $L$, $C$ can come from completely different paths: one spikes to the high at once and drifts down, the other does the reverse. Any technique built only from OHLCV inherits this blind spot.
+Two bars with identical $`O`$, $`H`$, $`L`$, $`C`$ can come from completely different paths: one spikes to the high at once and drifts down, the other does the reverse. Any technique built only from OHLCV inherits this blind spot.
 
-$H$ and $L$ are also only the highest and lowest **trades**, not the highest and lowest prices the market passed through between trades. [Lecture 3, §4.4](../03-same-bars-different-questions/lecture.md#44-why-every-range-estimate-is-biased-down-discrete-sampling) shows that this makes every range-based volatility estimate slightly too low.
+$`H`$ and $`L`$ are also only the highest and lowest **trades**, not the highest and lowest prices the market passed through between trades. [Lecture 3, §4.4](../03-same-bars-different-questions/lecture.md#44-why-every-range-estimate-is-biased-down-discrete-sampling) shows that this makes every range-based volatility estimate slightly too low.
 
 ### 1.3 The window itself is a choice
 
@@ -32,11 +32,11 @@ A fixed time window is the default and a good starting point: simple, universall
 
 ### 1.4 Adjusted prices
 
-The real data in this lecture are adjusted for splits and distributions. Early dollar levels in an adjusted series are therefore prices that never traded, while ratios within one day ($H/L$, $C/O$) are unaffected. This is one more reason to work in returns and ratios rather than dollar levels.
+The real data in this lecture are adjusted for splits and distributions. Early dollar levels in an adjusted series are therefore prices that never traded, while ratios within one day ($`H/L`$, $`C/O`$) are unaffected. This is one more reason to work in returns and ratios rather than dollar levels.
 
 ## 2. From a bar to a single price
 
-Every technique in Sections 4–5 needs one number per bar, not four. $C$ is the default, but it is only one of several reasonable ways to collapse $(O, H, L, C)$, and the choice changes what the number emphasises.
+Every technique in Sections 4–5 needs one number per bar, not four. $`C`$ is the default, but it is only one of several reasonable ways to collapse $`(O, H, L, C)`$, and the choice changes what the number emphasises.
 
 ### 2.1 Why one number is not automatically the close
 
@@ -46,17 +46,17 @@ The close is simply the last trade. That is exactly right when you need a mark-t
 
 | Name | Formula | Emphasises |
 |---|---|---|
-| Close | $C$ | Where trading ended |
-| Open | $O$ | Where trading began |
-| Median Price (HL2) | $(H + L)/2$ | The midpoint of the range; ignores the body |
-| Typical Price (HLC3) | $(H + L + C)/3$ | The range, leaning toward where the bar settled |
-| Weighted Close (HLCC4) | $(H + L + 2C)/4$ | As Typical Price, but the close counts twice |
-| OHLC4 (Average Price) | $(O + H + L + C)/4$ | All four equally; the close of a Heikin-Ashi candle |
-| Body Midpoint | $(O + C)/2$ | The body only; ignores the wicks |
+| Close | $`C`$ | Where trading ended |
+| Open | $`O`$ | Where trading began |
+| Median Price (HL2) | $`(H + L)/2`$ | The midpoint of the range; ignores the body |
+| Typical Price (HLC3) | $`(H + L + C)/3`$ | The range, leaning toward where the bar settled |
+| Weighted Close (HLCC4) | $`(H + L + 2C)/4`$ | As Typical Price, but the close counts twice |
+| OHLC4 (Average Price) | $`(O + H + L + C)/4`$ | All four equally; the close of a Heikin-Ashi candle |
+| Body Midpoint | $`(O + C)/2`$ | The body only; ignores the wicks |
 
 ### 2.3 Worked on real data: QQQ, 3 January 2001
 
-The constructions differ by an amount proportional to the bar's own range, so the differences are largest on the widest bar. Across QQQ's 6,940 daily bars since March 1999, the widest relative to its close is 3 January 2001, the day of a surprise Fed rate cut: $O = 43.93$, $H = 54.92$, $L = 43.90$, $C = 52.56$, a range of 21% of the close.
+The constructions differ by an amount proportional to the bar's own range, so the differences are largest on the widest bar. Across QQQ's 6,940 daily bars since March 1999, the widest relative to its close is 3 January 2001, the day of a surprise Fed rate cut: $`O = 43.93`$, $`H = 54.92`$, $`L = 43.90`$, $`C = 52.56`$, a range of 21% of the close.
 
 | Construction | Value |
 |---|---|
@@ -87,19 +87,19 @@ A single bar's price, whichever construction is chosen, is still one noisy obser
 p_t = \underbrace{\text{slower-moving level}}_{\text{signal}} + \underbrace{\text{bar-specific noise}}_{\text{noise}}
 ```
 
-One $p_t$ cannot separate the two terms. Combining several bars can, if the noise is less persistent than the level, which is the working assumption behind every method below. This is where the word "filter" comes from in signal processing: separating a persistent signal from transient noise.
+One $`p_t`$ cannot separate the two terms. Combining several bars can, if the noise is less persistent than the level, which is the working assumption behind every method below. This is where the word "filter" comes from in signal processing: separating a persistent signal from transient noise.
 
 ### 3.2 The general form
 
-Every technique here is a function of a trailing window of past prices, producing one new number at each $t$:
+Every technique here is a function of a trailing window of past prices, producing one new number at each $`t`$:
 
 ```math
 \hat p_t = g\big(p_{t-N+1},\, \dots,\, p_t;\; \theta\big)
 ```
 
-This is a special case of Lecture 1's $w_t = f(\mathcal I_t;\theta)$. It is **causal**: it uses only information available at $t$. It sits at the data → signal boundary of the pipeline (Lecture 1, §2.1): $\hat p_t$ is not yet a forecast or a position, but it is usually the first derived quantity a forecast is built from.
+This is a special case of Lecture 1's $`w_t = f(\mathcal I_t;\theta)`$. It is **causal**: it uses only information available at $`t`$. It sits at the data → signal boundary of the pipeline (Lecture 1, §2.1): $`\hat p_t`$ is not yet a forecast or a position, but it is usually the first derived quantity a forecast is built from.
 
-Causal also means the value is not known until the bar closes. A signal from bar $t$ can be traded at the close of bar $t$ at the earliest, and only if the computation runs in the final moments of the session; otherwise at the next bar.
+Causal also means the value is not known until the bar closes. A signal from bar $`t`$ can be traded at the close of bar $`t`$ at the earliest, and only if the computation runs in the final moments of the session; otherwise at the next bar.
 
 ### 3.3 The real design choice
 
@@ -126,12 +126,12 @@ Confusing these is a real failure mode: feeding a trend-strength number into a s
 
 | Method | Weighted by | Needs | Memory |
 |---|---|---|---|
-| SMA | Equal weight | Price | Rolling (last $N$ bars) |
+| SMA | Equal weight | Price | Rolling (last $`N`$ bars) |
 | EMA / EWMA | Recency, exponential decay | Price | Expanding (recursive) |
-| VWAP | Trading activity (volume) | Price and volume | Rolling (last $N$ bars) |
+| VWAP | Trading activity (volume) | Price and volume | Rolling (last $`N`$ bars) |
 | KAMA | Trend efficiency, adaptive | Price | Hybrid (rolling diagnostic, expanding recursion) |
 
-Read the **Memory** column first. *Rolling* means a literal buffer of the last $N$ bars, each dropped the instant it ages past $N$. *Expanding* means a recursive running number that folds in the entire history, with old bars fading smoothly rather than being cut off. Sections 6 and 7 both turn on this distinction.
+Read the **Memory** column first. *Rolling* means a literal buffer of the last $`N`$ bars, each dropped the instant it ages past $`N`$. *Expanding* means a recursive running number that folds in the entire history, with old bars fading smoothly rather than being cut off. Sections 6 and 7 both turn on this distinction.
 
 ### 4.1 SMA: equal weight
 
@@ -139,7 +139,7 @@ Read the **Memory** column first. *Rolling* means a literal buffer of the last $
 \mathrm{SMA}_t = \frac{1}{N}\sum_{k=0}^{N-1} p_{t-k}
 ```
 
-Every bar inside the window counts the same; every bar outside counts zero. That hard edge causes a predictable artefact: a bar's influence does not fade, it disappears all at once $N$ periods later (§7.2).
+Every bar inside the window counts the same; every bar outside counts zero. That hard edge causes a predictable artefact: a bar's influence does not fade, it disappears all at once $`N`$ periods later (§7.2).
 
 ### 4.2 EMA / EWMA: recency
 
@@ -149,11 +149,11 @@ Every bar inside the window counts the same; every bar outside counts zero. That
 \mathrm{EMA}_t = \alpha p_t + (1-\alpha)\,\mathrm{EMA}_{t-1}, \qquad \alpha = \frac{2}{N+1}
 ```
 
-A bar $k$ periods old carries weight $\alpha(1-\alpha)^k$. $N$ enters only through the convention $\alpha = 2/(N+1)$; §6 shows this convention is not arbitrary.
+A bar $`k`$ periods old carries weight $`\alpha(1-\alpha)^k`$. $`N`$ enters only through the convention $`\alpha = 2/(N+1)`$; §6 shows this convention is not arbitrary.
 
 Because the whole history is folded into one stored number, each update costs the same however long the history is. How much history to load before the first trustworthy value is covered in [§9.1](#91-how-much-data-each-method-needs).
 
-**An implementation trap.** pandas' `ewm` defaults to `adjust=True`, which re-normalises the weights during warm-up and so does not follow the recursion above for the first few dozen bars. `adjust=False` is the textbook recursion. On QQQ with $N = 20$ the two differ by up to 0.49% in the first 50 bars and by $6\times 10^{-10}$ after bar 200. Mixing them matters for any backtest that starts near the beginning of the data.
+**An implementation trap.** pandas' `ewm` defaults to `adjust=True`, which re-normalises the weights during warm-up and so does not follow the recursion above for the first few dozen bars. `adjust=False` is the textbook recursion. On QQQ with $`N = 20`$ the two differ by up to 0.49% in the first 50 bars and by $`6\times 10^{-10}`$ after bar 200. Mixing them matters for any backtest that starts near the beginning of the data.
 
 ### 4.3 VWAP: trading activity
 
@@ -161,11 +161,11 @@ Because the whole history is folded into one stored number, each update costs th
 \mathrm{VWAP}_t = \frac{\sum_{k=0}^{N-1} p_{t-k}\,v_{t-k}}{\sum_{k=0}^{N-1} v_{t-k}}
 ```
 
-A heavily traded bar counts more, whatever its age. $p$ is conventionally Typical Price. True intraday VWAP resets at each session open; the trailing fixed-$N$ version is the usual adaptation for daily bars. Volume must be split-adjusted consistently with price, or a split silently reweights the window.
+A heavily traded bar counts more, whatever its age. $`p`$ is conventionally Typical Price. True intraday VWAP resets at each session open; the trailing fixed-$`N`$ version is the usual adaptation for daily bars. Volume must be split-adjusted consistently with price, or a split silently reweights the window.
 
 ### 4.4 KAMA: trend efficiency, adaptively
 
-Kaufman's Adaptive Moving Average keeps the EMA recursion but changes the decay rate every bar, based on how efficient the last $n$ bars have been: net progress relative to total movement.
+Kaufman's Adaptive Moving Average keeps the EMA recursion but changes the decay rate every bar, based on how efficient the last $`n`$ bars have been: net progress relative to total movement.
 
 ```math
 \mathrm{ER}_t = \frac{\lvert p_t - p_{t-n}\rvert}{\sum_{k=0}^{n-1}\lvert p_{t-k}-p_{t-k-1}\rvert} \in [0,1]
@@ -175,31 +175,31 @@ Kaufman's Adaptive Moving Average keeps the EMA recursion but changes the decay 
 \mathrm{sc}_t = \big(\mathrm{ER}_t(\alpha_f-\alpha_s)+\alpha_s\big)^2, \qquad \mathrm{KAMA}_t = \mathrm{KAMA}_{t-1} + \mathrm{sc}_t\,(p_t - \mathrm{KAMA}_{t-1})
 ```
 
-with Kaufman's $\alpha_f = 2/3$ and $\alpha_s = 2/31$ (a 2-bar and a 30-bar EMA) and $n = 10$. $\mathrm{ER} \to 1$ for a straight run; $\mathrm{ER} \to 0$ for a path that doubles back as much as it progresses. KAMA tracks price tightly in clean trends and goes nearly flat in chop.
+with Kaufman's $`\alpha_f = 2/3`$ and $`\alpha_s = 2/31`$ (a 2-bar and a 30-bar EMA) and $`n = 10`$. $`\mathrm{ER} \to 1`$ for a straight run; $`\mathrm{ER} \to 0`$ for a path that doubles back as much as it progresses. KAMA tracks price tightly in clean trends and goes nearly flat in chop.
 
-Its memory is a hybrid: ER is read from a strict rolling $n$-bar window, while the KAMA recursion itself is expanding, like EMA.
+Its memory is a hybrid: ER is read from a strict rolling $`n`$-bar window, while the KAMA recursion itself is expanding, like EMA.
 
 ## 5. A different kind of estimator: the Kalman filter
 
-SMA, EMA, VWAP and KAMA all pick weights for past bars and take a weighted average. **The Kalman filter does not.** It keeps a running belief about the current level and trend, a mean and an uncertainty, and updates that belief with each new bar. It never re-reads $p_{t-5}$ or $p_{t-50}$; its memory is compressed entirely into its current state. There is no $N$ to set. Like EMA, it is expanding: every past bar keeps some influence and none is cut off at a fixed age.
+SMA, EMA, VWAP and KAMA all pick weights for past bars and take a weighted average. **The Kalman filter does not.** It keeps a running belief about the current level and trend, a mean and an uncertainty, and updates that belief with each new bar. It never re-reads $`p_{t-5}`$ or $`p_{t-50}`$; its memory is compressed entirely into its current state. There is no $`N`$ to set. Like EMA, it is expanding: every past bar keeps some influence and none is cut off at a fixed age.
 
 ### 5.1 The recursion
 
-A local-linear-trend filter tracks two unobserved states of log price, a level $\ell_t$ and a trend $\tau_t$:
+A local-linear-trend filter tracks two unobserved states of log price, a level $`\ell_t`$ and a trend $`\tau_t`$:
 
 ```math
 \begin{pmatrix}\ell_t\\ \tau_t\end{pmatrix} = \begin{pmatrix}1 & 1\\0 & 1\end{pmatrix}\begin{pmatrix}\ell_{t-1}\\ \tau_{t-1}\end{pmatrix} + \eta_t, \quad \eta_t \sim \mathcal N(0, Q), \qquad \log p_t = \ell_t + \varepsilon_t, \quad \varepsilon_t \sim \mathcal N(0, R)
 ```
 
-Each bar it **predicts** ($\hat\ell = \ell_{t-1} + \tau_{t-1}$), then **corrects** toward the new observation by the innovation (observed minus predicted) times the **Kalman gain**. The gain is set by $Q$ against $R$: a large $R$ relative to $Q$ means "trust the model, barely move"; a small $R$ means the opposite.
+Each bar it **predicts** ($`\hat\ell = \ell_{t-1} + \tau_{t-1}`$), then **corrects** toward the new observation by the innovation (observed minus predicted) times the **Kalman gain**. The gain is set by $`Q`$ against $`R`$: a large $`R`$ relative to $`Q`$ means "trust the model, barely move"; a small $`R`$ means the opposite.
 
 ### 5.2 What its weights look like
 
-In steady state the gain settles to a constant and the filter becomes a fixed linear smoother. For a level-only model that smoother is exactly an EMA. For the local linear trend it is Holt's linear exponential smoothing (Harvey, 1989), and its implied weights on old observations turn slightly **negative**. Those negative weights let it extrapolate the trend, so it tracks a straight-line trend with **zero average lag**, whatever $Q$ and $R$ are. The price is overshoot after a jump: it reads part of a one-off jump as the start of a trend (§8.1).
+In steady state the gain settles to a constant and the filter becomes a fixed linear smoother. For a level-only model that smoother is exactly an EMA. For the local linear trend it is Holt's linear exponential smoothing (Harvey, 1989), and its implied weights on old observations turn slightly **negative**. Those negative weights let it extrapolate the trend, so it tracks a straight-line trend with **zero average lag**, whatever $`Q`$ and $`R`$ are. The price is overshoot after a jump: it reads part of a one-off jump as the start of a trend (§8.1).
 
 ### 5.3 Noise settings are a memory choice
 
-Because there is no $N$, $Q$ and $R$ are the memory dial, and default values can hide a very short memory. The default noise settings in this course's `trading_models` package (level variance $10^{-4}$, trend variance $10^{-6}$, observation variance $10^{-3}$) smooth about as much as a **4.5-bar** moving average. Comparing that filter to SMA(20) compares a short memory with a long one. Section 6 shows how to match them properly.
+Because there is no $`N`$, $`Q`$ and $`R`$ are the memory dial, and default values can hide a very short memory. The default noise settings in this course's `trading_models` package (level variance $`10^{-4}`$, trend variance $`10^{-6}`$, observation variance $`10^{-3}`$) smooth about as much as a **4.5-bar** moving average. Comparing that filter to SMA(20) compares a short memory with a long one. Section 6 shows how to match them properly.
 
 ## 6. Matching memory before comparing
 
@@ -207,29 +207,29 @@ A comparison of "SMA(20) against a Kalman filter" means nothing unless both carr
 
 ### 6.1 Two measures of memory
 
-Write any linear smoother as weights on past prices, $\hat p_t = \sum_k w_k p_{t-k}$ with $\sum_k w_k = 1$. Two standard summaries:
+Write any linear smoother as weights on past prices, $`\hat p_t = \sum_k w_k p_{t-k}`$ with $`\sum_k w_k = 1`$. Two standard summaries:
 
 ```math
 \text{average age} = \sum_{k\ge 0} k\,w_k, \qquad \text{variance reduction factor} = \sum_{k\ge 0} w_k^2
 ```
 
 - **Average age** (centre of mass): on a price rising along a straight line, exactly how many bars the smoother trails behind.
-- **Variance reduction factor**: if prices were independent noise around a constant, the smoother's variance would be this fraction of the noise variance. Its reciprocal is a "noise-equivalent $N$".
+- **Variance reduction factor**: if prices were independent noise around a constant, the smoother's variance would be this fraction of the noise variance. Its reciprocal is a "noise-equivalent $`N`$".
 
-### 6.2 Why $\alpha = 2/(N+1)$: Brown's convention
+### 6.2 Why $`\alpha = 2/(N+1)`$: Brown's convention
 
-An SMA($N$) has average age $(N-1)/2$. An EMA has average age $(1-\alpha)/\alpha$. Setting them equal gives $\alpha = 2/(N+1)$. Brown (1963) chose the convention for exactly this reason. It also makes the variance reduction factors equal: the EMA's is $\alpha/(2-\alpha)$, which at $\alpha = 2/(N+1)$ is $1/N$, the same as the SMA's.
+An SMA($`N`$) has average age $`(N-1)/2`$. An EMA has average age $`(1-\alpha)/\alpha`$. Setting them equal gives $`\alpha = 2/(N+1)`$. Brown (1963) chose the convention for exactly this reason. It also makes the variance reduction factors equal: the EMA's is $`\alpha/(2-\alpha)`$, which at $`\alpha = 2/(N+1)`$ is $`1/N`$, the same as the SMA's.
 
 ### 6.3 The Kalman filter needs the other measure
 
-The local-linear-trend filter has zero average age by construction (§5.2), so average age cannot calibrate it. Its variance reduction factor can. Solving for the observation variance that gives a variance reduction of 1/20 yields $R = 0.20$.
+The local-linear-trend filter has zero average age by construction (§5.2), so average age cannot calibrate it. Its variance reduction factor can. Solving for the observation variance that gives a variance reduction of 1/20 yields $`R = 0.20`$.
 
-| Smoother | Average age (bars) | Variance reduction | Noise-equivalent $N$ |
+| Smoother | Average age (bars) | Variance reduction | Noise-equivalent $`N`$ |
 |---|---|---|---|
 | SMA(20) | 9.5 | 0.050 | 20 |
 | EMA(span 20) | 9.5 | 0.050 | 20 |
-| Kalman, matched ($R = 0.20$) | 0.0 | 0.050 | 20 |
-| Kalman, package default ($R = 10^{-3}$) | 0.0 | 0.224 | 4.5 |
+| Kalman, matched ($`R = 0.20`$) | 0.0 | 0.050 | 20 |
+| Kalman, package default ($`R = 10^{-3}`$) | 0.0 | 0.224 | 4.5 |
 
 From here on, "Kalman, matched" is the fair comparison with SMA(20) and EMA(20). The weight profiles are plotted in [chart A.1](#a1-weight-given-to-a-price-k-bars-old-6).
 
@@ -241,9 +241,9 @@ First a toy series, where every number can be checked by hand; then the same fiv
 
 ### 7.1 Toy series: one spike on heavy volume
 
-Ten gently rising bars, one +7% bar on about 4–5× normal volume, then a calm uptrend. $N = 5$ throughout. SMA and VWAP need a full window (first value at $t = 4$), KAMA one more bar; EMA and Kalman, both expanding, start at $t = 0$.
+Ten gently rising bars, one +7% bar on about 4–5× normal volume, then a calm uptrend. $`N = 5`$ throughout. SMA and VWAP need a full window (first value at $`t = 4`$), KAMA one more bar; EMA and Kalman, both expanding, start at $`t = 0`$.
 
-| $t$ | Price | Volume | SMA(5) | EMA(5) | VWAP(5) | KAMA(5) | Kalman |
+| $`t`$ | Price | Volume | SMA(5) | EMA(5) | VWAP(5) | KAMA(5) | Kalman |
 |---|---|---|---|---|---|---|---|
 | 0 | 100.0 | 1000 | — | 100.00 | — | — | 100.00 |
 | 1 | 100.3 | 1020 | — | 100.10 | — | — | 100.30 |
@@ -260,25 +260,25 @@ Ten gently rising bars, one +7% bar on about 4–5× normal volume, then a calm 
 | **12** | 103.5 | 1010 | **103.02** | 103.25 | **102.96** | 104.20 | 103.97 |
 | 13 | 103.8 | 1040 | 103.28 | 103.43 | 103.27 | 104.02 | 104.11 |
 
-**The $t = 7$ numbers by hand.** The window is bars 3–7: prices 100.8, 101.0, 101.3, 101.5, 108.5; volumes 1010, 1040, 990, 1030, 4800.
+**The $`t = 7`$ numbers by hand.** The window is bars 3–7: prices 100.8, 101.0, 101.3, 101.5, 108.5; volumes 1010, 1040, 990, 1030, 4800.
 
 - **SMA:** 513.1 / 5 = 102.62.
-- **EMA:** $\alpha = 2/6 = 0.3333$; 0.3333 × 108.5 + 0.6667 × 101.06 = 103.54.
-- **VWAP:** $\sum p\,v = 932{,}480$; $\sum v = 8{,}870$; ratio 105.13. The spike bar alone is 520,800 / 932,480 = 56% of the numerator.
-- **KAMA:** net move |108.5 − 100.5| = 8.0; path 0.3 + 0.2 + 0.3 + 0.2 + 7.0 = 8.0; so $\mathrm{ER} = 1.0$ exactly and $\mathrm{sc} = \alpha_f^2 = 0.4444$, KAMA's fastest possible setting. 101.39 + 0.4444 × (108.5 − 101.39) = 104.55.
+- **EMA:** $`\alpha = 2/6 = 0.3333`$; 0.3333 × 108.5 + 0.6667 × 101.06 = 103.54.
+- **VWAP:** $`\sum p\,v = 932{,}480`$; $`\sum v = 8{,}870`$; ratio 105.13. The spike bar alone is 520,800 / 932,480 = 56% of the numerator.
+- **KAMA:** net move |108.5 − 100.5| = 8.0; path 0.3 + 0.2 + 0.3 + 0.2 + 7.0 = 8.0; so $`\mathrm{ER} = 1.0`$ exactly and $`\mathrm{sc} = \alpha_f^2 = 0.4444`$, KAMA's fastest possible setting. 101.39 + 0.4444 × (108.5 − 101.39) = 104.55.
 - **Kalman** (log space): predicted level 4.6228, observed log(108.5) = 4.6868, innovation 0.0640, gain 0.470; 4.6228 + 0.470 × 0.0640 = 4.6528, and exp(4.6528) = 104.88.
 
 ### 7.2 What the toy table shows
 
-- **$t = 7$:** VWAP reacts hardest, because the spike also carries the most volume. KAMA does **not** react least: with $\mathrm{ER} = 1$ it moves more than EMA (104.55 vs 103.54). ER cannot tell a clean trend from a clean trend plus one spike in the same direction.
-- **$t = 8$:** the window now holds the spike and the reversal. $\mathrm{ER}$ collapses to 1.7 / 13.7 = 0.124 and $\mathrm{sc}$ to 0.0194, about 1/23 of the previous bar. KAMA freezes near 104.5 while price is back at 102.5–103.3.
-- **$t = 8\text{–}11$:** price is calm, but SMA and VWAP keep rising, because the spike is still inside their window.
-- **$t = 12$:** the spike leaves the window and SMA (104.02 → 103.02) and VWAP (105.63 → 102.96) drop with no move in price. This is the rolling-window cliff.
-- **EMA and Kalman** show no cliff but never fully forget: replacing the spike with a normal 102.0 gives $\mathrm{EMA}_{13} = 103.24$ instead of 103.43.
+- **$`t = 7`$:** VWAP reacts hardest, because the spike also carries the most volume. KAMA does **not** react least: with $`\mathrm{ER} = 1`$ it moves more than EMA (104.55 vs 103.54). ER cannot tell a clean trend from a clean trend plus one spike in the same direction.
+- **$`t = 8`$:** the window now holds the spike and the reversal. $`\mathrm{ER}`$ collapses to 1.7 / 13.7 = 0.124 and $`\mathrm{sc}`$ to 0.0194, about 1/23 of the previous bar. KAMA freezes near 104.5 while price is back at 102.5–103.3.
+- **$`t = 8\text{–}11`$:** price is calm, but SMA and VWAP keep rising, because the spike is still inside their window.
+- **$`t = 12`$:** the spike leaves the window and SMA (104.02 → 103.02) and VWAP (105.63 → 102.96) drop with no move in price. This is the rolling-window cliff.
+- **EMA and Kalman** show no cliff but never fully forget: replacing the spike with a normal 102.0 gives $`\mathrm{EMA}_{13} = 103.24`$ instead of 103.43.
 
 ### 7.3 The same five methods on a real day: QQQ, 24 August 2015
 
-The flash-crash open, $N = 20$. Each hand result was asserted equal to the library value in the notebook.
+The flash-crash open, $`N = 20`$. Each hand result was asserted equal to the library value in the notebook.
 
 | Method | Calculation | Value |
 |---|---|---|
@@ -286,10 +286,10 @@ The flash-crash open, $N = 20$. Each hand result was asserted equal to the libra
 | SMA(20) | 2,024.57 / 20 | 101.23 |
 | EMA(20) | 0.0952 × 90.77 + 0.9048 × 101.136 | 100.15 |
 | VWAP(20) | 76.77bn / 780.05m shares | 98.42 |
-| KAMA(10) | $\mathrm{ER} = 12.09/14.80 = 0.817$, $\mathrm{sc} = 0.3095$; 100.862 + 0.3095 × (90.77 − 100.862) | 97.74 |
+| KAMA(10) | $`\mathrm{ER} = 12.09/14.80 = 0.817`$, $`\mathrm{sc} = 0.3095`$; 100.862 + 0.3095 × (90.77 − 100.862) | 97.74 |
 | Kalman (package default) | innovation −0.0800 × gain 0.332 in log space | 95.75 |
 
-The real day repeats the toy lessons. VWAP sits well below SMA because 24 August itself carried 19.3% of the window's volume, one of twenty bars. KAMA moved fast because the preceding ten days had fallen almost in a straight line ($\mathrm{ER} = 0.82$). The Kalman filter at default settings followed price most closely, but §6 showed that is a 4.5-bar memory, not a better method.
+The real day repeats the toy lessons. VWAP sits well below SMA because 24 August itself carried 19.3% of the window's volume, one of twenty bars. KAMA moved fast because the preceding ten days had fallen almost in a straight line ($`\mathrm{ER} = 0.82`$). The Kalman filter at default settings followed price most closely, but §6 showed that is a 4.5-bar memory, not a better method.
 
 ## 8. Evidence on real data
 
@@ -335,39 +335,39 @@ The three episodes are plotted in [chart A.3](#a3-the-five-methods-through-three
 
 ### 8.3 Window length matters more than method
 
-Re-running each method at $N = 10$, 20 and 50 through the 2020 crash (the Kalman filter re-matched to each $N$) moves the results far more than switching method at a fixed $N$. Short windows follow the crash and the rebound sooner and are noisier in calm periods; long windows are the reverse. The defaults 20, 50 and 200 are conventions, not results. See [chart A.4](#a4-window-length-through-the-2020-crash-83).
+Re-running each method at $`N = 10`$, 20 and 50 through the 2020 crash (the Kalman filter re-matched to each $`N`$) moves the results far more than switching method at a fixed $`N`$. Short windows follow the crash and the rebound sooner and are noisier in calm periods; long windows are the reverse. The defaults 20, 50 and 200 are conventions, not results. See [chart A.4](#a4-window-length-through-the-2020-crash-83).
 
 ## 9. Side by side, and practical notes
 
 | Method | Memory | Needs volume | Decay shape | What breaks it | Common mistake |
 |---|---|---|---|---|---|
-| SMA | Rolling, hard edge at $N$ | No | Flat, then a cliff | A bar's influence vanishes at once $N$ bars later, moving the level with no price move | Reading another method at the same $N$ as comparable without matching memory (§6) |
+| SMA | Rolling, hard edge at $`N`$ | No | Flat, then a cliff | A bar's influence vanishes at once $`N`$ bars later, moving the level with no price move | Reading another method at the same $`N`$ as comparable without matching memory (§6) |
 | EMA | Expanding | No | Smooth geometric | Reacts to every move by the same fixed proportion | Mixing `adjust=True` with the textbook recursion |
-| VWAP | Rolling, hard edge at $N$ | Yes | Flat, weighted by size | One heavy bar dominates, then drops off the same cliff | Split-unadjusted volume with adjusted prices |
+| VWAP | Rolling, hard edge at $`N`$ | Yes | Flat, weighted by size | One heavy bar dominates, then drops off the same cliff | Split-unadjusted volume with adjusted prices |
 | KAMA | Rolling ER, expanding recursion | No | Adaptive | A spike in the trend's direction makes it fastest, the reversal then freezes it | Judging its speed on clean examples |
-| Kalman | Expanding, set by $Q$ and $R$ | No | Smooth, negative weights on old bars | Overshoot after jumps; fixed $Q$, $R$ in a changing volatility regime | Comparing default noise settings with a 20-bar average |
+| Kalman | Expanding, set by $`Q`$ and $`R`$ | No | Smooth, negative weights on old bars | Overshoot after jumps; fixed $`Q`$, $`R`$ in a changing volatility regime | Comparing default noise settings with a 20-bar average |
 
 None of these values exists before the bar closes.
 
 ### 9.1 How much data each method needs
 
-No method needs the full price history. Each needs a limited warm-up before its first trustworthy value, then only a small stored state to update bar by bar. Every method here costs the same fixed amount per new bar, $O(1)$, however long the history: the rolling methods add the new bar and subtract the one leaving the window, and the expanding methods update a few stored numbers. Cost per bar is therefore never the issue. What differs is the stored state and how much history each method must see first.
+No method needs the full price history. Each needs a limited warm-up before its first trustworthy value, then only a small stored state to update bar by bar. Every method here costs the same fixed amount per new bar, $`O(1)`$, however long the history: the rolling methods add the new bar and subtract the one leaving the window, and the expanding methods update a few stored numbers. Cost per bar is therefore never the issue. What differs is the stored state and how much history each method must see first.
 
 | Method | Stored between bars | Warm-up to discard | Example |
 |---|---|---|---|
-| SMA($N$) | Last $N$ prices and a running sum | $N-1$ bars; exact afterwards | 19 bars for $N = 20$ |
-| VWAP($N$) | Last $N$ prices and volumes, two running sums | $N-1$ bars; exact afterwards | 19 bars for $N = 20$ |
-| EMA($N$) | One number | $\approx 3.5N$ bars | $\approx 70$ bars for $N = 20$ |
-| KAMA($n$) | One number and the last $n+1$ prices | Depends on the market: $\approx 12$ bars in a clean trend, up to $\approx 1{,}650$ in pure chop | QQQ, $n = 10$: median 82, maximum 132 bars |
-| Kalman (local linear trend) | Two states and their $2\times 2$ uncertainty | The longer of gain settling and the 0.1% memory horizon | $\approx 60$ bars (default), $\approx 200$ (matched) |
+| SMA($`N`$) | Last $`N`$ prices and a running sum | $`N-1`$ bars; exact afterwards | 19 bars for $`N = 20`$ |
+| VWAP($`N`$) | Last $`N`$ prices and volumes, two running sums | $`N-1`$ bars; exact afterwards | 19 bars for $`N = 20`$ |
+| EMA($`N`$) | One number | $`\approx 3.5N`$ bars | $`\approx 70`$ bars for $`N = 20`$ |
+| KAMA($`n`$) | One number and the last $`n+1`$ prices | Depends on the market: $`\approx 12`$ bars in a clean trend, up to $`\approx 1{,}650`$ in pure chop | QQQ, $`n = 10`$: median 82, maximum 132 bars |
+| Kalman (local linear trend) | Two states and their $`2\times 2`$ uncertainty | The longer of gain settling and the 0.1% memory horizon | $`\approx 60`$ bars (default), $`\approx 200`$ (matched) |
 
-The rolling methods are exact once their window is full. The expanding methods never are; they are close enough once the starting value no longer matters. For an EMA the combined weight of every bar older than $k$ is exactly $(1-\alpha)^k$, and an arbitrary starting value fades by the same factor (Brown, 1963; Hyndman et al., 2008):
+The rolling methods are exact once their window is full. The expanding methods never are; they are close enough once the starting value no longer matters. For an EMA the combined weight of every bar older than $`k`$ is exactly $`(1-\alpha)^k`$, and an arbitrary starting value fades by the same factor (Brown, 1963; Hyndman et al., 2008):
 
 ```math
 \mathrm{EMA}_t = \alpha\sum_{k\ge 0}(1-\alpha)^k\, p_{t-k}, \qquad \text{weight older than } k = (1-\alpha)^k \approx e^{-2k/(N+1)}
 ```
 
-At $k = 3.5N$ that is $e^{-7} \approx 0.1\%$. KAMA's $\alpha$ moves every bar between $\alpha_s^2 = 0.0042$ and $\alpha_f^2 = 0.44$, so its memory lengthens in choppy markets. These bounds follow from Kaufman's smoothing constants (Kaufman, 2013); the calculation is ours. That is a practical drawback: KAMA has no fixed warm-up, and the safe upper bound (about 1,650 bars, six and a half years of daily data) is rarely affordable. The workable fix is to measure it: start KAMA from two different values and treat it as warmed up once the two agree within 0.1%. On QQQ that took 82 bars at the median and 132 at worst (example below). The matched Kalman filter smooths like EMA(20), yet its slow trend component reaches back about 200 bars; starting it with a large initial uncertainty (a *diffuse* start) removes most of the starting-value error early (Durbin and Koopman, 2012, ch. 5). The Kalman figures are our own calculation with the filter settings of §6.
+At $`k = 3.5N`$ that is $`e^{-7} \approx 0.1\%`$. KAMA's $`\alpha`$ moves every bar between $`\alpha_s^2 = 0.0042`$ and $`\alpha_f^2 = 0.44`$, so its memory lengthens in choppy markets. These bounds follow from Kaufman's smoothing constants (Kaufman, 2013); the calculation is ours. That is a practical drawback: KAMA has no fixed warm-up, and the safe upper bound (about 1,650 bars, six and a half years of daily data) is rarely affordable. The workable fix is to measure it: start KAMA from two different values and treat it as warmed up once the two agree within 0.1%. On QQQ that took 82 bars at the median and 132 at worst (example below). The matched Kalman filter smooths like EMA(20), yet its slow trend component reaches back about 200 bars; starting it with a large initial uncertainty (a *diffuse* start) removes most of the starting-value error early (Durbin and Koopman, 2012, ch. 5). The Kalman figures are our own calculation with the filter settings of §6.
 
 **Example: when the backtest starts matters.** Two common ways to start KAMA(10), from the first price or from the average of the first 10 prices, compared from 311 monthly start dates on QQQ between 1999 and 2025 (our measurement for these notes):
 
@@ -379,7 +379,7 @@ At $k = 3.5N$ that is $e^{-7} \approx 0.1\%$. KAMA's $\alpha$ moves every bar be
 | January 2008 | Choppy, early financial crisis | 0.22 | 130 | 6 |
 | November 2008 | Violent crisis swings | 0.22 | 112 | 18, the last 55 bars in |
 
-Warm-up tracks how choppy the first months are (correlation with mean ER: $-0.86$). In 71% of start dates the long/short signal, price above or below KAMA, differs on at least one day. A backtest starting in November 2008 with no warm-up would show different trades for almost three months purely because of a starting convention. An EMA(20) needs about 70 bars whatever the market.
+Warm-up tracks how choppy the first months are (correlation with mean ER: $`-0.86`$). In 71% of start dates the long/short signal, price above or below KAMA, differs on at least one day. A backtest starting in November 2008 with no warm-up would show different trades for almost three months purely because of a starting convention. An EMA(20) needs about 70 bars whatever the market.
 
 **Practical rule.** Before the backtest start date, load the longest warm-up among the indicators the strategy uses, compute on all of it, and discard the warm-up bars before measuring performance. In live trading, update each method from its stored state; never recompute from the start of the series. Libraries handle this explicitly. We use TA-Lib as the example because it is the long-standing open-source reference implementation of these indicators, used directly or through wrappers such as Python's `talib`, and it documents the issue: it calls the discarded stretch the *unstable period* and lets the user set it for EMA and KAMA, among others ([TA-Lib documentation](https://ta-lib.org/api/unstable-period/)).
 
@@ -390,7 +390,7 @@ Live, each filter is updated from its saved state, so the full history is pulled
 | What to store | Why | Example |
 |---|---|---|
 | The input data as used, from an agreed start date | Vendors revise history (splits, adjustments, corrected prints), so a fresh download can differ from what the filter saw | QQQ closes from 10 March 1999, saved at every update |
-| The configuration, including how the filter was started | Changing any of it gives, in effect, a different filter until warm-up passes | KAMA: $n = 10$, fast 2, slow 30, start date, starting value = first close. Kalman: $Q$, $R$, initial uncertainty (diffuse or not) |
+| The configuration, including how the filter was started | Changing any of it gives, in effect, a different filter until warm-up passes | KAMA: $`n = 10`$, fast 2, slow 30, start date, starting value = first close. Kalman: $`Q`$, $`R`$, initial uncertainty (diffuse or not) |
 | State checkpoints | A fast restart without replaying everything | End-of-day KAMA value and last 11 closes; Kalman level, trend and their uncertainty |
 
 **Example: a restart in November 2008.** A system running KAMA(10) and EMA(20) on QQQ since March 1999 loses its saved state on 20 November 2008 and rebuilds each filter from only the last 30 bars (our calculation for these notes):
@@ -404,7 +404,7 @@ The same restart on 1 June 2017, in a calm market, changes nothing visible: gaps
 
 That gives two ways to rebuild, and they must agree. The fast way loads the latest checkpoint and replays the bars since. The full way replays everything from the start date with the stored data and configuration. Comparing the two daily is the reconciliation check: a difference means the data or the configuration has changed.
 
-If exact reproducibility matters more than $O(1)$ updates, cap the history deliberately: restart the filter over a fixed window of the last $M$ bars each time. It then becomes a deterministic function of those $M$ bars, the property Lecture 1 asks of a systematic rule (same inputs, same outputs), at a cost of $O(M)$ work per bar.
+If exact reproducibility matters more than $`O(1)`$ updates, cap the history deliberately: restart the filter over a fixed window of the last $`M`$ bars each time. It then becomes a deterministic function of those $`M`$ bars, the property Lecture 1 asks of a systematic rule (same inputs, same outputs), at a cost of $`O(M)`$ work per bar.
 
 ## 10. Summary, exercises and reading
 
@@ -413,21 +413,21 @@ If exact reproducibility matters more than $O(1)$ updates, cap the history delib
 1. Building a bar is **compression** (data shrinks); aggregating bars is **filtering** (data does not shrink, signal is separated from noise).
 2. A bar's single price and the aggregation across bars are two separate design choices; on a wide bar the first alone can move "the price" by 16%.
 3. The methods differ only in how much each past bar counts, and in whether memory is rolling (SMA, VWAP), expanding (EMA, Kalman) or hybrid (KAMA).
-4. **Compare only at equal memory.** $\alpha = 2/(N+1)$ matches EMA to SMA; the Kalman filter must be matched on variance reduction. At equal memory EMA beats SMA on QQQ in every period tested.
+4. **Compare only at equal memory.** $`\alpha = 2/(N+1)`$ matches EMA to SMA; the Kalman filter must be matched on variance reduction. At equal memory EMA beats SMA on QQQ in every period tested.
 5. Window length moves results more than the choice of method.
 
 ### 10.2 Exercises
 
 - [ ] For a single bar, construct an example where Median Price and Body Midpoint differ by more than 1% of the close. What kind of session produces it? Find three such days in QQQ.
-- [ ] Reproduce the toy table in §7.1 and extend it to $N = 10$. Does the SMA/VWAP cliff at $t = 12$ disappear, move, or shrink?
-- [ ] Prove that an EMA with $\alpha = 2/(N+1)$ has the same average age and the same variance reduction factor as SMA($N$).
+- [ ] Reproduce the toy table in §7.1 and extend it to $`N = 10`$. Does the SMA/VWAP cliff at $`t = 12`$ disappear, move, or shrink?
+- [ ] Prove that an EMA with $`\alpha = 2/(N+1)`$ has the same average age and the same variance reduction factor as SMA($`N`$).
 - [ ] Construct a 5-bar window with one large reversal and find its ER. Can you make it arbitrarily close to 0? To 1?
 - [ ] Re-run the step test of §8.1 with Gaussian noise added to the input. How much slower does KAMA become?
 - [ ] Describe a market condition where one method from §4 gives a worse estimate of the "true" level than plain SMA.
 
 ### 10.3 Reading list
 
-- Brown, R.G. (1963). *Smoothing, Forecasting and Prediction of Discrete Time Series.* Prentice-Hall. — the $\alpha = 2/(N+1)$ convention.
+- Brown, R.G. (1963). *Smoothing, Forecasting and Prediction of Discrete Time Series.* Prentice-Hall. — the $`\alpha = 2/(N+1)`$ convention.
 - Holt, C.C. (1957, reprinted 2004). Forecasting seasonals and trends by exponentially weighted moving averages. *International Journal of Forecasting.*
 - Harvey, A. (1989). *Forecasting, Structural Time Series Models and the Kalman Filter.* Cambridge University Press.
 - Hyndman, R., Koehler, A., Ord, J.K. and Snyder, R. (2008). *Forecasting with Exponential Smoothing: The State Space Approach.* Springer. — exponential smoothing and its starting values (§9.1).
