@@ -458,6 +458,14 @@ One day can move classical kurtosis by eight times its typical daily variation; 
 
 Implementations of Wilder's smoothing differ in how the first value is seeded: Wilder used the simple average of the first $n$ values, the `trading_models` package starts from the first value. The two converge after a few dozen bars.
 
+**Using libraries knowingly.** A library's indicator is a bundle of choices: the averaging scheme, how the first value is seeded, and default settings. Before relying on one, know those choices, check one value by hand against it, and handle the warm-up explicitly. When the built-in version makes a choice you do not want, compose the indicator from simpler parts rather than rewriting it. For example, ATR built two ways from the same true ranges in pandas:
+
+```python
+tr = pd.concat([high - low, (high - close.shift()).abs(), (low - close.shift()).abs()], axis=1).max(axis=1)
+atr_plain = tr.rolling(14).mean()                       # memory exactly 14 bars, exact after 13
+atr_wilder = tr.ewm(alpha=1 / 14, adjust=False).mean()  # Wilder's smoothing, seeded from the first value
+```
+
 **Clock-time bars, and other bars.** Every statistic here was computed on daily clock-time bars, but none of them strictly requires them: each needs only OHLCV, which bars cut by trades, volume or dollars also have (Lecture 8). Three things change on such bars. Anything stated per day or annualised, including the range estimators built on $\sqrt{8/\pi}$, assumes every bar covers the same span of time. Correlation and beta need both assets observed at the same moments. And returns per bar look different: in trade or volume time they tend to be closer to normal, so measured kurtosis falls (Clark, 1973; Ané and Geman, 2000), although how close is debated. With tick data there are also dedicated estimators: realised volatility, skewness and kurtosis built from intraday returns, and correlation estimators for assets that trade at different moments. Part III returns to both.
 
 ## 12. Summary, exercises and reading
