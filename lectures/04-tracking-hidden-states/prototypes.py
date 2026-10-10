@@ -134,3 +134,22 @@ fig.update_layout(title="One filter, three hidden states: how the noise settings
                   height=900, width=1100, margin=dict(t=90, b=70), legend=dict(orientation="h", y=-0.06, x=0))
 save_figure(fig, "c6_noise_settings_emphasis", FIG)
 print("\nCharts written to", FIG)
+
+# ---- Design versus tuning (Lecture 4 section 5): three designs, two speeds, three test prices ----
+t_ = np.arange(3000.0)
+tests = {"price jump of 1": np.where(t_ < 100, 0.0, 1.0), "steady trend (+0.01/bar)": 0.01 * t_,
+         "parabolic (1e-5 * t^2)": 1e-5 * t_ ** 2}
+speeds = {"slow": np.array([1e-4, 1e-6, 1e-8]), "fast": np.array([1e-2, 1e-3, 1e-4])}
+print("\nDesign versus tuning (price noise R = 1):")
+for test, y in tests.items():
+    print(f"  {test}")
+    for k in (1, 2, 3):
+        F, H, _ = model(k)
+        cells = []
+        for speed, q in speeds.items():
+            level = kalman(y, F, H, q[:k], 1.0)[:, 0]
+            if test.startswith("price jump"):
+                cells.append(f"{speed}: overshoot {max(0.0, level[100:].max() - 1) * 100:5.1f}%")
+            else:
+                cells.append(f"{speed}: gap at bar 1500 {y[1500] - level[1500]:.4f}, at bar 2999 {y[2999] - level[2999]:.4f}")
+        print(f"    {names[k]:30s} " + " | ".join(cells))
