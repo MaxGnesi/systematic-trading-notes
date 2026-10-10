@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 10, 2026 · Max Gnesi*
 
-A bar compresses a stream of trades into five numbers; a moving average filters many bars into one estimate of the price level. This lecture covers both, and tests every method on real QQQ data from 1999 to 2026. Companion notebook: [11_price_aggregation_methods.ipynb](11_price_aggregation_methods.ipynb).
+A bar compresses a stream of trades into five numbers; a moving average filters many bars into one estimate of the price level. This lecture covers both, and tests every method on real QQQ data from 1999 to 2026. Companion notebook: [11_price_smoothing.ipynb](11_price_smoothing.ipynb).
 
 ## 1. OHLCV: what a bar actually is
 
@@ -442,7 +442,7 @@ If exact reproducibility matters more than $O(1)$ updates, cap the history delib
 
 ## Appendix: main charts
 
-From the companion notebook, [11_price_aggregation_methods.ipynb](11_price_aggregation_methods.ipynb), where every real-data number in this lecture is computed and each formula is checked against the library on a real date.
+From the companion notebook, [11_price_smoothing.ipynb](11_price_smoothing.ipynb), where every real-data number in this lecture is computed and each formula is checked against the library on a real date.
 
 ### A.1 Weight given to a price k bars old (§6)
 
