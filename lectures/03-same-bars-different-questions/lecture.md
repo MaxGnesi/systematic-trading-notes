@@ -83,7 +83,7 @@ The **Average True Range** (Wilder, 1978) smooths it with Wilder's recursion:
 \mathrm{ATR}_t = \mathrm{ATR}_{t-1} + \frac{1}{n}\big(\mathrm{TR}_t - \mathrm{ATR}_{t-1}\big)
 ```
 
-This is an EMA with $\alpha = 1/n$, so ATR is **expanding**, not a window of recent ranges, even though "period" looks like a window size. Lecture 2 §6.3 showed ATR(14) has the memory of a 27-bar average.
+This is an EMA with $\alpha = 1/n$, so ATR is **expanding**, not a window of recent ranges, even though "period" looks like a window size. Its average age is $n-1$ bars, against $(N-1)/2$ for a rolling window of $N$ bars (Lecture 2, §6.1), so ATR($n$) carries the memory of a $2n-1$ bar average: ATR(14) looks back like a 27-bar window, not a 14-bar one. It also needs a warm-up of about $7n$ bars, roughly 93 for ATR(14), by the rule in Lecture 2, §9.1. Both effects come from Wilder's smoothing, not from the true range: averaging the same true ranges with a plain $n$-bar mean (an SMA) gives an ATR whose memory is exactly $n$ bars and which is exact after $n-1$ bars. Wilder's choice is one of the weighting schemes Lecture 2 compares.
 
 ### 3.2 Toy series ($n = 5$)
 
@@ -193,7 +193,7 @@ Windows in this lecture are set by two rules, not by convention: match memory fo
 
 ### 5.1 Matching memory
 
-Lecture 2 §6.3 showed that Wilder's period $n$ carries the memory of a $2n-1$ bar rolling window. ATR(14) and ADX(14) therefore look back like a **27-bar** window, so the volatility estimators, the efficiency ratio and the order imbalance below all use 27 bars. The common defaults 14 and 20 have no shared basis and should not be read together as if they did.
+Wilder's period $n$ carries the memory of a $2n-1$ bar rolling window (§3.1). ATR(14) and ADX(14) therefore look back like a **27-bar** window, so the volatility estimators, the efficiency ratio and the order imbalance below all use 27 bars. The common defaults 14 and 20 have no shared basis and should not be read together as if they did.
 
 ### 5.2 Matching precision
 
@@ -480,6 +480,7 @@ Implementations of Wilder's smoothing differ in how the first value is seeded: W
 - [ ] Prove that for $n$ points the sample skewness cannot exceed $(n-2)/\sqrt{n-1}$. Which configuration attains it?
 - [ ] Re-run the bootstrap of §10.2 with block lengths of 5, 21 and 63 days. How does the kurtosis band change, and why?
 - [ ] Construct a 5-bar window of two series where correlation and beta move in the **same** direction. What must be true of their relative move sizes?
+- [ ] Show that Wilder's smoothing with period $n$ has average age $n-1$, and hence that ATR(14) matches a 27-bar window. Then recompute the toy ATR in §3.2 with a plain 5-bar mean of the true ranges instead: how do the peak and the decay change?
 
 ### 12.3 Reading list
 

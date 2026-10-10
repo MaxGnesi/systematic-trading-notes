@@ -220,17 +220,7 @@ Write any linear smoother as weights on past prices, $\hat p_t = \sum_k w_k p_{t
 
 An SMA($N$) has average age $(N-1)/2$. An EMA has average age $(1-\alpha)/\alpha$. Setting them equal gives $\alpha = 2/(N+1)$. Brown (1963) chose the convention for exactly this reason. It also makes the variance reduction factors equal: the EMA's is $\alpha/(2-\alpha)$, which at $\alpha = 2/(N+1)$ is $1/N$, the same as the SMA's.
 
-### 6.3 Wilder's period is not a window length
-
-Wilder's smoothing, used in ATR and ADX, is an EMA with $\alpha = 1/n$. Its average age is $n-1$. Matching that to a rolling window's $(N-1)/2$ gives
-
-```math
-N = 2n - 1
-```
-
-so **ATR(14) carries the memory of a 27-bar average, not a 14-bar one**. Lecture 3 uses this rule to choose window lengths for indicators read side by side.
-
-### 6.4 The Kalman filter needs the other measure
+### 6.3 The Kalman filter needs the other measure
 
 The local-linear-trend filter has zero average age by construction (§5.2), so average age cannot calibrate it. Its variance reduction factor can. Solving for the observation variance that gives a variance reduction of 1/20 yields $R = 0.20$.
 
@@ -238,7 +228,6 @@ The local-linear-trend filter has zero average age by construction (§5.2), so a
 |---|---|---|---|
 | SMA(20) | 9.5 | 0.050 | 20 |
 | EMA(span 20) | 9.5 | 0.050 | 20 |
-| Wilder(14) | 13.0 | 0.037 | 27 |
 | Kalman, matched ($R = 0.20$) | 0.0 | 0.050 | 20 |
 | Kalman, package default ($R = 10^{-3}$) | 0.0 | 0.224 | 4.5 |
 
@@ -352,7 +341,7 @@ Re-running each method at $N = 10$, 20 and 50 through the 2020 crash (the Kalman
 
 | Method | Memory | Needs volume | Decay shape | What breaks it | Common mistake |
 |---|---|---|---|---|---|
-| SMA | Rolling, hard edge at $N$ | No | Flat, then a cliff | A bar's influence vanishes at once $N$ bars later, moving the level with no price move | Reading SMA(20) and ATR(20) as the same length: ATR(20) has the memory of a 39-bar average |
+| SMA | Rolling, hard edge at $N$ | No | Flat, then a cliff | A bar's influence vanishes at once $N$ bars later, moving the level with no price move | Reading another method at the same $N$ as comparable without matching memory (§6) |
 | EMA | Expanding | No | Smooth geometric | Reacts to every move by the same fixed proportion | Mixing `adjust=True` with the textbook recursion |
 | VWAP | Rolling, hard edge at $N$ | Yes | Flat, weighted by size | One heavy bar dominates, then drops off the same cliff | Split-unadjusted volume with adjusted prices |
 | KAMA | Rolling ER, expanding recursion | No | Adaptive | A spike in the trend's direction makes it fastest, the reversal then freezes it | Judging its speed on clean examples |
@@ -369,7 +358,6 @@ No method needs the full price history. Each needs a limited warm-up before its 
 | SMA($N$) | Last $N$ prices and a running sum | $N-1$ bars; exact afterwards | 19 bars for $N = 20$ |
 | VWAP($N$) | Last $N$ prices and volumes, two running sums | $N-1$ bars; exact afterwards | 19 bars for $N = 20$ |
 | EMA($N$) | One number | $\approx 3.5N$ bars | $\approx 70$ bars for $N = 20$ |
-| Wilder($n$): ATR, ADX | One number per smoothed series | $\approx 7n$ bars | $\approx 93$ bars for $n = 14$ |
 | KAMA($n$) | One number and the last $n+1$ prices | Depends on the market: $\approx 12$ bars in a clean trend, up to $\approx 1{,}650$ in pure chop | QQQ, $n = 10$: median 82, maximum 132 bars |
 | Kalman (local linear trend) | Two states and their $2\times 2$ uncertainty | The longer of gain settling and the 0.1% memory horizon | $\approx 60$ bars (default), $\approx 200$ (matched) |
 
@@ -379,7 +367,7 @@ The rolling methods are exact once their window is full. The expanding methods n
 \mathrm{EMA}_t = \alpha\sum_{k\ge 0}(1-\alpha)^k\, p_{t-k}, \qquad \text{weight older than } k = (1-\alpha)^k \approx e^{-2k/(N+1)}
 ```
 
-At $k = 3.5N$ that is $e^{-7} \approx 0.1\%$. Wilder's smoothing uses $\alpha = 1/n$, so the same 0.1% takes about $7n$ bars: ATR(14) needs roughly 93 bars of warm-up, not 14. KAMA's $\alpha$ moves every bar between $\alpha_s^2 = 0.0042$ and $\alpha_f^2 = 0.44$, so its memory lengthens in choppy markets. These bounds follow from Kaufman's smoothing constants (Kaufman, 2013); the calculation is ours. That is a practical drawback: KAMA has no fixed warm-up, and the safe upper bound (about 1,650 bars, six and a half years of daily data) is rarely affordable. The workable fix is to measure it: start KAMA from two different values and treat it as warmed up once the two agree within 0.1%. On QQQ that took 82 bars at the median and 132 at worst (example below). The matched Kalman filter smooths like EMA(20), yet its slow trend component reaches back about 200 bars; starting it with a large initial uncertainty (a *diffuse* start) removes most of the starting-value error early (Durbin and Koopman, 2012, ch. 5). The Kalman figures are our own calculation with the filter settings of §6.
+At $k = 3.5N$ that is $e^{-7} \approx 0.1\%$. KAMA's $\alpha$ moves every bar between $\alpha_s^2 = 0.0042$ and $\alpha_f^2 = 0.44$, so its memory lengthens in choppy markets. These bounds follow from Kaufman's smoothing constants (Kaufman, 2013); the calculation is ours. That is a practical drawback: KAMA has no fixed warm-up, and the safe upper bound (about 1,650 bars, six and a half years of daily data) is rarely affordable. The workable fix is to measure it: start KAMA from two different values and treat it as warmed up once the two agree within 0.1%. On QQQ that took 82 bars at the median and 132 at worst (example below). The matched Kalman filter smooths like EMA(20), yet its slow trend component reaches back about 200 bars; starting it with a large initial uncertainty (a *diffuse* start) removes most of the starting-value error early (Durbin and Koopman, 2012, ch. 5). The Kalman figures are our own calculation with the filter settings of §6.
 
 **Example: when the backtest starts matters.** Two common ways to start KAMA(10), from the first price or from the average of the first 10 prices, compared from 311 monthly start dates on QQQ between 1999 and 2025 (our measurement for these notes):
 
@@ -393,7 +381,7 @@ At $k = 3.5N$ that is $e^{-7} \approx 0.1\%$. Wilder's smoothing uses $\alpha = 
 
 Warm-up tracks how choppy the first months are (correlation with mean ER: $-0.86$). In 71% of start dates the long/short signal, price above or below KAMA, differs on at least one day. A backtest starting in November 2008 with no warm-up would show different trades for almost three months purely because of a starting convention. An EMA(20) needs about 70 bars whatever the market.
 
-**Practical rule.** Before the backtest start date, load the longest warm-up among the indicators the strategy uses, compute on all of it, and discard the warm-up bars before measuring performance. In live trading, update each method from its stored state; never recompute from the start of the series. Libraries handle this explicitly. We use TA-Lib as the example because it is the long-standing open-source reference implementation of these indicators, used directly or through wrappers such as Python's `talib`, and it documents the issue: it calls the discarded stretch the *unstable period* and lets the user set it for EMA, ATR, ADX and KAMA, among others ([TA-Lib documentation](https://ta-lib.org/api/unstable-period/)).
+**Practical rule.** Before the backtest start date, load the longest warm-up among the indicators the strategy uses, compute on all of it, and discard the warm-up bars before measuring performance. In live trading, update each method from its stored state; never recompute from the start of the series. Libraries handle this explicitly. We use TA-Lib as the example because it is the long-standing open-source reference implementation of these indicators, used directly or through wrappers such as Python's `talib`, and it documents the issue: it calls the discarded stretch the *unstable period* and lets the user set it for EMA and KAMA, among others ([TA-Lib documentation](https://ta-lib.org/api/unstable-period/)).
 
 ### 9.2 Running it live
 
@@ -425,7 +413,7 @@ If exact reproducibility matters more than $O(1)$ updates, cap the history delib
 1. Building a bar is **compression** (data shrinks); aggregating bars is **filtering** (data does not shrink, signal is separated from noise).
 2. A bar's single price and the aggregation across bars are two separate design choices; on a wide bar the first alone can move "the price" by 16%.
 3. The methods differ only in how much each past bar counts, and in whether memory is rolling (SMA, VWAP), expanding (EMA, Kalman) or hybrid (KAMA).
-4. **Compare only at equal memory.** $\alpha = 2/(N+1)$ matches EMA to SMA; Wilder's $n$ equals a $2n-1$ bar window; the Kalman filter must be matched on variance reduction. At equal memory EMA beats SMA on QQQ in every period tested.
+4. **Compare only at equal memory.** $\alpha = 2/(N+1)$ matches EMA to SMA; the Kalman filter must be matched on variance reduction. At equal memory EMA beats SMA on QQQ in every period tested.
 5. Window length moves results more than the choice of method.
 
 ### 10.2 Exercises
@@ -433,7 +421,6 @@ If exact reproducibility matters more than $O(1)$ updates, cap the history delib
 - [ ] For a single bar, construct an example where Median Price and Body Midpoint differ by more than 1% of the close. What kind of session produces it? Find three such days in QQQ.
 - [ ] Reproduce the toy table in §7.1 and extend it to $N = 10$. Does the SMA/VWAP cliff at $t = 12$ disappear, move, or shrink?
 - [ ] Prove that an EMA with $\alpha = 2/(N+1)$ has the same average age and the same variance reduction factor as SMA($N$).
-- [ ] Show that Wilder's smoothing with period $n$ has average age $n-1$, and hence that ATR(14) matches a 27-bar window.
 - [ ] Construct a 5-bar window with one large reversal and find its ER. Can you make it arbitrarily close to 0? To 1?
 - [ ] Re-run the step test of §8.1 with Gaussian noise added to the input. How much slower does KAMA become?
 - [ ] Describe a market condition where one method from §4 gives a worse estimate of the "true" level than plain SMA.
@@ -446,7 +433,6 @@ If exact reproducibility matters more than $O(1)$ updates, cap the history delib
 - Hyndman, R., Koehler, A., Ord, J.K. and Snyder, R. (2008). *Forecasting with Exponential Smoothing: The State Space Approach.* Springer. — exponential smoothing and its starting values (§9.1).
 - Durbin, J. and Koopman, S.J. (2012). *Time Series Analysis by State Space Methods* (2nd ed.). Oxford University Press. — ch. 5, starting a Kalman filter, including the diffuse start (§9.1).
 - Kaufman, P. (2013). *Trading Systems and Methods* (5th ed.). Wiley. — KAMA.
-- Wilder, J.W. (1978). *New Concepts in Technical Trading Systems.* Trend Research.
 - Ehlers, J. (2001). *Rocket Science for Traders.* Wiley.
 - Chan, E. (2013). *Algorithmic Trading.* Wiley. — Kalman filters for hedge ratios.
 - Berkowitz, S., Logue, D. and Noser, E. (1988). The total cost of transactions on the NYSE. *Journal of Finance.* — VWAP as an execution benchmark.
@@ -460,9 +446,9 @@ From the companion notebook, [11_price_aggregation_methods.ipynb](11_price_aggre
 
 ### A.1 Weight given to a price k bars old (§6)
 
-![Weight profiles of SMA(20), EMA(20), Wilder(14) and two Kalman filters](figures/11_01_memory_weights.png)
+![Weight profiles of SMA(20), EMA(20) and two Kalman filters](figures/11_01_memory_weights.png)
 
-SMA is flat then cuts off at 20. EMA and Wilder(14) decay smoothly, Wilder more slowly (27-bar memory). The matched Kalman filter's weights dip slightly below zero for old bars, which is how it removes trend lag. The default Kalman filter puts a third of its weight on today.
+SMA is flat then cuts off at 20; EMA decays smoothly. The matched Kalman filter's weights dip slightly below zero for old bars, which is how it removes trend lag. The default Kalman filter puts a third of its weight on today.
 
 ### A.2 Responses to a step and a ramp (§8.1)
 
