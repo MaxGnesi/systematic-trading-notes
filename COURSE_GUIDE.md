@@ -11,23 +11,24 @@ The course follows one pipeline throughout (data → signal → position → eva
 | I. Foundations | 1 | Introduction to Systematic Trading | The pipeline; bias moves into research; strategy families as examples | — | Done |
 | | 2 | OHLCV and Price Smoothing | A bar is compression; averaging is filtering; compare at equal memory | 11 (QQQ) | Done |
 | | 3 | Same Bars, Different Questions: Volatility, Flow, Correlation and Tails | Same data, different transformations | 12 (SPY, QQQ, GLD, AGG) | Done |
-| II. Clock-time bars: trend and relative value | 4 | Signal to position | Volatility targeting; scaling raw signals into sized positions | 09 | Planned |
-| | 5 | Trend across asset classes | What works where, and who pays | 09, 10 | Planned |
-| | 6 | Stat arb: from pairs to baskets | Relative value, hedge ratios, spreads; mirror image of trend | StatARB repo (check contents first) | Planned |
-| III. From the tape to bars and back | 7 | The tape | Raw events: trades, quotes, order book updates; what a bar throws away | new | Planned |
-| | 8 | Building bars from ticks | Time bars at any interval, plus tick, volume, dollar and imbalance bars (only possible with the ticks) | new | Planned |
-| | 9 | Same strategies, intraday bars | Trend and stat arb on bars built in Lecture 8: still bar strategies, but costs, noise and the sampling rule change; backtesting on non-time bars (§1.2) | new | Planned |
-| | 10 | Strategies that need the tape itself | Market making, queue position, cross-venue arbitrage, latency: the edge lives between the events a bar summarises | new | Planned |
-| IV. Probabilities | 11 | Prediction markets | A price is a probability; bounded payoff; resolution | Polymarket | Planned |
-| | 12 | Trading probabilities | Calibration, edge vs implied odds, Kelly sizing, domain models, news | Polymarket | Planned |
-| V. Putting it together | 13 | Testing honestly across all three | Walk-forward, multiple testing, what a backtest can't say; the three data types side by side | 06 | Planned |
-| | 14 | One portfolio of different strategies | Covariance and its noise, HRP, risk parity, combining strategies with different horizons and sizing rules | 02–05, 07, 08 | Planned |
+| | 4 | Tracking Hidden States: the Kalman Filter | Top-down filtering: model the hidden level, slope and acceleration and update them bar by bar; Q and R; adaptive noise; extended and unscented filters | new notebook (Kalman material moves from 11) | Outline |
+| II. Clock-time bars: trend and relative value | 5 | Signal to position | Volatility targeting; scaling raw signals into sized positions | 09 | Planned |
+| | 6 | Trend across asset classes | What works where, and who pays | 09, 10 | Planned |
+| | 7 | Stat arb: from pairs to baskets | Relative value, hedge ratios, spreads; mirror image of trend | StatARB repo (check contents first) | Planned |
+| III. From the tape to bars and back | 8 | The tape | Raw events: trades, quotes, order book updates; what a bar throws away | new | Planned |
+| | 9 | Building bars from ticks | Time bars at any interval, plus tick, volume, dollar and imbalance bars (only possible with the ticks) | new | Planned |
+| | 10 | Same strategies, intraday bars | Trend and stat arb on bars built in Lecture 9: still bar strategies, but costs, noise and the sampling rule change; backtesting on non-time bars (§1.2) | new | Planned |
+| | 11 | Strategies that need the tape itself | Market making, queue position, cross-venue arbitrage, latency: the edge lives between the events a bar summarises | new | Planned |
+| IV. Probabilities | 12 | Prediction markets | A price is a probability; bounded payoff; resolution | Polymarket | Planned |
+| | 13 | Trading probabilities | Calibration, edge vs implied odds, Kelly sizing, domain models, news | Polymarket | Planned |
+| V. Putting it together | 14 | Testing honestly across all three | Walk-forward, multiple testing, what a backtest can't say; the three data types side by side | 06 | Planned |
+| | 15 | One portfolio of different strategies | Covariance and its noise, HRP, risk parity, combining strategies with different horizons and sizing rules | 02–05, 07, 08 | Planned |
 
 Threads to keep visible across parts:
 
 - **Sizing comes back three times:** volatility targeting (Part II), inventory and spread limits (Part III), Kelly on a bounded payoff (Part IV). Part V combines them.
 - **Lecture 3 sets up Part III:** discrete sampling and bid-ask bounce (Lecture 3, §4.4) are the hook for "what is inside the bar".
-- **Lecture 9 mirrors Lecture 3:** same data with different transformations, versus the same strategy on different data.
+- **Lecture 10 mirrors Lecture 3:** same data with different transformations, versus the same strategy on different data.
 - **The research checklist** (Lecture 1, §1.2) is applied in every *How we judge it* section.
 
 Notebook numbers above were assigned from file names; check each notebook's contents before writing its lecture.
@@ -39,9 +40,9 @@ Notebook numbers above were assigned from file names; check each notebook's cont
 - **Part II: bars that close on the clock.** Daily, weekly or monthly OHLCV, the data available for decades. Daily is the main case; everything holds for weekly or monthly bars too.
 - **Part III: changing the rule, or dropping bars.** Bars that close after a number of trades, an amount of volume or dollars, or an order-flow imbalance (still OHLCV, on a different clock); or the raw events themselves.
 
-Strategy family and data frequency are separate choices: trend and stat arb run on daily bars, minute bars or alternative bars. The dividing line in Part III is whether a strategy needs **aggregated bars** (Lectures 8–9) or **individual events** (Lecture 10). Lecture 9 says this in its opening: "these are bar strategies; the ticks only decide how the bars are cut."
+Strategy family and data frequency are separate choices: trend and stat arb run on daily bars, minute bars or alternative bars. The dividing line in Part III is whether a strategy needs **aggregated bars** (Lectures 9–10) or **individual events** (Lecture 11). Lecture 10 says this in its opening: "these are bar strategies; the ticks only decide how the bars are cut."
 
-### 1.2 Backtesting on bars that are not clock-time (for Lecture 9)
+### 1.2 Backtesting on bars that are not clock-time (for Lecture 10)
 
 The strategy logic carries over to any bars, since each still has OHLCV. The backtest machinery changes in four places:
 
@@ -50,9 +51,9 @@ The strategy logic carries over to any bars, since each still has OHLCV. The bac
 3. **Asynchronous assets.** Different assets' volume bars close at different moments; baskets and pairs need a common clock (clock-time snapshots or an event-driven backtest).
 4. **P&L and risk in clock time.** Returns, volatility and drawdowns are reported per day, so positions are revalued at common times.
 
-These four points form Lecture 9's *How we judge it* section.
+These four points form Lecture 10's *How we judge it* section.
 
-### 1.2a Risk measures on tick data (for Lectures 8–9)
+### 1.2a Risk measures on tick data (for Lectures 9–10)
 
 Lecture 3, §11 promises that Part III returns to risk measures beyond clock-time bars. Two routes to cover:
 
@@ -61,7 +62,7 @@ Lecture 3, §11 promises that Part III returns to risk measures beyond clock-tim
 
 ### 1.3 Folder and tab layout
 
-- **GitHub:** lecture folders stay **flat** under `lectures/`, numbered globally (`01-…` to `14-…`), so links survive changes to the outline. The part is shown as a column in the README and in the roadmap above, not in the folder path.
+- **GitHub:** lecture folders stay **flat** under `lectures/`, numbered globally (`01-…` to `15-…`), so links survive changes to the outline. The part is shown as a column in the README and in the roadmap above, not in the folder path.
 - **Doc:** each part is a parent tab ("Part I: Foundations", "Part II: Clock-time bars: trend and relative value", …) holding a short paragraph on what the part covers and how it leads into the next, with its lectures as sub-tabs.
 
 ## 2. Where things live
@@ -107,6 +108,7 @@ Headings must match what follows them. A heading that promises "three" of someth
 - **Cite at the point of the claim.** Put the reference in the sentence that uses it, e.g. "(Durbin and Koopman, 2012, ch. 5)", with a chapter when known, so a reader interested in one point can go straight to the source. Every inline citation also appears in the reading list, with a note on what it is used for (e.g. "— starting a Kalman filter (§9.1)").
 - **Say what is ours.** Results derived or measured for these notes are labelled as such: "the calculation is ours", "our measurement for these notes". Such numbers must be reproducible in the companion notebook.
 - **Justify specific examples.** When naming one tool, library, dataset or vendor out of many, say in a clause why that one (e.g. TA-Lib: the long-standing open-source reference implementation that documents the issue).
+- **Name variables by meaning.** Prefer names a reader can connect to their role (*level*, *slope*, *surprise*, *q_level*) over bare letters; when a standard symbol is used, define it in words where it first appears.
 - **No constant columns.** If every row of a table column has the same value, drop the column and state the fact once, with the reason.
 
 ## 5. Formula conventions
@@ -145,7 +147,7 @@ Never use `\operatorname` (GitHub rejects it): write `\mathrm{sign}`. Avoid `\!`
 | Window length | N (rolling window), n (Wilder period or sample size) |
 | Volatility, target volatility | σ, σ* |
 | Smoothing constant | α = 2/(N+1) for EMA; α = 1/n for Wilder |
-| Kalman | level ℓ, trend τ, noise variances Q (state) and R (observation) |
+| Kalman (Lecture 4) | Named by meaning: states *level*, *slope*, *acceleration*; *q_level*, *q_slope*, *q_acceleration* (how much each may change per bar, the diagonal of Q); *r_price* (price noise, R); *uncertainty* (P); *gain* (K); *surprise* (price minus forecast). Symbols ℓ, τ only alongside the names |
 | Moments | g₁, g₂ plain; G₁, G₂ bias-adjusted |
 
 ## 6. Figures and notebooks
