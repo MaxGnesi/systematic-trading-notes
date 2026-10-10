@@ -395,6 +395,29 @@ Warm-up tracks how choppy the first months are (correlation with mean ER: $-0.86
 
 **Practical rule.** Before the backtest start date, load the longest warm-up among the indicators the strategy uses, compute on all of it, and discard the warm-up bars before measuring performance. In live trading, update each method from its stored state; never recompute from the start of the series. Libraries handle this explicitly. We use TA-Lib as the example because it is the long-standing open-source reference implementation of these indicators, used directly or through wrappers such as Python's `talib`, and it documents the issue: it calls the discarded stretch the *unstable period* and lets the user set it for EMA, ATR, ADX and KAMA, among others ([TA-Lib documentation](https://ta-lib.org/api/unstable-period/)).
 
+### 9.2 Running it live
+
+Live, each filter is updated from its saved state, so the full history is pulled once at the first start, not on every bar. The operational risk is path dependence: an expanding filter's value depends on the data and the starting rules it was built from, so rebuilding it from different data or rules changes it until its warm-up has passed. Reproducing a value therefore needs more than the saved state.
+
+| What to store | Why | Example |
+|---|---|---|
+| The input data as used, from an agreed start date | Vendors revise history (splits, adjustments, corrected prints), so a fresh download can differ from what the filter saw | QQQ closes from 10 March 1999, saved at every update |
+| The configuration, including how the filter was started | Changing any of it gives, in effect, a different filter until warm-up passes | KAMA: $n = 10$, fast 2, slow 30, start date, starting value = first close. Kalman: $Q$, $R$, initial uncertainty (diffuse or not) |
+| State checkpoints | A fast restart without replaying everything | End-of-day KAMA value and last 11 closes; Kalman level, trend and their uncertainty |
+
+**Example: a restart in November 2008.** A system running KAMA(10) and EMA(20) on QQQ since March 1999 loses its saved state on 20 November 2008 and rebuilds each filter from only the last 30 bars (our calculation for these notes):
+
+| Filter | Running since 1999 | Rebuilt from 30 bars | Gap | Days the long/short signal differs | Back within 0.1% after |
+|---|---|---|---|---|---|
+| KAMA(10) | 25.52 | 25.10 | 1.6% | 6, the last 48 days later | 61 bars |
+| EMA(20) | 25.83 | 25.55 | 1.1% | 4, the last 48 days later | 24 bars |
+
+The same restart on 1 June 2017, in a calm market, changes nothing visible: gaps of 0.07% and 0.00%, no signal differences. The damage depends on the market at the moment of the restart, which is why it is easy to miss in testing. Rebuilding from the stored data and configuration reproduces the original values exactly.
+
+That gives two ways to rebuild, and they must agree. The fast way loads the latest checkpoint and replays the bars since. The full way replays everything from the start date with the stored data and configuration. Comparing the two daily is the reconciliation check: a difference means the data or the configuration has changed.
+
+If exact reproducibility matters more than $O(1)$ updates, cap the history deliberately: restart the filter over a fixed window of the last $M$ bars each time. It then becomes a deterministic function of those $M$ bars, the property Lecture 1 asks of a systematic rule (same inputs, same outputs), at a cost of $O(M)$ work per bar.
+
 ## 10. Summary, exercises and reading
 
 ### 10.1 Five takeaways
