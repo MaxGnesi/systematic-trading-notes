@@ -1,12 +1,25 @@
-# Lecture 3: Other Aggregation Targets
+# Lecture 3: Same Bars, Different Questions
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 10, 2026 · Max Gnesi*
 
-The same causal window that smooths price can estimate volatility, trend strength, order flow, co-movement and distribution shape. This lecture works through each on a toy series and on 30 years of SPY, QQQ, GLD and AGG. Companion notebook: [12_other_aggregation_targets.ipynb](12_other_aggregation_targets.ipynb).
+Volatility, flow, correlation and tails. The same bars and the same causal window that smooth price can also estimate volatility, trend strength, order flow, co-movement and distribution shape. This lecture works through each on a toy series and on 30 years of SPY, QQQ, GLD and AGG. Companion notebook: [12_other_aggregation_targets.ipynb](12_other_aggregation_targets.ipynb).
 
 ## 1. Recap, and three questions
 
-[Lecture 2](../02-ohlcv-and-aggregation/lecture.md) built one family, SMA, EMA, VWAP, KAMA and the Kalman filter, all answering *where is price heading, net of noise?* This lecture keeps the same causal template, $\hat x_t = g(x_{t-N+1}, \dots, x_t;\theta)$, but $\hat x$ is no longer a price. A volatility estimator turns price into dispersion; a correlation estimator turns two price series into one relationship number. Reading one as if it were another gives a well-defined number that answers the wrong question.
+[Lecture 2](../02-ohlcv-and-moving-averages/lecture.md) built one family, SMA, EMA, VWAP, KAMA and the Kalman filter, all answering *where is price heading, net of noise?* This lecture keeps the same causal template, $\hat x_t = g(x_{t-N+1}, \dots, x_t;\theta)$, but $\hat x$ is no longer a price. A volatility estimator turns price into dispersion; a correlation estimator turns two price series into one relationship number. Reading one as if it were another gives a well-defined number that answers the wrong question.
+
+The input never changes: the same OHLCV bars, run through a trailing window. What changes is the transformation, and with it the question being answered.
+
+| Transformation of the bars | Question it answers | Where |
+|---|---|---|
+| Weighted average of prices | Where is price heading? | [Lecture 2](../02-ohlcv-and-moving-averages/lecture.md) |
+| Ranges and squared returns | How much is it moving? | [§3](#3-volatility-true-range-and-wilders-atr)–[4](#4-from-a-range-to-a-volatility) |
+| Net move versus total path | How one-sided is the move? | [§6](#6-trend-strength-how-one-sided-is-the-recent-path) |
+| Signed volume | Who is pushing it? | [§7](#7-order-flow-who-is-doing-the-buying) |
+| Products of two return series | Does it move with something else? | [§8](#8-relationship-between-series-do-two-assets-still-move-together) |
+| Third and fourth powers of returns | Is the path lopsided or fat-tailed? | [§9](#9-distribution-shape-is-the-recent-path-lopsided-or-fat-tailed)–[10](#10-signal-or-noise-bootstrap-bands-and-what-they-reveal) |
+
+Flow is the one place volume does real work, and correlation needs a second asset; otherwise it is the same data every time.
 
 ### 1.1 Three questions for every statistic
 

@@ -1,4 +1,4 @@
-# Lecture 2: OHLCV and Price Aggregation
+# Lecture 2: OHLCV and Moving Averages
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 10, 2026 · Max Gnesi*
 
@@ -24,7 +24,7 @@ Compression throws information away on purpose. A daily bar cannot tell you whet
 
 Two bars with identical O, H, L, C can come from completely different paths: one spikes to the high at once and drifts down, the other does the reverse. Any technique built only from OHLCV inherits this blind spot.
 
-H and L are also only the highest and lowest **trades**, not the highest and lowest prices the market passed through between trades. [Lecture 3, §4.4](../03-other-aggregation-targets/lecture.md#44-why-every-range-estimate-is-biased-down-discrete-sampling) shows that this makes every range-based volatility estimate slightly too low.
+H and L are also only the highest and lowest **trades**, not the highest and lowest prices the market passed through between trades. [Lecture 3, §4.4](../03-same-bars-different-questions/lecture.md#44-why-every-range-estimate-is-biased-down-discrete-sampling) shows that this makes every range-based volatility estimate slightly too low.
 
 ### 1.3 The window itself is a choice
 
@@ -109,7 +109,7 @@ This family is generically called a **moving average** or, more precisely, a **l
 
 ### 3.4 A map of what else aggregation can target
 
-The same causal template works for targets other than price. [Lecture 3](../03-other-aggregation-targets/lecture.md) takes each in turn.
+The same causal template works for targets other than price. [Lecture 3](../03-same-bars-different-questions/lecture.md) takes each in turn.
 
 | Target | What it represents | Example statistics |
 |---|---|---|
