@@ -153,3 +153,21 @@ for test, y in tests.items():
             else:
                 cells.append(f"{speed}: gap at bar 1500 {y[1500] - level[1500]:.4f}, at bar 2999 {y[2999] - level[2999]:.4f}")
         print(f"    {names[k]:30s} " + " | ".join(cells))
+
+# ---- Overshoot and early exits (Lecture 4 section 5): which signals say "exit" after a jump ----
+print("\nExit signals after a price jump (first bar and count), slow and fast settings:")
+cases = {"jump, then flat": np.r_[np.zeros(100), np.ones(300)],
+         "jump inside a continuing uptrend": 0.005 * np.arange(400.0) + np.where(np.arange(400.0) >= 100, 1.0, 0.0)}
+for case, y in cases.items():
+    print(f"  {case}")
+    for speed, q in speeds.items():
+        for k in (1, 2, 3):
+            F, H, _ = model(k)
+            X = kalman(y, F, H, q[:k], 1.0)[100:]
+            def summary(mask):
+                w = np.where(mask)[0]
+                return f"{len(w)} bars (first +{w[0]})" if len(w) else "never"
+            parts = [f"position {summary(y[100:] - X[:, 0] < 0)}"]
+            if k >= 2: parts.append(f"slope {summary(X[:, 1] < 0)}")
+            if k == 3: parts.append(f"acceleration {summary(X[:, 2] < 0)}")
+            print(f"    {speed:4s} {names[k]:30s} " + " | ".join(parts))
