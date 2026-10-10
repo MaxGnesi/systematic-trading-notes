@@ -92,7 +92,7 @@ Every lecture uses the same skeleton:
    - `### N.1 Takeaways` as a numbered list.
    - `### N.2 Exercises` as a checklist (`- [ ]`): mix proofs, reproductions and "construct a case where it breaks".
    - `### N.3 Reading list`, ending with *References are given from memory and should be checked against the originals before circulation.*
-9. **Appendix: main charts:** three or four PNGs from the notebook, each with a one-to-three-sentence caption, plus links to the notebook and lecture folder.
+9. **Appendix: charts:** PNGs from the notebook, each with a one-to-three-sentence caption, plus links to the notebook and lecture folder. Charts are lettered by lecture (Lecture 2: A.1…, Lecture 3: B.1…, Lecture 4: C.1…) and every chart is linked from the sentence that uses it ("chart C.4"). Three or four charts suit a lecture of familiar ideas; harder lectures use more, one or two per section (Lecture 4 plans twelve).
 
 Headings must match what follows them. A heading that promises "three" of something must be followed by three, and must not clash with nearby tables or lists.
 
