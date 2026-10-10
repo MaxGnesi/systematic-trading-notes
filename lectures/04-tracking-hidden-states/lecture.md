@@ -13,6 +13,15 @@ The methods of Lecture 2 construct a smooth line from the bottom up, as weighted
 - **Bottom-up** (SMA, EMA, VWAP, KAMA). The estimate is a weighted average of past prices and nothing more. These methods contain no explicit representation of a trend: a rise appears in the average only once rising prices have accumulated in its window, which is the source of their lag.
 - **Top-down.** A *state-space model* specifies three elements: the hidden quantities (the *state*), how the state evolves from one bar to the next, and how observed prices relate to it. When the state includes a slope, the trend becomes an explicit quantity: the model carries it from bar to bar and uses it to project the level forward. A rising market is then represented directly, as a positive slope, rather than inferred from accumulated past prices. With a level alone the model has no such component and reduces exactly to an EMA (§2); the slope enters in §3.
 
+| Dimension | Bottom-up (SMA, EMA, VWAP, KAMA) | Top-down (Kalman filter) |
+|---|---|---|
+| Core idea | Average past prices; the trend is whatever the average shows | Model the hidden level, slope and acceleration; check each bar against the model |
+| What it knows | Past prices (and volume, for VWAP); no notion of trend speed | An explicit model of how level, slope and acceleration move from bar to bar |
+| How it treats a bar | An ingredient, weighted and added to the average | Evidence, compared with the forecast and accepted in proportion to the gain |
+| How it reacts | Follows: moves only as new prices pull the average | Projects the current trend one bar ahead, then corrects by the surprise |
+| Weights on past prices | All positive: never overshoots, always lags a trend | Slope designs put negative weight on old prices: no lag on a steady trend, overshoot after jumps |
+| Uncertainty | None | An uncertainty for every hidden state |
+
 The filter applies the same three steps to every bar:
 
 | Step | What the filter does |
@@ -79,9 +88,9 @@ Only the uncertainty band changes, by a factor of $\sqrt{10}$. The equivalence i
 
 ## Sections still to write (outline)
 
-3. **Adding a slope: the core model.** Level + slope on log price, with a diagonal $Q$ so the level may jump by itself (prices gap); the alternative $Q$ derived from one noise level, compared on a price jump. Holt's method in steady state; zero lag on steady trends, overshoot after jumps. Unlike any positive-weight average, its level can sit above price while the market is still rising, because it extrapolates the slope.
-4. **Adding acceleration.** Over one bar the level moves by slope $+\tfrac12\,$acceleration, so acceleration moves both the slope and the level, changing where the filter sits relative to price. Acceleration as a candidate early warning of regime change, judged on lead time against false alarms; the noise each extra derivative brings.
-5. **Design versus tuning.** Two separate choices. The *design* (which states the model has) decides, for every parameter setting, which kind of motion it follows with no lasting gap and whether it overshoots a jump. The *tuning* ($Q$ and $R$, of which only the ratio matters) sets only the speed. Prototype check at a slow and a very fast setting:
+3. **Adding a slope.** The one-bar transition in plain words (next level = level + slope; next slope = slope) as the model's assumption; the matrix form with every entry given a financial meaning; diagonal versus derived $Q$ (chart C.4); Holt's method in steady state; negative weights (chart C.3); why the level can sit above price in a rising market.
+4. **Adding acceleration.** Next level = level + slope + ½·acceleration, next slope = slope + acceleration, next acceleration = acceleration (one bar = one time step). Acceleration moves the level and the slope; early warning of regime change against false alarms; the three designs and their readings (chart C.5).
+5. **Design versus tuning.** Two separate choices. The *design* (which states the model has) decides, for every parameter setting, which kind of motion it follows with no lasting gap and whether it overshoots a jump. The *tuning* ($Q$ and $R$, of which only the ratio matters) sets only the speed. Prototype check at a slow and a very fast setting: Then the dials: a table of what each entry of $Q$ does to how the filter follows price (raise *q_level*, *q_slope*, *q_acceleration* or $r_{	ext{price}}$ → effect → measured cost from chart C.6).
 
     | Design | Price jump: overshoot | Steady trend: gap behind price | Parabolic move: gap behind price |
     |---|---|---|---|
@@ -103,9 +112,9 @@ Only the uncertainty band changes, by a factor of $\sqrt{10}$. The equivalence i
     | Acceleration | Turns early (from +9 to +43) | Points against it for about 160 bars |
 
     In these tests only the level + slope model's slope stayed with a trend that continued after a jump, yet still turned once the move stopped. What this means for entering and leaving positions is the subject of Part II. Then the dials *q_level*, *q_slope*, *q_acceleration* ([chart C.6](#c6-the-dials)) and matching a Kalman filter to an EMA on variance reduction.
-6. **Starting the filter.** The starting uncertainty $P_0$, the diffuse start, warm-up length, and what to store to run it live.
+6. **Starting and running the filter.** Warm-up phases per design measured in the notebook (no universal bar count); the starting uncertainty $P_0$ and the diffuse start (chart C.7); a best-practice table: history to load, start, what to store, matched comparisons, surprise monitoring, re-estimating $q/R$.
 7. **Extensions and what each changes.** A robust update for fat-tailed surprises; $R$ per bar from the bar's range; a damped slope. Each profiled with the market conditions of §9 (what it gains, what it gives up), not ranked; early single-asset results are preliminary.
-8. **Nonlinear models: the extended and unscented filters, in depth.** On a case where the nonlinearity is real: hidden volatility estimated from daily ranges (range $\approx \sqrt{8/\pi}\,\sigma$, Lecture 3). Linearisation versus sigma points; taking logs makes the model nearly linear (Alizadeh, Brandt and Diebold, 2002), so transform first and use the UKF only when you cannot; what neither fixes (fat tails, regime breaks).
+8. **Nonlinear models, in depth.** Hidden volatility from daily ranges; linearisation (EKF) versus sigma points (UKF), with a table of the unscented parameters $lpha$, $eta$, $\kappa$ and what they actually control; transform first (log range) and the outlier lesson of 6 May 2010 (chart C.10); what neither fixes (fat tails, regime breaks).
 9. **What each filter captures: a profile by market condition, not a ranking.** Market conditions defined mechanically, across SPY, QQQ, GLD, AGG:
 
     | Market condition | Defined by | What we describe for each filter |
