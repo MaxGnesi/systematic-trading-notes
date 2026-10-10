@@ -362,26 +362,26 @@ None of these values exists before the bar closes.
 
 ### 9.1 How much data each method needs
 
-No method needs the full price history. Each needs a limited warm-up before its first trustworthy value, then only a small stored state to update bar by bar.
+No method needs the full price history. Each needs a limited warm-up before its first trustworthy value, then only a small stored state to update bar by bar. Every method here costs the same fixed amount per new bar, $O(1)$, however long the history: the rolling methods add the new bar and subtract the one leaving the window, and the expanding methods update a few stored numbers. Cost per bar is therefore never the issue. What differs is the stored state and how much history each method must see first.
 
-| Method | Stored between bars | Cost per new bar | Warm-up to discard | Example |
-|---|---|---|---|---|
-| SMA($N$) | Last $N$ prices and a running sum | $O(1)$ | $N-1$ bars; exact afterwards | 19 bars for $N = 20$ |
-| VWAP($N$) | Last $N$ prices and volumes, two running sums | $O(1)$ | $N-1$ bars; exact afterwards | 19 bars for $N = 20$ |
-| EMA($N$) | One number | $O(1)$ | $\approx 3.5N$ bars | $\approx 70$ bars for $N = 20$ |
-| Wilder($n$): ATR, ADX | One number per smoothed series | $O(1)$ | $\approx 7n$ bars | $\approx 93$ bars for $n = 14$ |
-| KAMA($n$) | One number and the last $n+1$ prices | $O(1)$ | Depends on the market: $\approx 12$ bars in a clean trend, up to $\approx 1{,}650$ in pure chop | QQQ, $n = 10$: median 82, maximum 132 bars |
-| Kalman (local linear trend) | Two states and their $2\times 2$ uncertainty | $O(1)$ | The longer of gain settling and the 0.1% memory horizon | $\approx 60$ bars (default), $\approx 200$ (matched) |
+| Method | Stored between bars | Warm-up to discard | Example |
+|---|---|---|---|
+| SMA($N$) | Last $N$ prices and a running sum | $N-1$ bars; exact afterwards | 19 bars for $N = 20$ |
+| VWAP($N$) | Last $N$ prices and volumes, two running sums | $N-1$ bars; exact afterwards | 19 bars for $N = 20$ |
+| EMA($N$) | One number | $\approx 3.5N$ bars | $\approx 70$ bars for $N = 20$ |
+| Wilder($n$): ATR, ADX | One number per smoothed series | $\approx 7n$ bars | $\approx 93$ bars for $n = 14$ |
+| KAMA($n$) | One number and the last $n+1$ prices | Depends on the market: $\approx 12$ bars in a clean trend, up to $\approx 1{,}650$ in pure chop | QQQ, $n = 10$: median 82, maximum 132 bars |
+| Kalman (local linear trend) | Two states and their $2\times 2$ uncertainty | The longer of gain settling and the 0.1% memory horizon | $\approx 60$ bars (default), $\approx 200$ (matched) |
 
-The rolling methods are exact once their window is full. The expanding methods never are; they are close enough once the starting value no longer matters. For an EMA the combined weight of every bar older than $k$ is exactly $(1-\alpha)^k$, and an arbitrary starting value fades by the same factor:
+The rolling methods are exact once their window is full. The expanding methods never are; they are close enough once the starting value no longer matters. For an EMA the combined weight of every bar older than $k$ is exactly $(1-\alpha)^k$, and an arbitrary starting value fades by the same factor (Brown, 1963; Hyndman et al., 2008):
 
 ```math
 \mathrm{EMA}_t = \alpha\sum_{k\ge 0}(1-\alpha)^k\, p_{t-k}, \qquad \text{weight older than } k = (1-\alpha)^k \approx e^{-2k/(N+1)}
 ```
 
-At $k = 3.5N$ that is $e^{-7} \approx 0.1\%$. Wilder's smoothing uses $\alpha = 1/n$, so the same 0.1% takes about $7n$ bars: ATR(14) needs roughly 93 bars of warm-up, not 14. KAMA's $\alpha$ moves every bar between $\alpha_s^2 = 0.0042$ and $\alpha_f^2 = 0.44$, so its memory lengthens in choppy markets. That is a practical drawback: KAMA has no fixed warm-up, and the safe upper bound (about 1,650 bars, six and a half years of daily data) is rarely affordable. The workable fix is to measure it: start KAMA from two different values and treat it as warmed up once the two agree within 0.1%. On QQQ that took 82 bars at the median and 132 at worst (example below). The matched Kalman filter smooths like EMA(20), yet its slow trend component reaches back about 200 bars; starting it with a large initial uncertainty (a *diffuse* start) removes most of the starting-value error early.
+At $k = 3.5N$ that is $e^{-7} \approx 0.1\%$. Wilder's smoothing uses $\alpha = 1/n$, so the same 0.1% takes about $7n$ bars: ATR(14) needs roughly 93 bars of warm-up, not 14. KAMA's $\alpha$ moves every bar between $\alpha_s^2 = 0.0042$ and $\alpha_f^2 = 0.44$, so its memory lengthens in choppy markets. These bounds follow from Kaufman's smoothing constants (Kaufman, 2013); the calculation is ours. That is a practical drawback: KAMA has no fixed warm-up, and the safe upper bound (about 1,650 bars, six and a half years of daily data) is rarely affordable. The workable fix is to measure it: start KAMA from two different values and treat it as warmed up once the two agree within 0.1%. On QQQ that took 82 bars at the median and 132 at worst (example below). The matched Kalman filter smooths like EMA(20), yet its slow trend component reaches back about 200 bars; starting it with a large initial uncertainty (a *diffuse* start) removes most of the starting-value error early (Durbin and Koopman, 2012, ch. 5). The Kalman figures are our own calculation with the filter settings of §6.
 
-**Example: when the backtest starts matters.** Two common ways to start KAMA(10), from the first price or from the average of the first 10 prices, compared from 311 monthly start dates on QQQ between 1999 and 2025:
+**Example: when the backtest starts matters.** Two common ways to start KAMA(10), from the first price or from the average of the first 10 prices, compared from 311 monthly start dates on QQQ between 1999 and 2025 (our measurement for these notes):
 
 | Backtest starts | First months | Mean ER, first 60 bars | Bars until the two agree within 0.1% | Days the long/short signal differs |
 |---|---|---|---|---|
@@ -393,7 +393,7 @@ At $k = 3.5N$ that is $e^{-7} \approx 0.1\%$. Wilder's smoothing uses $\alpha = 
 
 Warm-up tracks how choppy the first months are (correlation with mean ER: $-0.86$). In 71% of start dates the long/short signal, price above or below KAMA, differs on at least one day. A backtest starting in November 2008 with no warm-up would show different trades for almost three months purely because of a starting convention. An EMA(20) needs about 70 bars whatever the market.
 
-**Practical rule.** Before the backtest start date, load the longest warm-up among the indicators the strategy uses, compute on all of it, and discard the warm-up bars before measuring performance. In live trading, update each method from its stored state; never recompute from the start of the series.
+**Practical rule.** Before the backtest start date, load the longest warm-up among the indicators the strategy uses, compute on all of it, and discard the warm-up bars before measuring performance. In live trading, update each method from its stored state; never recompute from the start of the series. Libraries handle this explicitly. We use TA-Lib as the example because it is the long-standing open-source reference implementation of these indicators, used directly or through wrappers such as Python's `talib`, and it documents the issue: it calls the discarded stretch the *unstable period* and lets the user set it for EMA, ATR, ADX and KAMA, among others ([TA-Lib documentation](https://ta-lib.org/api/unstable-period/)).
 
 ## 10. Summary, exercises and reading
 
@@ -420,11 +420,14 @@ Warm-up tracks how choppy the first months are (correlation with mean ER: $-0.86
 - Brown, R.G. (1963). *Smoothing, Forecasting and Prediction of Discrete Time Series.* Prentice-Hall. — the $\alpha = 2/(N+1)$ convention.
 - Holt, C.C. (1957, reprinted 2004). Forecasting seasonals and trends by exponentially weighted moving averages. *International Journal of Forecasting.*
 - Harvey, A. (1989). *Forecasting, Structural Time Series Models and the Kalman Filter.* Cambridge University Press.
+- Hyndman, R., Koehler, A., Ord, J.K. and Snyder, R. (2008). *Forecasting with Exponential Smoothing: The State Space Approach.* Springer. — exponential smoothing and its starting values (§9.1).
+- Durbin, J. and Koopman, S.J. (2012). *Time Series Analysis by State Space Methods* (2nd ed.). Oxford University Press. — ch. 5, starting a Kalman filter, including the diffuse start (§9.1).
 - Kaufman, P. (2013). *Trading Systems and Methods* (5th ed.). Wiley. — KAMA.
 - Wilder, J.W. (1978). *New Concepts in Technical Trading Systems.* Trend Research.
 - Ehlers, J. (2001). *Rocket Science for Traders.* Wiley.
 - Chan, E. (2013). *Algorithmic Trading.* Wiley. — Kalman filters for hedge ratios.
 - Berkowitz, S., Logue, D. and Noser, E. (1988). The total cost of transactions on the NYSE. *Journal of Finance.* — VWAP as an execution benchmark.
+- TA-Lib documentation, "Unstable Period": [ta-lib.org/api/unstable-period](https://ta-lib.org/api/unstable-period/) — discarding warm-up bars in practice (§9.1).
 
 *References are given from memory and should be checked against the originals before circulation.*
 
