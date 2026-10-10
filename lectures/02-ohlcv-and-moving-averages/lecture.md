@@ -151,6 +151,8 @@ Every bar inside the window counts the same; every bar outside counts zero. That
 
 A bar $k$ periods old carries weight $\alpha(1-\alpha)^k$. $N$ enters only through the convention $\alpha = 2/(N+1)$; §6 shows this convention is not arbitrary.
 
+Because the whole history is folded into one stored number, each update costs the same however long the history is. How much history to load before the first trustworthy value is covered in [§9.1](#91-how-much-data-each-method-needs).
+
 **An implementation trap.** pandas' `ewm` defaults to `adjust=True`, which re-normalises the weights during warm-up and so does not follow the recursion above for the first few dozen bars. `adjust=False` is the textbook recursion. On QQQ with $N = 20$ the two differ by up to 0.49% in the first 50 bars and by $6\times 10^{-10}$ after bar 200. Mixing them matters for any backtest that starts near the beginning of the data.
 
 ### 4.3 VWAP: trading activity
@@ -356,7 +358,30 @@ Re-running each method at $N = 10$, 20 and 50 through the 2020 crash (the Kalman
 | KAMA | Rolling ER, expanding recursion | No | Adaptive | A spike in the trend's direction makes it fastest, the reversal then freezes it | Judging its speed on clean examples |
 | Kalman | Expanding, set by $Q$ and $R$ | No | Smooth, negative weights on old bars | Overshoot after jumps; fixed $Q$, $R$ in a changing volatility regime | Comparing default noise settings with a 20-bar average |
 
-None of these values exists before the bar closes. Warm-up also differs: SMA and VWAP need $N$ bars, EMA formally none but in practice several $N$, KAMA its ER window plus several bars, Kalman until its gain settles.
+None of these values exists before the bar closes.
+
+### 9.1 How much data each method needs
+
+No method needs the full price history. Each needs a limited warm-up before its first trustworthy value, then only a small stored state to update bar by bar.
+
+| Method | Stored between bars | Cost per new bar | Warm-up to discard | Example |
+|---|---|---|---|---|
+| SMA($N$) | Last $N$ prices and a running sum | $O(1)$ | $N-1$ bars; exact afterwards | 19 bars for $N = 20$ |
+| VWAP($N$) | Last $N$ prices and volumes, two running sums | $O(1)$ | $N-1$ bars; exact afterwards | 19 bars for $N = 20$ |
+| EMA($N$) | One number | $O(1)$ | $\approx 3.5N$ bars | $\approx 70$ bars for $N = 20$ |
+| Wilder($n$): ATR, ADX | One number per smoothed series | $O(1)$ | $\approx 7n$ bars | $\approx 93$ bars for $n = 14$ |
+| KAMA($n$) | One number and the last $n+1$ prices | $O(1)$ | Depends on the market: $\approx 12$ bars in a clean trend, up to $\approx 1{,}650$ in pure chop | QQQ, $n = 10$: median 81, maximum 124 bars |
+| Kalman (local linear trend) | Two states and their $2\times 2$ uncertainty | $O(1)$ | The longer of gain settling and the 0.1% memory horizon | $\approx 60$ bars (default), $\approx 200$ (matched) |
+
+The rolling methods are exact once their window is full. The expanding methods never are; they are close enough once the starting value no longer matters. For an EMA the combined weight of every bar older than $k$ is exactly $(1-\alpha)^k$, and an arbitrary starting value fades by the same factor:
+
+```math
+\mathrm{EMA}_t = \alpha\sum_{k\ge 0}(1-\alpha)^k\, p_{t-k}, \qquad \text{weight older than } k = (1-\alpha)^k \approx e^{-2k/(N+1)}
+```
+
+At $k = 3.5N$ that is $e^{-7} \approx 0.1\%$. Wilder's smoothing uses $\alpha = 1/n$, so the same 0.1% takes about $7n$ bars: ATR(14) needs roughly 93 bars of warm-up, not 14. KAMA's $\alpha$ moves every bar between $\alpha_s^2 = 0.0042$ and $\alpha_f^2 = 0.44$, so its memory lengthens in choppy markets. That is a practical drawback: KAMA has no fixed warm-up, and the safe upper bound (about 1,650 bars, six and a half years of daily data) is rarely affordable. The workable fix is to measure it: start KAMA from two different values and treat it as warmed up once the two agree within 0.1%. On QQQ that took 81 bars at the median and 124 at worst. The matched Kalman filter smooths like EMA(20), yet its slow trend component reaches back about 200 bars; starting it with a large initial uncertainty (a *diffuse* start) removes most of the starting-value error early.
+
+**Practical rule.** Before the backtest start date, load the longest warm-up among the indicators the strategy uses, compute on all of it, and discard the warm-up bars before measuring performance. In live trading, update each method from its stored state; never recompute from the start of the series.
 
 ## 10. Summary, exercises and reading
 
