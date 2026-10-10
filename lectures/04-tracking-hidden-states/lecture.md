@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 10, 2026 · Max Gnesi*
 
-> **Draft in progress.** Sections 1–2 are written; sections 3–11 are still an outline (below). All numbers and charts come from the companion notebook [13_tracking_hidden_states.ipynb](13_tracking_hidden_states.ipynb). The Kalman material still in [Lecture 2](../02-ohlcv-and-price-smoothing/lecture.md) moves here once this lecture is complete.
+> **Draft in progress.** Sections 1–4 are written; sections 5–11 are still an outline (below). All numbers and charts come from the companion notebook [13_tracking_hidden_states.ipynb](13_tracking_hidden_states.ipynb). The Kalman material still in [Lecture 2](../02-ohlcv-and-price-smoothing/lecture.md) moves here once this lecture is complete.
 
 Lecture 2's methods smooth the data from the bottom up; the Kalman filter works from the top down, by modelling what is hidden behind prices and updating that model with each new bar. This lecture builds the linear filter step by step, from a single level to slope and acceleration, describes what each hidden state captures, then covers extensions and the nonlinear extended and unscented filters. Companion notebook: [13_tracking_hidden_states.ipynb](13_tracking_hidden_states.ipynb).
 
@@ -86,10 +86,104 @@ Only the uncertainty band changes, by a factor of $\sqrt{10}$. The equivalence i
 
 **Example: a thermometer.** Let one variance describe how far the room temperature can drift in an hour and the other how noisy the thermometer is. Scaling both by the same factor leaves the relative reliability of model and instrument unchanged, so the estimate is unchanged; only the stated uncertainty increases.
 
+## 3. Adding a slope: the core model
+
+A slope state gives the filter an explicit trend, which it carries from bar to bar and projects forward; in steady state the filter is Holt's linear exponential smoothing (Harvey, 1989).
+
+### 3.1 The one-bar transition
+
+The model borrows the equations of motion: the level plays the role of position and the slope that of velocity. Over one bar of length $\Delta t$:
+
+- next level = level + slope × $\Delta t$
+- next slope = slope, apart from a random change
+
+In matrix form, with the price as the only observation:
+
+```math
+\begin{pmatrix}\text{level}_t\\ \text{slope}_t\end{pmatrix} = \underbrace{\begin{pmatrix}1 & \Delta t\\ 0 & 1\end{pmatrix}}_{F}\begin{pmatrix}\text{level}_{t-1}\\ \text{slope}_{t-1}\end{pmatrix} + \begin{pmatrix}\text{level change}_t\\ \text{slope change}_t\end{pmatrix}, \qquad \text{price}_t = \underbrace{\begin{pmatrix}1 & 0\end{pmatrix}}_{H}\begin{pmatrix}\text{level}_t\\ \text{slope}_t\end{pmatrix} + \text{price noise}_t
+```
+
+With one bar as the unit of time ($\Delta t = 1$) and the random changes summarised by their variances:
+
+```math
+F = \begin{pmatrix}1 & 1\\ 0 & 1\end{pmatrix}, \qquad H = \begin{pmatrix}1 & 0\end{pmatrix}, \qquad Q = \begin{pmatrix}q_{\text{level}} & 0\\ 0 & q_{\text{slope}}\end{pmatrix}, \qquad R = r_{\text{price}}
+```
+
+| Entry | Mathematical role | Financial meaning |
+|---|---|---|
+| $F$, first row $(1, 1)$ | The level moves by the slope over one bar | The underlying price drifts by the current trend |
+| $F$, second row $(0, 1)$ | The slope carries over unchanged | Today's trend is the best guess for tomorrow's: the trend follower's hypothesis |
+| $H = (1, 0)$ | Only the level is observed | Prices reveal the level; the trend is never observed directly, only inferred from how levels change |
+| $q_{\text{level}}$ | Variance of random changes in the level | One-off revaluations: gaps and news that shift the price without changing the trend |
+| $q_{\text{slope}}$ | Variance of random changes in the slope | How quickly the trend itself may change: shifts in momentum |
+| $r_{\text{price}}$ | Variance of the price noise | Bid-ask bounce, temporary order-flow pressure, overshoots that reverse |
+
+The filter runs on log prices, so the slope is a daily log trend, shown annualised (×252) in the charts. The equations of motion are an analogy, not a law: prices have no inertia that guarantees a trend persists. The model assumes persistence and the surprises measure, bar by bar, how far the data disagree.
+
+### 3.2 What the slope changes
+
+In steady state the filter is a fixed linear smoother, like the methods of Lecture 2, but its weights differ in one decisive way: recent prices receive positive weights and older prices small negative ones ([chart C.3](#c3-weights-on-past-prices-32)). The negative weights are what extrapolation looks like in a weighted average. They let the filter follow a steady trend with no lasting gap, and they make it overshoot after a jump (§5).
+
+The same extrapolation lets the level sit above price while the market is still rising, which no positive-weight average can do. In the strongest advances (63-day returns in each asset's top 5%, median over SPY, QQQ, GLD and AGG), price is above the level-only design's level on 91% of days, but above the level + slope design's level on only 65%: its level has been projected ahead of price.
+
+### 3.3 Two ways to specify Q
+
+The diagonal $Q$ above lets the level and the slope change independently, so the level can jump by itself, as prices gap. The alternative derives $Q$ from a single setting $q$ by assuming that only the slope receives random kicks and the level moves because the slope moved during the bar:
+
+```math
+Q_{\text{derived}} = q\begin{pmatrix}1/3 & 1/2\\ 1/2 & 1\end{pmatrix}
+```
+
+The off-diagonal terms link the two changes (correlation 0.87): a kick to the slope always drags the level with it. Matched to EMA(20) on variance reduction, the two forms behave similarly on a price jump: both cover half the jump in 8 bars, and the derived form overshoots slightly more (20.1% against 18.9%), because it must explain the jump as a faster trend ([chart C.4](#c4-a-price-jump-two-forms-of-q-33)). The difference is modest; the diagonal form is the more natural choice for prices, which gap.
+
+## 4. Adding acceleration
+
+An acceleration state models changes in the speed of the trend, and because it also enters the level, it changes where the filter sits relative to price.
+
+### 4.1 The one-bar transition
+
+Continuing the analogy, acceleration is the rate of change of the slope. Over one bar of length $\Delta t$:
+
+- next level = level + slope × $\Delta t$ + ½ × acceleration × $\Delta t^2$
+- next slope = slope + acceleration × $\Delta t$
+- next acceleration = acceleration, apart from a random change
+
+```math
+\begin{pmatrix}\text{level}_t\\ \text{slope}_t\\ \text{acceleration}_t\end{pmatrix} = \underbrace{\begin{pmatrix}1 & \Delta t & \tfrac12\Delta t^2\\ 0 & 1 & \Delta t\\ 0 & 0 & 1\end{pmatrix}}_{F}\begin{pmatrix}\text{level}_{t-1}\\ \text{slope}_{t-1}\\ \text{acceleration}_{t-1}\end{pmatrix} + \text{random changes}_t
+```
+
+With $\Delta t = 1$ bar:
+
+```math
+F = \begin{pmatrix}1 & 1 & 0.5\\ 0 & 1 & 1\\ 0 & 0 & 1\end{pmatrix}, \qquad H = \begin{pmatrix}1 & 0 & 0\end{pmatrix}, \qquad Q = \begin{pmatrix}q_{\text{level}} & 0 & 0\\ 0 & q_{\text{slope}} & 0\\ 0 & 0 & q_{\text{acceleration}}\end{pmatrix}
+```
+
+| Entry | Financial meaning |
+|---|---|
+| $F$, first row $(1, 1, 0.5)$ | The underlying price drifts by the trend plus half the change in the trend: an accelerating rise pushes the projected level up, a decelerating rise pulls it down |
+| $F$, second row $(0, 1, 1)$ | The trend itself strengthens or fades by the acceleration |
+| $F$, third row $(0, 0, 1)$ | The change in trend speed carries over: a market that is speeding up is assumed to keep speeding up |
+| $q_{\text{acceleration}}$ | How quickly the change in trend speed may itself change |
+
+The first row is the reason acceleration matters beyond the slope: through the ½ entry it moves the level directly, so a decelerating rise lowers the projected level and brings it towards, or below, price earlier.
+
+### 4.2 Three designs, three readings
+
+The three designs, matched to EMA(20) on variance reduction so that differences come from structure rather than from smoothing more or less, give six readings: position (price above or below the level) for each design, the slope of the two slope designs, and the acceleration ([chart C.5](#c5-three-designs-states-and-readings)). On QQQ, 1999–2026, readings from the same state largely agree, while readings from different states agree only about half to three-quarters of the time:
+
+| Agreement of readings | Position | Slope | Acceleration |
+|---|---|---|---|
+| Position (across designs) | 78–91% | 45–68% | 51–58% |
+| Slope (across designs) | 45–68% | 89% | 70–74% |
+
+The states therefore capture three distinct layers of the same price: where it is relative to the estimate, which way the trend points, and whether the trend is strengthening or fading. The comparison is fair within each state; across states, note that a slope measures change, which needs more data than a level, so slope readings move on a longer timescale than position readings by nature.
+
+### 4.3 Acceleration as an early warning
+
+Acceleration turns before the slope on average, but not at every turning point. Across SPY, QQQ, GLD and AGG, the median delay after a turning point is 23 days for the acceleration reading against 30–36 days for the slope readings, and the acceleration reading changes sign less often in choppy markets (4.4 times a year against 5–7). In 2020 it turned down 13 days after the February peak, ahead of the slopes (16–18 days), but turned up 39 days after the March low, no earlier than the slopes (30–40 days). Its value is as an additional layer of information, not a reliable leading indicator; §9 profiles it by market condition.
+
 ## Sections still to write (outline)
 
-3. **Adding a slope.** The one-bar transition in plain words (next level = level + slope; next slope = slope) as the model's assumption; the matrix form with every entry given a financial meaning; diagonal versus derived $Q$ (chart C.4); Holt's method in steady state; negative weights (chart C.3); why the level can sit above price in a rising market.
-4. **Adding acceleration.** Next level = level + slope + ½·acceleration, next slope = slope + acceleration, next acceleration = acceleration (one bar = one time step). Acceleration moves the level and the slope; early warning of regime change against false alarms; the three designs and their readings (chart C.5).
 5. **Design versus tuning.** Two separate choices. The *design* (which states the model has) decides, for every parameter setting, which kind of motion it follows with no lasting gap and whether it overshoots a jump. The *tuning* ($Q$ and $R$, of which only the ratio matters) sets only the speed. Prototype check at a slow and a very fast setting: Then the dials: a table of what each entry of $Q$ does to how the filter follows price (raise *q_level*, *q_slope*, *q_acceleration* or $r_{	ext{price}}$ → effect → measured cost from chart C.6).
 
     | Design | Price jump: overshoot | Steady trend: gap behind price | Parabolic move: gap behind price |
@@ -154,6 +248,18 @@ Each bar the forecast is yesterday's level; the correction is the gain (1/3) tim
 ![Gain and level with uncertainty bands for (q, R) = (1, 4) and (10, 40)](figures/c02_ratio_invariance.png)
 
 The gain starts near 1 and settles within a few bars; it is the same at both scales, and so is the level. Only the uncertainty band is wider at the larger scale.
+
+### C.3 Weights on past prices (§3.2)
+
+![Weight given to a price k bars old: EMA(20), and the three designs matched to it](figures/c03_weights.png)
+
+The level-only design reproduces EMA(20) exactly. The slope designs put more weight on the middle of the window and small negative weights on old prices, which is how a weighted average extrapolates.
+
+### C.4 A price jump: two forms of Q (§3.3)
+
+![Level + slope design on a price jump, with diagonal and derived Q, both matched to EMA(20)](figures/c04_q_forms_jump.png)
+
+Both forms cover half the jump in 8 bars and then overshoot; the derived form, which can only explain the jump through the slope, overshoots slightly more.
 
 ### C.5 Three designs: states and readings
 
