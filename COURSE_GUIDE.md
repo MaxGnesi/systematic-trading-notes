@@ -74,6 +74,8 @@ Status: outline in the doc; prototypes exist outside the lecture. Kalman materia
 
 **Models.** Local level (= EMA, the bridge from Lecture 2); local linear trend (level + slope, diagonal Q; the core); acceleration as a candidate early warning of regime change, judged on lead time versus false alarms. EKF/UKF in depth on hidden volatility from daily ranges ("transform first, use the UKF only when you cannot").
 
+**Design versus tuning.** Design (which states) decides, for every setting, which motion is followed with no lasting gap (level only: flat; + slope: steady trend; + acceleration: parabolic) and whether jumps are overshot (positive weights never; any negative weight always). Tuning (the ratio of Q to R) only sets speed. Verified numerically at two settings; the table goes in Lecture 4 §5. No design is best; each is a bet about what the market is doing.
+
 **Extensions to evaluate, not assume:** a robust update for fat-tailed surprises; R per bar from the bar's range; a damped slope. Single-asset, single-setting prototype results on QQQ are preliminary only.
 
 **Profiling framework (Lecture 4 §9 and its notebook).** Market conditions defined mechanically, across SPY, QQQ, GLD, AGG (and more) and a grid of settings; for each filter and signal family, describe its behaviour in each condition:
