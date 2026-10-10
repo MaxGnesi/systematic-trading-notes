@@ -70,21 +70,21 @@ Lecture 3, §11 promises that Part III returns to risk measures beyond clock-tim
 
 Status: outline in the doc; prototypes exist outside the lecture. Kalman material stays in Lecture 2 until Lecture 4 is written.
 
-**Purpose of a trend filter.** Find structural, long-horizon trends that are robust to daily noise. It is not about predicting tomorrow's price; one-step forecast error is the wrong yardstick and is not used.
+**Purpose of a trend filter.** Find structural, long-horizon trends that are robust to daily noise. No filter is best: each captures different behaviour, so filters are profiled (what each captures, in which market conditions, at what cost), not ranked. Predicting tomorrow's price is not the goal and one-step forecast error is not used.
 
 **Models.** Local level (= EMA, the bridge from Lecture 2); local linear trend (level + slope, diagonal Q; the core); acceleration as a candidate early warning of regime change, judged on lead time versus false alarms. EKF/UKF in depth on hidden volatility from daily ranges ("transform first, use the UKF only when you cannot").
 
 **Extensions to evaluate, not assume:** a robust update for fat-tailed surprises; R per bar from the bar's range; a damped slope. Single-asset, single-setting prototype results on QQQ are preliminary only.
 
-**Evaluation framework (Lecture 4 §9 and its notebook).** Across SPY, QQQ, GLD, AGG (and more) and a grid of settings:
+**Profiling framework (Lecture 4 §9 and its notebook).** Market conditions defined mechanically, across SPY, QQQ, GLD, AGG (and more) and a grid of settings; for each filter and signal family, describe its behaviour in each condition:
 
-- Delay at structural turning points defined mechanically in advance (e.g. 15–20% moves from a high or low), not picked by eye.
-- Whipsaws: slope sign changes not followed by a sustained move.
-- Stability of the slope's sign within persistent trends.
-- Relation of today's slope to returns over the next one to six months (persistence, not next-day prediction).
-- Acceleration: lead time over the slope at turning points against its false-alarm rate.
+- Choppy, trendless (low efficiency ratio): how often it flips, how much it chases noise.
+- Steady trend (high efficiency ratio): how far it lags, how stable its signal stays.
+- Parabolic or accelerating move (rising slope, positive acceleration): whether it keeps up.
+- Regime change (turning points defined in advance, e.g. 15–20% moves from a high or low): how early it turns, how often it warns falsely.
+- Persistence: relation of each signal to returns over the next one to six months.
 
-Final verdicts on which extension helps come only from this framework, and are then carried into Part II, where filters are judged as parts of complete strategies.
+The result is a pros-and-cons profile per filter, not a winner. Whether combining filters with different profiles improves a trend system is tested in Part II, as complete strategies.
 
 **Charts (appendix C, each linked from the text):**
 
