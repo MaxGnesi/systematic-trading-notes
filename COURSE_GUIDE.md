@@ -29,6 +29,7 @@ Threads to keep visible across parts:
 - **Sizing comes back three times:** volatility targeting (Part II), inventory and spread limits (Part III), Kelly on a bounded payoff (Part IV). Part V combines them.
 - **Lecture 3 sets up Part III:** discrete sampling and bid-ask bounce (Lecture 3, §4.4) are the hook for "what is inside the bar".
 - **Lecture 10 mirrors Lecture 3:** same data with different transformations, versus the same strategy on different data.
+- **Two kinds of trend signal:** a positive-weight moving average always lags below price in a steady rise, while the Kalman level + slope extrapolates and can sit above price while the market still rises (QQQ illustration: above price on 43% of up-market days versus 23% for EMA(20); signals agree on 68% of days; naive rule returns correlate 0.37, one asset, one setting). Lecture 4 explains the mechanism; Part II (Lectures 5–6) tests whether combining the two families diversifies a trend system.
 - **The research checklist** (Lecture 1, §1.2) is applied in every *How we judge it* section.
 
 Notebook numbers above were assigned from file names; check each notebook's contents before writing its lecture.
