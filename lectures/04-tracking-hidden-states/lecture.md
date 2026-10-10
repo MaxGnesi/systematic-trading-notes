@@ -89,7 +89,7 @@ The filter estimates the level from the prices. To do so it computes four quanti
 
 ### 2.3 Equivalence to the EMA
 
-Substituting step 1 into step 5 gives $`\text{level}_t = \text{gain}\cdot\text{price}_t + (1-\text{gain})\cdot\text{level}_{t-1}`$, an EMA whose $`\alpha`$ is the gain. After a few bars the gain converges to a constant: the steady forecast uncertainty $`u`$ solves $`u^2 - q_{\text{level}}\,u - q_{\text{level}}\,r_{\text{price}} = 0`$, and the steady gain is $`u/(u + r_{\text{price}})`$. With $`q_{\text{level}}/r_{\text{price}} = 1/6`$ the steady gain is exactly $`1/3`$, the $`\alpha`$ of EMA(5).
+Substituting step 1 into step 5 gives $`\text{level}_t = \text{gain}\cdot\text{price}_t + (1-\text{gain})\cdot\text{level}_{t-1}`$, an EMA whose $`\alpha`$ is the gain. After a few bars the gain converges to a constant: the steady forecast uncertainty $`u`$ solves $`u^2 - q_{\text{level}}\,u - q_{\text{level}}\,r_{\text{price}} = 0`$, and the steady gain is $`u/(u + r_{\text{price}})`$. With $`q_{\text{level}}/r_{\text{price}} = 1/6`$ the steady gain is exactly $`1/3`$, the $`\alpha`$ of EMA(5). The same fixed-point equation appears in the lifeboat example of Bocquet and Farchi (2025, §2.2).
 
 On Lecture 2's toy series, with $`q_{\text{level}}/r_{\text{price}} = 1/6`$ and the filter started at its steady uncertainty, the level reproduces EMA(5) on every bar, including the 103.54 after the spike ([chart C.1](#c1-predict-compare-correct-2)). Started instead from a wide uncertainty, the gain begins close to 1, so the first prices are accepted almost in full, and converges within a few bars ([chart C.2](#c2-only-the-ratio-matters-24)).
 
@@ -221,7 +221,7 @@ The rest of the lecture compares three designs. Each hidden state yields a *read
 | LSA | 12.5 | −0.8 | 0.050 | −0.0065 |
 | EMA(20), for reference | — | 9.5 | 0.050 | 0 |
 
-L matched this way is EMA(20) exactly. A design used at default settings, without matching, can carry a very different memory: Lecture 2 found that the default of the `trading_models` package smooths like a 4.5-bar average. Unless stated otherwise, every result below uses the matched designs of Table 4.3.
+L matched this way is EMA(20) exactly. A design used at default settings, without matching, can carry a very different memory: Lecture 2 found that the default of the `trading_models` package smooths like a 4.5-bar average. Unless stated otherwise, every result below uses the matched designs of Table 4.3. Matching on the level is the fair way to compare designs at one smoothing level; a long-horizon trend filter is built differently, with separate speeds for level and slope (§6.2).
 
 ### 4.3 What a position reading measures
 
@@ -235,7 +235,7 @@ In classical trend following, price below a moving average is read as a downtren
 | LS | Yesterday's level plus the slope | Price rose less than the projected trend: a pullback or deceleration reading, closer to contrarian | 65% |
 | LSA | Level plus slope plus half the acceleration | As LS | 59% |
 
-Strong advances are days whose 63-day return lies in the asset's top 5% (median over SPY, QQQ, GLD and AGG, §9). In the same advances the slope readings point up on 99.9% of days: in the slope designs, the trend reading is the slope. The readings are therefore building blocks rather than an off-the-shelf signal. Requiring position and slope to agree, or reading a positive acceleration inside a negative slope as a fading decline, are design choices that belong to Part II and must be tested there. Practitioners use the surprise scaled by its standard deviation in this deviation sense, for instance as a mean-reversion signal on a spread (Chan, 2013).
+Strong advances are days whose 63-day return lies in the asset's top 5% (median over SPY, QQQ, GLD and AGG, §9). In the same advances the slope readings point up on 99.9% of days: in the slope designs, the trend reading is the slope. The readings are therefore building blocks rather than an off-the-shelf signal. Requiring position and slope to agree, or reading a positive acceleration inside a negative slope as a fading decline, are design choices that belong to Part II and must be tested there. Practitioners use this comparison in the projected sense. Benhamou (2018) goes long when the filter's prediction lies above the previous close, the opposite of the classical moving-average rule, and Chan (2013) uses the surprise scaled by its standard deviation as a mean-reversion signal on a spread.
 
 ### 4.4 How far the readings agree
 
@@ -351,43 +351,51 @@ A filter must be started from a guess, and how long the guess takes to be forgot
 
 The *diffuse start*, a very large $`P_0`$, tells the filter that its starting guess is worthless. The gain then begins close to one, the first prices overwrite the guess almost at once, and the level error vanishes within a bar (chart C.7). A confident start with a wrong guess takes 137 bars to forget the same error in the level + slope design, longer than EMA(20) (70 bars). Each extra state lengthens everything: the three-state design needs about 350 bars before its slope can be trusted after a confident start, and its memory reaches back over 400 bars. Unlike KAMA (Lecture 2, §9.1), these numbers are fixed by the design and its settings, so they can be computed in advance.
 
-### 6.2 Long memories: how much burn-in?
+### 6.2 Long horizons: putting the trend memory on the slope
 
-With a diffuse start the starting guess is gone within a bar (Table 6.1). A different question remains: how many bars must be loaded before the readings match those of the same filter run on a much longer history? It matters most for long memories, so each design is now matched to EMA(252), a one-year average, as in §4.2.
+Structural trends are measured over a year or more, so a trend filter needs the memory of EMA(252) or EMA(500), not of EMA(20). The matched designs of §4.2 tie every speed to a single dial: the noise ratios are fixed and the price noise is solved to match the level's smoothing. That is the fair way to compare designs at one smoothing level, but it is the wrong way to build a long-horizon trend filter. To make the level of LS as smooth as EMA(252), the price noise must be so large that the slope slows down as well, and the whole filter stretches over many years: matched this way, LS puts 36% of its weight on prices more than a year old (our calculation).
 
-**Table 6.2. Burn-in test: setup**
+Practitioners set the speeds separately. Holt's method has one smoothing constant for the level and another for the trend, and state-space applications estimate the level and slope noise, and even the starting uncertainty, from data (Harvey, 1989; Benhamou, 2018). The level then tracks price closely, and the long memory sits where it belongs, in the slope.
+
+**Table 6.2. Building a long-horizon level + slope filter**
+
+| Step | What to do | Why |
+|---|---|---|
+| 1. Fix the scale | Set $`r_{\text{price}} = 1`$ | Only the ratios matter (§2.4) |
+| 2. Make the level fast | Set $`q_{\text{level}} = 0.1`$ | The level's job is to track price, not to carry the trend |
+| 3. Choose the trend horizon | For example $`N = 252`$ or $`500`$ bars | The horizon over which the trend should be measured |
+| 4. Solve for $`q_{\text{slope}}`$ | Choose $`q_{\text{slope}}`$ so that the slope's steady-state weights on past prices reach back as far as those of EMA(N), to 0.1% of the total weight; a bisection on the steady-state gain finds it ($`5.3 \times 10^{-6}`$ for $`N = 252`$, $`1.3 \times 10^{-6}`$ for $`N = 500`$) | The long memory goes into the slope only |
+| 5. Start diffuse | Use a large $`P_0`$ | With an exact diffuse start, the start is typically absorbed within as many bars as there are diffuse states, two here (Durbin and Koopman, 2012, ch. 5) |
+| 6. Burn in | Load $`N`$ to $`2N`$ bars before the evaluation starts | Table 6.4 |
+
+**Table 6.3. Burn-in test: setup**
 
 | Item | Setting |
 |---|---|
-| Designs | L, LS and LSA, each matched to EMA(252) on variance reduction |
+| Design | LS built as in Table 6.2, for $`N = 252`$ and $`N = 500`$ |
 | Start | Diffuse, at 22 dates across SPY, QQQ, GLD and AGG (every 500 bars from bar 1,500) |
-| Burn-in | 300, 500 or 1,000 bars, followed by one year of comparison |
-| Benchmark | The same design run on the asset's full history |
-| Measured | Share of days in that year on which each reading agrees with the benchmark (median over the 22 starts) |
+| Burn-in | $`N`$ or $`2N`$ bars, followed by one year of comparison |
+| Benchmark | The same filter run on the asset's full history |
+| Measured | Share of days in that year on which each reading agrees with the benchmark, and the mean gap in the slope; medians over the 22 starts |
 
-**Table 6.3. Burn-in test: results**
+**Table 6.4. Burn-in test: results**
 
-| Reading | Weight on prices older than one year | Agreement after 300 bars | After 500 bars | After 1,000 bars |
+| Trend horizon $`N`$ | Burn-in | S-LS agrees | Slope gap (% a year) | P-LS agrees |
 |---|---|---|---|---|
-| P-L | 14% | 99% | 100% | 100% |
-| S-LS | 36% | 100% | 100% | 100% |
-| P-LS | 36% | 77% | 85% | 97% |
-| S-LSA | 53% | 62% | 67% | 95% |
-| P-LSA | 53% | 59% | 57% | 68% |
+| 252 | 252 bars | 99% | 1.0 | 99% |
+| 252 | 504 bars | 100% | 0.16 | 100% |
+| 500 | 500 bars | 100% | 1.3 | 99% |
+| 500 | 1,000 bars | 100% | 0.18 | 100% |
 
-For L, which is EMA(252) itself, and for the trend reading of LS, a burn-in of one to two times the equivalent window is enough: 300 to 500 bars for a one-year memory. The size of the LS slope converges more slowly than its sign (5.5% a year away from the benchmark after 300 bars, 2.0% after 500), but the reading agrees throughout. More burn-in is needed for readings tied to the exact level of a slope design, and for everything in LSA. Matched on the level's smoothing, the slope designs reach far back: 36% of the weight of LS, and 53% of LSA, lies on prices more than a year old, because extrapolating a trend amplifies noise, which must be offset by averaging over a longer window. At a one-year memory, LSA needs more history than most markets provide.
+A burn-in of one to two trend horizons is enough, the same as for an EMA of that horizon: built this way, the Kalman filter needs no more history than the moving average it replaces. A slower level ($`q_{\text{level}} = 0.01`$) gives the same results.
 
-The early bars are not wasted either way. With a diffuse start, each estimate is the best the model can give from the data available since the start, with no look-ahead: it is exactly what a trader starting on that day would compute, and it simply rests on less data. When history is short, three options remain:
-
-- Warm up on a longer related series that is not used for evaluation: the index an ETF tracks, before the ETF existed (the S&P 500 for SPY, the Nasdaq-100 for QQQ), or back-adjusted futures. A price index without dividends is adequate for warm-up, not for evaluation.
-- Include the burn-in period in the evaluation, and report it separately.
-- Use fewer states for long horizons.
+The early bars are not wasted either. With a diffuse start, each estimate is the best the model can give from the data available since the start, with no look-ahead: it is exactly what a trader starting on that day would compute, and it simply rests on less data. When history is short, the burn-in can come from a longer related series that is not used for evaluation: the index an ETF tracks, before the ETF existed (the S&P 500 for SPY, the Nasdaq-100 for QQQ), or back-adjusted futures. A price index without dividends is adequate for warm-up, not for evaluation.
 
 ### 6.3 Practice
 
 | Practice | Why |
 |---|---|
-| Load a burn-in before the evaluation start: one to two times the equivalent window for L and for the slope of LS, more for LSA (§6.2), from a longer related series if necessary | Until then the states differ from those of a run on longer history |
+| Load a burn-in of one to two trend horizons before the evaluation start, from a longer related series if necessary (§6.2) | Until then the states differ from those of a run on longer history |
 | Use a diffuse start (large $`P_0`$) | The first prices overwrite the guess, instead of a guess biasing the states for months |
 | Store data, configuration and state, including $`P_0`$, $`Q`$ and $`R`$ (Lecture 2, §9.2) | A restart from different data or settings changes the states until warm-up passes |
 | Compare designs only at matched memory | Otherwise the comparison measures smoothing, not design |
@@ -552,7 +560,7 @@ The same machinery with a different hidden state gives volatility (§8, from Lec
 2. With one hidden state the Kalman filter is an EMA, with $`\alpha`$ set by the ratio of the noise variances; only ratios matter.
 3. The design decides which motion is followed with no lasting gap and whether jumps are overshot, at every setting; tuning sets the speed.
 4. Each state gives its own reading: position, slope, acceleration. They capture different layers of the same price and agree only about half to three-quarters of the time across states.
-5. Warm-up is fixed by design and settings and can be computed in advance. A diffuse start removes the starting guess at once; long memories still need long history, which can come from a related series rather than from evaluation data.
+5. Warm-up is fixed by design and settings and can be computed in advance. A diffuse start removes the starting guess at once. With the trend memory placed on the slope, a burn-in of one to two trend horizons is enough, as for an EMA.
 6. The extended and unscented filters are for genuinely nonlinear models; transform first where possible.
 7. No design is best. Each is a bet about what the market is doing; the 2000–2002 and 2020 episodes reward opposite designs.
 
@@ -569,6 +577,8 @@ The same machinery with a different hidden state gives volatility (§8, from Lec
 ### 11.3 Reading list
 
 - Alizadeh, S., Brandt, M. and Diebold, F. (2002). Range-based estimation of stochastic volatility models. *Journal of Finance* 57(3), 1047–1091. — range-based volatility and the near-normality of the log range (§8).
+- Benhamou, E. (2018). Kalman filter demystified: from intuition to probabilistic graphical model to real case in financial markets. arXiv:1811.11618. — level + slope model with estimated noise and starting uncertainty; prediction above the close read as an up-trend (§4.3, §6.2).
+- Bocquet, M. and Farchi, A. (2025). *Introduction to the principles and methods of data assimilation in the geosciences.* Lecture notes, École des Ponts ParisTech, revision 0.52. — the Kalman filter from the data-assimilation side; the steady-state uncertainty of a random walk (§2.3).
 - Chan, E. (2013). *Algorithmic Trading: Winning Strategies and Their Rationale.* Wiley. — a Kalman-filter hedge ratio for an ETF pair, traded on the forecast error scaled by its standard deviation (§4.3, §9.4).
 - Durbin, J. and Koopman, S.J. (2012). *Time Series Analysis by State Space Methods* (2nd ed.). Oxford University Press. — ch. 5, starting a filter, including the diffuse start (§6).
 - Fama, E. and French, K. (1988). Permanent and temporary components of stock prices. *Journal of Political Economy* 96(2), 246–273. — a slowly reverting component of prices (§2.1).
