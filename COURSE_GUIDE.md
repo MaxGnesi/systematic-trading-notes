@@ -11,13 +11,13 @@ The course follows one pipeline throughout (data → signal → position → eva
 | I. Foundations | 1 | Introduction to Systematic Trading | The pipeline; bias moves into research; strategy families as examples | — | Done |
 | | 2 | OHLCV and Moving Averages | A bar is compression; averaging is filtering; compare at equal memory | 11 (QQQ) | Done |
 | | 3 | Same Bars, Different Questions: Volatility, Flow, Correlation and Tails | Same data, different transformations | 12 (SPY, QQQ, GLD, AGG) | Done |
-| II. Daily bars | 4 | Signal to position | Volatility targeting; scaling raw signals into sized positions | 09 | Planned |
+| II. Clock-time bars: trend and relative value | 4 | Signal to position | Volatility targeting; scaling raw signals into sized positions | 09 | Planned |
 | | 5 | Trend across asset classes | What works where, and who pays | 09, 10 | Planned |
 | | 6 | Stat arb: from pairs to baskets | Relative value, hedge ratios, spreads; mirror image of trend | StatARB repo (check contents first) | Planned |
-| III. Tick data | 7 | The tape | Trades, quotes, the order book; what bars hide | new | Planned |
-| | 8 | Other ways to cut time | Tick, volume, dollar and imbalance bars | new | Planned |
-| | 9 | Same strategies, faster data | Trend and stat arb intraday: costs, noise, alternative bars, who is on the other side | new | Planned |
-| | 10 | Strategies that only exist inside the bar | Market making, cross-venue arbitrage, latency | new | Planned |
+| III. From the tape to bars and back | 7 | The tape | Raw events: trades, quotes, order book updates; what a bar throws away | new | Planned |
+| | 8 | Building bars from ticks | Time bars at any interval, plus tick, volume, dollar and imbalance bars (only possible with the ticks) | new | Planned |
+| | 9 | Same strategies, intraday bars | Trend and stat arb on bars built in Lecture 8: still bar strategies, but costs, noise and the sampling rule change; backtesting on non-time bars (§1.2) | new | Planned |
+| | 10 | Strategies that need the tape itself | Market making, queue position, cross-venue arbitrage, latency: the edge lives between the events a bar summarises | new | Planned |
 | IV. Probabilities | 11 | Prediction markets | A price is a probability; bounded payoff; resolution | Polymarket | Planned |
 | | 12 | Trading probabilities | Calibration, edge vs implied odds, Kelly sizing, domain models, news | Polymarket | Planned |
 | V. Putting it together | 13 | Testing honestly across all three | Walk-forward, multiple testing, what a backtest can't say; the three data types side by side | 06 | Planned |
@@ -31,6 +31,31 @@ Threads to keep visible across parts:
 - **The research checklist** (Lecture 1, §1.2) is applied in every *How we judge it* section.
 
 Notebook numbers above were assigned from file names; check each notebook's contents before writing its lecture.
+
+### 1.1 How Parts II and III are separated
+
+**OHLCV is a summary format, not a type of bar.** Every bar has an open, high, low, close and volume, whatever decides when it ends. The parts differ in the **sampling rule**:
+
+- **Part II: bars that close on the clock.** Daily, weekly or monthly OHLCV, the data available for decades. Daily is the main case; everything holds for weekly or monthly bars too.
+- **Part III: changing the rule, or dropping bars.** Bars that close after a number of trades, an amount of volume or dollars, or an order-flow imbalance (still OHLCV, on a different clock); or the raw events themselves.
+
+Strategy family and data frequency are separate choices: trend and stat arb run on daily bars, minute bars or alternative bars. The dividing line in Part III is whether a strategy needs **aggregated bars** (Lectures 8–9) or **individual events** (Lecture 10). Lecture 9 says this in its opening: "these are bar strategies; the ticks only decide how the bars are cut."
+
+### 1.2 Backtesting on bars that are not clock-time (for Lecture 9)
+
+The strategy logic carries over to any bars, since each still has OHLCV. The backtest machinery changes in four places:
+
+1. **When the bar is known to be finished.** A volume bar closes at the trade that crosses the threshold, at an irregular time; signals may use only closed bars, and the trade comes after that moment.
+2. **The trade price.** Filling at the close of the signal bar is optimistic; use the next trade or quote after the bar closes, plus the spread. This needs the underlying ticks or quotes.
+3. **Asynchronous assets.** Different assets' volume bars close at different moments; baskets and pairs need a common clock (clock-time snapshots or an event-driven backtest).
+4. **P&L and risk in clock time.** Returns, volatility and drawdowns are reported per day, so positions are revalued at common times.
+
+These four points form Lecture 9's *How we judge it* section.
+
+### 1.3 Folder and tab layout
+
+- **GitHub:** lecture folders stay **flat** under `lectures/`, numbered globally (`01-…` to `14-…`), so links survive changes to the outline. The part is shown as a column in the README and in the roadmap above, not in the folder path.
+- **Doc:** each part is a parent tab ("Part I: Foundations", "Part II: Clock-time bars: trend and relative value", …) holding a short paragraph on what the part covers and how it leads into the next, with its lectures as sub-tabs.
 
 ## 2. Where things live
 
