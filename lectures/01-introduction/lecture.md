@@ -228,7 +228,7 @@ with $T$ the number of return periods per year. A high backtest Sharpe ratio is 
 
 ### 5.3 Multiple testing in one paragraph
 
-If you test 100 independent strategies with no true edge, about five will show a t-statistic above 2 by chance alone. Published work argues that, given how many factors the profession has tried, a new factor should clear a higher bar than the conventional threshold of 2 (Harvey, Liu and Zhu, 2016). The practical rule is to keep a record of everything you tried, not only what worked, and to demand an economic explanation alongside the statistics.
+If you test 100 independent strategies with no true edge, about five will show a $t$-statistic above 2 by chance alone. Published work argues that, given how many factors the profession has tried, a new factor should clear a higher bar than the conventional threshold of 2 (Harvey, Liu and Zhu, 2016). The practical rule is to keep a record of everything you tried, not only what worked, and to demand an economic explanation alongside the statistics.
 
 ## 6. Worked case study: a diversified trend-following model
 
