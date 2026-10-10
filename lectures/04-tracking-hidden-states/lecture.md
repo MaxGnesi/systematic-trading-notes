@@ -6,7 +6,7 @@
 
 Lecture 2's methods smooth the data from the bottom up; the Kalman filter works from the top down, by modelling what is hidden behind prices and updating that model with each new bar. This lecture builds the linear filter step by step, from a single level to slope and acceleration, shows that each hidden state carries its own trading signal, then covers extensions and the nonlinear extended and unscented filters.
 
-**Purpose.** A trend filter should find structural, long-horizon trends that are robust to daily noise. It is not judged on predicting tomorrow's price.
+**Purpose.** A trend filter should find structural, long-horizon trends that are robust to daily noise. No filter is best: each captures different behaviour, so the lecture profiles what each one captures and when that helps or hurts, rather than ranking them. Predicting tomorrow's price is not the goal.
 
 ## Planned sections
 
@@ -16,9 +16,18 @@ Lecture 2's methods smooth the data from the bottom up; the Kalman filter works 
 4. **Adding acceleration.** Over one bar the level moves by slope $+\tfrac12\,$acceleration, so acceleration moves both the slope and the level, changing where the filter sits relative to price. Acceleration as a candidate early warning of regime change, judged on lead time against false alarms; the noise each extra derivative brings.
 5. **The dials $Q$ and $R$.** What each means; the diagonal entries *q_level*, *q_slope*, *q_acceleration* set how much each state may change per bar ([chart C.6](#c6-the-dials)); matching a Kalman filter to an EMA on variance reduction.
 6. **Starting the filter.** The starting uncertainty $P_0$, the diffuse start, warm-up length, and what to store to run it live.
-7. **Extensions, evaluated not assumed.** A robust update for fat-tailed surprises; $R$ per bar from the bar's range; a damped slope. Each judged with the criteria of §9; early single-asset results are preliminary.
+7. **Extensions and what each changes.** A robust update for fat-tailed surprises; $R$ per bar from the bar's range; a damped slope. Each profiled with the market conditions of §9 (what it gains, what it gives up), not ranked; early single-asset results are preliminary.
 8. **Nonlinear models: the extended and unscented filters, in depth.** On a case where the nonlinearity is real: hidden volatility estimated from daily ranges (range $\approx \sqrt{8/\pi}\,\sigma$, Lecture 3). Linearisation versus sigma points; taking logs makes the model nearly linear (Alizadeh, Brandt and Diebold, 2002), so transform first and use the UKF only when you cannot; what neither fixes (fat tails, regime breaks).
-9. **Evaluating trend filters for what trend systems need.** Delay at mechanically defined structural turning points; whipsaws; slope stability within trends; relation of the slope to returns over the next one to six months; acceleration's lead time against false alarms; across SPY, QQQ, GLD, AGG and a grid of settings. Plus a time-varying hedge ratio as a bridge to stat arb (Chan, 2013).
+9. **What each filter captures: a profile by market condition, not a ranking.** Market conditions defined mechanically, across SPY, QQQ, GLD, AGG:
+
+    | Market condition | Defined by | What we describe for each filter |
+    |---|---|---|
+    | Choppy, trendless | Low efficiency ratio (Lecture 3) | How often it flips; how much it chases noise |
+    | Steady trend | High efficiency ratio, moderate slope | How far it lags; how stable its signal stays |
+    | Parabolic or accelerating move | Rising slope, positive acceleration | Whether it keeps up or falls behind |
+    | Regime change | Mechanically defined turning points | How early it turns; how often it warns falsely |
+
+    The output is a pros-and-cons profile per filter and per signal family, backed by numbers per condition. Plus a time-varying hedge ratio as a bridge to stat arb (Chan, 2013).
 10. **Side by side.** The three models and their three signal families: position (price versus level), slope (direction), acceleration (strengthening or fading) ([chart C.5](#c5-three-models-states-and-signals)); comparison with the Lecture 2 methods; practical notes and common mistakes.
 11. **Summary, exercises and reading.** References verified before citing.
 
