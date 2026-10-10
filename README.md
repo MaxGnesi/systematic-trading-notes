@@ -3,6 +3,9 @@
 Lecture notes on systematic trading (MSc level). Each lecture lives in its own folder together with
 the notebook that tests its claims on real market data and the charts it cites.
 
+The course roadmap (planned lectures on daily trend and stat arb, tick data, prediction markets, and a final part on
+testing and portfolio construction) and the style and formula conventions are in [COURSE_GUIDE.md](COURSE_GUIDE.md).
+
 ## Lectures
 
 | # | Lecture | Companion notebook | What it covers |
