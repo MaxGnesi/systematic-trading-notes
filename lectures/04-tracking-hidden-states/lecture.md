@@ -43,46 +43,58 @@ With a single hidden state, the Kalman filter is an EMA whose smoothing constant
 The hidden level moves at random from bar to bar, and each price equals the level plus noise:
 
 ```math
-\text{level}_t = \text{level}_{t-1} + \text{level change}_t, \qquad \text{price}_t = \text{level}_t + \text{price noise}_t
+\text{level}_t = \text{level}_{t-1} + \text{level change}_t, \qquad \text{level change}_t \sim N(0,\ q_{\text{level}})
 ```
 
-| Quantity | Financial meaning |
+```math
+\text{price}_t = \text{level}_t + \text{price noise}_t, \qquad \text{price noise}_t \sim N(0,\ r_{\text{price}})
+```
+
+The model has one hidden quantity and two variances:
+
+| Model quantity | Financial meaning |
 |---|---|
-| *level* | The underlying price: where the market is, net of noise |
-| $q_{\text{level}}$ | Variance of genuine changes in the underlying price per bar: news, revaluation, persistent shifts in demand |
-| $r_{\text{price}}$ | Variance of the noise around it: bid-ask bounce, temporary order-flow pressure, overshoots that reverse |
-| *uncertainty* | How unsure the filter is about the underlying price (variance of its error) |
-| *gain* | The share of today's unexpected move treated as genuine information rather than noise |
+| *level* | The underlying price: where the market is, net of noise. Never observed directly |
+| $`q_{\text{level}}`$ | Variance of the level change: genuine changes in the underlying price per bar, from news, revaluation and persistent shifts in demand |
+| $`r_{\text{price}}`$ | Variance of the price noise: bid-ask bounce, temporary order-flow pressure, overshoots that reverse |
+
+The filter estimates the level from the prices. To do so it computes four quantities of its own on every bar, which appear in the steps below:
+
+| Filter quantity | Financial meaning |
+|---|---|
+| *forecast* | The filter's estimate of today's underlying price before seeing today's price |
+| *uncertainty* | How unsure the filter is about the underlying price: the variance of its own error |
 | *surprise* | Today's unexpected move: the price minus the forecast |
+| *gain* | The share of the surprise treated as genuine information rather than noise |
 
 ### 2.2 The recursion, step by step
 
 | Step | Calculation | Financial interpretation |
 |---|---|---|
-| 1. Predict the level | $\text{forecast}_t = \text{level}_{t-1}$ | With no new trades, the best estimate of today's underlying price is yesterday's |
-| 2. Predict the uncertainty | $\text{forecast uncertainty}_t = \text{uncertainty}_{t-1} + q_{\text{level}}$ | Overnight, news may have moved the underlying price, so the estimate becomes less certain by $q_{\text{level}}$ |
-| 3. Compute the gain | $\text{gain}_t = \dfrac{\text{forecast uncertainty}_t}{\text{forecast uncertainty}_t + r_{\text{price}}}$ | How much of today's move to believe: near 1 when genuine changes dominate (a fast-moving market), near 0 when noise dominates (a market that mostly jitters around its value) |
-| 4. Compare | $\text{surprise}_t = \text{price}_t - \text{forecast}_t$ | Today's unexpected move |
-| 5. Correct the level | $\text{level}_t = \text{forecast}_t + \text{gain}_t \cdot \text{surprise}_t$ | Accept the believed part of the move, discard the rest as noise |
-| 6. Update the uncertainty | $\text{uncertainty}_t = (1 - \text{gain}_t)\cdot\text{forecast uncertainty}_t$ | Having seen today's price, the filter is more certain where the underlying price is |
+| 1. Predict the level | $`\text{forecast}_t = \text{level}_{t-1}`$ | With no new trades, the best estimate of today's underlying price is yesterday's |
+| 2. Predict the uncertainty | $`\text{forecast uncertainty}_t = \text{uncertainty}_{t-1} + q_{\text{level}}`$ | Overnight, news may have moved the underlying price, so the estimate becomes less certain by $`q_{\text{level}}`$ |
+| 3. Compute the gain | $`\text{gain}_t = \dfrac{\text{forecast uncertainty}_t}{\text{forecast uncertainty}_t + r_{\text{price}}}`$ | How much of today's move to believe: near 1 when genuine changes dominate (a fast-moving market), near 0 when noise dominates (a market that mostly jitters around its value) |
+| 4. Compare | $`\text{surprise}_t = \text{price}_t - \text{forecast}_t`$ | Today's unexpected move |
+| 5. Correct the level | $`\text{level}_t = \text{forecast}_t + \text{gain}_t \cdot \text{surprise}_t`$ | Accept the believed part of the move, discard the rest as noise |
+| 6. Update the uncertainty | $`\text{uncertainty}_t = (1 - \text{gain}_t)\cdot\text{forecast uncertainty}_t`$ | Having seen today's price, the filter is more certain where the underlying price is |
 
 ### 2.3 Equivalence to the EMA
 
-Substituting step 1 into step 5 gives $\text{level}_t = \text{gain}\cdot\text{price}_t + (1-\text{gain})\cdot\text{level}_{t-1}$, an EMA whose $\alpha$ is the gain. After a few bars the gain converges to a constant: the steady forecast uncertainty $u$ solves $u^2 - q_{\text{level}}\,u - q_{\text{level}}\,r_{\text{price}} = 0$, and the steady gain is $u/(u + r_{\text{price}})$. With $q_{\text{level}}/r_{\text{price}} = 1/6$ the steady gain is exactly $1/3$, the $\alpha$ of EMA(5).
+Substituting step 1 into step 5 gives $`\text{level}_t = \text{gain}\cdot\text{price}_t + (1-\text{gain})\cdot\text{level}_{t-1}`$, an EMA whose $`\alpha`$ is the gain. After a few bars the gain converges to a constant: the steady forecast uncertainty $`u`$ solves $`u^2 - q_{\text{level}}\,u - q_{\text{level}}\,r_{\text{price}} = 0`$, and the steady gain is $`u/(u + r_{\text{price}})`$. With $`q_{\text{level}}/r_{\text{price}} = 1/6`$ the steady gain is exactly $`1/3`$, the $`\alpha`$ of EMA(5).
 
-On Lecture 2's toy series, with $q_{\text{level}}/r_{\text{price}} = 1/6$ and the filter started at its steady uncertainty, the level reproduces EMA(5) on every bar, including the 103.54 after the spike ([chart C.1](#c1-predict-compare-correct-2)). Started instead from a wide uncertainty, the gain begins close to 1, so the first prices are accepted almost in full, and converges within a few bars ([chart C.2](#c2-only-the-ratio-matters-24)).
+On Lecture 2's toy series, with $`q_{\text{level}}/r_{\text{price}} = 1/6`$ and the filter started at its steady uncertainty, the level reproduces EMA(5) on every bar, including the 103.54 after the spike ([chart C.1](#c1-predict-compare-correct-2)). Started instead from a wide uncertainty, the gain begins close to 1, so the first prices are accepted almost in full, and converges within a few bars ([chart C.2](#c2-only-the-ratio-matters-24)).
 
 ### 2.4 Only the ratio of the noise variances matters
 
-Scaling both noise variances by the same constant leaves the estimates unchanged, because the gain depends only on $q_{\text{level}}/r_{\text{price}}$. The same ten prices, filtered at two scales:
+Scaling both noise variances by the same constant leaves the estimates unchanged, because the gain depends only on $`q_{\text{level}}/r_{\text{price}}`$. The same ten prices, filtered at two scales:
 
-| Bar | Price | Level, $(q_{\text{level}}, r_{\text{price}}) = (1, 4)$ | Level, $(10, 40)$ | Gain, both | Uncertainty band ±1 sd, $(1, 4)$ | Band, $(10, 40)$ |
+| Bar | Price | Level, $`(q_{\text{level}}, r_{\text{price}}) = (1, 4)`$ | Level, $`(10, 40)`$ | Gain, both | Uncertainty band ±1 sd, $`(1, 4)`$ | Band, $`(10, 40)`$ |
 |---|---|---|---|---|---|---|
 | 1 | 101 | 100.556 | 100.556 | 0.556 | 1.49 | 4.71 |
 | 4 | 104 | 102.036 | 102.036 | 0.398 | 1.26 | 3.99 |
 | 9 | 110 | 107.633 | 107.633 | 0.390 | 1.25 | 3.95 |
 
-Only the uncertainty band changes, by a factor of $\sqrt{10}$. The equivalence is exact when the starting uncertainty is scaled by the same factor; with an unscaled start it is approximate during the warm-up and exact once the start has been forgotten ([chart C.2](#c2-only-the-ratio-matters-24)).
+Only the uncertainty band changes, by a factor of $`\sqrt{10}`$. The equivalence is exact when the starting uncertainty is scaled by the same factor; with an unscaled start it is approximate during the warm-up and exact once the start has been forgotten ([chart C.2](#c2-only-the-ratio-matters-24)).
 
 **Example: a thermometer.** Let one variance describe how far the room temperature can drift in an hour and the other how noisy the thermometer is. Scaling both by the same factor leaves the relative reliability of model and instrument unchanged, so the estimate is unchanged; only the stated uncertainty increases.
 
@@ -92,9 +104,9 @@ A slope state gives the filter an explicit trend, which it carries from bar to b
 
 ### 3.1 The one-bar transition
 
-The model borrows the equations of motion: the level plays the role of position and the slope that of velocity. Over one bar of length $\Delta t$:
+The model borrows the equations of motion: the level plays the role of position and the slope that of velocity. Over one bar of length $`\Delta t`$:
 
-- next level = level + slope × $\Delta t$
+- next level = level + slope × $`\Delta t`$
 - next slope = slope, apart from a random change
 
 In matrix form, with the price as the only observation:
@@ -103,7 +115,7 @@ In matrix form, with the price as the only observation:
 \begin{pmatrix}\text{level}_t\\ \text{slope}_t\end{pmatrix} = \underbrace{\begin{pmatrix}1 & \Delta t\\ 0 & 1\end{pmatrix}}_{F}\begin{pmatrix}\text{level}_{t-1}\\ \text{slope}_{t-1}\end{pmatrix} + \begin{pmatrix}\text{level change}_t\\ \text{slope change}_t\end{pmatrix}, \qquad \text{price}_t = \underbrace{\begin{pmatrix}1 & 0\end{pmatrix}}_{H}\begin{pmatrix}\text{level}_t\\ \text{slope}_t\end{pmatrix} + \text{price noise}_t
 ```
 
-With one bar as the unit of time ($\Delta t = 1$) and the random changes summarised by their variances:
+With one bar as the unit of time ($`\Delta t = 1`$) and the random changes summarised by their variances:
 
 ```math
 F = \begin{pmatrix}1 & 1\\ 0 & 1\end{pmatrix}, \qquad H = \begin{pmatrix}1 & 0\end{pmatrix}, \qquad Q = \begin{pmatrix}q_{\text{level}} & 0\\ 0 & q_{\text{slope}}\end{pmatrix}, \qquad R = r_{\text{price}}
@@ -111,12 +123,12 @@ F = \begin{pmatrix}1 & 1\\ 0 & 1\end{pmatrix}, \qquad H = \begin{pmatrix}1 & 0\e
 
 | Entry | Mathematical role | Financial meaning |
 |---|---|---|
-| $F$, first row $(1, 1)$ | The level moves by the slope over one bar | The underlying price drifts by the current trend |
-| $F$, second row $(0, 1)$ | The slope carries over unchanged | Today's trend is the best guess for tomorrow's: the trend follower's hypothesis |
-| $H = (1, 0)$ | Only the level is observed | Prices reveal the level; the trend is never observed directly, only inferred from how levels change |
-| $q_{\text{level}}$ | Variance of random changes in the level | One-off revaluations: gaps and news that shift the price without changing the trend |
-| $q_{\text{slope}}$ | Variance of random changes in the slope | How quickly the trend itself may change: shifts in momentum |
-| $r_{\text{price}}$ | Variance of the price noise | Bid-ask bounce, temporary order-flow pressure, overshoots that reverse |
+| $`F`$, first row $`(1, 1)`$ | The level moves by the slope over one bar | The underlying price drifts by the current trend |
+| $`F`$, second row $`(0, 1)`$ | The slope carries over unchanged | Today's trend is the best guess for tomorrow's: the trend follower's hypothesis |
+| $`H = (1, 0)`$ | Only the level is observed | Prices reveal the level; the trend is never observed directly, only inferred from how levels change |
+| $`q_{\text{level}}`$ | Variance of random changes in the level | One-off revaluations: gaps and news that shift the price without changing the trend |
+| $`q_{\text{slope}}`$ | Variance of random changes in the slope | How quickly the trend itself may change: shifts in momentum |
+| $`r_{\text{price}}`$ | Variance of the price noise | Bid-ask bounce, temporary order-flow pressure, overshoots that reverse |
 
 The filter runs on log prices, so the slope is a daily log trend, shown annualised (×252) in the charts. The equations of motion are an analogy, not a law: prices have no inertia that guarantees a trend persists. The model assumes persistence and the surprises measure, bar by bar, how far the data disagree.
 
@@ -128,7 +140,7 @@ The same extrapolation lets the level sit above price while the market is still 
 
 ### 3.3 Two ways to specify Q
 
-The diagonal $Q$ above lets the level and the slope change independently, so the level can jump by itself, as prices gap. The alternative derives $Q$ from a single setting $q$ by assuming that only the slope receives random kicks and the level moves because the slope moved during the bar:
+The diagonal $`Q`$ above lets the level and the slope change independently, so the level can jump by itself, as prices gap. The alternative derives $`Q`$ from a single setting $`q`$ by assuming that only the slope receives random kicks and the level moves because the slope moved during the bar:
 
 ```math
 Q_{\text{derived}} = q\begin{pmatrix}1/3 & 1/2\\ 1/2 & 1\end{pmatrix}
@@ -142,17 +154,17 @@ An acceleration state models changes in the speed of the trend, and because it a
 
 ### 4.1 The one-bar transition
 
-Continuing the analogy, acceleration is the rate of change of the slope. Over one bar of length $\Delta t$:
+Continuing the analogy, acceleration is the rate of change of the slope. Over one bar of length $`\Delta t`$:
 
-- next level = level + slope × $\Delta t$ + ½ × acceleration × $\Delta t^2$
-- next slope = slope + acceleration × $\Delta t$
+- next level = level + slope × $`\Delta t`$ + ½ × acceleration × $`\Delta t^2`$
+- next slope = slope + acceleration × $`\Delta t`$
 - next acceleration = acceleration, apart from a random change
 
 ```math
 \begin{pmatrix}\text{level}_t\\ \text{slope}_t\\ \text{acceleration}_t\end{pmatrix} = \underbrace{\begin{pmatrix}1 & \Delta t & \tfrac12\Delta t^2\\ 0 & 1 & \Delta t\\ 0 & 0 & 1\end{pmatrix}}_{F}\begin{pmatrix}\text{level}_{t-1}\\ \text{slope}_{t-1}\\ \text{acceleration}_{t-1}\end{pmatrix} + \text{random changes}_t
 ```
 
-With $\Delta t = 1$ bar:
+With $`\Delta t = 1`$ bar:
 
 ```math
 F = \begin{pmatrix}1 & 1 & 0.5\\ 0 & 1 & 1\\ 0 & 0 & 1\end{pmatrix}, \qquad H = \begin{pmatrix}1 & 0 & 0\end{pmatrix}, \qquad Q = \begin{pmatrix}q_{\text{level}} & 0 & 0\\ 0 & q_{\text{slope}} & 0\\ 0 & 0 & q_{\text{acceleration}}\end{pmatrix}
@@ -160,10 +172,10 @@ F = \begin{pmatrix}1 & 1 & 0.5\\ 0 & 1 & 1\\ 0 & 0 & 1\end{pmatrix}, \qquad H = 
 
 | Entry | Financial meaning |
 |---|---|
-| $F$, first row $(1, 1, 0.5)$ | The underlying price drifts by the trend plus half the change in the trend: an accelerating rise pushes the projected level up, a decelerating rise pulls it down |
-| $F$, second row $(0, 1, 1)$ | The trend itself strengthens or fades by the acceleration |
-| $F$, third row $(0, 0, 1)$ | The change in trend speed carries over: a market that is speeding up is assumed to keep speeding up |
-| $q_{\text{acceleration}}$ | How quickly the change in trend speed may itself change |
+| $`F`$, first row $`(1, 1, 0.5)`$ | The underlying price drifts by the trend plus half the change in the trend: an accelerating rise pushes the projected level up, a decelerating rise pulls it down |
+| $`F`$, second row $`(0, 1, 1)`$ | The trend itself strengthens or fades by the acceleration |
+| $`F`$, third row $`(0, 0, 1)`$ | The change in trend speed carries over: a market that is speeding up is assumed to keep speeding up |
+| $`q_{\text{acceleration}}`$ | How quickly the change in trend speed may itself change |
 
 The first row is the reason acceleration matters beyond the slope: through the ½ entry it moves the level directly, so a decelerating rise lowers the projected level and brings it towards, or below, price earlier.
 
@@ -184,7 +196,7 @@ Acceleration turns before the slope on average, but not at every turning point. 
 
 ## Sections still to write (outline)
 
-5. **Design versus tuning.** Two separate choices. The *design* (which states the model has) decides, for every parameter setting, which kind of motion it follows with no lasting gap and whether it overshoots a jump. The *tuning* ($Q$ and $R$, of which only the ratio matters) sets only the speed. Prototype check at a slow and a very fast setting: Then the dials: a table of what each entry of $Q$ does to how the filter follows price (raise *q_level*, *q_slope*, *q_acceleration* or $r_{	ext{price}}$ → effect → measured cost from chart C.6).
+5. **Design versus tuning.** Two separate choices. The *design* (which states the model has) decides, for every parameter setting, which kind of motion it follows with no lasting gap and whether it overshoots a jump. The *tuning* ($`Q`$ and $`R`$, of which only the ratio matters) sets only the speed. Prototype check at a slow and a very fast setting: Then the dials: a table of what each entry of $`Q`$ does to how the filter follows price (raise *q_level*, *q_slope*, *q_acceleration* or $`r_{	ext{price}}`$ → effect → measured cost from chart C.6).
 
     | Design | Price jump: overshoot | Steady trend: gap behind price | Parabolic move: gap behind price |
     |---|---|---|---|
@@ -206,9 +218,9 @@ Acceleration turns before the slope on average, but not at every turning point. 
     | Acceleration | Turns early (from +9 to +43) | Points against it for about 160 bars |
 
     In these tests only the level + slope model's slope stayed with a trend that continued after a jump, yet still turned once the move stopped. What this means for entering and leaving positions is the subject of Part II. Then the dials *q_level*, *q_slope*, *q_acceleration* ([chart C.6](#c6-the-dials)) and matching a Kalman filter to an EMA on variance reduction.
-6. **Starting and running the filter.** Warm-up phases per design measured in the notebook (no universal bar count); the starting uncertainty $P_0$ and the diffuse start (chart C.7); a best-practice table: history to load, start, what to store, matched comparisons, surprise monitoring, re-estimating $q/R$.
-7. **Extensions and what each changes.** A robust update for fat-tailed surprises; $R$ per bar from the bar's range; a damped slope. Each profiled with the market conditions of §9 (what it gains, what it gives up), not ranked; early single-asset results are preliminary.
-8. **Nonlinear models, in depth.** Hidden volatility from daily ranges; linearisation (EKF) versus sigma points (UKF), with a table of the unscented parameters $lpha$, $eta$, $\kappa$ and what they actually control; transform first (log range) and the outlier lesson of 6 May 2010 (chart C.10); what neither fixes (fat tails, regime breaks).
+6. **Starting and running the filter.** Warm-up phases per design measured in the notebook (no universal bar count); the starting uncertainty $`P_0`$ and the diffuse start (chart C.7); a best-practice table: history to load, start, what to store, matched comparisons, surprise monitoring, re-estimating $`q/R`$.
+7. **Extensions and what each changes.** A robust update for fat-tailed surprises; $`R`$ per bar from the bar's range; a damped slope. Each profiled with the market conditions of §9 (what it gains, what it gives up), not ranked; early single-asset results are preliminary.
+8. **Nonlinear models, in depth.** Hidden volatility from daily ranges; linearisation (EKF) versus sigma points (UKF), with a table of the unscented parameters $`lpha`$, $`eta`$, $`\kappa`$ and what they actually control; transform first (log range) and the outlier lesson of 6 May 2010 (chart C.10); what neither fixes (fat tails, regime breaks).
 9. **What each filter captures: a profile by market condition, not a ranking.** Market conditions defined mechanically, across SPY, QQQ, GLD, AGG:
 
     | Market condition | Defined by | What we describe for each filter |
@@ -271,4 +283,4 @@ The level-only filter lags price; the level + slope and three-state levels lead 
 
 ![Level, slope and acceleration for four noise settings of the three-state filter, QQQ 2020](figures/c06_dials.png)
 
-Each setting raises one entry of $Q$ a hundredfold from the balanced case. Emphasising the slope makes it turn within days at the 2020 turning points but flip sign far more often; emphasising acceleration makes the slope and level overshoot. The settings are illustrative, not estimated.
+Each setting raises one entry of $`Q`$ a hundredfold from the balanced case. Emphasising the slope makes it turn within days at the 2020 turning points but flip sign far more often; emphasising acceleration makes the slope and level overshoot. The settings are illustrative, not estimated.

@@ -6,7 +6,7 @@ Volatility, flow, correlation and tails. The same bars and the same causal windo
 
 ## 1. Recap: same bars, different questions
 
-[Lecture 2](../02-ohlcv-and-price-smoothing/lecture.md) built one family, SMA, EMA, VWAP, KAMA and the Kalman filter, all answering *where is price heading, net of noise?* This lecture keeps the same causal template, $\hat x_t = g(x_{t-N+1}, \dots, x_t;\theta)$, but $\hat x$ is no longer a price. A volatility estimator turns price into dispersion; a correlation estimator turns two price series into one relationship number. Reading one as if it were another gives a well-defined number that answers the wrong question.
+[Lecture 2](../02-ohlcv-and-price-smoothing/lecture.md) built one family, SMA, EMA, VWAP, KAMA and the Kalman filter, all answering *where is price heading, net of noise?* This lecture keeps the same causal template, $`\hat x_t = g(x_{t-N+1}, \dots, x_t;\theta)`$, but $`\hat x`$ is no longer a price. A volatility estimator turns price into dispersion; a correlation estimator turns two price series into one relationship number. Reading one as if it were another gives a well-defined number that answers the wrong question.
 
 The input never changes: the same OHLCV bars, run through a trailing window. What changes is the transformation, and with it the question being answered.
 
@@ -29,9 +29,9 @@ Flow is the one place volume does real work, and correlation needs a second asse
 
 ### 1.2 Two datasets
 
-**A toy series**, extended from Lecture 2 §7 with highs and lows, plus a calmer second asset B for the relationship section. $N = 5$ throughout.
+**A toy series**, extended from Lecture 2 §7 with highs and lows, plus a calmer second asset B for the relationship section. $`N = 5`$ throughout.
 
-| $t$ | $H$ / $L$, asset A | Close A | Volume A | Close B |
+| $`t`$ | $`H`$ / $`L`$, asset A | Close A | Volume A | Close B |
 |---|---|---|---|---|
 | 0 | 100.2 / 99.8 | 100.0 | 1000 | 50.00 |
 | 1 | 100.5 / 100.1 | 100.3 | 1020 | 50.20 |
@@ -83,15 +83,15 @@ The **Average True Range** (Wilder, 1978) smooths it with Wilder's recursion:
 \mathrm{ATR}_t = \mathrm{ATR}_{t-1} + \frac{1}{n}\big(\mathrm{TR}_t - \mathrm{ATR}_{t-1}\big)
 ```
 
-This is an EMA with $\alpha = 1/n$, so ATR is **expanding**, not a window of recent ranges, even though "period" looks like a window size. Its average age is $n-1$ bars, against $(N-1)/2$ for a rolling window of $N$ bars (Lecture 2, §6.1), so ATR($n$) carries the memory of a $2n-1$ bar average: ATR(14) looks back like a 27-bar window, not a 14-bar one. It also needs a warm-up of about $7n$ bars, roughly 93 for ATR(14), by the rule in Lecture 2, §9.1. Both effects come from Wilder's smoothing, not from the true range: averaging the same true ranges with a plain $n$-bar mean (an SMA) gives an ATR whose memory is exactly $n$ bars and which is exact after $n-1$ bars. Wilder's choice is one of the weighting schemes Lecture 2 compares. It suited 1978, when indicators were computed by hand and a recursion needed only yesterday's value, but it scales badly: ATR(100) remembers about 199 bars and needs about 690 bars, nearly three years of daily data, to warm up. For long horizons a plain mean of true ranges, or an EMA with its span stated, is the better choice; the reason to keep Wilder's version is comparability with platforms and published values that use it.
+This is an EMA with $`\alpha = 1/n`$, so ATR is **expanding**, not a window of recent ranges, even though "period" looks like a window size. Its average age is $`n-1`$ bars, against $`(N-1)/2`$ for a rolling window of $`N`$ bars (Lecture 2, §6.1), so ATR($`n`$) carries the memory of a $`2n-1`$ bar average: ATR(14) looks back like a 27-bar window, not a 14-bar one. It also needs a warm-up of about $`7n`$ bars, roughly 93 for ATR(14), by the rule in Lecture 2, §9.1. Both effects come from Wilder's smoothing, not from the true range: averaging the same true ranges with a plain $`n`$-bar mean (an SMA) gives an ATR whose memory is exactly $`n`$ bars and which is exact after $`n-1`$ bars. Wilder's choice is one of the weighting schemes Lecture 2 compares. It suited 1978, when indicators were computed by hand and a recursion needed only yesterday's value, but it scales badly: ATR(100) remembers about 199 bars and needs about 690 bars, nearly three years of daily data, to warm up. For long horizons a plain mean of true ranges, or an EMA with its span stated, is the better choice; the reason to keep Wilder's version is comparability with platforms and published values that use it.
 
 **Does the choice matter?** On SPY the two versions are 0.98 correlated, with a median gap of 6%, but they part company around volatility spikes. In March 2020 the plain mean peaked at 8.4% of price and Wilder's version at 6.6%, about 21% lower; through April and May Wilder's version stayed about 25% higher as it forgot the spike slowly ([chart B.7](#b7-atr-two-ways-31)). For a strategy that sizes positions on ATR, that is a 20–25% difference in position size at exactly the moments that matter.
 
-### 3.2 Toy series ($n = 5$)
+### 3.2 Toy series ($`n = 5`$)
 
-$\mathrm{ATR}_4$ is seeded with the simple average of the first five true ranges, (0.40 + 0.50 + 0.40 + 0.50 + 0.40) / 5 = 0.440. At the spike, $\mathrm{ATR}_7 = 0.442 + (7.50 - 0.442)/5 = 1.853$.
+$`\mathrm{ATR}_4`$ is seeded with the simple average of the first five true ranges, (0.40 + 0.50 + 0.40 + 0.50 + 0.40) / 5 = 0.440. At the spike, $`\mathrm{ATR}_7 = 0.442 + (7.50 - 0.442)/5 = 1.853`$.
 
-| $t$ | 4 | 5 | 6 | **7** | 8 | 9 | 10 | 11 | 12 | 13 |
+| $`t`$ | 4 | 5 | 6 | **7** | 8 | 9 | 10 | 11 | 12 | 13 |
 |---|---|---|---|---|---|---|---|---|---|---|
 | TR | 0.40 | 0.50 | 0.40 | **7.50** | 6.90 | 0.50 | 0.40 | 0.50 | 0.40 | 0.50 |
 | ATR(5) | 0.440 | 0.452 | 0.442 | **1.853** | 2.863 | 2.390 | 1.992 | 1.694 | 1.435 | 1.248 |
@@ -100,46 +100,46 @@ ATR keeps rising one bar after the spike because bar 8's true range is also larg
 
 ### 3.3 Real day: SPY, 16 March 2020
 
-The largest one-day fall in SPY since 1987. $H = 233.59$, $L = 215.82$, previous close 244.88.
+The largest one-day fall in SPY since 1987. $`H = 233.59`$, $`L = 215.82`$, previous close 244.88.
 
 | Candidate | Value |
 |---|---|
-| $H - L$ | 17.77 |
-| $\lvert H - C_{\text{prev}}\rvert$ | 11.29 |
-| $\lvert L - C_{\text{prev}}\rvert$ | **29.06** |
+| $`H - L`$ | 17.77 |
+| $`\lvert H - C_{\text{prev}}\rvert`$ | 11.29 |
+| $`\lvert L - C_{\text{prev}}\rvert`$ | **29.06** |
 
-The gap from the previous close dominates: the true range is 29.06, 64% more than the day's own high-low range. One step of Wilder's recursion ($n = 14$): 11.23 + (29.06 − 11.23) / 14 = 12.51, matching the library value.
+The gap from the previous close dominates: the true range is 29.06, 64% more than the day's own high-low range. One step of Wilder's recursion ($`n = 14`$): 11.23 + (29.06 − 11.23) / 14 = 12.51, matching the library value.
 
 ## 4. From a range to a volatility
 
-ATR is a range, not a standard deviation. A classical result converts one into the other: divide by $\sqrt{8/\pi} \approx 1.596$. The constant is not a rule of thumb; it follows from the mathematics of Brownian motion.
+ATR is a range, not a standard deviation. A classical result converts one into the other: divide by $`\sqrt{8/\pi} \approx 1.596`$. The constant is not a rule of thumb; it follows from the mathematics of Brownian motion.
 
-### 4.1 Where $\sqrt{8/\pi}$ comes from
+### 4.1 Where $`\sqrt{8/\pi}`$ comes from
 
-Assume log price follows a driftless Brownian motion with volatility $\sigma$ over a period of length $T$. The **reflection principle** says the running maximum $M_T$ of a Brownian path has the same distribution as $|W_T|$, the absolute value of where the path ends. For a normal variable with standard deviation $\sigma\sqrt T$, $\mathbb E|W_T| = \sigma\sqrt{2T/\pi}$. By symmetry the running minimum has the mirror-image expectation. So:
+Assume log price follows a driftless Brownian motion with volatility $`\sigma`$ over a period of length $`T`$. The **reflection principle** says the running maximum $`M_T`$ of a Brownian path has the same distribution as $`|W_T|`$, the absolute value of where the path ends. For a normal variable with standard deviation $`\sigma\sqrt T`$, $`\mathbb E|W_T| = \sigma\sqrt{2T/\pi}`$. By symmetry the running minimum has the mirror-image expectation. So:
 
 ```math
 \mathbb E[H - L] = \mathbb E[M_T] - \mathbb E[m_T] = 2\,\sigma\sqrt{\frac{2T}{\pi}} = \sigma\sqrt{\frac{8T}{\pi}} \approx 1.596\,\sigma\sqrt{T}
 ```
 
-The result is due to Feller (1951). Over one day ($T = 1$) the expected high-low range is about 1.6 daily standard deviations, so dividing an average range by $\sqrt{8/\pi}$ gives $\sigma$.
+The result is due to Feller (1951). Over one day ($`T = 1`$) the expected high-low range is about 1.6 daily standard deviations, so dividing an average range by $`\sqrt{8/\pi}`$ gives $`\sigma`$.
 
-Parkinson (1980) built his estimator on the same model but uses the **squared** range, $\mathbb E[(H-L)^2] = 4\ln 2\cdot\sigma^2 T$. That is why $4\ln 2$ appears in his formula rather than $8/\pi$: the mean of a square is not the square of a mean.
+Parkinson (1980) built his estimator on the same model but uses the **squared** range, $`\mathbb E[(H-L)^2] = 4\ln 2\cdot\sigma^2 T`$. That is why $`4\ln 2`$ appears in his formula rather than $`8/\pi`$: the mean of a square is not the square of a mean.
 
 **Example: a dog on a lead.** Walk a dog for an hour and note how far it ranged left and right of the path. A dog that wanders more has a wider range, and on average the range is a fixed multiple of how jittery the dog is. Feller's constant is that multiple for a random walk.
 
 ### 4.2 Range-based volatility estimators
 
-With $h = \ln(H/L)$, $c = \ln(C/O)$ and the overnight gap $o = \ln(O_t / C_{t-1})$:
+With $`h = \ln(H/L)`$, $`c = \ln(C/O)`$ and the overnight gap $`o = \ln(O_t / C_{t-1})`$:
 
 | Estimator | Daily variance estimate | Uses |
 |---|---|---|
-| Close-to-close | variance of $\ln(C_t/C_{t-1})$ | Closes only |
-| Parkinson (1980) | $h^2/(4\ln 2)$ | High and low |
-| Garman–Klass (1980) | $\frac{1}{2}h^2 - (2\ln 2 - 1)\,c^2$ | Open, high, low, close |
-| Rogers–Satchell (1991) | $\ln(H/C)\ln(H/O) + \ln(L/C)\ln(L/O)$ | Same, robust to drift |
-| Yang–Zhang (2000) | $\sigma_o^2 + k\,\sigma_c^2 + (1 - k)\,\sigma_{\mathrm{RS}}^2$, with $k = 0.34/(1.34 + (n+1)/(n-1))$ | Adds the overnight gap |
-| ATR% / $\sqrt{8/\pi}$ | $(\mathrm{ATR}/C)/1.596$, squared | True range, Feller's constant |
+| Close-to-close | variance of $`\ln(C_t/C_{t-1})`$ | Closes only |
+| Parkinson (1980) | $`h^2/(4\ln 2)`$ | High and low |
+| Garman–Klass (1980) | $`\frac{1}{2}h^2 - (2\ln 2 - 1)\,c^2`$ | Open, high, low, close |
+| Rogers–Satchell (1991) | $`\ln(H/C)\ln(H/O) + \ln(L/C)\ln(L/O)`$ | Same, robust to drift |
+| Yang–Zhang (2000) | $`\sigma_o^2 + k\,\sigma_c^2 + (1 - k)\,\sigma_{\mathrm{RS}}^2`$, with $`k = 0.34/(1.34 + (n+1)/(n-1))`$ | Adds the overnight gap |
+| ATR% / $`\sqrt{8/\pi}`$ | $`(\mathrm{ATR}/C)/1.596`$, squared | True range, Feller's constant |
 
 Range estimators use more of each bar than the close alone, so they are far more **efficient**: Parkinson's estimator needs roughly one-fifth as many days as close-to-close for the same precision under the Brownian model.
 
@@ -154,29 +154,29 @@ Annualised volatility, median over each asset's full history, 27-bar window (§5
 | Garman–Klass | 11.4% | 10.0% | 2.9% | 0.86 | 0.68 | 0.82 |
 | Rogers–Satchell | 11.4% | 10.0% | 3.0% | 0.86 | 0.68 | 0.83 |
 | Yang–Zhang | 13.8% | 14.8% | 3.9% | 1.04 | 1.00 | 1.10 |
-| ATR% / $\sqrt{8/\pi}$ | 11.7% | 11.9% | 3.3% | 0.88 | 0.81 | 0.91 |
+| ATR% / $`\sqrt{8/\pi}`$ | 11.7% | 11.9% | 3.3% | 0.88 | 0.81 | 0.91 |
 
-The session-only estimators report 67–86% of close-to-close volatility; Yang–Zhang, which adds the overnight gap back, reports 100–110%. The median share of Yang–Zhang variance from the overnight gap is 28% for SPY, 45% for AGG and **53% for GLD**: gold trades around the clock, GLD only in US hours, so half its variance arrives while GLD is closed. ATR% / $\sqrt{8/\pi}$ lands between the two groups because true range catches part of the gap through the previous close, but not all of it. [Chart B.2](#b2-four-ways-to-measure-glds-volatility-43) shows the four main estimators on GLD.
+The session-only estimators report 67–86% of close-to-close volatility; Yang–Zhang, which adds the overnight gap back, reports 100–110%. The median share of Yang–Zhang variance from the overnight gap is 28% for SPY, 45% for AGG and **53% for GLD**: gold trades around the clock, GLD only in US hours, so half its variance arrives while GLD is closed. ATR% / $`\sqrt{8/\pi}`$ lands between the two groups because true range catches part of the gap through the previous close, but not all of it. [Chart B.2](#b2-four-ways-to-measure-glds-volatility-43) shows the four main estimators on GLD.
 
 ### 4.4 Why every range estimate is biased down: discrete sampling
 
-The formula assumes you see the whole path, but you only see the trades. $\sqrt{8/\pi}\,\sigma$ is the expected range of a **continuous** path, its true highest and lowest points. A bar's recorded high and low come from trades at discrete moments, and between two trades the "true" price can move a little higher or lower without anyone trading there. So, always:
+The formula assumes you see the whole path, but you only see the trades. $`\sqrt{8/\pi}\,\sigma`$ is the expected range of a **continuous** path, its true highest and lowest points. A bar's recorded high and low come from trades at discrete moments, and between two trades the "true" price can move a little higher or lower without anyone trading there. So, always:
 
 - observed high ≤ true high
 - observed low ≥ true low
 - **observed range ≤ true range**
 
-The observed range can never be wider than the true one, and on average it is narrower. Dividing a range that is too small by the same constant gives a $\sigma$ that is too small.
+The observed range can never be wider than the true one, and on average it is narrower. Dividing a range that is too small by the same constant gives a $`\sigma`$ that is too small.
 
-**How big?** For a random walk sampled at $n$ evenly spaced points, the expected maximum falls short of the continuous maximum by about
+**How big?** For a random walk sampled at $`n`$ evenly spaced points, the expected maximum falls short of the continuous maximum by about
 
 ```math
 \beta\,\sigma\sqrt{T/n}, \qquad \beta = -\frac{\zeta(1/2)}{\sqrt{2\pi}} \approx 0.5826
 ```
 
-on each side (the Broadie–Glasserman–Kou correction, an asymptotic result for large $n$). The range loses about twice that. Relative to the full expected range of $1.596\,\sigma\sqrt{T}$, the shortfall is about **$0.73/\sqrt{n}$**:
+on each side (the Broadie–Glasserman–Kou correction, an asymptotic result for large $`n`$). The range loses about twice that. Relative to the full expected range of $`1.596\,\sigma\sqrt{T}`$, the shortfall is about **$`0.73/\sqrt{n}`$**:
 
-| Samples per bar ($n$) | Range understated by |
+| Samples per bar ($`n`$) | Range understated by |
 |---|---|
 | 10 | ~23% |
 | 100 | ~7% |
@@ -187,7 +187,7 @@ on each side (the Broadie–Glasserman–Kou correction, an asymptotic result fo
 
 ### 4.5 Using ATR as a volatility, without improvising
 
-Two standard steps: divide by price (§2), then by $\sqrt{8/\pi}$. The result is in the units of a standard deviation and can be annualised with $\sqrt{252}$. Remaining caveats: true range includes part of the overnight gap, Wilder's smoothing is an EMA rather than a plain mean, and the Brownian model ignores drift and jumps. Here it reads 81–91% of close-to-close, so it is reliable for **comparing** volatility across assets and over time and for sizing positions in proportion to it, as in the Turtle rules (Faith, 2007). Where the **level** must be right, use Yang–Zhang.
+Two standard steps: divide by price (§2), then by $`\sqrt{8/\pi}`$. The result is in the units of a standard deviation and can be annualised with $`\sqrt{252}`$. Remaining caveats: true range includes part of the overnight gap, Wilder's smoothing is an EMA rather than a plain mean, and the Brownian model ignores drift and jumps. Here it reads 81–91% of close-to-close, so it is reliable for **comparing** volatility across assets and over time and for sizing positions in proportion to it, as in the Turtle rules (Faith, 2007). Where the **level** must be right, use Yang–Zhang.
 
 ## 5. Memory and precision: choosing windows for a reason
 
@@ -195,19 +195,19 @@ Windows in this lecture are set by two rules, not by convention: match memory fo
 
 ### 5.1 Matching memory
 
-Wilder's period $n$ carries the memory of a $2n-1$ bar rolling window (§3.1). ATR(14) and ADX(14) therefore look back like a **27-bar** window, so the volatility estimators, the efficiency ratio and the order imbalance below all use 27 bars. The common defaults 14 and 20 have no shared basis and should not be read together as if they did.
+Wilder's period $`n`$ carries the memory of a $`2n-1`$ bar rolling window (§3.1). ATR(14) and ADX(14) therefore look back like a **27-bar** window, so the volatility estimators, the efficiency ratio and the order imbalance below all use 27 bars. The common defaults 14 and 20 have no shared basis and should not be read together as if they did.
 
 ### 5.2 Matching precision
 
 A statistic also needs enough observations to be estimated usefully, and that need differs by statistic. For independent normal returns the approximate standard errors are:
 
-| Statistic | Standard error | $N = 27$ | $N = 63$ | $N = 252$ |
+| Statistic | Standard error | $`N = 27`$ | $`N = 63`$ | $`N = 252`$ |
 |---|---|---|---|---|
-| Correlation (near 0) | $1/\sqrt{N}$ | 0.19 | 0.13 | 0.06 |
-| Skewness | $\sqrt{6/N}$ | 0.47 | 0.31 | 0.15 |
-| Excess kurtosis | $\sqrt{24/N}$ | 0.94 | 0.62 | 0.31 |
+| Correlation (near 0) | $`1/\sqrt{N}`$ | 0.19 | 0.13 | 0.06 |
+| Skewness | $`\sqrt{6/N}`$ | 0.47 | 0.31 | 0.15 |
+| Excess kurtosis | $`\sqrt{24/N}`$ | 0.94 | 0.62 | 0.31 |
 
-A 27-bar kurtosis has a standard error near 1 before fat tails make it worse, so correlation and the higher moments use **63 bars** (about one quarter). Each moment costs more data than the last: the $k$-th moment is dominated by the $k$-th power of the few largest returns.
+A 27-bar kurtosis has a standard error near 1 before fat tails make it worse, so correlation and the higher moments use **63 bars** (about one quarter). Each moment costs more data than the last: the $`k`$-th moment is dominated by the $`k`$-th power of the few largest returns.
 
 **Example: polling.** A poll of 27 people can tell you roughly what share prefer tea to coffee. It cannot tell you how lopsided their opinions are, or how many hold extreme views. Those are higher moments, and they need a much bigger sample.
 
@@ -239,24 +239,24 @@ where the bars denote Wilder smoothing. ADX lies in [0, 100] and carries no sign
 
 ### 6.3 Toy series
 
-| $t$ | 5 | 6 | **7** | **8** | 9 | 10 | 11 | 12 | 13 |
+| $`t`$ | 5 | 6 | **7** | **8** | 9 | 10 | 11 | 12 | 13 |
 |---|---|---|---|---|---|---|---|---|---|
 | ER(5) | 1.000 | 1.000 | **1.000** | **0.124** | 0.130 | 0.124 | 0.130 | 0.714 | 1.000 |
 
-| $t$ | 1–6 | **7** | **8** | 9 | 10–13 |
+| $`t`$ | 1–6 | **7** | **8** | 9 | 10–13 |
 |---|---|---|---|---|---|
-| $+\mathrm{DM}$ | 0.20–0.30 | **7.30** | 0.00 | 0.00 | 0.20–0.30 |
-| $-\mathrm{DM}$ | 0.00 | 0.00 | **0.40** | 0.00 | 0.00 |
+| $`+\mathrm{DM}`$ | 0.20–0.30 | **7.30** | 0.00 | 0.00 | 0.20–0.30 |
+| $`-\mathrm{DM}`$ | 0.00 | 0.00 | **0.40** | 0.00 | 0.00 |
 
-| $t$ | 8 | 9 | 10 | 11 | 12 | 13 |
+| $`t`$ | 8 | 9 | 10 | 11 | 12 | 13 |
 |---|---|---|---|---|---|---|
 | ADX | 97.69 | 95.84 | 94.47 | 93.53 | 92.90 | 92.59 |
 
-Bar 8's close falls sharply (108.5 → 102.5), yet $-\mathrm{DM}$ is only 0.40, the only nonzero $-\mathrm{DM}$ in the series. ADX registers a down-move only when the bar sets a **new low**, and bar 8's low (101.6) barely undercuts bar 7's (102.0). ADX stays near 95 throughout: a loud reversal in closing price is almost invisible to it, and the spike itself counts as a clean up-move however violent it was.
+Bar 8's close falls sharply (108.5 → 102.5), yet $`-\mathrm{DM}`$ is only 0.40, the only nonzero $`-\mathrm{DM}`$ in the series. ADX registers a down-move only when the bar sets a **new low**, and bar 8's low (101.6) barely undercuts bar 7's (102.0). ADX stays near 95 throughout: a loud reversal in closing price is almost invisible to it, and the spike itself counts as a clean up-move however violent it was.
 
 ### 6.4 Real day: SPY, 16 March 2020
 
-Up move 233.59 − 246.85 = −13.26; down move 225.97 − 215.82 = +10.15. So $+\mathrm{DM} = 0$ and $-\mathrm{DM} = 10.15$. After smoothing, $+\mathrm{DI} = 9.66$ and $-\mathrm{DI} = 38.82$, giving $\mathrm{DX} = 100 \times \lvert 9.66 - 38.82\rvert/(9.66 + 38.82) = 60.16$ and $\mathrm{ADX} = 41.10 + (60.16 - 41.10)/14 = 42.46$. The 27-bar efficiency ratio on the same day was 84.57 / 210.67 = 0.40: a large net fall, but along a path that swung hard both ways. Both values match the library. [Chart B.5](#b5-trend-strength-through-the-2020-crash-6) plots both through the 2020 crash.
+Up move 233.59 − 246.85 = −13.26; down move 225.97 − 215.82 = +10.15. So $`+\mathrm{DM} = 0`$ and $`-\mathrm{DM} = 10.15`$. After smoothing, $`+\mathrm{DI} = 9.66`$ and $`-\mathrm{DI} = 38.82`$, giving $`\mathrm{DX} = 100 \times \lvert 9.66 - 38.82\rvert/(9.66 + 38.82) = 60.16`$ and $`\mathrm{ADX} = 41.10 + (60.16 - 41.10)/14 = 42.46`$. The 27-bar efficiency ratio on the same day was 84.57 / 210.67 = 0.40: a large net fall, but along a path that swung hard both ways. Both values match the library. [Chart B.5](#b5-trend-strength-through-the-2020-crash-6) plots both through the 2020 crash.
 
 ## 7. Order flow: who is doing the buying
 
@@ -270,7 +270,7 @@ OBV's level is meaningless and cannot be compared across assets; its change over
 
 OBV (Granville, 1963) has **no decay at all**: not rolling, not expanding-with-decay, but a plain running sum. That is a third memory pattern beside Lecture 2's two: *cumulative*.
 
-| $t$ | 6 | **7** | **8** | 9 | 10 | 11 | 12 | 13 |
+| $`t`$ | 6 | **7** | **8** | 9 | 10 | 11 | 12 | 13 |
 |---|---|---|---|---|---|---|---|---|
 | Close | 101.5 | **108.5** | **102.5** | 102.8 | 103.0 | 103.3 | 103.5 | 103.8 |
 | OBV | 6,070 | **10,870** | **9,170** | 10,320 | 11,400 | 12,430 | 13,440 | 14,480 |
@@ -279,7 +279,7 @@ The spike adds its entire 4,800 because OBV reads only the sign of the move, nev
 
 ### 7.2 From OBV to a comparable order imbalance
 
-OBV's level depends on the start date and on each asset's typical volume, so only its changes carry information. The order-flow literature summarises buyer- and seller-initiated volume as **order imbalance**, $(V_{\text{buy}} - V_{\text{sell}})/(V_{\text{buy}} + V_{\text{sell}}) \in [-1, 1]$ (Chordia, Roll and Subrahmanyam, 2002). OBV's sign rule is a daily version of the **tick rule** used to classify trades as buys or sells (Lee and Ready, 1991). Applying it over a window turns the change in OBV into an order imbalance:
+OBV's level depends on the start date and on each asset's typical volume, so only its changes carry information. The order-flow literature summarises buyer- and seller-initiated volume as **order imbalance**, $`(V_{\text{buy}} - V_{\text{sell}})/(V_{\text{buy}} + V_{\text{sell}}) \in [-1, 1]`$ (Chordia, Roll and Subrahmanyam, 2002). OBV's sign rule is a daily version of the **tick rule** used to classify trades as buys or sells (Lee and Ready, 1991). Applying it over a window turns the change in OBV into an order imbalance:
 
 ```math
 \mathrm{OIB}^{\text{tick}}_t = \frac{\sum_{k=0}^{N-1}\mathrm{sign}(\Delta C_{t-k})\,v_{t-k}}{\sum_{k=0}^{N-1}v_{t-k}} = \frac{\mathrm{OBV}_t-\mathrm{OBV}_{t-N}}{\sum_{k=0}^{N-1}v_{t-k}}
@@ -289,9 +289,9 @@ On SPY over the 27 bars to 16 March 2020: signed volume −2.25bn / total 4.90bn
 
 ### 7.3 Bulk volume classification
 
-The tick rule gives a bar's whole volume to one side. **Bulk volume classification** (Easley, López de Prado and O'Hara, 2012) splits it: the buyer-initiated fraction is $\Phi(\Delta p / \sigma_{\Delta p})$, where $\Phi$ is the standard normal distribution function. A small move splits volume almost evenly; only a large move assigns most of it to one side. Here $\sigma$ comes from the preceding 252 bars, so no future data is used.
+The tick rule gives a bar's whole volume to one side. **Bulk volume classification** (Easley, López de Prado and O'Hara, 2012) splits it: the buyer-initiated fraction is $`\Phi(\Delta p / \sigma_{\Delta p})`$, where $`\Phi`$ is the standard normal distribution function. A small move splits volume almost evenly; only a large move assigns most of it to one side. Here $`\sigma`$ comes from the preceding 252 bars, so no future data is used.
 
-On 16 March 2020 SPY's log return was −11.6% against a $\sigma$ of 1.45%: $z = -8.0$ and $\Phi(z) \approx 0$, so essentially all the day's volume is classified as selling. Over the full histories the two imbalance measures correlate at 0.84 (SPY), 0.89 (GLD) and 0.82 (AGG). [Chart B.6](#b6-from-obv-to-a-comparable-order-imbalance-7) compares OBV with the order imbalance across assets.
+On 16 March 2020 SPY's log return was −11.6% against a $`\sigma`$ of 1.45%: $`z = -8.0`$ and $`\Phi(z) \approx 0`$, so essentially all the day's volume is classified as selling. Over the full histories the two imbalance measures correlate at 0.84 (SPY), 0.89 (GLD) and 0.82 (AGG). [Chart B.6](#b6-from-obv-to-a-comparable-order-imbalance-7) compares OBV with the order imbalance across assets.
 
 ## 8. Relationship between series: do two assets still move together
 
@@ -299,28 +299,28 @@ Correlation and beta answer different questions and can move in opposite directi
 
 ### 8.1 Rolling correlation and beta
 
-Over a trailing window of $N$ **returns** (co-movement is about changes, not levels):
+Over a trailing window of $`N`$ **returns** (co-movement is about changes, not levels):
 
 ```math
 \rho_t = \frac{\sum (x-\bar x)(y-\bar y)}{\sqrt{\sum (x-\bar x)^2\,\sum (y-\bar y)^2}}, \qquad \beta_t = \frac{\sum (x-\bar x)(y-\bar y)}{\sum (y-\bar y)^2}
 ```
 
-They share a numerator. $\rho$ divides by both series' dispersion and asks *how clean is the co-movement*; $\beta$ divides by $y$'s alone and asks *how large is it*. Both are rolling, with the same hard-edge cliff as SMA.
+They share a numerator. $`\rho`$ divides by both series' dispersion and asks *how clean is the co-movement*; $`\beta`$ divides by $`y`$'s alone and asks *how large is it*. Both are rolling, with the same hard-edge cliff as SMA.
 
-### 8.2 Toy series ($N = 5$)
+### 8.2 Toy series ($`N = 5`$)
 
-| $t$ | 5 | 6 | **7** | 8 | 9 | 10 | 11 | **12** | 13 |
+| $`t`$ | 5 | 6 | **7** | 8 | 9 | 10 | 11 | **12** | 13 |
 |---|---|---|---|---|---|---|---|---|---|
-| $r_A$ (%) | 0.297 | 0.197 | **6.897** | −5.530 | 0.293 | 0.195 | 0.291 | 0.194 | 0.290 |
-| $r_B$ (%) | 0.498 | −0.198 | 0.496 | −0.197 | 0.495 | −0.197 | 0.493 | −0.196 | 0.492 |
-| $\rho(5)$ | 0.992 | 1.000 | **0.421** | 0.659 | 0.642 | 0.661 | 0.644 | **0.426** | 1.000 |
-| $\beta(5)$ | 0.148 | 0.143 | **3.288** | 7.626 | 7.437 | 7.670 | 7.481 | **2.910** | 0.141 |
+| $`r_A`$ (%) | 0.297 | 0.197 | **6.897** | −5.530 | 0.293 | 0.195 | 0.291 | 0.194 | 0.290 |
+| $`r_B`$ (%) | 0.498 | −0.198 | 0.496 | −0.197 | 0.495 | −0.197 | 0.493 | −0.196 | 0.492 |
+| $`\rho(5)`$ | 0.992 | 1.000 | **0.421** | 0.659 | 0.642 | 0.661 | 0.644 | **0.426** | 1.000 |
+| $`\beta(5)`$ | 0.148 | 0.143 | **3.288** | 7.626 | 7.437 | 7.670 | 7.481 | **2.910** | 0.141 |
 
 When A spikes, correlation **falls** to 0.42 while beta **rises** to 3.3 and then above 7.6. A's 6.9% move is paired with an ordinary 0.5% move in B, so whatever co-movement is left gets scaled up by the ratio of move sizes. Correlation says the relationship got noisier; beta says that, to the extent it held, it held at a much larger scale. A hedge sized from this beta would be badly wrong, because the event was a one-off. Five bars later both numbers are back exactly where they started.
 
 ### 8.3 Real data: the stock–bond correlation changed sign
 
-The correlation between SPY and AGG returns, over 63 bars (§5), is one of the most consequential numbers in portfolio construction: a negative value means bonds hedge equity sell-offs. On 16 March 2020 it was $0.002856/\sqrt{0.052762 	imes 0.002835}$ = **+0.23**.
+The correlation between SPY and AGG returns, over 63 bars (§5), is one of the most consequential numbers in portfolio construction: a negative value means bonds hedge equity sell-offs. On 16 March 2020 it was $`0.002856/\sqrt{0.052762 	imes 0.002835}`$ = **+0.23**.
 
 | Period | Share of days with negative SPY–AGG correlation |
 |---|---|
@@ -337,20 +337,20 @@ Sample skewness and kurtosis are biased in small windows and bounded by the wind
 
 ### 9.1 The plain estimators
 
-From the window's central moments $m_k = \frac1n\sum (x-\bar x)^k$:
+From the window's central moments $`m_k = \frac1n\sum (x-\bar x)^k`$:
 
 ```math
 g_1 = \frac{m_3}{m_2^{3/2}} \quad\text{(skewness)}, \qquad g_2 = \frac{m_4}{m_2^{2}} - 3 \quad\text{(excess kurtosis)}
 ```
 
-Skewness is positive when a few large up-moves sit among many small down-moves. The $-3$ makes kurtosis *excess* kurtosis: zero for a normal distribution, positive for fatter tails.
+Skewness is positive when a few large up-moves sit among many small down-moves. The $`-3`$ makes kurtosis *excess* kurtosis: zero for a normal distribution, positive for fatter tails.
 
 ### 9.2 Why they need adjusting
 
 Two problems appear in small samples.
 
-1. **Bias.** $g_1$ and $g_2$ divide by $n$ and use the sample mean, so they are systematically too small in magnitude for small $n$. The adjusted Fisher–Pearson skewness $G_1$ and the matching adjusted kurtosis $G_2$ correct this; $G_2$ is exactly unbiased for normal data (Joanes and Gill, 1998). They are what `pandas` and most statistics packages report.
-2. **Bounds.** In a sample of $n$ points, skewness can never exceed $(n-2)/\sqrt{n-1}$, and $m_4/m_2^2$ can never exceed $(n^2-3n+3)/(n-1)$. The largest value in each case comes from one outlier among identical points.
+1. **Bias.** $`g_1`$ and $`g_2`$ divide by $`n`$ and use the sample mean, so they are systematically too small in magnitude for small $`n`$. The adjusted Fisher–Pearson skewness $`G_1`$ and the matching adjusted kurtosis $`G_2`$ correct this; $`G_2`$ is exactly unbiased for normal data (Joanes and Gill, 1998). They are what `pandas` and most statistics packages report.
+2. **Bounds.** In a sample of $`n`$ points, skewness can never exceed $`(n-2)/\sqrt{n-1}`$, and $`m_4/m_2^2`$ can never exceed $`(n^2-3n+3)/(n-1)`$. The largest value in each case comes from one outlier among identical points.
 
 ```math
 G_1 = g_1\,\frac{\sqrt{n(n-1)}}{n-2}, \qquad G_2 = \frac{(n-1)\big((n+1)\,g_2 + 6\big)}{(n-2)(n-3)}
@@ -358,23 +358,23 @@ G_1 = g_1\,\frac{\sqrt{n(n-1)}}{n-2}, \qquad G_2 = \frac{(n-1)\big((n+1)\,g_2 + 
 
 ### 9.3 Toy series: the numbers are pinned at their maximum
 
-Plain estimators on A's returns, $N = 5$:
+Plain estimators on A's returns, $`N = 5`$:
 
-| $t$ | 5 | 6 | **7** | 8 | 9 | 10 | 11 | **12** | 13 |
+| $`t`$ | 5 | 6 | **7** | 8 | 9 | 10 | 11 | **12** | 13 |
 |---|---|---|---|---|---|---|---|---|---|
-| Skew $g_1$ | −0.407 | 0.408 | **1.499** | 0.206 | 0.192 | 0.207 | 0.193 | **−1.499** | −0.407 |
-| Excess kurtosis $g_2$ | −1.832 | −1.832 | **0.249** | −0.488 | −0.489 | −0.488 | −0.489 | **0.248** | −1.832 |
+| Skew $`g_1`$ | −0.407 | 0.408 | **1.499** | 0.206 | 0.192 | 0.207 | 0.193 | **−1.499** | −0.407 |
+| Excess kurtosis $`g_2`$ | −1.832 | −1.832 | **0.249** | −0.488 | −0.489 | −0.488 | −0.489 | **0.248** | −1.832 |
 
-The sign of skew correctly tracks the outlier: +1.5 when the window holds the up-spike, −1.5 when it holds the reversal. But for $n = 5$ the bounds in §9.2 are a skewness of 3/2 = 1.5 and an excess kurtosis of 13/4 − 3 = 0.25. **The spike drives both statistics to the largest values a 5-point sample can produce.** Kurtosis cannot report the spike as "fat-tailed" in any stronger way, however extreme the move. This is the sharpest form of the small-sample problem, and why §5 uses 63 bars.
+The sign of skew correctly tracks the outlier: +1.5 when the window holds the up-spike, −1.5 when it holds the reversal. But for $`n = 5`$ the bounds in §9.2 are a skewness of 3/2 = 1.5 and an excess kurtosis of 13/4 − 3 = 0.25. **The spike drives both statistics to the largest values a 5-point sample can produce.** Kurtosis cannot report the spike as "fat-tailed" in any stronger way, however extreme the move. This is the sharpest form of the small-sample problem, and why §5 uses 63 bars.
 
 ### 9.4 Real data: SPY, 63 bars to 16 March 2020
 
 | Statistic | Plain | Adjusted |
 |---|---|---|
-| Skewness | $g_1 = -1.277$ | $G_1 = -1.309$ |
-| Excess kurtosis | $g_2 = +5.136$ | $G_2 = +5.670$ |
+| Skewness | $`g_1 = -1.277`$ | $`G_1 = -1.309`$ |
+| Excess kurtosis | $`g_2 = +5.136`$ | $`G_2 = +5.670`$ |
 
-Even at $n = 63$ the adjustment moves kurtosis by about 10%. Both adjusted values match `pandas`.
+Even at $`n = 63`$ the adjustment moves kurtosis by about 10%. Both adjusted values match `pandas`.
 
 ## 10. Signal or noise: bootstrap bands and what they reveal
 
@@ -435,7 +435,7 @@ Classical moments are driven by the few most extreme returns. Quantile-based mea
 \text{Bowley skewness} = \frac{Q_3 + Q_1 - 2Q_2}{Q_3 - Q_1}, \qquad \text{Moors kurtosis} = \frac{(E_7-E_5)+(E_3-E_1)}{E_6-E_2} - 1.233
 ```
 
-with $Q_i$ the quartiles, $E_i$ the octiles and 1.233 the normal-distribution value.
+with $`Q_i`$ the quartiles, $`E_i`$ the octiles and 1.233 the normal-distribution value.
 
 | Largest one-day change, in units of its own typical daily change | Classical | Quantile-based |
 |---|---|---|
@@ -449,7 +449,7 @@ One day can move classical kurtosis by eight times its typical daily variation; 
 | Quantity | Units | Comparable across assets | Memory | Window used, and why | Common mistake |
 |---|---|---|---|---|---|
 | ATR | Price | No | Expanding (Wilder) | Wilder 14 = 27-bar memory | Comparing dollar ATR across assets or decades |
-| ATR% / $\sqrt{8/\pi}$ | Daily volatility | Yes | Expanding | Same | Treating it as an unbiased level (reads 10–20% low here) |
+| ATR% / $`\sqrt{8/\pi}`$ | Daily volatility | Yes | Expanding | Same | Treating it as an unbiased level (reads 10–20% low here) |
 | Yang–Zhang | Volatility | Yes | Rolling | 27 bars, memory-matched | Session-only estimators on assets that move overnight |
 | Efficiency ratio | Unitless, [0, 1] | Yes | Rolling | 27 bars, memory-matched | Pairing it with ADX at unmatched lengths |
 | ADX | Unitless, [0, 100] | Yes | Expanding (Wilder) | 14 = 27-bar memory | Reading high ADX as a calm, orderly trend |
@@ -458,7 +458,7 @@ One day can move classical kurtosis by eight times its typical daily variation; 
 | Correlation, beta | Unitless | Yes | Rolling | 63 bars, by standard error | Reading a crisis jump as a change in dependence |
 | Skewness, kurtosis | Unitless | Yes | Rolling | 63 bars, by standard error | Reading short-window values as precise; ignoring that one day dominates |
 
-Implementations of Wilder's smoothing differ in how the first value is seeded: Wilder used the simple average of the first $n$ values, the `trading_models` package starts from the first value. The two converge after a few dozen bars.
+Implementations of Wilder's smoothing differ in how the first value is seeded: Wilder used the simple average of the first $`n`$ values, the `trading_models` package starts from the first value. The two converge after a few dozen bars.
 
 **Using libraries knowingly.** A library's indicator is a bundle of choices: the averaging scheme, how the first value is seeded, and default settings. Before relying on one, know those choices, check one value by hand against it, and handle the warm-up explicitly. When the built-in version makes a choice you do not want, compose the indicator from simpler parts rather than rewriting it. For example, ATR built two ways from the same true ranges in pandas:
 
@@ -468,29 +468,29 @@ atr_plain = tr.rolling(14).mean()                       # memory exactly 14 bars
 atr_wilder = tr.ewm(alpha=1 / 14, adjust=False).mean()  # Wilder's smoothing, seeded from the first value
 ```
 
-**Clock-time bars, and other bars.** Every statistic here was computed on daily clock-time bars, but none of them strictly requires them: each needs only OHLCV, which bars cut by trades, volume or dollars also have (Lecture 8). Three things change on such bars. Anything stated per day or annualised, including the range estimators built on $\sqrt{8/\pi}$, assumes every bar covers the same span of time. Correlation and beta need both assets observed at the same moments. And returns per bar look different: in trade or volume time they tend to be closer to normal, so measured kurtosis falls (Clark, 1973; Ané and Geman, 2000), although how close is debated. With tick data there are also dedicated estimators: realised volatility, skewness and kurtosis built from intraday returns, and correlation estimators for assets that trade at different moments. Part III returns to both.
+**Clock-time bars, and other bars.** Every statistic here was computed on daily clock-time bars, but none of them strictly requires them: each needs only OHLCV, which bars cut by trades, volume or dollars also have (Lecture 8). Three things change on such bars. Anything stated per day or annualised, including the range estimators built on $`\sqrt{8/\pi}`$, assumes every bar covers the same span of time. Correlation and beta need both assets observed at the same moments. And returns per bar look different: in trade or volume time they tend to be closer to normal, so measured kurtosis falls (Clark, 1973; Ané and Geman, 2000), although how close is debated. With tick data there are also dedicated estimators: realised volatility, skewness and kurtosis built from intraday returns, and correlation estimators for assets that trade at different moments. Part III returns to both.
 
 ## 12. Summary, exercises and reading
 
 ### 12.1 Six takeaways
 
 1. **Units.** Dollar measures are not comparable across assets or time and can point the wrong way (QQQ). Divide by price.
-2. **From range to volatility.** $\mathbb{E}[H - L] = \sigma\sqrt{8/\pi}$ follows from the reflection principle. Range estimators are efficient but session-only; Yang–Zhang adds the overnight gap. Discrete sampling biases every range down by about $0.73/\sqrt{n}$; bid-ask bounce biases it up.
-3. **Memory.** Wilder's $n$ equals a $2n-1$ bar window; statistics read together should be memory-matched.
-4. **Precision.** Each higher moment needs more data. With 5 points, skewness and kurtosis cannot exceed 1.5 and 0.25; adjusted estimators ($G_1$, $G_2$) correct small-sample bias.
+2. **From range to volatility.** $`\mathbb{E}[H - L] = \sigma\sqrt{8/\pi}`$ follows from the reflection principle. Range estimators are efficient but session-only; Yang–Zhang adds the overnight gap. Discrete sampling biases every range down by about $`0.73/\sqrt{n}`$; bid-ask bounce biases it up.
+3. **Memory.** Wilder's $`n`$ equals a $`2n-1`$ bar window; statistics read together should be memory-matched.
+4. **Precision.** Each higher moment needs more data. With 5 points, skewness and kurtosis cannot exceed 1.5 and 0.25; adjusted estimators ($`G_1`$, $`G_2`$) correct small-sample bias.
 5. **Signal or noise.** Judge rolling statistics against a **block**-bootstrap band. Fat tails come largely from volatility changing over time (mixture of distributions). Volatility clusters strongly; kurtosis barely does, and it measures surprise, not danger.
 6. **Different questions.** ADX near 95 through a reversal, OBV never giving back a round trip, and correlation falling while beta rises are all correct answers to narrow questions, not bugs.
 
 ### 12.2 Exercises
 
-- [ ] Using the reflection principle, show that $\mathbb{E}[\max_{0 \le s \le T} W_s] = \sigma\sqrt{2T/\pi}$, and hence $\mathbb{E}[H - L] = \sigma\sqrt{8T/\pi}$.
-- [ ] Simulate a Brownian path on a fine grid, sample it at $n = 10$, 100 and 1,000 points per bar, and check the $0.73/\sqrt{n}$ range shortfall of §4.4. Then add a bid-ask spread and find the $n$ at which the two biases cancel.
+- [ ] Using the reflection principle, show that $`\mathbb{E}[\max_{0 \le s \le T} W_s] = \sigma\sqrt{2T/\pi}`$, and hence $`\mathbb{E}[H - L] = \sigma\sqrt{8T/\pi}`$.
+- [ ] Simulate a Brownian path on a fine grid, sample it at $`n = 10`$, 100 and 1,000 points per bar, and check the $`0.73/\sqrt{n}`$ range shortfall of §4.4. Then add a bid-ask spread and find the $`n`$ at which the two biases cancel.
 - [ ] Compute ATR(5) for the toy series with bar 8's true range set to a normal 0.50. How much lower is the peak, and how fast does ATR decay?
-- [ ] Construct a low for toy bar 8 that makes $-\mathrm{DM}_8$ exceed $+\mathrm{DM}_7$. What price action does that require?
-- [ ] Prove that for $n$ points the sample skewness cannot exceed $(n-2)/\sqrt{n-1}$. Which configuration attains it?
+- [ ] Construct a low for toy bar 8 that makes $`-\mathrm{DM}_8`$ exceed $`+\mathrm{DM}_7`$. What price action does that require?
+- [ ] Prove that for $`n`$ points the sample skewness cannot exceed $`(n-2)/\sqrt{n-1}`$. Which configuration attains it?
 - [ ] Re-run the bootstrap of §10.2 with block lengths of 5, 21 and 63 days. How does the kurtosis band change, and why?
 - [ ] Construct a 5-bar window of two series where correlation and beta move in the **same** direction. What must be true of their relative move sizes?
-- [ ] Show that Wilder's smoothing with period $n$ has average age $n-1$, and hence that ATR(14) matches a 27-bar window. Then recompute the toy ATR in §3.2 with a plain 5-bar mean of the true ranges instead: how do the peak and the decay change?
+- [ ] Show that Wilder's smoothing with period $`n`$ has average age $`n-1`$, and hence that ATR(14) matches a 27-bar window. Then recompute the toy ATR in §3.2 with a plain 5-bar mean of the true ranges instead: how do the peak and the decay change?
 
 ### 12.3 Reading list
 
@@ -536,7 +536,7 @@ In dollars (top), QQQ's 2000–02 bust looks smaller than recent years. As a per
 
 ![Close-to-close, Parkinson, Yang–Zhang and ATR%/√(8/π) volatility for GLD, 2023–2026](figures/12_02_vol_estimators.png)
 
-Parkinson, which sees only the US session, runs far below close-to-close because about half of gold's variance arrives while GLD is closed. Yang–Zhang adds the overnight gap and tracks close-to-close. ATR%/$\sqrt{8/\pi}$ sits in between.
+Parkinson, which sees only the US session, runs far below close-to-close because about half of gold's variance arrives while GLD is closed. Yang–Zhang adds the overnight gap and tracks close-to-close. ATR%/$`\sqrt{8/\pi}`$ sits in between.
 
 ### B.3 The stock–bond relationship changed sign (§8.3)
 
@@ -560,7 +560,7 @@ The efficiency ratio drops as soon as the path turns choppy; ADX stays high whil
 
 ![On-balance volume and 27-bar tick-rule order imbalance for SPY, GLD and AGG](figures/12_04_flow.png)
 
-OBV's scale depends on each asset's volume, so its levels cannot be compared; the order imbalance is bounded in $[-1, 1]$ and can.
+OBV's scale depends on each asset's volume, so its levels cannot be compared; the order imbalance is bounded in $`[-1, 1]`$ and can.
 
 ### B.7 ATR two ways (§3.1)
 

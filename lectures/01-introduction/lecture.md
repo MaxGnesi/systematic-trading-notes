@@ -18,7 +18,7 @@ The first definition says how the machine is built; the second says why it shoul
 w_t = f(\mathcal{I}_t;\,\theta), \qquad \mathcal{I}_t = \{\text{data available at time } t\}
 ```
 
-Here $w_t$ is the target portfolio, $f$ is the rule set, and $\theta$ are parameters estimated or chosen in research. Two properties matter for everything that follows: $f$ uses only information available at $t$, and the same inputs always produce the same outputs.
+Here $`w_t`$ is the target portfolio, $`f`$ is the rule set, and $`\theta`$ are parameters estimated or chosen in research. Two properties matter for everything that follows: $`f`$ uses only information available at $`t`$, and the same inputs always produce the same outputs.
 
 ### 1.1 A spectrum, not a binary
 
@@ -71,7 +71,7 @@ A systematic strategy is a chain of five stages, each with its own inputs, outpu
 ### 2.1 The five stages
 
 - **Data.** Ingest, clean and timestamp market, fundamental, macro and alternative data. Errors here (survivorship bias, look-ahead, bad ticks) propagate to everything downstream.
-- **Signal generation.** Convert data into a forecast of return or relative value, usually normalised to a bounded score such as $s_{i,t} \in [-1, +1]$ for asset $i$.
+- **Signal generation.** Convert data into a forecast of return or relative value, usually normalised to a bounded score such as $`s_{i,t} \in [-1, +1]`$ for asset $`i`$.
 - **Portfolio construction and allocation.** Map signals to target positions, balancing expected return, risk, factor exposures, leverage and transaction costs.
 - **Risk management.** Enforce constraints: volatility targets, position and sector limits, drawdown rules, liquidity buffers.
 - **Execution.** Route orders with execution algorithms (e.g. TWAP, VWAP, smart order routing) to minimise slippage and market impact.
@@ -84,7 +84,7 @@ Presenting risk management as a stage after allocation is a teaching simplificat
 \max_{w}\; \mu^{\top} w \;-\; \frac{\lambda}{2}\, w^{\top}\Sigma\, w \;-\; c(w - w_{t-1})
 ```
 
-where $\mu$ is the vector of signal-based forecasts, $\Sigma$ the covariance matrix, $\lambda$ the risk aversion, and $c(\cdot)$ the transaction-cost penalty on the trade from the previous holdings $w_{t-1}$. Constraints on leverage, concentration or drawdown enter as additional restrictions on $w$.
+where $`\mu`$ is the vector of signal-based forecasts, $`\Sigma`$ the covariance matrix, $`\lambda`$ the risk aversion, and $`c(\cdot)`$ the transaction-cost penalty on the trade from the previous holdings $`w_{t-1}`$. Constraints on leverage, concentration or drawdown enter as additional restrictions on $`w`$.
 
 The simplest example is volatility targeting, which scales each position so that it contributes a chosen amount of risk:
 
@@ -92,7 +92,7 @@ The simplest example is volatility targeting, which scales each position so that
 w_{i,t} = s_{i,t}\cdot\frac{\sigma^{*}}{\hat{\sigma}_{i,t}}
 ```
 
-with $\sigma^{*}$ the target volatility and the denominator a forecast of asset $i$'s volatility. Risk control is therefore built into position sizing, not bolted on at the end.
+with $`\sigma^{*}`$ the target volatility and the denominator a forecast of asset $`i`$'s volatility. Risk control is therefore built into position sizing, not bolted on at the end.
 
 > **Example: driving on ice.** Think of volatility targeting as driving to the conditions. On a dry road you hold a steady speed; when the road turns icy you slow down, so the risk of a crash stays about the same. The strategy does the same: when markets become more volatile it shrinks positions, so the portfolio's risk stays near its target.
 
@@ -148,11 +148,11 @@ A standard time-series momentum signal takes the sign of the past return, then s
 s_{i,t} = \mathrm{sign}\big(r_{i,t-L:t}\big), \qquad w_{i,t} = s_{i,t}\cdot\frac{\sigma^{*}}{\hat{\sigma}_{i,t}}
 ```
 
-Variants use moving-average crossovers or breakout channels; the lookback $L$, commonly from one month to a year, is the key parameter. Trend following has often performed well in sustained crises, which is why it is marketed as "crisis alpha". The record is not uniform: sharp reversals, such as 2009 and parts of 2022-23, hurt the strategy, so the claim should be presented as a tendency, not a guarantee.
+Variants use moving-average crossovers or breakout channels; the lookback $`L`$, commonly from one month to a year, is the key parameter. Trend following has often performed well in sustained crises, which is why it is marketed as "crisis alpha". The record is not uniform: sharp reversals, such as 2009 and parts of 2022-23, hurt the strategy, so the claim should be presented as a tendency, not a guarantee.
 
 ### 4.2 Statistical arbitrage (equity market neutral)
 
-StatArb exploits short-term deviations between related securities while keeping market exposure near zero ($\beta \approx 0$). Return is compensation for providing liquidity: the strategy buys what others are forced or eager to sell and sells what they are eager to buy.
+StatArb exploits short-term deviations between related securities while keeping market exposure near zero ($`\beta \approx 0`$). Return is compensation for providing liquidity: the strategy buys what others are forced or eager to sell and sells what they are eager to buy.
 
 > **Example: two dogs on a leash.** Picture two dogs tied to the same owner, say two oil companies tied to the same oil price. Each wanders, but the leash keeps pulling them back. When the gap between them is unusually wide, bet that it narrows: buy the dog that fell behind and sell the one that ran ahead. The risk is that the leash can snap, for example when one company is taken over, and the gap never closes.
 
@@ -162,7 +162,7 @@ The classic pairs version models the spread between two stocks and trades its st
 z_t = \frac{S_t - \mu_S}{\sigma_S}, \qquad S_t = \log P^{A}_t - \beta \log P^{B}_t
 ```
 
-Open a position when $|z_t|$ exceeds an entry threshold and close it as $z_t$ returns toward zero. Modern implementations generalise pairs to baskets and to factor residuals: regress each stock on common factors and trade the idiosyncratic residual, whose mean reversion is modelled directly (Avellaneda and Lee, 2010).
+Open a position when $`|z_t|`$ exceeds an entry threshold and close it as $`z_t`$ returns toward zero. Modern implementations generalise pairs to baskets and to factor residuals: regress each stock on common factors and trade the idiosyncratic residual, whose mean reversion is modelled directly (Avellaneda and Lee, 2010).
 
 The main danger is crowding. In August 2007, many market-neutral funds held similar positions; forced deleveraging by some pushed prices against all of them within days, the so-called quant quake.
 
@@ -213,7 +213,7 @@ The usual summary statistic is the annualised Sharpe ratio of excess returns:
 \text{SR} = \frac{\mathbb{E}[r - r_f]}{\sigma(r)}\sqrt{T}
 ```
 
-with $T$ the number of return periods per year. A high backtest Sharpe ratio is evidence of a good fit, not of a good strategy.
+with $`T`$ the number of return periods per year. A high backtest Sharpe ratio is evidence of a good fit, not of a good strategy.
 
 ### 5.2 The main pitfalls
 
@@ -228,7 +228,7 @@ with $T$ the number of return periods per year. A high backtest Sharpe ratio is 
 
 ### 5.3 Multiple testing in one paragraph
 
-If you test 100 independent strategies with no true edge, about five will show a $t$-statistic above 2 by chance alone. Published work argues that, given how many factors the profession has tried, a new factor should clear a higher bar than the conventional threshold of 2 (Harvey, Liu and Zhu, 2016). The practical rule is to keep a record of everything you tried, not only what worked, and to demand an economic explanation alongside the statistics.
+If you test 100 independent strategies with no true edge, about five will show a $`t`$-statistic above 2 by chance alone. Published work argues that, given how many factors the profession has tried, a new factor should clear a higher bar than the conventional threshold of 2 (Harvey, Liu and Zhu, 2016). The practical rule is to keep a record of everything you tried, not only what worked, and to demand an economic explanation alongside the statistics.
 
 ## 6. Worked case study: a diversified trend-following model
 
