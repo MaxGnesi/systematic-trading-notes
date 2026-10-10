@@ -8,61 +8,64 @@ Lecture 2's methods smooth the data from the bottom up; the Kalman filter works 
 
 ## 1. Bottom-up versus top-down
 
-Lecture 2's methods build a smooth line from the bottom up, by averaging bars; the Kalman filter works from the top down, by stating what is hidden behind prices and checking every new bar against that statement.
+The methods of Lecture 2 construct a smooth line from the bottom up, as weighted averages of past bars. The Kalman filter proceeds from the top down: it specifies a model of the quantities hidden behind prices and revises its estimate of them as each bar arrives.
 
-- **Bottom-up** (SMA, EMA, VWAP, KAMA): the estimate is whatever the weighting of past bars produces. The method has no notion of a trend; a trend shows up only because recent prices are higher.
-- **Top-down**, an aerial view: a *state-space model* says three things. What is hidden (a level, possibly a slope and an acceleration); how the hidden quantities move from one bar to the next; and how prices relate to them (price = level + noise).
+- **Bottom-up** (SMA, EMA, VWAP, KAMA). The estimate is a weighted average of past prices and nothing more. These methods contain no explicit representation of a trend: a rise appears in the average only once rising prices have accumulated in its window, which is the source of their lag.
+- **Top-down.** A *state-space model* specifies three elements: the hidden quantities (the *state*), how the state evolves from one bar to the next, and how observed prices relate to it. When the state includes a slope, the trend becomes an explicit quantity: the model carries it from bar to bar and uses it to project the level forward. A rising market is then represented directly, as a positive slope, rather than inferred from accumulated past prices. With a level alone the model has no such component and reduces exactly to an EMA (§2); the slope enters in §3.
 
-The filter then repeats one loop on every bar:
+The filter applies the same three steps to every bar:
 
-1. **Predict:** move the hidden state forward one bar with the model.
-2. **Compare:** the *surprise* is the price minus the forecast.
-3. **Correct:** move the state by *gain* × *surprise*. The gain is high when the filter is unsure of its own state relative to how noisy prices are, and low otherwise (Kalman, 1960).
+| Step | What the filter does |
+|---|---|
+| Predict | Projects the state one bar ahead, using the model of how it evolves |
+| Compare | Computes the *surprise*: the observed price minus the forecast |
+| Correct | Revises the state by *gain* × *surprise*. The gain is large when the filter's uncertainty about its state is large relative to the price noise, and small otherwise (Kalman, 1960) |
 
-**Example: dead reckoning.** A navigator knows the ship's speed and heading and estimates its position from them. When a noisy landmark sighting arrives, the navigator corrects the estimate partway, by how much the sighting is trusted against the reckoning. The Kalman filter does the same, with the model as the reckoning and the price as the sighting.
+**Example: navigation.** A navigator estimates position from known speed and heading (the model) and adjusts that estimate when a landmark is sighted (the observation). The size of the adjustment depends on the relative reliability of the reckoning and the sighting. The Kalman filter applies the same principle, with prices as the observations.
 
-Neither view is better. They are different designs that make different bets about the market, and the right one is whichever fits what you want to capture. What the top-down view offers is one coherent model that delivers several things at once: a smoothed level, a trend and its change, and an uncertainty around them, a theme §10 returns to. This lecture describes what each hidden state measures and how it follows price; each state gives a *reading* (up or down), and turning readings into trading signals is the subject of Part II.
+The two approaches are not ranked. They embody different assumptions about the data, and the appropriate choice depends on what the analysis is meant to capture. The distinctive feature of the top-down approach is that a single model delivers several quantities at once: a level, a trend and its rate of change, and the uncertainty around each (§10). Throughout this lecture each hidden state yields a *reading*, up or down; the use of readings as trading signals is treated in Part II.
 
 ## 2. One hidden state: the level
 
-With a single hidden state the Kalman filter is exactly an EMA, with $\alpha$ set by the ratio of two noise settings.
+With a single hidden state, the Kalman filter is an EMA whose smoothing constant is set by the ratio of two noise variances.
 
-### 2.1 The model and the loop
+### 2.1 The model
 
-The hidden *level* drifts at random from bar to bar, and each price is the level plus noise:
+The hidden level moves at random from bar to bar, and each price equals the level plus noise:
 
 ```math
 \text{level}_t = \text{level}_{t-1} + \text{level change}_t, \qquad \text{price}_t = \text{level}_t + \text{price noise}_t
 ```
 
-Here $q_{\text{level}}$ is the variance of the level change (how far the true level may wander per bar) and $r_{\text{price}}$ the variance of the price noise (how noisy a single price is). The *uncertainty* is the variance of the filter's own error about the level. Each bar:
-
-```math
-\begin{aligned}
-\text{forecast}_t &= \text{level}_{t-1}, & \text{forecast uncertainty}_t &= \text{uncertainty}_{t-1} + q_{\text{level}}\\
-\text{gain}_t &= \frac{\text{forecast uncertainty}_t}{\text{forecast uncertainty}_t + r_{\text{price}}}, & \text{surprise}_t &= \text{price}_t - \text{forecast}_t\\
-\text{level}_t &= \text{forecast}_t + \text{gain}_t \cdot \text{surprise}_t, & \text{uncertainty}_t &= (1 - \text{gain}_t)\cdot\text{forecast uncertainty}_t
-\end{aligned}
-```
-
-### 2.2 Why it is an EMA
-
-Rearranging the correction gives $\text{level}_t = \text{gain}\cdot\text{price}_t + (1-\text{gain})\cdot\text{level}_{t-1}$: an EMA whose $\alpha$ is the gain. After a few bars the gain settles to a constant: the steady forecast uncertainty $u$ solves $u^2 - q_{\text{level}}\,u - q_{\text{level}}\,r_{\text{price}} = 0$, and the gain is $u/(u + r_{\text{price}})$. With $q_{\text{level}}/r_{\text{price}} = 1/6$ the steady gain is exactly $1/3$, the $\alpha$ of EMA(5).
-
-**Worked by hand on Lecture 2's toy series** ($q_{\text{level}}/r_{\text{price}} = 1/6$, started at its steady uncertainty), bar 7, the spike:
-
-| Step | Value |
+| Quantity | Financial meaning |
 |---|---|
-| Forecast (yesterday's level) | 101.062 |
-| Surprise | 108.5 − 101.062 = 7.438 |
-| Gain | 0.3333 |
-| New level | 101.062 + 0.3333 × 7.438 = 103.541 |
+| *level* | The underlying price: where the market is, net of noise |
+| $q_{\text{level}}$ | Variance of genuine changes in the underlying price per bar: news, revaluation, persistent shifts in demand |
+| $r_{\text{price}}$ | Variance of the noise around it: bid-ask bounce, temporary order-flow pressure, overshoots that reverse |
+| *uncertainty* | How unsure the filter is about the underlying price (variance of its error) |
+| *gain* | The share of today's unexpected move treated as genuine information rather than noise |
+| *surprise* | Today's unexpected move: the price minus the forecast |
 
-That is EMA(5)'s 103.54 from [Lecture 2, §7.1](../02-ohlcv-and-price-smoothing/lecture.md#71-toy-series-one-spike-on-heavy-volume); the notebook checks every bar of the series and they agree exactly ([chart C.1](#c1-predict-compare-correct-2)). Started with a wide uncertainty instead, the gain begins near 1, so the first prices are trusted almost fully, and settles within a few bars ([chart C.2](#c2-only-the-ratio-matters-23)).
+### 2.2 The recursion, step by step
 
-### 2.3 Only the ratio matters
+| Step | Calculation | Financial interpretation |
+|---|---|---|
+| 1. Predict the level | $\text{forecast}_t = \text{level}_{t-1}$ | With no new trades, the best estimate of today's underlying price is yesterday's |
+| 2. Predict the uncertainty | $\text{forecast uncertainty}_t = \text{uncertainty}_{t-1} + q_{\text{level}}$ | Overnight, news may have moved the underlying price, so the estimate becomes less certain by $q_{\text{level}}$ |
+| 3. Compute the gain | $\text{gain}_t = \dfrac{\text{forecast uncertainty}_t}{\text{forecast uncertainty}_t + r_{\text{price}}}$ | How much of today's move to believe: near 1 when genuine changes dominate (a fast-moving market), near 0 when noise dominates (a market that mostly jitters around its value) |
+| 4. Compare | $\text{surprise}_t = \text{price}_t - \text{forecast}_t$ | Today's unexpected move |
+| 5. Correct the level | $\text{level}_t = \text{forecast}_t + \text{gain}_t \cdot \text{surprise}_t$ | Accept the believed part of the move, discard the rest as noise |
+| 6. Update the uncertainty | $\text{uncertainty}_t = (1 - \text{gain}_t)\cdot\text{forecast uncertainty}_t$ | Having seen today's price, the filter is more certain where the underlying price is |
 
-Multiply both noise settings by the same constant and the estimates do not change at all: the gain depends only on $q_{\text{level}}/r_{\text{price}}$. Ten prices filtered twice:
+### 2.3 Equivalence to the EMA
+
+Substituting step 1 into step 5 gives $\text{level}_t = \text{gain}\cdot\text{price}_t + (1-\text{gain})\cdot\text{level}_{t-1}$, an EMA whose $\alpha$ is the gain. After a few bars the gain converges to a constant: the steady forecast uncertainty $u$ solves $u^2 - q_{\text{level}}\,u - q_{\text{level}}\,r_{\text{price}} = 0$, and the steady gain is $u/(u + r_{\text{price}})$. With $q_{\text{level}}/r_{\text{price}} = 1/6$ the steady gain is exactly $1/3$, the $\alpha$ of EMA(5).
+
+On Lecture 2's toy series, with $q_{\text{level}}/r_{\text{price}} = 1/6$ and the filter started at its steady uncertainty, the level reproduces EMA(5) on every bar, including the 103.54 after the spike ([chart C.1](#c1-predict-compare-correct-2)). Started instead from a wide uncertainty, the gain begins close to 1, so the first prices are accepted almost in full, and converges within a few bars ([chart C.2](#c2-only-the-ratio-matters-24)).
+
+### 2.4 Only the ratio of the noise variances matters
+
+Scaling both noise variances by the same constant leaves the estimates unchanged, because the gain depends only on $q_{\text{level}}/r_{\text{price}}$. The same ten prices, filtered at two scales:
 
 | Bar | Price | Level, $(q_{\text{level}}, r_{\text{price}}) = (1, 4)$ | Level, $(10, 40)$ | Gain, both | Uncertainty band ±1 sd, $(1, 4)$ | Band, $(10, 40)$ |
 |---|---|---|---|---|---|---|
@@ -70,9 +73,9 @@ Multiply both noise settings by the same constant and the estimates do not chang
 | 4 | 104 | 102.036 | 102.036 | 0.398 | 1.26 | 3.99 |
 | 9 | 110 | 107.633 | 107.633 | 0.390 | 1.25 | 3.95 |
 
-Only the band rescales, by $\sqrt{10}$. The result is exact when the starting uncertainty is scaled by the same factor; with an unscaled start the agreement is approximate during warm-up and exact once the start is forgotten ([chart C.2](#c2-only-the-ratio-matters-23)).
+Only the uncertainty band changes, by a factor of $\sqrt{10}$. The equivalence is exact when the starting uncertainty is scaled by the same factor; with an unscaled start it is approximate during the warm-up and exact once the start has been forgotten ([chart C.2](#c2-only-the-ratio-matters-24)).
 
-**Example: a thermometer.** One setting says how far the room temperature can drift per hour, the other how noisy the thermometer is. Double both and you trust a reading exactly as much as before: the estimate is unchanged, you are only less sure in absolute terms.
+**Example: a thermometer.** Let one variance describe how far the room temperature can drift in an hour and the other how noisy the thermometer is. Scaling both by the same factor leaves the relative reliability of model and instrument unchanged, so the estimate is unchanged; only the stated uncertainty increases.
 
 ## Sections still to write (outline)
 
@@ -137,7 +140,7 @@ Signals from the same state largely agree; signals from different states agree o
 
 Each bar the forecast is yesterday's level; the correction is the gain (1/3) times the surprise. On the spike at bar 7 the level moves a third of the way to the price, exactly like EMA(5).
 
-### C.2 Only the ratio matters (§2.3)
+### C.2 Only the ratio matters (§2.4)
 
 ![Gain and level with uncertainty bands for (q, R) = (1, 4) and (10, 40)](figures/c02_ratio_invariance.png)
 

@@ -158,6 +158,9 @@ Headings must match what follows them. A heading that promises "three" of someth
 - **Say what is ours.** Results derived or measured for these notes are labelled as such: "the calculation is ours", "our measurement for these notes". Such numbers must be reproducible in the companion notebook.
 - **Justify specific examples.** When naming one tool, library, dataset or vendor out of many, say in a clause why that one (e.g. TA-Lib: the long-standing open-source reference implementation that documents the issue).
 - **Name variables by meaning.** Prefer names a reader can connect to their role (*level*, *slope*, *surprise*, *q_level*) over bare letters; when a standard symbol is used, define it in words where it first appears.
+- **Dose numeric examples.** Use a worked number where a concept is counterintuitive, muddy or easy to get wrong (e.g. "only the ratio q/R matters"); skip it where the formula already makes the point, since examples of the obvious tire the reader.
+- **Give every variable a financial meaning.** In formulas, tables and matrices, explain each symbol in trading terms (level = the underlying price net of noise; q_level = genuine changes from news and revaluation; r_price = bid-ask bounce and temporary pressure; gain = the share of today's move believed). Prefer a step / calculation / financial-interpretation table over a block of equations side by side.
+- **Tone.** Formal and precise, as in Lectures 2 and 3; analogies are kept short and stated soberly.
 - **No constant columns.** If every row of a table column has the same value, drop the column and state the fact once, with the reason.
 
 ## 5. Formula conventions
