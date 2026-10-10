@@ -69,7 +69,21 @@ Lecture 3, §11 promises that Part III returns to risk measures beyond clock-tim
 
 Status: outline in the doc; prototypes exist outside the lecture. Kalman material stays in Lecture 2 until Lecture 4 is written.
 
-**Design choices (revised after testing on QQQ).** Two linear models: the local level (= EMA, the bridge from Lecture 2) and the local linear trend (level + slope, diagonal Q; the core). Extension: a robust update capping surprises at about 3 sd, because normalised surprises exceed ±3 on 4–5% of days versus 0.27% for normal noise; it smooths the level (roughness 0.386 → 0.358) and cuts slope flips slightly but turns later, a trade-off, not a free gain. Tested and rejected as the upgrade: R per bar from the range (worse on every measure; wide ranges are mostly genuine movement, i.e. Q, not R), kept as an instructive failure. Damped slope: negligible difference, one paragraph at most. Acceleration only as a cautionary extension. EKF/UKF in depth on hidden volatility from daily ranges ("transform first, use the UKF only when you cannot"). Key honesty point: as one-step forecasts of log price no filter beats "tomorrow = today" (RMSE 1.63% vs 2.25% for the standard filter, QQQ); a trend filter describes the current trend, and whether that pays is judged in Part II. All these numbers come from prototypes and must be reproduced in the Lecture 4 notebook.
+**Purpose of a trend filter.** Find structural, long-horizon trends that are robust to daily noise. It is not about predicting tomorrow's price; one-step forecast error is the wrong yardstick and is not used.
+
+**Models.** Local level (= EMA, the bridge from Lecture 2); local linear trend (level + slope, diagonal Q; the core); acceleration as a candidate early warning of regime change, judged on lead time versus false alarms. EKF/UKF in depth on hidden volatility from daily ranges ("transform first, use the UKF only when you cannot").
+
+**Extensions to evaluate, not assume:** a robust update for fat-tailed surprises; R per bar from the bar's range; a damped slope. Single-asset, single-setting prototype results on QQQ are preliminary only.
+
+**Evaluation framework (Lecture 4 §9 and its notebook).** Across SPY, QQQ, GLD, AGG (and more) and a grid of settings:
+
+- Delay at structural turning points defined mechanically in advance (e.g. 15–20% moves from a high or low), not picked by eye.
+- Whipsaws: slope sign changes not followed by a sustained move.
+- Stability of the slope's sign within persistent trends.
+- Relation of today's slope to returns over the next one to six months (persistence, not next-day prediction).
+- Acceleration: lead time over the slope at turning points against its false-alarm rate.
+
+Final verdicts on which extension helps come only from this framework, and are then carried into Part II, where filters are judged as parts of complete strategies.
 
 **Charts (appendix C, each linked from the text):**
 
@@ -79,13 +93,13 @@ Status: outline in the doc; prototypes exist outside the lecture. Kalman materia
 | C.2 | Gain and uncertainty settling; same q/R ratio at two scales gives identical levels, wider bands | §2, §5 |
 | C.3 | Weights on past prices: level-only filter = EMA; level + slope with negative weights | §2–3 |
 | C.4 | A price jump: diagonal versus derived Q | §3 |
-| C.5 | Level, slope and acceleration separately for four noise settings, QQQ 2020 (prototype exists) | §4 |
+| C.5 | Level, slope and acceleration separately for four noise settings, QQQ 2020 (prototype exists); acceleration's lead time at turning points | §4 |
 | C.6 | The memory dial: q/R ratio against smoothness and tracking | §5 |
 | C.7 | Warm-up: starting error with a diffuse versus a confident start | §6 |
-| C.8 | Standard versus robust update, and range-based R as an instructive failure, QQQ 2020 | §7 |
+| C.8 | The extensions (robust update, range-based R, damped slope) compared under the §9 criteria | §7 |
 | C.9 | Normalised surprises against a normal curve; standard versus robust update on a spike | §7 |
 | C.10 | Hidden volatility from daily ranges: linear filter on log range, EKF and UKF | §8 |
-| C.11 | Smoothness versus tracking on QQQ episodes (moved from Lecture 2) | §9 |
+| C.11 | Trend-system scorecard across assets: turning-point delay, whipsaws, slope stability, persistence | §9 |
 | C.12 | A time-varying hedge ratio | §9 |
 
 **References: status before citing.**
