@@ -22,7 +22,20 @@ Lecture 2's methods smooth the data from the bottom up; the Kalman filter works 
     | Level + slope | Always (20% slow, 17% fast) | None | Fixed gap (0.02 slow, 0.0006 fast) |
     | Level + slope + acceleration | Always, larger (29% slow, 23% fast) | None | None |
 
-    Tuning shrinks a gap but never removes it; only adding a state does. Overshoot follows from the weights: positive weights on past prices can never overshoot a jump, and any negative weight forces an overshoot, because the cumulative weights must exceed one before settling back to one. Each design is a different bet about what the market is doing; none is best. Then the dials *q_level*, *q_slope*, *q_acceleration* ([chart C.6](#c6-the-dials)) and matching a Kalman filter to an EMA on variance reduction.
+    Tuning shrinks a gap but never removes it; only adding a state does. Overshoot follows from the weights: positive weights on past prices can never overshoot a jump, and any negative weight forces an overshoot, because the cumulative weights must exceed one before settling back to one. Each design is a different bet about what the market is doing; none is best.
+
+    **Overshoot and early exits.** Because the slope designs overshoot a jump, they can signal an exit without any fall in price, just by correcting their own overshoot. Prototype test, same pattern at both speeds:
+
+    | Signal | After a jump, then flat (trend over) | After a jump inside a continuing uptrend |
+    |---|---|---|
+    | Position, level only | Never exits | Never exits |
+    | Position, level + slope | Exits early (from bar +6 to +34) | False exit for about 150 bars |
+    | Slope, level + slope | Exits late (from +27 to +143) | Never exits |
+    | Position, three-state | Exits first (from +3 to +15) | False exit for about 140 bars |
+    | Slope, three-state | Exits (from +13 to +61) | False exit for 16–47 bars |
+    | Acceleration | Exits early (from +9 to +43) | False exit for about 160 bars |
+
+    Early exits help at a real top and hurt inside a trend that continues after a jump. In these tests the level + slope model's slope signal was the one that held a continuing trend yet still exited once the trend stopped. Whether early exits help over real histories is for the case studies and Part II. Then the dials *q_level*, *q_slope*, *q_acceleration* ([chart C.6](#c6-the-dials)) and matching a Kalman filter to an EMA on variance reduction.
 6. **Starting the filter.** The starting uncertainty $P_0$, the diffuse start, warm-up length, and what to store to run it live.
 7. **Extensions and what each changes.** A robust update for fat-tailed surprises; $R$ per bar from the bar's range; a damped slope. Each profiled with the market conditions of §9 (what it gains, what it gives up), not ranked; early single-asset results are preliminary.
 8. **Nonlinear models: the extended and unscented filters, in depth.** On a case where the nonlinearity is real: hidden volatility estimated from daily ranges (range $\approx \sqrt{8/\pi}\,\sigma$, Lecture 3). Linearisation versus sigma points; taking logs makes the model nearly linear (Alizadeh, Brandt and Diebold, 2002), so transform first and use the UKF only when you cannot; what neither fixes (fat tails, regime breaks).
