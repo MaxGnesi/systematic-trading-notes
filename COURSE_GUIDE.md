@@ -160,7 +160,8 @@ Headings must match what follows them. A heading that promises "three" of someth
 - **Name variables by meaning.** Prefer names a reader can connect to their role (*level*, *slope*, *surprise*, *q_level*) over bare letters; when a standard symbol is used, define it in words where it first appears.
 - **Dose numeric examples.** Use a worked number where a concept is counterintuitive, muddy or easy to get wrong (e.g. "only the ratio q/R matters"); skip it where the formula already makes the point, since examples of the obvious tire the reader.
 - **Give every variable a financial meaning.** In formulas, tables and matrices, explain each symbol in trading terms (level = the underlying price net of noise; q_level = genuine changes from news and revaluation; r_price = bid-ask bounce and temporary pressure; gain = the share of today's move believed). Prefer a step / calculation / financial-interpretation table over a block of equations side by side.
-- **Tone.** Formal and precise, as in Lectures 2 and 3; analogies are kept short and stated soberly.
+- **Tone.** Formal and precise, as in Lectures 2 and 3; analogies are kept short and stated soberly. Formal does not mean stiff: sentences flow, one idea each, with clear transitions; a plain word or short label ("dial for gaps", "trend projection") is used sporadically where it genuinely helps the reader picture an idea, never for its own sake.
+- **Results like a paper.** Define every design and reading once, with short labels used consistently afterwards; define each experiment (data, setting, metric) before its results; number tables with captions that say what is measured; follow each table with one or two sentences on what to take from it.
 - **No constant columns.** If every row of a table column has the same value, drop the column and state the fact once, with the reason.
 
 ## 5. Formula conventions
