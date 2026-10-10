@@ -203,7 +203,7 @@ Because there is no $N$, $Q$ and $R$ are the memory dial, and default values can
 
 ## 6. Matching memory before comparing
 
-A comparison of "SMA(20) against a Kalman filter" means nothing unless both carry the same amount of memory. Otherwise the one that looks better may simply be smoothing less.
+A comparison of "SMA(20) against a Kalman filter" means nothing unless both carry the same amount of memory. Otherwise any difference may come from how much each one smooths, not from the method: smoothing less looks better on tracking price, smoothing more looks better on smoothness.
 
 ### 6.1 Two measures of memory
 
