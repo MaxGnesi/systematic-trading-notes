@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 10, 2026 · Max Gnesi*
 
-> **Draft outline for review.** Sections below state what each part will contain; the text is not written yet. The two charts in the appendix are prototypes, reproduced by [prototypes.py](prototypes.py); their numbers are illustrations on one asset, not results. The Kalman material still in [Lecture 2](../02-ohlcv-and-price-smoothing/lecture.md) moves here when this lecture is written.
+> **Draft outline for review.** Sections below state what each part will contain; the text is not written yet. All numbers and charts come from the companion notebook [13_tracking_hidden_states.ipynb](13_tracking_hidden_states.ipynb); the text is being written section by section. The Kalman material still in [Lecture 2](../02-ohlcv-and-price-smoothing/lecture.md) moves here when this lecture is written.
 
 Lecture 2's methods smooth the data from the bottom up; the Kalman filter works from the top down, by modelling what is hidden behind prices and updating that model with each new bar. This lecture builds the linear filter step by step, from a single level to slope and acceleration, shows that each hidden state carries its own trading signal, then covers extensions and the nonlinear extended and unscented filters.
 
@@ -69,12 +69,12 @@ Signals from the same state largely agree; signals from different states agree o
 
 ### C.5 Three models: states and signals
 
-![Three Kalman models matched on memory: level, slope, acceleration and one signal per state, QQQ 2021–2023](figures/c5_three_models_states_signals.png)
+![Three Kalman models matched on memory: level, slope, acceleration and one signal per state, QQQ 2021–2023](figures/c05_three_designs.png)
 
 The level-only filter lags price; the level + slope and three-state levels lead it, falling below price earlier in the 2022 decline and rising above it in rebounds. Acceleration turned negative before the November 2021 peak and positive ahead of the slope in mid-2022, but also wobbled around zero at other times: the false alarms the evaluation must count.
 
 ### C.6 The dials
 
-![Level, slope and acceleration for four noise settings of the three-state filter, QQQ 2020](figures/c6_noise_settings_emphasis.png)
+![Level, slope and acceleration for four noise settings of the three-state filter, QQQ 2020](figures/c06_dials.png)
 
 Each setting raises one entry of $Q$ a hundredfold from the balanced case. Emphasising the slope makes it turn within days at the 2020 turning points but flip sign far more often; emphasising acceleration makes the slope and level overshoot. The settings are illustrative, not estimated.
