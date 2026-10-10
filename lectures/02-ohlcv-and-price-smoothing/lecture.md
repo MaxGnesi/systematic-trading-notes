@@ -1,4 +1,4 @@
-# Lecture 2: OHLCV and Moving Averages
+# Lecture 2: OHLCV and Price Smoothing
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 10, 2026 · Max Gnesi*
 
@@ -105,7 +105,7 @@ Causal also means the value is not known until the bar closes. A signal from bar
 
 Given that template, the one real degree of freedom is: **how much should each past bar count?** A weighting rule can treat every bar the same, favour recent bars, favour high-volume bars, favour bars with large moves, or adapt between these based on recent behaviour. Each is a named, legitimate technique.
 
-This family is generically called a **moving average** or, more precisely, a **low-pass filter**: it lets the slow component through and suppresses the fast one. In this course's code it is called a **Baseline**: a raw trend estimate on its own scale, kept separate from the later step (an *Envelope*) that turns it into a sized position.
+This family is generically called **price smoothing**. Most of its members are **moving averages**: weighted averages of a window of past prices. The Kalman filter reaches the same kind of result by a different route (§5). In signal-processing terms each is a **low-pass filter**: it lets the slow component through and suppresses the fast one. In this course's code it is called a **Baseline**: a raw trend estimate on its own scale, kept separate from the later step (an *Envelope*) that turns it into a sized position.
 
 ### 3.4 A map of what else aggregation can target
 

@@ -9,7 +9,7 @@ The course follows one pipeline throughout (data → signal → position → eva
 | Part | # | Lecture | Core idea | Notebooks / data | Status |
 |---|---|---|---|---|---|
 | I. Foundations | 1 | Introduction to Systematic Trading | The pipeline; bias moves into research; strategy families as examples | — | Done |
-| | 2 | OHLCV and Moving Averages | A bar is compression; averaging is filtering; compare at equal memory | 11 (QQQ) | Done |
+| | 2 | OHLCV and Price Smoothing | A bar is compression; averaging is filtering; compare at equal memory | 11 (QQQ) | Done |
 | | 3 | Same Bars, Different Questions: Volatility, Flow, Correlation and Tails | Same data, different transformations | 12 (SPY, QQQ, GLD, AGG) | Done |
 | II. Clock-time bars: trend and relative value | 4 | Signal to position | Volatility targeting; scaling raw signals into sized positions | 09 | Planned |
 | | 5 | Trend across asset classes | What works where, and who pays | 09, 10 | Planned |
