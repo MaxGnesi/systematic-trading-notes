@@ -65,6 +65,37 @@ Lecture 3, §11 promises that Part III returns to risk measures beyond clock-tim
 - **GitHub:** lecture folders stay **flat** under `lectures/`, numbered globally (`01-…` to `15-…`), so links survive changes to the outline. The part is shown as a column in the README and in the roadmap above, not in the folder path.
 - **Doc:** each part is a parent tab ("Part I: Foundations", "Part II: Clock-time bars: trend and relative value", …) holding a short paragraph on what the part covers and how it leads into the next, with its lectures as sub-tabs.
 
+### 1.4 Lecture 4 plan (Kalman filter): design choices, charts, references
+
+Status: outline in the doc; prototypes exist outside the lecture. Kalman material stays in Lecture 2 until Lecture 4 is written.
+
+**Design choices.** Core model: level + slope on log price, diagonal Q (prices gap). Acceleration only as a cautionary extension. Dials set by memory matching or maximum likelihood. Recommended upgrade: R per bar from the bar's range (Lecture 3). Fat tails: a robust update, not the UKF. EKF/UKF in depth on a genuinely nonlinear case: hidden volatility from daily ranges; lesson "transform first (log range), use the UKF only when you cannot". Bridge to stat arb: a time-varying hedge ratio.
+
+**Charts (appendix C, each linked from the text):**
+
+| Chart | Content | Section |
+|---|---|---|
+| C.1 | Predict, compare, correct on the toy series | §1–2 |
+| C.2 | Gain and uncertainty settling; same q/R ratio at two scales gives identical levels, wider bands | §2, §5 |
+| C.3 | Weights on past prices: level-only filter = EMA; level + slope with negative weights | §2–3 |
+| C.4 | A price jump: diagonal versus derived Q | §3 |
+| C.5 | Level, slope and acceleration separately for four noise settings, QQQ 2020 (prototype exists) | §4 |
+| C.6 | The memory dial: q/R ratio against smoothness and tracking | §5 |
+| C.7 | Warm-up: starting error with a diffuse versus a confident start | §6 |
+| C.8 | R per bar from the range versus fixed R, QQQ 2020 | §7 |
+| C.9 | Normalised surprises against a normal curve; standard versus robust update on a spike | §7 |
+| C.10 | Hidden volatility from daily ranges: linear filter on log range, EKF and UKF | §8 |
+| C.11 | Smoothness versus tracking on QQQ episodes (moved from Lecture 2) | §9 |
+| C.12 | A time-varying hedge ratio | §9 |
+
+**References: status before citing.**
+
+| Reference | Verified | Still to check |
+|---|---|---|
+| Alizadeh, Brandt and Diebold (2002), *Journal of Finance* 57(3), 1047–1091 | Log range approximately Gaussian, robust to microstructure noise; Gaussian quasi-ML for latent volatility | The exact state-space form in the estimation section |
+| Chan (2013), *Algorithmic Trading: Winning Strategies and Their Rationale* | Kalman-filter hedge ratio on EWA/EWC | Chapter number (cite without it until checked); a replication found much weaker results (Sharpe 0.65 vs 2.4, different period) |
+| Kalman (1960); Julier and Uhlmann (unscented filter); adaptive and robust filtering sources | — | All, before §1, §7 and §8 are written |
+
 ## 2. Where things live
 
 | What | Where |
