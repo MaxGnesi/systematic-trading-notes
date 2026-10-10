@@ -2,8 +2,6 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 10, 2026 · Max Gnesi*
 
-> **Draft in progress.** Sections 1–4 are written; sections 5–11 are still an outline (below). All numbers and charts come from the companion notebook [13_tracking_hidden_states.ipynb](13_tracking_hidden_states.ipynb). The Kalman material still in [Lecture 2](../02-ohlcv-and-price-smoothing/lecture.md) moves here once this lecture is complete.
-
 Lecture 2's methods smooth the data from the bottom up; the Kalman filter works from the top down, by modelling what is hidden behind prices and updating that model with each new bar. This lecture builds the linear filter step by step, from a single level to slope and acceleration, describes what each hidden state captures, then covers extensions and the nonlinear extended and unscented filters. Companion notebook: [13_tracking_hidden_states.ipynb](13_tracking_hidden_states.ipynb).
 
 ## 1. Bottom-up versus top-down
@@ -194,66 +192,271 @@ The states therefore capture three distinct layers of the same price: where it i
 
 Acceleration turns before the slope on average, but not at every turning point. Across SPY, QQQ, GLD and AGG, the median delay after a turning point is 23 days for the acceleration reading against 30–36 days for the slope readings, and the acceleration reading changes sign less often in choppy markets (4.4 times a year against 5–7). In 2020 it turned down 13 days after the February peak, ahead of the slopes (16–18 days), but turned up 39 days after the March low, no earlier than the slopes (30–40 days). Its value is as an additional layer of information, not a reliable leading indicator; §9 profiles it by market condition.
 
-## Sections still to write (outline)
+## 5. Design versus tuning
 
-5. **Design versus tuning.** Two separate choices. The *design* (which states the model has) decides, for every parameter setting, which kind of motion it follows with no lasting gap and whether it overshoots a jump. The *tuning* ($`Q`$ and $`R`$, of which only the ratio matters) sets only the speed. Prototype check at a slow and a very fast setting: Then the dials: a table of what each entry of $`Q`$ does to how the filter follows price (raise *q_level*, *q_slope*, *q_acceleration* or $`r_{	ext{price}}`$ → effect → measured cost from chart C.6).
+Two choices shape a Kalman filter, and they do different things. The *design* (which states the model has) decides, for every parameter setting, which kind of motion the filter follows with no lasting gap and whether it overshoots a jump. The *tuning* (the noise variances, of which only the ratios matter) decides only how fast it does so.
 
-    | Design | Price jump: overshoot | Steady trend: gap behind price | Parabolic move: gap behind price |
-    |---|---|---|---|
-    | Level only | None (0% at both speeds) | Fixed gap (0.99 slow, 0.095 fast) | Growing gap (2.8 → 5.8 slow, 0.28 → 0.57 fast) |
-    | Level + slope | Always (20% slow, 17% fast) | None | Fixed gap (0.02 slow, 0.0006 fast) |
-    | Level + slope + acceleration | Always, larger (29% slow, 23% fast) | None | None |
+### 5.1 What the design decides
 
-    Tuning shrinks a gap but never removes it; only adding a state does. Overshoot follows from the weights: positive weights on past prices can never overshoot a jump, and any negative weight forces an overshoot, because the cumulative weights must exceed one before settling back to one. Each design is a different bet about what the market is doing; none is best.
+Each design at a slow and a very fast setting, on a price jump, a steady trend and a parabolic move ($`r_{\text{price}} = 1`$):
 
-    **How each design follows price after a jump.** Because the slope designs overshoot, they turn against a move on their own when price stalls, simply by correcting their own overshoot, as if tightening a stop; the level-only design just waits for price to come to it. Prototype test, same pattern at both speeds (days on which each state points against the move):
-
-    | State | After a jump, then flat | After a jump inside a continuing uptrend |
-    |---|---|---|
-    | Position, level only | Never against the move | Never against the move |
-    | Position, level + slope | Turns against it early (from bar +6 to +34) | Points against it for about 150 bars |
-    | Slope, level + slope | Turns against it late (from +27 to +143) | Never against the move |
-    | Position, three-state | Turns first (from +3 to +15) | Points against it for about 140 bars |
-    | Slope, three-state | Turns (from +13 to +61) | Points against it for 16–47 bars |
-    | Acceleration | Turns early (from +9 to +43) | Points against it for about 160 bars |
-
-    In these tests only the level + slope model's slope stayed with a trend that continued after a jump, yet still turned once the move stopped. What this means for entering and leaving positions is the subject of Part II. Then the dials *q_level*, *q_slope*, *q_acceleration* ([chart C.6](#c6-the-dials)) and matching a Kalman filter to an EMA on variance reduction.
-6. **Starting and running the filter.** Warm-up phases per design measured in the notebook (no universal bar count); the starting uncertainty $`P_0`$ and the diffuse start (chart C.7); a best-practice table: history to load, start, what to store, matched comparisons, surprise monitoring, re-estimating $`q/R`$.
-7. **Extensions and what each changes.** A robust update for fat-tailed surprises; $`R`$ per bar from the bar's range; a damped slope. Each profiled with the market conditions of §9 (what it gains, what it gives up), not ranked; early single-asset results are preliminary.
-8. **Nonlinear models, in depth.** Hidden volatility from daily ranges; linearisation (EKF) versus sigma points (UKF), with a table of the unscented parameters $`lpha`$, $`eta`$, $`\kappa`$ and what they actually control; transform first (log range) and the outlier lesson of 6 May 2010 (chart C.10); what neither fixes (fat tails, regime breaks).
-9. **What each filter captures: a profile by market condition, not a ranking.** Market conditions defined mechanically, across SPY, QQQ, GLD, AGG:
-
-    | Market condition | Defined by | What we describe for each filter |
-    |---|---|---|
-    | Choppy, trendless | Low efficiency ratio (Lecture 3) | How often it flips; how much it chases noise |
-    | Steady trend | High efficiency ratio, moderate slope | How far it lags; how stable its signal stays |
-    | Parabolic or accelerating move | Rising slope, positive acceleration | Whether it keeps up or falls behind |
-    | Regime change | Mechanically defined turning points | How early it turns; how often it warns falsely |
-
-    Two case studies with all three designs: **the 2000 top**, a parabolic rise followed by violent counter-trend rallies all the way to the October 2002 low, the phase that whipsawed trend followers; and **the 2020 V-shaped crash and recovery**, two sharp turns in quick succession.
-
-    The output is a pros-and-cons profile per filter and per signal family, backed by numbers per condition. Plus a time-varying hedge ratio as a bridge to stat arb (Chan, 2013).
-10. **Side by side.** The three models and their three signal families: position (price versus level), slope (direction), acceleration (strengthening or fading) ([chart C.5](#c5-three-designs-states-and-readings)); comparison with the Lecture 2 methods; practical notes and common mistakes.
-11. **Summary, exercises and reading.** References verified before citing.
-
-## Preliminary observations (prototype, QQQ)
-
-Three models matched on memory to EMA(20) (variance reduction 1/20), so that differences come from structure, not from smoothing more or less. How often each pair of long/short signals agrees, QQQ 1999–2026:
-
-| | Position signals | Slope signals | Acceleration |
+| Design | Price jump: overshoot | Steady trend: gap behind price | Parabolic move: gap behind price |
 |---|---|---|---|
-| **Position signals** | 78–91% | 45–68% | 50–58% |
-| **Slope signals** | 45–68% | 89% | 70–75% |
+| Level only | None (0% at both speeds) | Fixed gap (0.99 slow, 0.095 fast) | Growing gap (2.8 → 5.8 slow, 0.28 → 0.57 fast) |
+| Level + slope | Always (20% slow, 17% fast) | None | Fixed gap (0.02 slow, 0.0006 fast) |
+| Level + slope + acceleration | Always, larger (29% slow, 23% fast) | None | None |
 
-Signals from the same state largely agree; signals from different states agree only about half to two-thirds of the time, i.e. three distinct signal families. This is agreement, not performance: whether any of them, or a combination, earns money is tested in Part II.
+Tuning shrinks a gap but never removes it; only adding a state does. Each additional state lets the filter follow one more kind of motion exactly: a flat price, a steady trend, a steady acceleration. Overshoot follows from the weights. Positive weights on past prices can never overshoot a jump; any negative weight forces an overshoot, because the cumulative weights must exceed one before settling back to one. Each design is therefore a different bet about what the market is doing, and none is best.
+
+### 5.2 How each design follows price after a jump
+
+Because the slope designs overshoot, they turn against a move on their own when price stalls, simply by correcting their own overshoot, as if tightening a stop; the level-only design waits for price to come to it. Days on which each state points against the move, same pattern at both speeds:
+
+| State | After a jump, then flat | After a jump inside a continuing uptrend |
+|---|---|---|
+| Position, level only | Never against the move | Never against the move |
+| Position, level + slope | Turns against it early (from bar +6 to +34) | Points against it for about 150 bars |
+| Slope, level + slope | Turns against it late (from +27 to +143) | Never against the move |
+| Position, three-state | Turns first (from +3 to +15) | Points against it for about 140 bars |
+| Slope, three-state | Turns (from +13 to +61) | Points against it for 16–47 bars |
+| Acceleration | Turns early (from +9 to +43) | Points against it for about 160 bars |
+
+Only the slope of the level + slope design stayed with a trend that continued after a jump, yet still turned once the move stopped.
+
+### 5.3 The dials
+
+Within a design, the diagonal of $`Q`$ sets how much each state may change per bar, relative to the price noise. Raising one entry shifts the filter's attention towards that state (chart C.6). Measured on QQQ with the three-state design, each setting raising one entry a hundredfold from a balanced case:
+
+| To make the filter… | Raise | Effect on how it follows price | Measured cost (QQQ) |
+|---|---|---|---|
+| Follow price closely | $`q_{\text{level}}`$ | The level hugs price (gap to price 0.64% against 2.24%) | The slope barely moves: the level absorbs every move, and the design collapses towards an EMA |
+| Turn faster at trend changes | $`q_{\text{slope}}`$ | The slope turned 3 days after the 2020 peak and 3 days after the low (balanced: 6 and 15) | 24.7 slope sign changes a year against 8.0 |
+| React to changes in trend speed | $`q_{\text{acceleration}}`$ | Acceleration responds within days | Slope and level overshoot: in April 2020 the slope rose above +500% annualised |
+| Ignore daily noise | $`r_{\text{price}}`$, relative to all of the above | Smoother states | More lag everywhere |
+
+Only the ratios to $`r_{\text{price}}`$ matter (§2.4), so "raise $`q_{\text{slope}}`$" and "lower everything else" are the same instruction. The settings above are illustrative; in practice the ratios can be estimated by maximum likelihood (Harvey, 1989; Durbin and Koopman, 2012) or set by matching memory.
+
+### 5.4 Matching memory to an EMA
+
+To compare designs fairly, each is matched to EMA(20) on the variance reduction factor $`\sum_k w_k^2 = 1/20`$ (Lecture 2, §6), by solving for its price noise. Average age cannot be used: the slope designs follow a steady trend with no lag, so their average age is zero or negative.
+
+| Design | Price noise matched | Average age (bars) | Variance reduction | Smallest weight |
+|---|---|---|---|---|
+| Level only | 0.0100 | 9.5 | 0.050 | 0 |
+| Level + slope | 0.200 | 0.0 | 0.050 | −0.0039 |
+| Level + slope + acceleration | 12.5 | −0.8 | 0.050 | −0.0065 |
+| EMA(20) | — | 9.5 | 0.050 | 0 |
+
+The level-only design matched this way is EMA(20) exactly. A design used at its default settings without matching can carry a very different memory; Lecture 2 found that the default of the `trading_models` package smooths like a 4.5-bar average.
+
+## 6. Starting and running the filter
+
+A filter must be started from a guess, and how long the guess takes to be forgotten depends on the design and on the starting uncertainty $`P_0`$, not on a universal number of bars.
+
+### 6.1 Warm-up by design
+
+Matched to EMA(20); the starting error is 10% in the level and zero slope:
+
+| Design | Gain settles within 1% | Memory horizon (older prices < 0.1% of weight) | Level error < 0.1%: diffuse start / confident start | Slope within 1%/yr for good: diffuse / confident |
+|---|---|---|---|---|
+| Level only | 26 bars | 70 bars | 0 / 73 bars | — |
+| Level + slope | 86 bars | 197 bars | 0 / 137 bars | 24 / 163 bars |
+| Level + slope + acceleration | 184 bars | 436 bars | 23 / 145 bars | 174 / 346 bars |
+
+The *diffuse start*, a very large $`P_0`$, tells the filter that its starting guess is worthless. The gain then begins close to one, the first prices overwrite the guess almost at once, and the level error vanishes within a bar (chart C.7). A confident start with a wrong guess takes 137 bars to forget the same error in the level + slope design, longer than EMA(20) (70 bars). Each extra state lengthens everything: the three-state design needs about 350 bars before its slope can be trusted after a confident start, and its memory reaches back over 400 bars. Unlike KAMA (Lecture 2, §9.1), these numbers are fixed by the design and its settings, so they can be computed in advance.
+
+### 6.2 Practice
+
+| Practice | Why |
+|---|---|
+| Load at least the memory horizon of the slowest design before the evaluation start, and discard it | The states are unreliable until the start is forgotten |
+| Use a diffuse start (large $`P_0`$) | The first prices overwrite the guess, instead of a guess biasing the states for months |
+| Store data, configuration and state, including $`P_0`$, $`Q`$ and $`R`$ (Lecture 2, §9.2) | A restart from different data or settings changes the states until warm-up passes |
+| Compare designs only at matched memory | Otherwise the comparison measures smoothing, not design |
+| Work on log prices | A slope then means the same percentage trend at any price level |
+| Monitor the normalised surprises | If the model fits, surprise ÷ its standard deviation should look like standard normal noise; persistent departures signal a misfit (§7) |
+| Re-estimate the noise ratios occasionally | Markets change; the ratios that fitted a calm decade may not fit a volatile one (Mehra, 1970) |
+
+## 7. Extensions and what each changes
+
+The normalised surprises show where the basic model is wrong: they are fat-tailed. Standardised to unit variance, the share beyond ±3 is far above the 0.27% a normal distribution gives (chart C.9):
+
+| | Share of surprises beyond ±3 | Excess kurtosis | Skewness |
+|---|---|---|---|
+| SPY | 1.26% | 5.9 | −0.64 |
+| QQQ | 1.69% | 3.3 | 0.10 |
+| GLD | 1.17% | 2.1 | −0.23 |
+| AGG | 1.77% | 12.0 | −0.48 |
+
+Three extensions of the level + slope design express different beliefs about the data (chart C.8):
+
+- **Robust update.** A surprise larger than three times the recent typical surprise (a running estimate using past data only) is capped before the correction, a simple version of the approach of Masreliez and Martin (1977). The cap is relative to recent surprises rather than to the model's own surprise variance, because matching memory sets the model's price noise far above the actual daily noise, and a cap on that scale would almost never bind.
+- **Price noise from the bar's range.** $`r_{\text{price}}`$ changes every bar in proportion to the bar's Parkinson variance (Lecture 3), at the same average.
+- **Damped slope.** The slope fades by 2% a bar unless renewed by the data.
+
+Profiled under the market conditions of §9, median across the four assets:
+
+| Variant (level + slope) | Position sign changes/yr, choppy / trending | Strong advances: position pointing up | Median delay after turning points: position / slope |
+|---|---|---|---|
+| Standard | 26.8 / 32.1 | 65% | 4.2 / 29.5 days |
+| Robust update | 26.7 / 31.8 | 66% | 4.2 / 29.5 days |
+| Price noise from the range | 30.6 / 37.3 | 62% | 5.0 / 26.5 days |
+| Damped slope | 29.3 / 21.1 | 89% | 6.0 / 29.5 days |
+
+Each extension changes something different. The robust update acts only on the rare days with extreme surprises, so it barely moves aggregate statistics, but it softens the reaction to those days: in March 2020 its slope bottomed near −70% annualised against about −90% for the standard filter. Making the price noise follow the bar's range adds sign changes: a wide range is mostly genuine movement rather than noise, so treating it as noise makes the filter discount real moves on volatile days and chase small ones on quiet days. The damped slope pulls the level back towards price in strong trends (the position reading points up on 89% of strong-advance days, close to the level-only design) and cuts position sign changes in trends by about a third, at the cost of slightly more in choppy markets. None is an improvement in general; each suits a different view of the market.
+
+## 8. Nonlinear models: the extended and unscented filters
+
+The linear filter requires the state to enter the model linearly. When it does not, two extensions exist: the extended Kalman filter (EKF), which linearises the model around the current estimate, and the unscented Kalman filter (UKF), which propagates a small set of sample points through the nonlinear function instead (Julier and Uhlmann, 1997, 2004). Neither is needed for the price models of §2–4, which are linear. Both are needed when the hidden quantity enters nonlinearly, as hidden volatility does.
+
+### 8.1 Hidden volatility from daily ranges
+
+Let the hidden state be the log daily variance $`h_t`$, following a random walk. For a driftless Brownian motion with variance $`e^{h_t}`$ over the day, the high-low range in log terms is $`e^{h_t/2}\,\rho`$, where $`\rho`$ is the range of a standard Brownian motion over unit time. Simulated on a fine grid, $`\rho`$ has mean 1.572, 1.6% below $`\sqrt{8/\pi} = 1.596`$, which is the discrete-sampling shortfall of Lecture 3, §4.4 for 2,000 steps. Two routes follow:
+
+| Route | Measurement equation | Filter |
+|---|---|---|
+| Nonlinear | $`\text{range}_t = e^{h_t/2}\,\mathbb{E}[\rho] + \text{noise}`$ | EKF or UKF |
+| Transform first | $`\ln \text{range}_t = h_t/2 + \mathbb{E}[\ln \rho] + \varepsilon_t`$ | Ordinary Kalman filter |
+
+The second route works because the log range is close to normal: simulated, $`\ln\rho`$ has mean 0.409, variance 0.085, skewness 0.16 and excess kurtosis −0.25, consistent with the finding of Alizadeh, Brandt and Diebold (2002) that range-based volatility proxies are approximately Gaussian. The noise variance of the log-variance random walk, estimated by maximum likelihood on the linear model, is 0.126 per day.
+
+### 8.2 Linearisation versus sigma points
+
+The EKF replaces the measurement function by its tangent at the current estimate. The UKF instead places $`2n+1`$ sample points (sigma points) around the estimate, three for a single state, passes each through the exact nonlinear function, and recombines them with weights to obtain the forecast and its variance. It needs no derivatives and captures curvature that the tangent misses. Its three parameters are often misunderstood:
+
+| Parameter | What it controls | Usual value |
+|---|---|---|
+| $`\alpha`$ | How far the sigma points spread around the current estimate | Small and positive, typically between 0.0001 and 1 (0.1 here) |
+| $`\beta`$ | A correction for the shape of the state's distribution in the variance weights | 2, optimal when the state is normally distributed |
+| $`\kappa`$ | A secondary scaling of the spread | 0, or 3 minus the number of states |
+
+None of them reaches into fat tails: the UKF still assumes normally distributed noise, and its sigma points describe the mean and variance of the state, not extreme events.
+
+### 8.3 Results on SPY, and what neither fixes
+
+The three filters agree closely: the EKF and UKF estimates correlate 0.95 and 0.94 with the linear filter on log range, with mean absolute differences of about one volatility point (chart C.10). The exception is instructive. On 6 May 2010, the flash crash, the EKF and UKF, which read the raw range, spike to about 210% annualised volatility for a day, while the linear filter on the log range barely moves, because the logarithm compresses extremes. Transforming first therefore made the model linear and also robust to an outlier. The rule is to transform first and to use the UKF only when no transformation linearises the model. Neither filter fixes fat tails or regime breaks; those require a different noise model, not a different way of propagating a normal one.
+
+## 9. What each design captures
+
+The designs are profiled, not ranked: each captures different behaviour, and the useful question is which behaviour, in which market. Conditions are defined mechanically for each of SPY, QQQ, GLD and AGG (they describe a period after the fact; the readings themselves use only past data):
+
+- **Choppy** and **trending**: 63-day efficiency ratio in the asset's bottom or top third.
+- **Strong advance**: 63-day log return in the asset's top 5%.
+- **Turning points**: alternating highs and lows separated by a move of at least one year of the asset's typical volatility.
+
+### 9.1 The profile
+
+Median across the four assets, all designs matched to EMA(20):
+
+| Reading | Sign changes/yr, choppy | Sign changes/yr, trending | Strong advances: pointing up | Median delay after turning points |
+|---|---|---|---|---|
+| Position, level only | 38.3 | 23.0 | 91% | 5 days |
+| Position, level + slope | 26.8 | 32.1 | 65% | 4 days |
+| Position, three-state | 22.1 | 26.1 | 59% | 4 days |
+| Slope, level + slope | 7.4 | 0.1 | 99.9% | 30 days |
+| Slope, three-state | 5.3 | 0.4 | 99.9% | 36 days |
+| Acceleration | 4.4 | 1.9 | 97% | 23 days |
+
+Three behaviours stand out. Position readings react within days but change sign often, in choppy markets most of all for the level-only design. Slope readings hold a trend almost without interruption and ignore most chop, but turn about a month after a turning point. Acceleration sits between them. The relation to the following 63 days' returns is weak and mixed: the median difference between days when a slope reading points up and days when it points down is about 1 percentage point, and close to zero or slightly negative for position readings. Persistence of this kind is a question for Part II, not a property any reading delivers on its own. Position should be compared with position and slope with slope: a slope measures change and moves on a longer timescale by nature, and matching the designs on the slope's own smoothing, rather than the level's, is an alternative the notebook can apply.
+
+### 9.2 The 2000 top: violent counter-trend rallies
+
+QQQ peaked in March 2000 and fell until October 2002, interrupted by five rallies of 22% to 52% off a low, identified mechanically as rises of at least 20% ended by a 20% fall (chart C.11). The warm-up is complete by the peak: the starting choices change the three-state level by at most 0.17% from then on.
+
+| Reading | Sign changes, Mar 2000 – Oct 2002 | Rallies followed | Days from each rally low until pointing up / rally length |
+|---|---|---|---|
+| Position, level only | 83 | 5 of 5 | 4/72, 1/15, 5/33, 9/54, 3/14 |
+| Position, level + slope | 79 | 5 of 5 | 4/72, 1/15, 4/33, 8/54, 1/14 |
+| Position, three-state | 67 | 5 of 5 | 4/72, 1/15, 4/33, 10/54, 1/14 |
+| Slope, level + slope | 9 | 2 of 5 | 34/72, never/15, never/33, 38/54, never/14 |
+| Slope, three-state | 7 | 2 of 5 | 69/72, never/15, never/33, 44/54, never/14 |
+| Acceleration | 8 | 3 of 5 | 61/72, never/15, 18/33, 34/54, never/14 |
+
+In a market of wide mean reversion, position readings follow every swing and pay for it in sign changes; slope readings hold the major downtrend and ignore most rallies; acceleration notices three of the five.
+
+### 9.3 The 2020 V-shaped crash and recovery
+
+| Reading | Days after the 19 Feb peak until pointing down | Days after the 23 Mar low until pointing up | Sign changes, Feb–Jun 2020 |
+|---|---|---|---|
+| Position, level only | 3 | 3 | 6 |
+| Position, level + slope | 2 | 10 | 7 |
+| Position, three-state | 1 | 10 | 5 |
+| Slope, level + slope | 16 | 30 | 2 |
+| Slope, three-state | 18 | 40 | 2 |
+| Acceleration | 13 | 39 | 2 |
+
+Two sharp turns a month apart favour readings that react quickly; the slope readings, which ignore noise, were still pointing down weeks into the recovery (chart C.12). The 2000–2002 and 2020 episodes reward opposite behaviours, which is the point: the right design depends on the market one expects.
+
+### 9.4 A time-varying hedge ratio
+
+The same machinery estimates a regression whose coefficients drift. QQQ's daily log return is regressed on SPY's, with the intercept and the hedge ratio (beta) as hidden states following random walks, the approach Chan (2013) applies to a pair of ETFs. The Kalman beta correlates 0.85 with a rolling 63-day least-squares beta, but its day-to-day changes are about a sixth as large (standard deviation 0.0034 against 0.0193), because it updates smoothly rather than dropping old observations off a window edge (chart C.13). This is the bridge to the relative-value strategies of Part II.
+
+## 10. Side by side, and the Swiss army knife
+
+One model, level + slope + acceleration, gives in one coherent piece:
+
+- a smoothed level (Lecture 2);
+- a trend and its change (overlapping Lecture 3's trend-strength measures);
+- uncertainty bands, and surprises whose size tracks volatility.
+
+The same machinery with a different hidden state gives volatility (§8, from Lecture 3's ranges) and a time-varying beta (§9.4, Lecture 3's relationship measures). It does not cover order flow, which needs volume, or distribution shape, which a Gaussian filter assumes away; its surprises reveal fat tails (§7) but do not model them. The Kalman filter is therefore a Swiss army knife: one consistent tool for most of what Lectures 2 and 3 measure separately. Lecture 3's dedicated measures remain the more granular instruments for any single job.
+
+| | Level only | Level + slope | Level + slope + acceleration |
+|---|---|---|---|
+| Follows with no lasting gap | A flat price | A steady trend | A steady acceleration |
+| Overshoots a jump | Never | Always | Always, most |
+| Equivalent bottom-up method | EMA | Holt's linear exponential smoothing | — |
+| Readings | Position | Position, slope | Position, slope, acceleration |
+| Typical behaviour | Calm level, frequent position changes in chop, late at turns | Slope holds trends and ignores chop, about a month late at turns | Earliest change-of-trend reading on average, most noise and overshoot |
+| Warm-up, matched to EMA(20) | Short (70-bar memory) | About 200 bars | About 450 bars |
+
+**Common mistakes.** Comparing designs at unmatched memory; judging a design at its default settings; trusting slope and acceleration readings during the warm-up; treating the uncertainty bands as reliable when the surprises are fat-tailed; reading a design's behaviour in one episode as a general property.
+
+## 11. Summary, exercises and reading
+
+### 11.1 Takeaways
+
+1. Bottom-up methods average bars; a state-space model states what is hidden and checks each bar against it. With a slope state the trend becomes an explicit quantity, projected forward.
+2. With one hidden state the Kalman filter is an EMA, with $`\alpha`$ set by the ratio of the noise variances; only ratios matter.
+3. The design decides which motion is followed with no lasting gap and whether jumps are overshot, at every setting; tuning sets the speed.
+4. Each state gives its own reading: position, slope, acceleration. They capture different layers of the same price and agree only about half to three-quarters of the time across states.
+5. Warm-up is fixed by design and settings, can be computed in advance, and is shortened drastically by a diffuse start.
+6. The extended and unscented filters are for genuinely nonlinear models; transform first where possible.
+7. No design is best. Each is a bet about what the market is doing; the 2000–2002 and 2020 episodes reward opposite designs.
+
+### 11.2 Exercises
+
+- [ ] Derive the steady gain of the level-only filter from $`u^2 - q\,u - q\,R = 0`$ and show that the filter equals an EMA with $`\alpha`$ equal to that gain.
+- [ ] Show that any linear smoother with a negative weight on some past price must overshoot a unit jump.
+- [ ] Re-run the profile of §9.1 with the designs matched on the slope's variance reduction rather than the level's. Which conclusions change?
+- [ ] Estimate the noise ratios of the level + slope design for QQQ by maximum likelihood and compare them with the values matched to EMA(20).
+- [ ] Replace the robust update's cap of 3 by 2 and by 5. On which days does the level change, and by how much?
+- [ ] Implement the UKF for the volatility model with $`\alpha`$ of 0.01, 0.1 and 1. Does the estimate change?
+- [ ] Repeat the case studies of §9.2–9.3 for SPY and GLD.
+
+### 11.3 Reading list
+
+- Alizadeh, S., Brandt, M. and Diebold, F. (2002). Range-based estimation of stochastic volatility models. *Journal of Finance* 57(3), 1047–1091. — range-based volatility and the near-normality of the log range (§8).
+- Chan, E. (2013). *Algorithmic Trading: Winning Strategies and Their Rationale.* Wiley. — a Kalman-filter hedge ratio for an ETF pair (§9.4).
+- Durbin, J. and Koopman, S.J. (2012). *Time Series Analysis by State Space Methods* (2nd ed.). Oxford University Press. — ch. 5, starting a filter, including the diffuse start (§6).
+- Harvey, A. (1989). *Forecasting, Structural Time Series Models and the Kalman Filter.* Cambridge University Press. — local level and local linear trend models; Holt's method as a steady-state filter (§3).
+- Julier, S. and Uhlmann, J. (1997). A new extension of the Kalman filter to nonlinear systems. *Proc. SPIE* 3068, 182–193. — the unscented filter (§8).
+- Julier, S. and Uhlmann, J. (2004). Unscented filtering and nonlinear estimation. *Proceedings of the IEEE* 92(3), 401–422. — review of the unscented transform (§8).
+- Kalman, R.E. (1960). A new approach to linear filtering and prediction problems. *Journal of Basic Engineering* 82(1), 35–45. — the original filter (§1).
+- Masreliez, C. and Martin, R.D. (1977). Robust Bayesian estimation for the linear model and robustifying the Kalman filter. *IEEE Transactions on Automatic Control* 22(3), 361–371. — robust updates (§7).
+- Mehra, R. (1970). On the identification of variances and adaptive Kalman filtering. *IEEE Transactions on Automatic Control* 15(2), 175–184. — estimating the noise variances from the surprises (§6).
+
+*Harvey (1989) is given from memory and should be checked before circulation; the other references were checked against publisher or library records.*
 
 ## Appendix: main charts
+
+From the companion notebook, [13_tracking_hidden_states.ipynb](13_tracking_hidden_states.ipynb), where every number in this lecture is computed and each formula is checked against the code.
 
 ### C.1 Predict, compare, correct (§2)
 
 ![One hidden state on Lecture 2's toy series: price, forecast, updated level and the correction gain × surprise](figures/c01_predict_compare_correct.png)
 
-Each bar the forecast is yesterday's level; the correction is the gain (1/3) times the surprise. On the spike at bar 7 the level moves a third of the way to the price, exactly like EMA(5).
+Each bar the forecast is the previous level; the correction is the gain (1/3) times the surprise. On the spike at bar 7 the level moves a third of the way to the price, exactly as EMA(5) does.
 
 ### C.2 Only the ratio matters (§2.4)
 
@@ -273,14 +476,56 @@ The level-only design reproduces EMA(20) exactly. The slope designs put more wei
 
 Both forms cover half the jump in 8 bars and then overshoot; the derived form, which can only explain the jump through the slope, overshoots slightly more.
 
-### C.5 Three designs: states and readings
+### C.5 Three designs: states and readings (§4.2)
 
-![Three Kalman models matched on memory: level, slope, acceleration and one signal per state, QQQ 2021–2023](figures/c05_three_designs.png)
+![Three designs matched on memory: level, slope, acceleration and one reading per state, QQQ 2021–2023](figures/c05_three_designs.png)
 
-The level-only filter lags price; the level + slope and three-state levels lead it, falling below price earlier in the 2022 decline and rising above it in rebounds. Acceleration turned negative before the November 2021 peak and positive ahead of the slope in mid-2022, but also wobbled around zero at other times: the false alarms the evaluation must count.
+The level-only design lags price; the slope designs lead it, falling below price earlier in the 2022 decline and rising above it in rebounds. Acceleration turned negative before the November 2021 peak and positive ahead of the slope in mid-2022, but also wobbled around zero at other times.
 
-### C.6 The dials
+### C.6 The dials (§5.3)
 
-![Level, slope and acceleration for four noise settings of the three-state filter, QQQ 2020](figures/c06_dials.png)
+![Level, slope and acceleration for four noise settings of the three-state design, QQQ 2020](figures/c06_dials.png)
 
-Each setting raises one entry of $`Q`$ a hundredfold from the balanced case. Emphasising the slope makes it turn within days at the 2020 turning points but flip sign far more often; emphasising acceleration makes the slope and level overshoot. The settings are illustrative, not estimated.
+Each setting raises one entry of $`Q`$ a hundredfold from the balanced case. Emphasising the slope makes it turn within days at both 2020 turning points but change sign far more often; emphasising acceleration makes the slope and level overshoot.
+
+### C.7 Warm-up (§6.1)
+
+![How a 10% starting error fades: Kalman filter with a confident and a diffuse start, and EMA(20)](figures/c07_warmup.png)
+
+With a diffuse start the error vanishes within a bar; with a confident wrong start the level + slope design needs 137 bars to forget it, EMA(20) 70.
+
+### C.8 Extensions through the 2020 crash (§7)
+
+![Level and slope of the level + slope design in standard form, with a robust update, with price noise from the range, and with a damped slope, QQQ 2020](figures/c08_extensions_2020.png)
+
+The robust update softens the reaction to the extreme crash days; price noise from the range keeps the level far above price during the crash, because it discounts the volatile days; the damped slope stays closest to price in level and smallest in slope.
+
+### C.9 Fat-tailed surprises (§7)
+
+![Normalised surprises of the level + slope design against a standard normal curve, QQQ, log scale](figures/c09_surprises.png)
+
+On a log scale the tails stand out: surprises beyond four standard deviations, which a normal distribution would almost never produce, occur repeatedly.
+
+### C.10 Hidden volatility from daily ranges (§8.3)
+
+![Annualised volatility of SPY from daily ranges, 2007–2010: linear filter on log range, EKF and UKF on the range](figures/c10_volatility_filters.png)
+
+The three estimates move together through the financial crisis. On 6 May 2010 the EKF and UKF spike to about 210% while the linear filter on log range does not.
+
+### C.11 The 2000 top (§9.2)
+
+![The 2000 top and its counter-trend rallies, three designs matched on memory, QQQ 2000–2002](figures/c11_case_2000.png)
+
+Shaded: the five rallies of 20% or more. Position readings follow each rally within days; slope readings hold the downtrend through most of them.
+
+### C.12 The 2020 V-shaped crash and recovery (§9.3)
+
+![Three designs matched on memory through the 2020 crash and recovery, QQQ](figures/c12_case_2020.png)
+
+Position readings turn within days at both turns; slope readings turn weeks later and were still pointing down well into the recovery.
+
+### C.13 A time-varying hedge ratio (§9.4)
+
+![Hedge ratio of QQQ on SPY: Kalman filter against a rolling 63-day regression](figures/c13_hedge_ratio.png)
+
+Both estimates track the same changes in the relationship; the Kalman beta does so smoothly, without the jumps a rolling window produces when old observations drop off its edge.
