@@ -606,9 +606,9 @@ The same machinery with a different hidden state gives volatility (§8, from Lec
 ### 11.3 Reading list
 
 - Alizadeh, S., Brandt, M. and Diebold, F. (2002). Range-based estimation of stochastic volatility models. *Journal of Finance* 57(3), 1047–1091. — range-based volatility and the near-normality of the log range (§8).
+- Bell, B.M. and Cathey, F.W. (1993). The iterated Kalman filter update as a Gauss-Newton method. *IEEE Transactions on Automatic Control* 38(2), 294–297. — the iterated EKF (§8.3).
 - Benhamou, E. (2018). Kalman filter demystified: from intuition to probabilistic graphical model to real case in financial markets. arXiv:1811.11618. — level + slope model with estimated noise and starting uncertainty; prediction above the close read as an up-trend (§4.3, §6.2).
 - Bocquet, M. and Farchi, A. (2025). *Introduction to the principles and methods of data assimilation in the geosciences.* Lecture notes, École des Ponts ParisTech, revision 0.52. — the Kalman filter from the data-assimilation side; the steady-state uncertainty of a random walk (§2.3).
-- Bell, B.M. and Cathey, F.W. (1993). The iterated Kalman filter update as a Gauss-Newton method. *IEEE Transactions on Automatic Control* 38(2), 294–297. — the iterated EKF (§8.3).
 - Chan, E. (2013). *Algorithmic Trading: Winning Strategies and Their Rationale.* Wiley. — a Kalman-filter hedge ratio for an ETF pair, traded on the forecast error scaled by its standard deviation (§4.3, §9.4).
 - Durbin, J. and Koopman, S.J. (2012). *Time Series Analysis by State Space Methods* (2nd ed.). Oxford University Press. — ch. 5, starting a filter, including the diffuse start (§6).
 - Fama, E. and French, K. (1988). Permanent and temporary components of stock prices. *Journal of Political Economy* 96(2), 246–273. — a slowly reverting component of prices (§2.1).
