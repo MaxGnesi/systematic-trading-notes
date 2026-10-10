@@ -370,7 +370,7 @@ No method needs the full price history. Each needs a limited warm-up before its 
 | VWAP($N$) | Last $N$ prices and volumes, two running sums | $O(1)$ | $N-1$ bars; exact afterwards | 19 bars for $N = 20$ |
 | EMA($N$) | One number | $O(1)$ | $\approx 3.5N$ bars | $\approx 70$ bars for $N = 20$ |
 | Wilder($n$): ATR, ADX | One number per smoothed series | $O(1)$ | $\approx 7n$ bars | $\approx 93$ bars for $n = 14$ |
-| KAMA($n$) | One number and the last $n+1$ prices | $O(1)$ | Depends on the market: $\approx 12$ bars in a clean trend, up to $\approx 1{,}650$ in pure chop | QQQ, $n = 10$: median 81, maximum 124 bars |
+| KAMA($n$) | One number and the last $n+1$ prices | $O(1)$ | Depends on the market: $\approx 12$ bars in a clean trend, up to $\approx 1{,}650$ in pure chop | QQQ, $n = 10$: median 82, maximum 132 bars |
 | Kalman (local linear trend) | Two states and their $2\times 2$ uncertainty | $O(1)$ | The longer of gain settling and the 0.1% memory horizon | $\approx 60$ bars (default), $\approx 200$ (matched) |
 
 The rolling methods are exact once their window is full. The expanding methods never are; they are close enough once the starting value no longer matters. For an EMA the combined weight of every bar older than $k$ is exactly $(1-\alpha)^k$, and an arbitrary starting value fades by the same factor:
@@ -379,7 +379,19 @@ The rolling methods are exact once their window is full. The expanding methods n
 \mathrm{EMA}_t = \alpha\sum_{k\ge 0}(1-\alpha)^k\, p_{t-k}, \qquad \text{weight older than } k = (1-\alpha)^k \approx e^{-2k/(N+1)}
 ```
 
-At $k = 3.5N$ that is $e^{-7} \approx 0.1\%$. Wilder's smoothing uses $\alpha = 1/n$, so the same 0.1% takes about $7n$ bars: ATR(14) needs roughly 93 bars of warm-up, not 14. KAMA's $\alpha$ moves every bar between $\alpha_s^2 = 0.0042$ and $\alpha_f^2 = 0.44$, so its memory lengthens in choppy markets. That is a practical drawback: KAMA has no fixed warm-up, and the safe upper bound (about 1,650 bars, six and a half years of daily data) is rarely affordable. The workable fix is to measure it: start KAMA from two different values and treat it as warmed up once the two agree within 0.1%. On QQQ that took 81 bars at the median and 124 at worst. The matched Kalman filter smooths like EMA(20), yet its slow trend component reaches back about 200 bars; starting it with a large initial uncertainty (a *diffuse* start) removes most of the starting-value error early.
+At $k = 3.5N$ that is $e^{-7} \approx 0.1\%$. Wilder's smoothing uses $\alpha = 1/n$, so the same 0.1% takes about $7n$ bars: ATR(14) needs roughly 93 bars of warm-up, not 14. KAMA's $\alpha$ moves every bar between $\alpha_s^2 = 0.0042$ and $\alpha_f^2 = 0.44$, so its memory lengthens in choppy markets. That is a practical drawback: KAMA has no fixed warm-up, and the safe upper bound (about 1,650 bars, six and a half years of daily data) is rarely affordable. The workable fix is to measure it: start KAMA from two different values and treat it as warmed up once the two agree within 0.1%. On QQQ that took 82 bars at the median and 132 at worst (example below). The matched Kalman filter smooths like EMA(20), yet its slow trend component reaches back about 200 bars; starting it with a large initial uncertainty (a *diffuse* start) removes most of the starting-value error early.
+
+**Example: when the backtest starts matters.** Two common ways to start KAMA(10), from the first price or from the average of the first 10 prices, compared from 311 monthly start dates on QQQ between 1999 and 2025:
+
+| Backtest starts | First months | Mean ER, first 60 bars | Bars until the two agree within 0.1% | Days the long/short signal differs |
+|---|---|---|---|---|
+| February 2010 | Clean uptrend | 0.46 | 39 | 0 |
+| April 2024 | Clean uptrend | 0.48 | 40 | 0 |
+| January 2000 | Choppy, near the dot-com peak | 0.26 | 132 | 3 |
+| January 2008 | Choppy, early financial crisis | 0.22 | 130 | 6 |
+| November 2008 | Violent crisis swings | 0.22 | 112 | 18, the last 55 bars in |
+
+Warm-up tracks how choppy the first months are (correlation with mean ER: $-0.86$). In 71% of start dates the long/short signal, price above or below KAMA, differs on at least one day. A backtest starting in November 2008 with no warm-up would show different trades for almost three months purely because of a starting convention. An EMA(20) needs about 70 bars whatever the market.
 
 **Practical rule.** Before the backtest start date, load the longest warm-up among the indicators the strategy uses, compute on all of it, and discard the warm-up bars before measuring performance. In live trading, update each method from its stored state; never recompute from the start of the series.
 
