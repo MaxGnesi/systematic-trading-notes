@@ -192,23 +192,25 @@ The first row is the reason acceleration matters beyond the slope: through the �
 
 ### 4.2 Three designs, six readings
 
-The rest of the lecture compares three designs. Each hidden state yields a *reading*: the direction in which it points on a given day, up (+1) or down (−1). Short labels are used from here on.
+Sections 2 to 4.1 built three *designs*. A design is the set of hidden states the model tracks, together with how they move from bar to bar; it is not a parameter setting. The settings (the noise variances, or dials) are a separate choice, made within a design and discussed in §5.3. The rest of the lecture compares the three designs, and short labels are used from here on.
 
 **Table 4.1. Designs and the readings they provide**
 
-| Label | Design | Hidden states | Readings |
+| Label | Design | Hidden states | One-bar transition | Built in | Readings |
+|---|---|---|---|---|---|
+| L | Level only | level | level stays where it was | §2 | P-L |
+| LS | Level + slope | level, slope | level moves by the slope | §3 | P-LS, S-LS |
+| LSA | Level + slope + acceleration | level, slope, acceleration | level moves by slope + ½ acceleration; slope moves by acceleration | §4.1 | P-LSA, S-LSA, A-LSA |
+
+On every bar each design produces its hidden states, after the update with that bar's price. Each state is then condensed into a *reading*: the direction in which it points on that day, up (+1) or down (−1). A reading discards the size of the state and keeps only its direction, which puts states measured on different scales (a price level, a trend in % a year, a change in that trend) on a common footing: on any day one can ask whether they point the same way. A reading's label names the state first and the design second: P-LS is the position reading of the level + slope design, S-LSA the slope reading of the level + slope + acceleration design.
+
+**Table 4.2. Definition of the readings** (log prices; states after the update with day $`t`$'s price)
+
+| Reading | Calculation | Points up when | What it measures |
 |---|---|---|---|
-| L | Level only | level | P-L |
-| LS | Level + slope | level, slope | P-LS, S-LS |
-| LSA | Level + slope + acceleration | level, slope, acceleration | P-LSA, S-LSA, A-LSA |
-
-**Table 4.2. Definition of the readings** (computed daily on log prices)
-
-| Reading | Points up when | What it measures |
-|---|---|---|
-| Position: P-L, P-LS, P-LSA | Price is above the design's level | Where price stands relative to the design's estimate (§4.3) |
-| Slope: S-LS, S-LSA | The slope is positive | Which way the trend points |
-| Acceleration: A-LSA | The acceleration is positive | Whether the trend is strengthening or fading |
+| Position: P-L, P-LS, P-LSA | $`\mathrm{sign}(\text{price}_t - \text{level}_t)`$, using that design's level | Price is above the design's level | Where price stands relative to the design's estimate (§4.3) |
+| Slope: S-LS, S-LSA | $`\mathrm{sign}(\text{slope}_t)`$ | The slope is positive | Which way the trend points |
+| Acceleration: A-LSA | $`\mathrm{sign}(\text{acceleration}_t)`$ | The acceleration is positive | Whether the trend is strengthening or fading |
 
 **A fair comparison: matching memory.** A design that smooths less reacts faster for that reason alone. So that differences come from structure rather than from smoothing more or less, every design is matched to the same memory, that of EMA(20). The criterion is the variance reduction factor $`\sum_k w_k^2 = 1/20`$ (Lecture 2, §6), where $`w_k`$ is the steady-state weight on a price $`k`$ bars old; with $`q_{\text{level}} = 10^{-4}`$, $`q_{\text{slope}} = 10^{-6}`$ and $`q_{\text{acceleration}}`$ = $`10^{-8}`$ fixed, the price noise $`r_{\text{price}}`$ is solved for. Average age cannot serve as the criterion: the slope designs follow a steady trend with no lag, so their average age is zero or negative.
 
@@ -235,9 +237,11 @@ In classical trend following, price below a moving average is read as a downtren
 | LS | Yesterday's level plus the slope | Price rose less than the projected trend: a pullback or deceleration reading, closer to contrarian | 65% |
 | LSA | Level plus slope plus half the acceleration | As LS | 59% |
 
-Strong advances are days whose 63-day return lies in the asset's top 5% (median over SPY, QQQ, GLD and AGG, §9). In the same advances the slope readings point up on 99.9% of days: in the slope designs, the trend reading is the slope. The readings are therefore building blocks rather than an off-the-shelf signal. Requiring position and slope to agree, or reading a positive acceleration inside a negative slope as a fading decline, are design choices that belong to Part II and must be tested there. Practitioners use this comparison in the projected sense. Benhamou (2018) goes long when the filter's prediction lies above the previous close, the opposite of the classical moving-average rule, and Chan (2013) uses the surprise scaled by its standard deviation as a mean-reversion signal on a spread.
+Strong advances are days whose 63-day return lies in the asset's top 5%; the shares are medians over SPY, QQQ, GLD and AGG, with the designs of Table 4.3 (notebook §12). In the same advances the slope readings point up on 99.9% of days: in the slope designs, the trend reading is the slope. The readings are therefore building blocks rather than an off-the-shelf signal. Requiring position and slope to agree, or reading a positive acceleration inside a negative slope as a fading decline, are design choices that belong to Part II and must be tested there. Practitioners use this comparison in the projected sense. Benhamou (2018) goes long when the filter's prediction lies above the previous close, the opposite of the classical moving-average rule, and Chan (2013) uses the surprise scaled by its standard deviation as a mean-reversion signal on a spread.
 
 ### 4.4 How far the readings agree
+
+**Experiment 4.1.** Data: QQQ daily closes, 1999–2026, in logs. Designs: L, LS and LSA with the settings of Table 4.3. Each day, the six readings of Table 4.2 are computed; the first 300 bars are dropped as warm-up. Measured: for each pair of readings, the share of days on which they have the same sign. Notebook §7; the states and readings over 2021–2023 are plotted in [chart C.5](#c5-three-designs-states-and-readings-44).
 
 **Table 4.5. Share of days on which two readings point the same way** (QQQ, 1999–2026, matched designs, first 300 bars excluded)
 
@@ -249,11 +253,13 @@ Strong advances are days whose 63-day return lies in the asset's top 5% (median 
 | S-LS | | | | — | 89% | 70% |
 | S-LSA | | | | | — | 74% |
 
-Two unrelated readings that each point up half the time would agree on about half the days. Readings of the same state agree on 78–91% of days; readings of different states on 45–74%. The states therefore capture three distinct layers of the same price: where it stands relative to the estimate, which way the trend points, and whether the trend is strengthening or fading (chart C.5). Comparisons are fair within a state. Across states, note that a slope measures change, which needs more data than a level, so slope readings move on a longer timescale by nature.
+Two unrelated readings that each point up half the time would agree on about half the days. Readings of the same state agree on 78–91% of days; readings of different states on 45–74%. The states therefore capture three distinct layers of the same price: where it stands relative to the estimate, which way the trend points, and whether the trend is strengthening or fading ([chart C.5](#c5-three-designs-states-and-readings-44)). Comparisons are fair within a state. Across states, note that a slope measures change, which needs more data than a level, so slope readings move on a longer timescale by nature.
 
 ### 4.5 Acceleration as an early warning
 
-**Table 4.6. Trend readings at turning points** (matched designs; turning points and choppy markets as defined in §9)
+**Experiment 4.2.** Data: SPY, QQQ, GLD and AGG daily closes, in logs, plus QQQ around the 2020 crash. Designs: LS and LSA with the settings of Table 4.3. Turning points are alternating highs and lows separated by a move of at least one year of the asset's typical volatility; choppy markets are days whose 63-day efficiency ratio lies in the asset's bottom third (both as in §9). Measured: days from each turning point until the reading points the new way (median over the four assets), and sign changes per year in choppy markets. Notebook §12 and §13.
+
+**Table 4.6. Trend readings at turning points**
 
 | Reading | Median delay after turning points, four ETFs (days) | Sign changes per year, choppy markets | 2020: days after the 19 Feb peak until pointing down | 2020: days after the 23 Mar low until pointing up |
 |---|---|---|---|---|
@@ -311,7 +317,7 @@ When price stalls after a jump, the slope designs turn against the move on their
 
 ### 5.3 The dials
 
-Choosing the dials is part of modelling, as much as choosing the design. The design fixes which motions the filter can follow; the dials decide how each surprise is shared between level, slope and acceleration, and therefore how the filter behaves at a turn, in chop and after a jump. Within a design, the diagonal of $`Q`$ sets how much each state may change per bar, relative to the price noise; raising one entry shifts the filter's attention towards that state. Four settings of LSA illustrate this, each raising one entry a hundredfold from a balanced case (chart C.6).
+Choosing the dials is part of modelling, as much as choosing the design. The design fixes which motions the filter can follow; the dials decide how each surprise is shared between level, slope and acceleration, and therefore how the filter behaves at a turn, in chop and after a jump. Within a design, the diagonal of $`Q`$ sets how much each state may change per bar, relative to the price noise; raising one entry shifts the filter's attention towards that state. Four settings of LSA illustrate this, each raising one entry a hundredfold from a balanced case ([chart C.6](#c6-the-dials-53)).
 
 **Table 5.5. Dial settings** (LSA, $`r_{\text{price}} = 10^{-4}`$)
 
@@ -349,7 +355,7 @@ A filter must be started from a guess, and how long the guess takes to be forgot
 | LS | 86 bars | 197 bars | 0 / 137 bars | 24 / 163 bars |
 | LSA | 184 bars | 436 bars | 23 / 145 bars | 174 / 346 bars |
 
-The *diffuse start*, a very large $`P_0`$, tells the filter that its starting guess is worthless. The gain then begins close to one, the first prices overwrite the guess almost at once, and the level error vanishes within a bar (chart C.7). A confident start with a wrong guess takes 137 bars to forget the same error in the level + slope design, longer than EMA(20) (70 bars). Each extra state lengthens everything: the three-state design needs about 350 bars before its slope can be trusted after a confident start, and its memory reaches back over 400 bars. Unlike KAMA (Lecture 2, §9.1), these numbers are fixed by the design and its settings, so they can be computed in advance.
+The *diffuse start*, a very large $`P_0`$, tells the filter that its starting guess is worthless. The gain then begins close to one, the first prices overwrite the guess almost at once, and the level error vanishes within a bar ([chart C.7](#c7-warm-up-61)). A confident start with a wrong guess takes 137 bars to forget the same error in the level + slope design, longer than EMA(20) (70 bars). Each extra state lengthens everything: the three-state design needs about 350 bars before its slope can be trusted after a confident start, and its memory reaches back over 400 bars. Unlike KAMA (Lecture 2, §9.1), these numbers are fixed by the design and its settings, so they can be computed in advance.
 
 ### 6.2 Long horizons: putting the trend memory on the slope
 
@@ -405,7 +411,7 @@ The early bars are not wasted either. With a diffuse start, each estimate is the
 
 ## 7. Extensions and what each changes
 
-The normalised surprises show where the basic model is wrong: they are fat-tailed. Standardised to unit variance, the share beyond ±3 is far above the 0.27% a normal distribution gives (chart C.9):
+The normalised surprises show where the basic model is wrong: they are fat-tailed. Standardised to unit variance, the share beyond ±3 is far above the 0.27% a normal distribution gives ([chart C.9](#c9-fat-tailed-surprises-7)):
 
 | | Share of surprises beyond ±3 | Excess kurtosis | Skewness |
 |---|---|---|---|
@@ -414,7 +420,7 @@ The normalised surprises show where the basic model is wrong: they are fat-taile
 | GLD | 1.17% | 2.1 | −0.23 |
 | AGG | 1.77% | 12.0 | −0.48 |
 
-Three extensions of the level + slope design express different beliefs about the data (chart C.8):
+Three extensions of the level + slope design express different beliefs about the data ([chart C.8](#c8-extensions-through-the-2020-crash-7)):
 
 - **Robust update.** A surprise larger than three times the recent typical surprise (a running estimate using past data only) is capped before the correction, a simple version of the approach of Masreliez and Martin (1977). The cap is relative to recent surprises rather than to the model's own surprise variance, because matching memory sets the model's price noise far above the actual daily noise, and a cap on that scale would almost never bind.
 - **Price noise from the bar's range.** $`r_{\text{price}}`$ changes every bar in proportion to the bar's Parkinson variance (Lecture 3), at the same average.
@@ -455,7 +461,7 @@ Both filters face the same problem. The filter's belief about the hidden log var
 | EKF | Replaces the curve by its tangent at the current estimate, then applies the linear filter to the tangent | The bend: the forecast mean is the curve evaluated at the estimate, with no allowance for uncertainty |
 | UKF | Places $`2n+1`$ sample points (*sigma points*) around the estimate, three for one state (the estimate and one point either side), passes each through the exact curve, and recombines them with weights into a forecast mean and variance | Only features of the distribution beyond its mean and variance |
 
-The difference can be checked exactly, because the forecast of a lognormal quantity has a known mean and variance (chart C.10; our calculation). Relative to the curve evaluated at the estimate:
+The difference can be checked exactly, because the forecast of a lognormal quantity has a known mean and variance ([chart C.10](#c10-linearisation-versus-sigma-points-82); our calculation). Relative to the curve evaluated at the estimate:
 
 | Uncertainty about the log variance | Exact forecast mean | EKF | UKF ($`\alpha = 0.1`$) | UKF ($`\alpha = 1`$) |
 |---|---|---|---|---|
@@ -474,7 +480,7 @@ None of them reaches into fat tails: the UKF still assumes normally distributed 
 
 ### 8.3 Results on SPY, and what neither fixes
 
-The three filters agree closely: the EKF and UKF estimates correlate 0.95 and 0.94 with the linear filter on log range, with mean absolute differences of about one volatility point (chart C.11). The exception is instructive. On 6 May 2010, the flash crash, the EKF and UKF, which read the raw range, spike to about 210% annualised volatility for a day, while the linear filter on the log range barely moves, because the logarithm compresses extremes. Transforming first therefore made the model linear and also robust to an outlier. The rule is to transform first and to use the UKF only when no transformation linearises the model. Neither filter fixes fat tails or regime breaks; those require a different noise model, not a different way of propagating a normal one.
+The three filters agree closely: the EKF and UKF estimates correlate 0.95 and 0.94 with the linear filter on log range, with mean absolute differences of about one volatility point ([chart C.11](#c11-hidden-volatility-from-daily-ranges-83)). The exception is instructive. On 6 May 2010, the flash crash, the EKF and UKF, which read the raw range, spike to about 210% annualised volatility for a day, while the linear filter on the log range barely moves, because the logarithm compresses extremes. Transforming first therefore made the model linear and also robust to an outlier. The rule is to transform first and to use the UKF only when no transformation linearises the model. Neither filter fixes fat tails or regime breaks; those require a different noise model, not a different way of propagating a normal one.
 
 ## 9. What each design captures
 
@@ -501,7 +507,7 @@ Three behaviours stand out. Position readings react within days but change sign 
 
 ### 9.2 The 2000 top: violent counter-trend rallies
 
-QQQ peaked in March 2000 and fell until October 2002, interrupted by five rallies of 22% to 52% off a low, identified mechanically as rises of at least 20% ended by a 20% fall (chart C.12). The warm-up is complete by the peak: the starting choices change the three-state level by at most 0.17% from then on.
+QQQ peaked in March 2000 and fell until October 2002, interrupted by five rallies of 22% to 52% off a low, identified mechanically as rises of at least 20% ended by a 20% fall ([chart C.12](#c12-the-2000-top-92)). The warm-up is complete by the peak: the starting choices change the three-state level by at most 0.17% from then on.
 
 | Reading | Sign changes, Mar 2000 – Oct 2002 | Rallies followed | Days from each rally low until pointing up / rally length |
 |---|---|---|---|
@@ -525,11 +531,11 @@ In a market of wide mean reversion, position readings follow every swing and pay
 | Slope, three-state | 18 | 40 | 2 |
 | Acceleration | 13 | 39 | 2 |
 
-Two sharp turns a month apart favour readings that react quickly; the slope readings, which ignore noise, were still pointing down weeks into the recovery (chart C.13). The 2000–2002 and 2020 episodes reward opposite behaviours, which is the point: the right design depends on the market one expects.
+Two sharp turns a month apart favour readings that react quickly; the slope readings, which ignore noise, were still pointing down weeks into the recovery ([chart C.13](#c13-the-2020-v-shaped-crash-and-recovery-93)). The 2000–2002 and 2020 episodes reward opposite behaviours, which is the point: the right design depends on the market one expects.
 
 ### 9.4 A time-varying hedge ratio
 
-The same machinery estimates a regression whose coefficients drift. QQQ's daily log return is regressed on SPY's, with the intercept and the hedge ratio (beta) as hidden states following random walks, the approach Chan (2013) applies to a pair of ETFs. The Kalman beta correlates 0.85 with a rolling 63-day least-squares beta, but its day-to-day changes are about a sixth as large (standard deviation 0.0034 against 0.0193), because it updates smoothly rather than dropping old observations off a window edge (chart C.14). This is the bridge to the relative-value strategies of Part II.
+The same machinery estimates a regression whose coefficients drift. QQQ's daily log return is regressed on SPY's, with the intercept and the hedge ratio (beta) as hidden states following random walks, the approach Chan (2013) applies to a pair of ETFs. The Kalman beta correlates 0.85 with a rolling 63-day least-squares beta, but its day-to-day changes are about a sixth as large (standard deviation 0.0034 against 0.0193), because it updates smoothly rather than dropping old observations off a window edge ([chart C.14](#c14-a-time-varying-hedge-ratio-94)). This is the bridge to the relative-value strategies of Part II.
 
 ## 10. Side by side, and the Swiss army knife
 
@@ -571,7 +577,7 @@ The same machinery with a different hidden state gives volatility (§8, from Lec
 - [ ] Re-run the profile of §9.1 with the designs matched on the slope's variance reduction rather than the level's. Which conclusions change?
 - [ ] Estimate the noise ratios of the level + slope design for QQQ by maximum likelihood and compare them with the values matched to EMA(20).
 - [ ] Replace the robust update's cap of 3 by 2 and by 5. On which days does the level change, and by how much?
-- [ ] Repeat the comparison of chart C.10 at $`P = 4`$, a very uncertain start. How far do the EKF and UKF forecasts fall from the exact values?
+- [ ] Repeat the comparison of [chart C.10](#c10-linearisation-versus-sigma-points-82) at $`P = 4`$, a very uncertain start. How far do the EKF and UKF forecasts fall from the exact values?
 - [ ] Repeat the case studies of §9.2–9.3 for SPY and GLD.
 
 ### 11.3 Reading list
