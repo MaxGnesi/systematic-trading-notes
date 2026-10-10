@@ -102,8 +102,9 @@ The result is a pros-and-cons profile per filter, not a winner. Whether combinin
 | C.8 | The extensions (robust update, range-based R, damped slope) compared under the §9 criteria | §7 |
 | C.9 | Normalised surprises against a normal curve; standard versus robust update on a spike | §7 |
 | C.10 | Hidden volatility from daily ranges: linear filter on log range, EKF and UKF | §8 |
-| C.11 | Trend-system scorecard across assets: turning-point delay, whipsaws, slope stability, persistence | §9 |
-| C.12 | A time-varying hedge ratio | §9 |
+| C.11 | Case study: the 2000 top (parabolic rise, then violent counter-trend rallies to the October 2002 low); three designs, states and signals; check the three-state warm-up first (QQQ data start 10 March 1999) | §9 |
+| C.12 | Case study: the 2020 V-shaped crash and recovery; three designs, states and signals | §9 |
+| C.13 | A time-varying hedge ratio | §9 |
 
 **References: status before citing.**
 
@@ -140,7 +141,7 @@ Every lecture uses the same skeleton:
    - `### N.1 Takeaways` as a numbered list.
    - `### N.2 Exercises` as a checklist (`- [ ]`): mix proofs, reproductions and "construct a case where it breaks".
    - `### N.3 Reading list`, ending with *References are given from memory and should be checked against the originals before circulation.*
-9. **Appendix: charts:** PNGs from the notebook, each with a one-to-three-sentence caption, plus links to the notebook and lecture folder. Charts are lettered by lecture (Lecture 2: A.1…, Lecture 3: B.1…, Lecture 4: C.1…) and every chart is linked from the sentence that uses it ("chart C.4"). Three or four charts suit a lecture of familiar ideas; harder lectures use more, one or two per section (Lecture 4 plans twelve).
+9. **Appendix: charts:** PNGs from the notebook, each with a one-to-three-sentence caption, plus links to the notebook and lecture folder. Charts are lettered by lecture (Lecture 2: A.1…, Lecture 3: B.1…, Lecture 4: C.1…) and every chart is linked from the sentence that uses it ("chart C.4"). Three or four charts suit a lecture of familiar ideas; harder lectures use more, one or two per section (Lecture 4 plans thirteen).
 
 Headings must match what follows them. A heading that promises "three" of something must be followed by three, and must not clash with nearby tables or lists.
 

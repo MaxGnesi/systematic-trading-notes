@@ -35,6 +35,8 @@ Lecture 2's methods smooth the data from the bottom up; the Kalman filter works 
     | Parabolic or accelerating move | Rising slope, positive acceleration | Whether it keeps up or falls behind |
     | Regime change | Mechanically defined turning points | How early it turns; how often it warns falsely |
 
+    Two case studies with all three designs: **the 2000 top**, a parabolic rise followed by violent counter-trend rallies all the way to the October 2002 low, the phase that whipsawed trend followers; and **the 2020 V-shaped crash and recovery**, two sharp turns in quick succession.
+
     The output is a pros-and-cons profile per filter and per signal family, backed by numbers per condition. Plus a time-varying hedge ratio as a bridge to stat arb (Chan, 2013).
 10. **Side by side.** The three models and their three signal families: position (price versus level), slope (direction), acceleration (strengthening or fading) ([chart C.5](#c5-three-models-states-and-signals)); comparison with the Lecture 2 methods; practical notes and common mistakes.
 11. **Summary, exercises and reading.** References verified before citing.
