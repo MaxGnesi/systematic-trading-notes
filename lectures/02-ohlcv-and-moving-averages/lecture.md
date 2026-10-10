@@ -352,7 +352,7 @@ Re-running each method at $N = 10$, 20 and 50 through the 2020 crash (the Kalman
 
 | Method | Memory | Needs volume | Decay shape | What breaks it | Common mistake |
 |---|---|---|---|---|---|
-| SMA | Rolling, hard edge at $N$ | No | Flat, then a cliff | A bar's influence vanishes at once $N$ bars later, moving the level with no price move | Reading "SMA(20)" and "ATR(14)" as comparable lengths |
+| SMA | Rolling, hard edge at $N$ | No | Flat, then a cliff | A bar's influence vanishes at once $N$ bars later, moving the level with no price move | Reading SMA(20) and ATR(20) as the same length: ATR(20) has the memory of a 39-bar average |
 | EMA | Expanding | No | Smooth geometric | Reacts to every move by the same fixed proportion | Mixing `adjust=True` with the textbook recursion |
 | VWAP | Rolling, hard edge at $N$ | Yes | Flat, weighted by size | One heavy bar dominates, then drops off the same cliff | Split-unadjusted volume with adjusted prices |
 | KAMA | Rolling ER, expanding recursion | No | Adaptive | A spike in the trend's direction makes it fastest, the reversal then freezes it | Judging its speed on clean examples |
