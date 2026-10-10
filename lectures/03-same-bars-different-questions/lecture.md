@@ -458,6 +458,8 @@ One day can move classical kurtosis by eight times its typical daily variation; 
 
 Implementations of Wilder's smoothing differ in how the first value is seeded: Wilder used the simple average of the first $n$ values, the `trading_models` package starts from the first value. The two converge after a few dozen bars.
 
+**Clock-time bars, and other bars.** Every statistic here was computed on daily clock-time bars, but none of them strictly requires them: each needs only OHLCV, which bars cut by trades, volume or dollars also have (Lecture 8). Three things change on such bars. Anything stated per day or annualised, including the range estimators built on $\sqrt{8/\pi}$, assumes every bar covers the same span of time. Correlation and beta need both assets observed at the same moments. And returns per bar look different: in trade or volume time they tend to be closer to normal, so measured kurtosis falls (Clark, 1973; Ané and Geman, 2000), although how close is debated. With tick data there are also dedicated estimators: realised volatility, skewness and kurtosis built from intraday returns, and correlation estimators for assets that trade at different moments. Part III returns to both.
+
 ## 12. Summary, exercises and reading
 
 ### 12.1 Six takeaways
@@ -499,6 +501,7 @@ Implementations of Wilder's smoothing differ in how the first value is seeded: W
 - Efron, B. (1979). Bootstrap methods: another look at the jackknife. *Annals of Statistics.*
 - Künsch, H. (1989). The jackknife and the bootstrap for general stationary observations. *Annals of Statistics.*
 - Politis, D. and Romano, J. (1994). The stationary bootstrap. *Journal of the American Statistical Association.*
+- Ané, T. and Geman, H. (2000). Order flow, transaction clock, and normality of asset returns. *Journal of Finance.* — returns in trade time (§11).
 - Clark, P. (1973). A subordinated stochastic process model with finite variance for speculative prices. *Econometrica.*
 - Mandelbrot, B. (1963). The variation of certain speculative prices. *Journal of Business.*
 - Engle, R. (1982). Autoregressive conditional heteroscedasticity. *Econometrica.*

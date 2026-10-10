@@ -52,6 +52,13 @@ The strategy logic carries over to any bars, since each still has OHLCV. The bac
 
 These four points form Lecture 9's *How we judge it* section.
 
+### 1.2a Risk measures on tick data (for Lectures 8–9)
+
+Lecture 3, §11 promises that Part III returns to risk measures beyond clock-time bars. Two routes to cover:
+
+- **Same measures on other bars**, with the three caveats from Lecture 3 §11: per-day and annualised figures assume equal time spans; correlation needs a common clock; returns in trade or volume time are closer to normal (Clark, 1973; Ané and Geman, 2000; contested by Murphy and Izzeldin, 2005).
+- **Dedicated high-frequency estimators:** realised variance and its noise-robust versions (two-scale estimators, realised kernels), bipower variation for jumps, realised skewness and kurtosis, and correlation for asynchronous trading (the Epps effect; Hayashi–Yoshida). Candidate references, to verify before citing: Andersen, Bollerslev, Diebold and Labys (2003); Barndorff-Nielsen and Shephard (2004); Zhang, Mykland and Aït-Sahalia (2005); Barndorff-Nielsen, Hansen, Lunde and Shephard (2008); Amaya, Christoffersen, Jacobs and Vasquez (2015); Epps (1979); Hayashi and Yoshida (2005).
+
 ### 1.3 Folder and tab layout
 
 - **GitHub:** lecture folders stay **flat** under `lectures/`, numbered globally (`01-…` to `14-…`), so links survive changes to the outline. The part is shown as a column in the README and in the roadmap above, not in the folder path.
