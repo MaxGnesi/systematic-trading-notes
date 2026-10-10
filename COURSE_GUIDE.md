@@ -11,7 +11,7 @@ The course follows one pipeline throughout (data → signal → position → eva
 | I. Foundations | 1 | Introduction to Systematic Trading | The pipeline; bias moves into research; strategy families as examples | — | Done |
 | | 2 | OHLCV and Price Smoothing | A bar is compression; averaging is filtering; compare at equal memory | 11 (QQQ) | Done |
 | | 3 | Same Bars, Different Questions: Volatility, Flow, Correlation and Tails | Same data, different transformations | 12 (SPY, QQQ, GLD, AGG) | Done |
-| | 4 | Tracking Hidden States: the Kalman Filter | Top-down filtering: model the hidden level, slope and acceleration and update them bar by bar; Q and R; adaptive noise; extended and unscented filters | new notebook (Kalman material moves from 11) | Outline |
+| | 4 | Tracking Hidden States: the Kalman Filter | Top-down filtering: model the hidden level, slope and acceleration and update them bar by bar; Q and R; adaptive noise; extended and unscented filters | 13 (SPY, QQQ, GLD, AGG) | Written; Kalman material still to be removed from Lecture 2 |
 | II. Clock-time bars: trend and relative value | 5 | Signal to position | Volatility targeting; scaling raw signals into sized positions | 09 | Planned |
 | | 6 | Trend across asset classes | What works where, and who pays | 09, 10 | Planned |
 | | 7 | Stat arb: from pairs to baskets | Relative value, hedge ratios, spreads; mirror image of trend | StatARB repo (check contents first) | Planned |
@@ -68,7 +68,7 @@ Lecture 3, §11 promises that Part III returns to risk measures beyond clock-tim
 
 ### 1.4 Lecture 4 plan (Kalman filter): design choices, charts, references
 
-Status: outline in the doc; prototypes exist outside the lecture. Kalman material stays in Lecture 2 until Lecture 4 is written.
+Status: written (doc and GitHub), companion notebook 13_tracking_hidden_states. Next: remove the Kalman material from Lecture 2 and re-run notebook 11 without it.
 
 **Purpose of a trend filter.** Find structural, long-horizon trends that are robust to daily noise. No filter is best: each captures different behaviour, so filters are profiled (what each captures, in which market conditions, at what cost), not ranked. Predicting tomorrow's price is not the goal and one-step forecast error is not used.
 
