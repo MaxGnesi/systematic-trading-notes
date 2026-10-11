@@ -91,7 +91,9 @@ Here $`x_{t\mid t-1}`$ is the estimate before today's price is seen and $`x_{t\m
 | 100 | 30 Jul 1999 | 47.64 | 48.60 | −2.00% | 0.279 | 0.003 | 48.33 | +30 | 8.9 |
 | 500 | 1 Mar 2001 | 41.08 | 42.11 | −2.49% | 0.275 | 0.002 | 41.82 | −71 | 6.9 |
 
-Three phases are visible. On bar 1 the gain on the level is 1: the first price simply overwrites the starting guess. On bar 2 the gain on the slope is close to 1 as well, so the slope is set to the first daily change, 0.49%, or 123% a year: one observation's worth of trend. From then on both gains fall as evidence accumulates. The slope still swings widely (−249% a year on bar 3), but its standard deviation of 187% a year says that the estimate means little yet. By bar 100 the gains have nearly settled and the slope's standard deviation is under 9% a year; by bar 500 the gains are constant to the third decimal, the steady state in which the filter is a fixed weighted average of past prices. As §1.1 noted, the gain column would be the same for any prices.
+Three phases are visible. On bar 1 the gain on the level is 1: the first price simply overwrites the starting guess. On bar 2 the gain on the slope is close to 1 as well, so the slope is set to the first daily change, 0.49%, or 123% a year: one observation's worth of trend. From then on both gains fall as evidence accumulates. The slope still swings widely (−249% a year on bar 3), but its standard deviation of 187% a year says that the estimate means little yet. By bar 100 the gains have nearly settled and the slope's standard deviation is under 9% a year; by bar 500 the gains are constant to the third decimal, the steady state in which the filter is a fixed weighted average of past prices. The gain columns depend only on the noise settings and the start, never on the prices: any price series would produce the same gains. The standard filter therefore does not react faster when markets turn volatile; that requires noise that depends on the data (§7).
+
+**The filter runs online.** Each bar needs only three things: yesterday's estimate $`x_{t-1\mid t-1}`$, its uncertainty $`P_{t-1\mid t-1}`$ and today's price. Everything the filter knows about the past is condensed into those two objects, so live, the price can be discarded once it has been processed; a backtest simply loops through the history one bar at a time. A full price history is needed in only two cases. The first is estimating the noise settings from the data (§5). The second is *smoothing*: running a second pass backwards through the history so that each past estimate also uses the prices that came after it (Rauch, Tung and Striebel, 1965). Smoothed estimates are useful for describing the past, but they look ahead, so they must never be used to generate readings in a backtest.
 
 ### 1.5 From the blueprint to the code
 
@@ -125,3 +127,7 @@ Only the first layer is the model. The second is the machinery of Table 1.3, the
 | The design: which hidden quantities to track ($`F`$ and $`H`$) | §2–4 |
 | How fast each hidden quantity may change, relative to the price noise ($`Q`$ and $`r`$) | §5 |
 | The start ($`x_0`$, $`P_0`$) and how much history to load first | §6 |
+
+## References (so far)
+
+- Rauch, H.E., Tung, F. and Striebel, C.T. (1965). Maximum likelihood estimates of linear dynamic systems. *AIAA Journal* 3(8), 1445–1450. — the smoother (§1.4).
