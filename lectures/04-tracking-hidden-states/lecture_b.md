@@ -16,7 +16,7 @@ Adapting to the data is not what distinguishes it: the EMA already favours recen
 
 | | Bottom-up (SMA, EMA, KAMA, VWAP) | Top-down (Kalman filter) |
 |---|---|---|
-| **What it estimates** | **The level only.** A trend needs a separate average | **Level, slope and acceleration, jointly,** from the same surprises |
+| **What it estimates** | **The level only.** A trend needs a separate average | **As many as the design specifies:** the level alone, or the level with a slope, or with a slope and acceleration, all estimated jointly from the same surprises |
 | **What gives a bar its influence** | **Recency, volume or trend efficiency** | **Its surprise:** how far the bar lands from the forecast |
 | **Forecast and lag** | **Flat,** so the line lags every trend | **Along the trend,** so there is no lasting lag on a steady trend |
 | **Uncertainty** | **None** | **A confidence band for every hidden quantity,** a test for unusual bars, and a likelihood for calibrating the model |
