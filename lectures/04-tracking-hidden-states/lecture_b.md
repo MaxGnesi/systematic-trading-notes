@@ -241,13 +241,41 @@ Every quantity the filter produces on each bar can be read directly; nothing bey
 
 | Quantity | Computed in | What it shows | Where it leads (Part II) |
 |---|---|---|---|
-| Level $`\ell_t`$, with band $`\pm\sqrt{P_{\ell\ell}}`$ | Steps 7 and 8 | The smoothed price, and how sure the filter is of it | A cleaner price to trade against |
-| Slope $`s_t`$, with its standard deviation | Steps 7 and 8 | Direction and speed of the trend; whether it is distinguishable from zero | The core of a trend-following signal |
-| Acceleration $`a_t`$, with its standard deviation | Steps 7 and 8 | Whether the trend is strengthening or fading | An early warning that a trend is tiring |
-| Stretch $`y_t - \ell_t`$ | Step 7 | How far price has run from its projected trend | Overbought and oversold judgements |
-| Normalised surprise $`e_t / \sqrt{S_t}`$ | Steps 4 and 6 | How unusual today's bar is, compared with what the model expects | Flagging shocks, and checking whether the model fits |
+| Level $`\ell_t`$, with band $`\pm\sqrt{P_{\ell\ell}}`$ | Steps 7 and 8 | The smoothed price, and how sure the filter is of it; once the filter has settled, the band keeps a constant width ([chart C.1](#c1-level-and-its-uncertainty-band-25)) | A cleaner price to trade against |
+| Slope $`s_t`$, with its standard deviation | Steps 7 and 8 | Direction and speed of the trend; whether it is distinguishable from zero ([chart C.2](#c2-slope-and-acceleration-with-their-uncertainty-25)) | The core of a trend-following signal |
+| Acceleration $`a_t`$, with its standard deviation | Steps 7 and 8 | Whether the trend is strengthening or fading ([chart C.2](#c2-slope-and-acceleration-with-their-uncertainty-25)) | An early warning that a trend is tiring |
+| Stretch $`y_t - \ell_t`$ | Step 7 | How far price has run from its projected trend ([chart C.3](#c3-stretch-25)) | Overbought and oversold judgements |
+| Normalised surprise $`e_t / \sqrt{S_t}`$ | Steps 4 and 6 | How unusual today's bar is, compared with what the model expects; clusters of large surprises mark periods the model does not fit ([chart C.4](#c4-normalised-surprises-25)) | Flagging shocks, and checking whether the model fits |
 
 A short preview of what comes next. With the level alone, a trend shows only as price against a lagging average, which is the EMA's logic. With a slope, the trend is a quantity in its own right, measured with a confidence band; with an acceleration, so is its change. Part II introduces trend-following systems and shows how such quantities become trading decisions. This lecture stays with what they are and how they behave.
+
+## Appendix: charts
+
+From the companion notebook, section 2c ([04_tracking_hidden_states.ipynb](04_tracking_hidden_states.ipynb)). All four charts use QQQ daily closes in logs. The level, the slope, the stretch and the surprises come from the level + slope design, with the level reacting to each surprise like EMA(15) and the slope remembering like EMA(252). The acceleration comes from a three-state design whose acceleration remembers like EMA(156): within one filter the slope cannot keep a longer memory than the acceleration, so a second filter is needed. The ratios of the noise variances set these memories; their common scale, which sets the uncertainty, is calibrated so that the normalised surprises have a standard deviation of 1 over 2014–2018, before the period charted. It corresponds to a daily price noise of 1.8%.
+
+### C.1 Level and its uncertainty band (§2.5)
+
+![QQQ close, level and level ± 2 standard deviations, 2019–2023](figures/b_c01_level_bands.png)
+
+The level follows price closely. Its band, ±2 standard deviations of the level estimate, is about ±1.3% and keeps that width through the 2020 crash and the 2022 decline: once the filter has settled, its uncertainty no longer moves. On a price chart the band therefore adds little; its value lies at the start (Table 1.4) and as a yardstick for the slope (chart C.2). It is not a Bollinger band, which measures how widely prices disperse and widens with volatility; it measures only how sure the filter is of the level.
+
+### C.2 Slope and acceleration with their uncertainty (§2.5)
+
+![QQQ close and level; slope ± 2 standard deviations; acceleration ± 2 standard deviations, 2019–2023](figures/b_c02_slope_acceleration.png)
+
+The slope is the trend in % a year, the grey band ±2 standard deviations. Over 2019–2023 the slope lay more than two standard deviations above zero on 67% of days and below on 13%; on the remaining 20% the trend could not be told apart from noise. The acceleration turned negative in late 2021, before the slope fell through zero in early 2022, and positive in late 2022, before the slope turned up in early 2023. It also swings in between: an earlier and noisier layer than the slope.
+
+### C.3 Stretch (§2.5)
+
+![QQQ close and level; stretch, price minus level in %, 2019–2023](figures/b_c03_stretch.png)
+
+Price minus level, in %. On nine days in ten the stretch lay between −4.5% and +3.7% (5th to 95th percentile, 2019–2023); the extremes came in fast moves, −17% in the March 2020 crash and +8% in the rebound. A strongly negative stretch while the slope stays positive marks a pullback within a rising trend; what such readings are worth is a question for Part II.
+
+### C.4 Normalised surprises (§2.5)
+
+![Normalised surprises of the level + slope design, QQQ 2000–2026, with ±3 lines](figures/b_c04_surprises.png)
+
+Each bar's surprise divided by its expected size $`\sqrt{S_t}`$. Calibrated on 2014–2018, they have a standard deviation of 1 there; over 2000–2026 it is 1.61, and 6.4% of days lie beyond ±3, against 0.27% for a normal distribution. The large surprises come in clusters: 2000–2002, 2008–2009 and 2022 hold most of them, with a short burst in 2020. A cluster means that the model's fixed price noise is too small for that period: volatility has risen, and the standard filter's uncertainty does not follow it. The surprises, not the band, are therefore the filter's gauge of volatility; making the noise follow them is the subject of §5.
 
 ## References (so far)
 
