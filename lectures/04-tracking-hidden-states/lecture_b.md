@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 11, 2026 · Max Gnesi · draft, written section by section*
 
-Lecture 2 smoothed prices from the bottom up, by averaging past bars. The Kalman filter works from the top down: it states a model of the quantities hidden behind prices (a level, and possibly a trend and its acceleration) and revises its estimate of them as each new bar arrives. This lecture builds the linear filter from a single level up to trend speed and acceleration, examines the information each hidden state carries, and covers the nonlinear extensions, the extended and unscented filters, for tracking unobserved volatility. Companion notebook: [04_tracking_hidden_states.ipynb](04_tracking_hidden_states.ipynb).
+Lecture 2 smoothed prices from the bottom up, by averaging past bars. The Kalman filter works from the top down: it states a model of the state hidden behind prices (a level, and possibly a trend and its acceleration) and revises its estimate of them as each new bar arrives. This lecture builds the linear filter from a single level up to trend speed and acceleration, examines the information each state variable carries, and covers the nonlinear extensions, the extended and unscented filters, for tracking unobserved volatility. Companion notebook: [04_tracking_hidden_states.ipynb](04_tracking_hidden_states.ipynb).
 
 ## 1. From averaging to modelling
 
@@ -19,7 +19,7 @@ Adapting to the data is not what distinguishes it: the EMA already favours recen
 | **What it estimates** | **The level only.** A trend needs a separate average | **As many as the design specifies:** the level alone, or the level with a slope, or with a slope and acceleration, all estimated jointly from the same surprises |
 | **What gives a bar its influence** | **Recency, volume or trend efficiency** | **Its surprise:** how far the bar lands from the forecast |
 | **Forecast and lag** | **Flat,** so the line lags every trend | **Along the trend,** so there is no lasting lag on a steady trend |
-| **Uncertainty** | **None** | **A confidence band for every hidden quantity,** a test for unusual bars, and a likelihood for calibrating the model |
+| **Uncertainty** | **None** | **A confidence band for every state variable,** a test for unusual bars, and a likelihood for calibrating the model |
 
 Each of these is built up in the sections that follow.
 
@@ -39,10 +39,10 @@ y_t &= H\,x_t + v_t, \qquad v_t \sim N(0,\ r) \qquad &\text{(observation equatio
 | Symbol | Mathematical role | Financial meaning |
 |---|---|---|
 | $`y_t`$ | Observation at bar $`t`$ | The log price, the only quantity the market shows |
-| $`x_t`$ | State vector, $`n \times 1`$ | The hidden quantities: the level and, in larger designs, the slope and the acceleration. Its size $`n`$ is a modelling choice |
-| $`F`$ | Transition matrix, $`n \times n`$ | How the hidden quantities move from one bar to the next, for instance the level drifting by the slope |
-| $`w_t`$, $`Q`$ | State noise and its covariance | Genuine, persistent changes in the hidden quantities: a revaluation, a shift in the trend |
-| $`H`$ | Observation matrix, $`1 \times n`$ | Which hidden quantity the price reveals: in every design here, the level alone |
+| $`x_t`$ | State vector, $`n \times 1`$ | The hidden state: one vector whose components, the *state variables*, are the level and, in larger designs, the slope and the acceleration. Its size $`n`$ is a modelling choice |
+| $`F`$ | Transition matrix, $`n \times n`$ | How the state variables move from one bar to the next, for instance the level drifting by the slope |
+| $`w_t`$, $`Q`$ | State noise and its covariance | Genuine, persistent changes in the state variables: a revaluation, a shift in the trend |
+| $`H`$ | Observation matrix, $`1 \times n`$ | Which state variable the price reveals: in every design here, the level alone |
 | $`v_t`$, $`r`$ | Price noise and its variance | The part of each price that does not persist (§2.1) |
 
 A control term is sometimes added to the state equation for inputs the user sets, such as an engine's thrust. A trader cannot set prices, so it is absent here.
@@ -62,7 +62,7 @@ Q & \begin{pmatrix}q_\ell\end{pmatrix} & \begin{pmatrix}q_\ell & 0\\ 0 & q_s\end
 \end{array}
 ```
 
-Each design adds one hidden quantity, one row and column to $`F`$ and $`Q`$, and one term to the forecast. The first row of $`F`$ is the forecast of the level: flat for L, along the trend for LS, along a bending trend for LSA. Each $`q`$ sets how much its hidden quantity may change per bar, relative to the price noise $`r`$. Sections 2, 3 and 4 build the designs one at a time.
+Each design adds one state variable, one row and column to $`F`$ and $`Q`$, and one term to the forecast. The first row of $`F`$ is the forecast of the level: flat for L, along the trend for LS, along a bending trend for LSA. Each $`q`$ sets how much its state variable may change per bar, relative to the price noise $`r`$. Sections 2, 3 and 4 build the designs one at a time.
 
 ### 1.4 One bar of the filter: predict, compare, correct
 
@@ -71,17 +71,17 @@ Each design adds one hidden quantity, one row and column to $`F`$ and $`Q`$, and
 | Step | Calculation | Notebook code (`kalman()`) | Financial meaning |
 |---|---|---|---|
 | 1. Predict the state | $`x_{t\mid t-1} = F\,x_{t-1\mid t-1}`$ | `state = transition @ state` | Project yesterday's estimate one bar ahead: the level, moved by the trend if there is one |
-| 2. Predict its uncertainty | $`P_{t\mid t-1} = F\,P_{t-1\mid t-1}\,F^\top + Q`$ | `uncertainty = transition @ uncertainty @ transition.T + Q` | The projection is less certain than yesterday's estimate, because the hidden quantities may have moved overnight |
+| 2. Predict its uncertainty | $`P_{t\mid t-1} = F\,P_{t-1\mid t-1}\,F^\top + Q`$ | `uncertainty = transition @ uncertainty @ transition.T + Q` | The projection is less certain than yesterday's estimate, because the state variables may have moved overnight |
 | 3. Forecast the price | $`\hat y_t = H\,x_{t\mid t-1}`$ | `forecast = observe @ state` | The price expected before today's bar is seen |
 | 4. Expected variance of the surprise | $`S_t = H\,P_{t\mid t-1}\,H^\top + r`$ | `surprise_var = observe @ uncertainty @ observe + r` | How large a surprise would normally be: forecast uncertainty plus price noise |
-| 5. Compute the gain | $`K_t = P_{t\mid t-1}\,H^\top / S_t`$ | `gain = uncertainty @ observe / surprise_var` | For each hidden quantity, the share of the coming surprise to accept as genuine |
+| 5. Compute the gain | $`K_t = P_{t\mid t-1}\,H^\top / S_t`$ | `gain = uncertainty @ observe / surprise_var` | For each state variable, the share of the coming surprise to accept as genuine |
 | 6. Compare | $`e_t = y_t - \hat y_t`$ | `surprise = price - forecast` | The surprise: today's price minus the forecast |
-| 7. Correct the state | $`x_{t\mid t} = x_{t\mid t-1} + K_t\,e_t`$ | `state = state + gain * used` | Move each hidden quantity by its share of the surprise |
-| 8. Correct its uncertainty | $`P_{t\mid t} = (I - K_t H)\,P_{t\mid t-1}`$ | `uncertainty = uncertainty - np.outer(gain, observe @ uncertainty)` | Having seen today's price, the filter is more certain where the hidden quantities stand |
+| 7. Correct the state | $`x_{t\mid t} = x_{t\mid t-1} + K_t\,e_t`$ | `state = state + gain * used` | Move each state variable by its share of the surprise |
+| 8. Correct its uncertainty | $`P_{t\mid t} = (I - K_t H)\,P_{t\mid t-1}`$ | `uncertainty = uncertainty - np.outer(gain, observe @ uncertainty)` | Having seen today's price, the filter is more certain where the state variables stand |
 
 Today's price enters only at step 6: everything before it, the gain included, is computed without it. Step 8 is written as $`P - K(HP)`$, the same algebra as $`(I - KH)P`$ without building an identity matrix; $`H`$ is stored as a plain vector, so no transpose is needed. In step 7, `used` is the surprise itself unless the optional robust cap of §7 is switched on.
 
-Here $`x_{t\mid t-1}`$ is the estimate before today's price is seen and $`x_{t\mid t}`$ the estimate after; $`P`$ is the uncertainty of the estimate, the covariance of its error. The gain $`K_t`$ is a vector with one entry per hidden quantity, so a single price surprise updates the level, the slope and the acceleration at once. This is how the filter learns a trend it never observes: when prices keep beating the forecast, the surprises are persistently positive, and each one nudges the slope up by its share.
+Here $`x_{t\mid t-1}`$ is the estimate before today's price is seen and $`x_{t\mid t}`$ the estimate after; $`P`$ is the uncertainty of the estimate, the covariance of its error. The gain $`K_t`$ is a vector with one entry per state variable, so a single price surprise updates the level, the slope and the acceleration at once. This is how the filter learns a trend it never observes: when prices keep beating the forecast, the surprises are persistently positive, and each one nudges the slope up by its share.
 
 **How the filter starts.** The start is easiest to see on four made-up prices, 50, 52, 55 and 57, filtered with the three-state design LSA. The filter is initialised with the level at the first price and the slope and acceleration at zero, together with a very large starting uncertainty $`P_0`$, which tells it that these zeros are guesses to be overwritten.
 
@@ -107,7 +107,7 @@ Read column by column:
 - **Bar 3: all three are pinned down.** The filter reproduces the parabola through the three prices, whose acceleration is $`(55-52)-(52-50) = 1`$, and the standard deviations of slope and acceleration fall from the hundreds to about 2.5. Gains above one are normal in these first bars: a single surprise must be converted into a whole slope or acceleration.
 - **Bar 4: averaging begins.** The forecast of 59.0 is the first to use all three quantities ($`55 + 3.5 + \tfrac12 \times 1`$). The gain on the level falls below one, so each new price is now blended with the past rather than copied.
 
-The filter needs as many prices as it has hidden quantities before each is determined: one for the level, two for the slope, three for the acceleration. The level-only design is set after one bar, the level + slope design after two, LSA after three; afterwards, every design averages. The gains that drive this sequence depend only on the noise settings and the start, never on the prices: any price series would produce the same gains. The standard filter therefore does not react faster when markets turn volatile. In practice gains do move, but only when the model lets them: when the price noise is made to depend on the data, when the settings are re-estimated, or after missing bars, during which the filter only predicts, its uncertainty grows, and the first price after the gap receives a larger gain (§7).
+The filter needs as many prices as it has state variables before each is determined: one for the level, two for the slope, three for the acceleration. The level-only design is set after one bar, the level + slope design after two, LSA after three; afterwards, every design averages. The gains that drive this sequence depend only on the noise settings and the start, never on the prices: any price series would produce the same gains. The standard filter therefore does not react faster when markets turn volatile. In practice gains do move, but only when the model lets them: when the price noise is made to depend on the data, when the settings are re-estimated, or after missing bars, during which the filter only predicts, its uncertainty grows, and the first price after the gap receives a larger gain (§7).
 
 **When is the filter stable?** When its gains stop changing. Because they do not depend on the prices, they can be computed before any data arrive, and the bar at which they settle can be read off directly. For the settings of Table 1.4 ($`q_\ell = 10^{-4}`$, $`q_s = 10^{-6}`$, $`q_a = 10^{-8}`$):
 
@@ -133,16 +133,16 @@ The blueprint names four objects: $`F`$, $`H`$, $`Q`$ and $`r`$. An implementati
 
 | Layer | In the notebook | Symbol | Shape | What it is |
 |---|---|---|---|---|
-| **Model: what is assumed** | `transition` | $`F`$ | $`n \times n`$ | How the hidden quantities move from bar to bar; fixed by the design (`design()`) |
-| | `observe` | $`H`$ | $`1 \times n`$ | Which hidden quantity the price reveals: $`(1, 0, \dots, 0)`$ |
-| | `Q` (from `q_diag`, or `full_q`) | $`Q`$ | $`n \times n`$ | How much each hidden quantity may change per bar |
+| **Model: what is assumed** | `transition` | $`F`$ | $`n \times n`$ | How the state variables move from bar to bar; fixed by the design (`design()`) |
+| | `observe` | $`H`$ | $`1 \times n`$ | Which state variable the price reveals: $`(1, 0, \dots, 0)`$ |
+| | `Q` (from `q_diag`, or `full_q`) | $`Q`$ | $`n \times n`$ | How much each state variable may change per bar |
 | | `r_price` | $`r`$ | scalar | Variance of the price noise |
-| **Filter: computed on every bar** | `state` | $`x_{t\mid t}`$ | $`n`$ | The current estimate of the hidden quantities: level, slope, acceleration |
+| **Filter: computed on every bar** | `state` | $`x_{t\mid t}`$ | $`n`$ | The current estimate of the state variables: level, slope, acceleration |
 | | `uncertainty` | $`P_{t\mid t}`$ | $`n \times n`$ | Variances of the estimation errors on the diagonal, their covariances off it |
 | | `forecast` | $`H\,x_{t\mid t-1}`$ | scalar | The price expected before today's bar is seen |
 | | `surprise` | $`e_t`$ | scalar | Today's price minus the forecast |
 | | `surprise_var` | $`S_t`$ | scalar | The variance a surprise should have if the model is right |
-| | `gain` | $`K_t`$ | $`n`$ | The share of the surprise each hidden quantity accepts |
+| | `gain` | $`K_t`$ | $`n`$ | The share of the surprise each state variable accepts |
 | **Settings: chosen by the user** | `start_state` | $`x_0`$ | $`n`$ | The starting guess: first price as level, zero slope and acceleration |
 | | `start_uncertainty` | $`P_0`$ | $`n \times n`$ | How much the starting guess is trusted; large means a diffuse start |
 | | `Q_REL`, `q_scale` | ratios within $`Q`$ | — | The relative speeds of level, slope and acceleration, and their overall scale |
@@ -154,8 +154,8 @@ Only the first layer is the model. The second is the machinery of Table 1.3, the
 
 | Choice | Covered in |
 |---|---|
-| The design: which hidden quantities to track ($`F`$ and $`H`$) | §2–4 |
-| How fast each hidden quantity may change, relative to the price noise ($`Q`$ and $`r`$) | §5 |
+| The design: which state variables to track ($`F`$ and $`H`$) | §2–4 |
+| How fast each state variable may change, relative to the price noise ($`Q`$ and $`r`$) | §5 |
 | The start ($`x_0`$, $`P_0`$) and how much history to load first | §6 |
 
 ## References (so far)
