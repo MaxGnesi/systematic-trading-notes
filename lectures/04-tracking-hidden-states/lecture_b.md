@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 11, 2026 · Max Gnesi · draft, written section by section*
 
-Lecture 2 smoothed prices from the bottom up, by averaging past bars. The Kalman filter works from the top down: it states a model of the quantities hidden behind prices (a level, and possibly a trend and its acceleration) and revises its estimate of them as each new bar arrives. This lecture builds the linear filter from a single level up to trend speed and acceleration, examines the information each hidden state carries, and covers the nonlinear extensions, the extended and unscented filters, for tracking unobserved volatility. Companion notebook: [04_tracking_hidden_states.ipynb](../04-tracking-hidden-states/04_tracking_hidden_states.ipynb).
+Lecture 2 smoothed prices from the bottom up, by averaging past bars. The Kalman filter works from the top down: it states a model of the quantities hidden behind prices (a level, and possibly a trend and its acceleration) and revises its estimate of them as each new bar arrives. This lecture builds the linear filter from a single level up to trend speed and acceleration, examines the information each hidden state carries, and covers the nonlinear extensions, the extended and unscented filters, for tracking unobserved volatility. Companion notebook: [04_tracking_hidden_states.ipynb](04_tracking_hidden_states.ipynb).
 
 ## 1. From averaging to modelling
 
@@ -88,11 +88,24 @@ Each design adds one hidden quantity, one row and column to $`F`$ and $`Q`$, and
 
 Here $`x_{t\mid t-1}`$ is the estimate before today's price is seen and $`x_{t\mid t}`$ the estimate after; $`P`$ is the uncertainty of the estimate, the covariance of its error. The gain $`K_t`$ is a vector with one entry per hidden quantity, so a single price surprise updates the level, the slope and the acceleration at once. This is how the filter learns a trend it never observes: when prices keep beating the forecast, the surprises are persistently positive, and each one nudges the slope up by its share.
 
+**Table 1.4. The first 500 bars of LS on QQQ** (log closes from 10 March 1999; $`r = 10^{-4}`$, a 1% daily price noise; $`q_\ell = 0.1\,r`$ and $`q_s = 5.3 \times 10^{-6}\,r`$, the long-horizon settings of §6, under which the slope remembers like EMA(252); start $`x_0`$ = (first price, 0), $`P_0 = I`$; notebook §2b, which prints every matrix and vector of the first three bars)
+
+| Bar | Date | Price | Forecast | Surprise $`e_t`$ | Gain on level | Gain on slope | Level | Slope (% a year) | Standard deviation of slope (% a year) |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | 10 Mar 1999 | 42.98 | 42.98 | 0.00% | 1.000 | 0.500 | 42.98 | 0 | 17,820 |
+| 2 | 11 Mar 1999 | 43.19 | 42.98 | +0.49% | 1.000 | 0.999 | 43.19 | +123 | 365 |
+| 3 | 12 Mar 1999 | 42.14 | 43.40 | −2.95% | 0.839 | 0.500 | 42.34 | −249 | 187 |
+| 10 | 23 Mar 1999 | 41.09 | 43.28 | −5.20% | 0.416 | 0.059 | 42.36 | −60 | 39 |
+| 100 | 30 Jul 1999 | 47.64 | 48.60 | −2.00% | 0.279 | 0.003 | 48.33 | +30 | 8.9 |
+| 500 | 1 Mar 2001 | 41.08 | 42.11 | −2.49% | 0.275 | 0.002 | 41.82 | −71 | 6.9 |
+
+Three phases are visible. On bar 1 the gain on the level is 1: the first price simply overwrites the starting guess. On bar 2 the gain on the slope is close to 1 as well, so the slope is set to the first daily change, 0.49%, or 123% a year: one observation's worth of trend. From then on both gains fall as evidence accumulates. The slope still swings widely (−249% a year on bar 3), but its standard deviation of 187% a year says that the estimate means little yet. By bar 100 the gains have nearly settled and the slope's standard deviation is under 9% a year; by bar 500 the gains are constant to the third decimal, the steady state in which the filter is a fixed weighted average of past prices. As §1.1 noted, the gain column would be the same for any prices.
+
 ### 1.5 From the blueprint to the code
 
 The blueprint names four objects: $`F`$, $`H`$, $`Q`$ and $`r`$. An implementation handles many more, because the filter needs working quantities of its own and a set of choices the blueprint leaves open. They fall into three layers, and keeping them apart is the easiest way to read any Kalman filter code, including the companion notebook's `kalman()` function.
 
-**Table 1.4. Every object in an implementation, by layer** (names as in the notebook)
+**Table 1.5. Every object in an implementation, by layer** (names as in the notebook)
 
 | Layer | In the notebook | Symbol | Shape | What it is |
 |---|---|---|---|---|
@@ -117,7 +130,7 @@ The blueprint names four objects: $`F`$, $`H`$, $`Q`$ and $`r`$. An implementati
 
 Only the first layer is the model. The second is the machinery of Table 1.3, the same for every design. The third is where most practical mistakes are made, so it deserves its own table.
 
-**Table 1.5. Setting what the blueprint leaves open**
+**Table 1.6. Setting what the blueprint leaves open**
 
 | Choice | How it is set in practice | Where in this lecture |
 |---|---|---|
