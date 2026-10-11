@@ -95,7 +95,21 @@ Here $`x_{t\mid t-1}`$ is the estimate before today's price is seen and $`x_{t\m
 | 3 | 55 | 55.2 | −0.2 | **55** | **3.5** | **1.0** | **All three are pinned down:** the filter reproduces the parabola through the three prices, whose acceleration is $`(55-52)-(52-50) = 1`$ |
 | 4 | 57 | **59.0** | −2.0 | 57.1 | 2.4 | 0.0 | **Averaging begins:** the first forecast to use all three ($`55 + 3.5 + \tfrac12 \times 1`$); from now on the gains are below one and each price is blended with the past |
 
-The filter needs as many prices as it has hidden quantities before each is determined: one for the level, two for the slope, three for the acceleration. The level-only design is set after one bar, the level + slope design after two, LSA after three; afterwards, every design averages. The gains that drive this sequence depend only on the noise settings and the start, never on the prices: any price series would produce the same gains. The standard filter therefore does not react faster when markets turn volatile; that requires noise that depends on the data (§7). On real data the gains take longer to settle, as §6 shows.
+The filter needs as many prices as it has hidden quantities before each is determined: one for the level, two for the slope, three for the acceleration. The level-only design is set after one bar, the level + slope design after two, LSA after three; afterwards, every design averages. The gains that drive this sequence depend only on the noise settings and the start, never on the prices: any price series would produce the same gains. The standard filter therefore does not react faster when markets turn volatile; that requires noise that depends on the data (§7).
+
+**When is the filter stable?** When its gains stop changing. Because they do not depend on the prices, they can be computed before any data arrive, and the bar at which they settle can be read off directly. For the settings of Table 1.4 ($`q_\ell = 10^{-4}`$, $`q_s = 10^{-6}`$, $`q_a = 10^{-8}`$):
+
+**Table 1.5. Gains of the LSA filter of Table 1.4, computed without any prices**
+
+| Bar | Gain on level | Gain on slope | Gain on acceleration |
+|---|---|---|---|
+| 4 | 0.950 | 1.050 | 0.500 |
+| 10 | 0.618 | 0.259 | 0.046 |
+| 50 | 0.167 | 0.014 | 0.0005 |
+| 100 | 0.097 | 0.0046 | 0.0001 |
+| 200 and after | 0.091 | 0.0043 | 0.0001 |
+
+From bar 120 on, every gain is within 1% of its final value: the filter has become a fixed weighted average of past prices, and stays one. A practical rule follows: the filter is stable once all its gains are within 1% of their final values, a bar fixed by the design and the settings and computable before the backtest starts. Slower settings take longer to settle. How much history must be discarded beyond this, so that the estimates no longer depend on where the data begin, is a separate question (§6).
 
 **The filter runs online.** Each bar needs only three things: yesterday's estimate $`x_{t-1\mid t-1}`$, its uncertainty $`P_{t-1\mid t-1}`$ and today's price. Everything the filter knows about the past is condensed into those two objects, so live, the price can be discarded once it has been processed; a backtest simply loops through the history one bar at a time. A full price history is needed in only two cases. The first is estimating the noise settings from the data (§5). The second is *smoothing*: running a second pass backwards through the history so that each past estimate also uses the prices that came after it (Rauch, Tung and Striebel, 1965). Smoothed estimates are useful for describing the past, but in a trading system they are a serious and common mistake: each one uses prices that were not yet known, so a backtest built on them looks far better than anything that can be traded. The same caution applies to the first case: noise settings estimated on the whole history and then used to backtest that same history leak future information; they must be estimated on data before the evaluation period, or re-estimated as it rolls forward.
 
@@ -103,7 +117,7 @@ The filter needs as many prices as it has hidden quantities before each is deter
 
 The blueprint names four objects: $`F`$, $`H`$, $`Q`$ and $`r`$. An implementation handles many more, because the filter needs working quantities of its own and a set of choices the blueprint leaves open. They fall into three layers, and keeping them apart is the easiest way to read any Kalman filter code, including the companion notebook's `kalman()` function.
 
-**Table 1.5. Every object in an implementation, by layer** (names as in the notebook)
+**Table 1.6. Every object in an implementation, by layer** (names as in the notebook)
 
 | Layer | In the notebook | Symbol | Shape | What it is |
 |---|---|---|---|---|
@@ -124,7 +138,7 @@ The blueprint names four objects: $`F`$, $`H`$, $`Q`$ and $`r`$. An implementati
 
 Only the first layer is the model. The second is the machinery of Table 1.3, the same for every design. The third is chosen by the user, and the rest of the lecture shows how; the code's remaining arguments belong to the extensions of §7.
 
-**Table 1.6. What the user must choose, and where the lecture covers it**
+**Table 1.7. What the user must choose, and where the lecture covers it**
 
 | Choice | Covered in |
 |---|---|
