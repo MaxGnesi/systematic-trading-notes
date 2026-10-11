@@ -10,26 +10,24 @@ Every method of Lecture 2 ends up as a weighted average of past prices, and in s
 
 ### 1.1 What sets the Kalman filter apart
 
-Adapting to the data is not what distinguishes it. Several methods of Lecture 2 already adapt: the EMA weights recent bars more, KAMA speeds up when the market trends, VWAP weights bars by their volume. The standard Kalman filter, by contrast, does not adapt to the data at all once it has warmed up.
+Adapting to the data is not what distinguishes it. Several methods of Lecture 2 already adapt: the EMA weights recent bars more, KAMA speeds up when the market trends, VWAP weights bars by their volume. The standard Kalman filter, by contrast, does not adapt to the data at all once it has warmed up. What does distinguish it appears dimension by dimension in Table 1.1.
 
-**Table 1.1. What sets the weight on the newest price**
+**Table 1.1. Bottom-up averages and the top-down Kalman filter**
 
-| Method | Weight on the newest price set by | Changes with the data? | Trend as a quantity of its own? | Forecast of the next bar | Measure of its own reliability? |
-|---|---|---|---|---|---|
-| SMA(N) | A fixed rule: 1/N | No | No | Today's average | No |
-| EMA(N) | A fixed rule: 2/(N + 1) | No | No | Today's average | No |
-| KAMA | The efficiency ratio of recent prices | Yes: faster in trends | No | Today's average | No |
-| VWAP | Each bar's share of volume | Yes: more weight on heavy volume | No | Today's average | No |
-| Kalman filter | The model: the ratio of state noise to price noise | No: after the warm-up the gain is constant | Yes, when the design includes a slope | The level plus the trend | Yes: a variance for every hidden quantity |
-| Kalman filter with data-dependent noise (§7) | The model, with the price noise changing bar by bar | Yes | As above | As above | As above |
+| Dimension | Bottom-up (SMA, EMA, KAMA, VWAP) | Top-down (Kalman filter) |
+|---|---|---|
+| **Core paradigm** | Price is smoothed directly, as a weighted average of past prices | Prices are noisy observations of a hidden state vector $`x_t`$, which the model tracks |
+| **Hidden quantities** | **One:** the level. A trend must be approximated separately, for instance from differences of averages | **One to three:** level; level and slope; level, slope and acceleration. The number is a modelling choice |
+| **Joint estimation** | **None:** separate averages run in isolation, with disconnected parameters, and can contradict each other | **Joint:** one surprise moves every hidden quantity, through one gain vector $`K_t`$ and one covariance matrix $`P_t`$, so the estimates stay consistent |
+| **Weight on the newest price** | **A rule:** fixed (SMA $`1/N`$, EMA $`2/(N+1)`$) or adaptive (KAMA through the efficiency ratio, VWAP through the volume share) | **Derived from the model:** the ratio of state noise to price noise. Constant after the warm-up, unless the noise is made to depend on the data (§7) |
+| **Memory** | A finite window (SMA) or an infinite, exponentially fading one (EMA) | Infinite and exponentially fading, as for an EMA; each hidden quantity has its own memory, set through $`Q`$ relative to $`r`$ (§5) |
+| **Forecast of the next bar** | **Flat:** today's average | **Along the trend:** $`\ell_t + s_t + \tfrac12 a_t`$ |
+| **Lag on a steady trend** | **Always:** the average moves only as new prices accumulate in its window | **None** with a slope state; as for an EMA with a level alone |
+| **Uncertainty** | **None:** a point estimate only | **A covariance matrix $`P_t`$:** a band around every hidden quantity, which also sets the gain and allows a start without a long run-in (§6) |
 
-Three things are genuinely different.
+Four rows are genuinely distinctive: the weights are derived from a model rather than chosen by a rule, the trend can be a state, the hidden quantities are estimated jointly, and the filter tracks its own uncertainty.
 
-- **The weights are derived, not chosen.** A moving average starts from a weighting rule. The Kalman filter starts from a statement of how prices are generated, and the weights follow from it: change the statement, for instance by adding a trend, and every weight changes consistently.
-- **The trend can be a state.** With a slope in the model, the trend is a number the filter holds, uses to forecast the next bar, and revises whenever prices beat or miss that forecast. A moving average has no such quantity; its forecast is a flat line.
-- **The filter tracks its own uncertainty.** That uncertainty sets how much of each surprise is believed, allows a start without a long run-in (§6), and gives a band around every hidden quantity.
-
-One property is often claimed and does not hold for the standard filter: that it widens its uncertainty and reacts faster when markets turn volatile. Its uncertainty and its gain depend only on the noise settings and the starting uncertainty, never on the prices, so the whole sequence of gains could be computed before the first price arrives (Benhamou, 2018). The filter reacts to volatility only when its noise is made to depend on the data, as in §7. Nor is it optimal in general: it is the best possible estimator when its model is true, the best linear one when only the model's variances are right, and otherwise a well-defined smoother.
+Three properties are often claimed and do not hold for the standard filter. It does not widen its uncertainty and react faster when markets turn volatile: its uncertainty and its gain depend only on the noise settings and the starting uncertainty, never on the prices, so the whole sequence of gains could be computed before the first price arrives (Benhamou, 2018); it reacts to volatility only when its noise is made to depend on the data (§7). Its infinite, exponentially fading memory is not distinctive either: an EMA has the same. And it is not optimal in general: it is the best possible estimator when its model is true, the best linear one when only the model's variances are right, and otherwise a well-defined smoother.
 
 ### 1.2 The blueprint
 
