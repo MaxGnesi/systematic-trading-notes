@@ -43,7 +43,7 @@ y_t &= H\,x_t + v_t, \qquad v_t \sim N(0,\ r) \qquad &\text{(observation equatio
 | $`F`$ | Transition matrix, $`n \times n`$ | How the state variables move from one bar to the next, for instance the level drifting by the slope |
 | $`w_t`$, $`Q`$ | State noise and its covariance | Genuine, persistent changes in the state variables: a revaluation, a shift in the trend |
 | $`H`$ | Observation matrix, $`1 \times n`$ | Which state variable the price reveals: in every design here, the level alone |
-| $`v_t`$, $`r`$ | Price noise and its variance | The part of each price that does not persist (§2.1) |
+| $`v_t`$, $`r`$ | Price noise and its variance | The part of each price that does not persist (§3) |
 
 *Hidden* means unobservable: no state variable is ever measured directly, only inferred from prices. In statistics such quantities are called latent variables, and models built on them unobserved-components models. The filter can nevertheless recover them because each leaves a trace in the sequence of prices, a property control engineers call observability: the level shows in one price, the slope in two, the acceleration in three (Table 1.4).
 
@@ -64,7 +64,7 @@ Q & \begin{pmatrix}q_\ell\end{pmatrix} & \begin{pmatrix}q_\ell & 0\\ 0 & q_s\end
 \end{array}
 ```
 
-Each design adds one state variable, one row and column to $`F`$ and $`Q`$, and one term to the forecast. The first row of $`F`$ is the forecast of the level: flat for L, along the trend for LS, along a bending trend for LSA. Each $`q`$ sets how much its state variable may change per bar, relative to the price noise $`r`$. Sections 2, 3 and 4 build the designs one at a time.
+Each design adds one state variable, one row and column to $`F`$ and $`Q`$, and one term to the forecast. The first row of $`F`$ is the forecast of the level: flat for L, along the trend for LS, along a bending trend for LSA. Each $`q`$ sets how much its state variable may change per bar, relative to the price noise $`r`$. Section 2 compares the designs.
 
 ### 1.4 One bar of the filter: predict, compare, correct
 
@@ -81,7 +81,7 @@ Each design adds one state variable, one row and column to $`F`$ and $`Q`$, and 
 | 7. Correct the state | $`x_{t\mid t} = x_{t\mid t-1} + K_t\,e_t`$ | `state = state + gain * used` | Move each state variable by its share of the surprise |
 | 8. Correct its uncertainty | $`P_{t\mid t} = (I - K_t H)\,P_{t\mid t-1}`$ | `uncertainty = uncertainty - np.outer(gain, observe @ uncertainty)` | Having seen today's price, the filter is more certain where the state variables stand |
 
-Today's price enters only at step 6: everything before it, the gain included, is computed without it. Step 8 is written as $`P - K(HP)`$, the same algebra as $`(I - KH)P`$ without building an identity matrix; $`H`$ is stored as a plain vector, so no transpose is needed. In step 7, `used` is the surprise itself unless the optional robust cap of §7 is switched on.
+Today's price enters only at step 6: everything before it, the gain included, is computed without it. Step 8 is written as $`P - K(HP)`$, the same algebra as $`(I - KH)P`$ without building an identity matrix; $`H`$ is stored as a plain vector, so no transpose is needed. In step 7, `used` is the surprise itself unless the optional robust cap of §5 is switched on.
 
 Here $`x_{t\mid t-1}`$ is the estimate before today's price is seen and $`x_{t\mid t}`$ the estimate after; $`P`$ is the uncertainty of the estimate, the covariance of its error. The gain $`K_t`$ is a vector with one entry per state variable, so a single price surprise updates the level, the slope and the acceleration at once. This is how the filter learns a trend it never observes: when prices keep beating the forecast, the surprises are persistently positive, and each one nudges the slope up by its share.
 
@@ -109,7 +109,7 @@ Read column by column:
 - **Bar 3: all three are pinned down.** The filter reproduces the parabola through the three prices, whose acceleration is $`(55-52)-(52-50) = 1`$, and the standard deviations of slope and acceleration fall from the hundreds to about 2.5. Gains above one are normal in these first bars: a single surprise must be converted into a whole slope or acceleration.
 - **Bar 4: averaging begins.** The forecast of 59.0 is the first to use all three quantities ($`55 + 3.5 + \tfrac12 \times 1`$). The gain on the level falls below one, so each new price is now blended with the past rather than copied.
 
-The filter needs as many prices as it has state variables before each is determined: one for the level, two for the slope, three for the acceleration. The level-only design is set after one bar, the level + slope design after two, LSA after three; afterwards, every design averages. The gains that drive this sequence depend only on the noise settings and the start, never on the prices: any price series would produce the same gains. The standard filter therefore does not react faster when markets turn volatile. In practice gains do move, but only when the model lets them: when the price noise is made to depend on the data, when the settings are re-estimated, or after missing bars, during which the filter only predicts, its uncertainty grows, and the first price after the gap receives a larger gain (§7).
+The filter needs as many prices as it has state variables before each is determined: one for the level, two for the slope, three for the acceleration. The level-only design is set after one bar, the level + slope design after two, LSA after three; afterwards, every design averages. The gains that drive this sequence depend only on the noise settings and the start, never on the prices: any price series would produce the same gains. The standard filter therefore does not react faster when markets turn volatile. In practice gains do move, but only when the model lets them: when the price noise is made to depend on the data, when the settings are re-estimated, or after missing bars, during which the filter only predicts, its uncertainty grows, and the first price after the gap receives a larger gain (§5).
 
 **When is the filter stable?** When its gains stop changing. Because they do not depend on the prices, they can be computed before any data arrive, and the bar at which they settle can be read off directly. For the settings of Table 1.4 ($`q_\ell = 10^{-4}`$, $`q_s = 10^{-6}`$, $`q_a = 10^{-8}`$):
 
@@ -123,9 +123,9 @@ The filter needs as many prices as it has state variables before each is determi
 | 100 | 0.097 | 0.0046 | 0.0001 |
 | 200 and after | 0.091 | 0.0043 | 0.0001 |
 
-From bar 121 on, every gain is within 1% of its final value: the filter has become a fixed weighted average of past prices, and stays one. A practical rule follows: the filter is stable once all its gains are within 1% of their final values, a bar fixed by the design and the settings and computable before the backtest starts. Slower settings take longer to settle. How much history must be discarded beyond this, so that the estimates no longer depend on where the data begin, is a separate question (§6).
+From bar 121 on, every gain is within 1% of its final value: the filter has become a fixed weighted average of past prices, and stays one. A practical rule follows: the filter is stable once all its gains are within 1% of their final values, a bar fixed by the design and the settings and computable before the backtest starts. Slower settings take longer to settle. How much history must be discarded beyond this, so that the estimates no longer depend on where the data begin, is a separate question (§4).
 
-**The filter runs online.** Each bar needs only three things: yesterday's estimate $`x_{t-1\mid t-1}`$, its uncertainty $`P_{t-1\mid t-1}`$ and today's price. Everything the filter knows about the past is condensed into those two objects, so live, the price can be discarded once it has been processed; a backtest simply loops through the history one bar at a time. A full price history is needed in only two cases. The first is estimating the noise settings from the data (§5). The second is *smoothing*: running a second pass backwards through the history so that each past estimate also uses the prices that came after it (Rauch, Tung and Striebel, 1965). Smoothed estimates are useful for describing the past, but in a trading system they are a serious and common mistake: each one uses prices that were not yet known, so a backtest built on them looks far better than anything that can be traded. The same caution applies to the first case: noise settings estimated on the whole history and then used to backtest that same history leak future information; they must be estimated on data before the evaluation period, or re-estimated as it rolls forward.
+**The filter runs online.** Each bar needs only three things: yesterday's estimate $`x_{t-1\mid t-1}`$, its uncertainty $`P_{t-1\mid t-1}`$ and today's price. Everything the filter knows about the past is condensed into those two objects, so live, the price can be discarded once it has been processed; a backtest simply loops through the history one bar at a time. A full price history is needed in only two cases. The first is estimating the noise settings from the data (§3). The second is *smoothing*: running a second pass backwards through the history so that each past estimate also uses the prices that came after it (Rauch, Tung and Striebel, 1965). Smoothed estimates are useful for describing the past, but in a trading system they are a serious and common mistake: each one uses prices that were not yet known, so a backtest built on them looks far better than anything that can be traded. The same caution applies to the first case: noise settings estimated on the whole history and then used to backtest that same history leak future information; they must be estimated on data before the evaluation period, or re-estimated as it rolls forward.
 
 ### 1.5 From the blueprint to the code
 
@@ -150,16 +150,95 @@ The blueprint names four objects: $`F`$, $`H`$, $`Q`$ and $`r`$. An implementati
 | | `Q_REL`, `q_scale` | ratios within $`Q`$ | — | The relative speeds of level, slope and acceleration, and their overall scale |
 | **Outputs** | `states`, `sds` | $`x_{t\mid t}`$, $`\sqrt{\mathrm{diag}\,P_{t\mid t}}`$ | $`T \times n`$ | The history of the estimates and of their standard deviations, for charts and readings |
 
-Only the first layer is the model. The second is the machinery of Table 1.3, the same for every design. The third is chosen by the user, and the rest of the lecture shows how; the code's remaining arguments belong to the extensions of §7.
+Only the first layer is the model. The second is the machinery of Table 1.3, the same for every design. The third is chosen by the user, and the rest of the lecture shows how; the code's remaining arguments belong to the extensions of §5.
 
 **Table 1.7. What the user must choose, and where the lecture covers it**
 
 | Choice | Covered in |
 |---|---|
-| The design: which state variables to track ($`F`$ and $`H`$) | §2–4 |
-| How fast each state variable may change, relative to the price noise ($`Q`$ and $`r`$) | §5 |
-| The start ($`x_0`$, $`P_0`$) and how much history to load first | §6 |
+| The design: which state variables to track ($`F`$ and $`H`$) | §2 |
+| How fast each state variable may change, relative to the price noise ($`Q`$ and $`r`$) | §3 |
+| The start ($`x_0`$, $`P_0`$) and how much history to load first | §4 |
+
+## 2. Choosing the design: which state variables to track
+
+The design is the first choice and the most consequential: it fixes which kinds of price motion the filter can follow and what it can report about them. This lecture is still about smoothing, but the design is where smoothing turns into the raw material of trend systems. Each state variable added to the design is one more property of the price, estimated separately and consistently with the others: where the price is, which way and how fast it is moving, and whether that movement is speeding up. Part II builds trend systems on these quantities; this section shows what each design delivers.
+
+### 2.1 Level only: an EMA with a model behind it
+
+The simplest design tracks the level alone. Once the gain has settled (§1.4), steps 1 to 7 of Table 1.3 reduce to one line:
+
+```math
+\ell_t = \ell_{t-1} + K\,(y_t - \ell_{t-1}) = K\,y_t + (1-K)\,\ell_{t-1}
+```
+
+This is an EMA whose smoothing constant $`\alpha`$ is the steady gain $`K`$. The gain follows from the ratio $`q_\ell / r`$ alone: with $`q_\ell / r = 1/6`$ it is exactly $`1/3`$, the $`\alpha`$ of EMA(5) (our derivation; notebook §3).
+
+Trend following is possible with this design, exactly as with an EMA: price above the level is read as an up-trend, because the level lags. Nothing is gained over the EMA except the uncertainty band, and nothing is lost. The design is the bridge from Lecture 2: it shows that the Kalman filter contains the EMA as its simplest case.
+
+### 2.2 Level + slope: the trend becomes a state
+
+Adding a slope gives the *local linear trend* model. The level drifts by the slope each bar, and the slope itself changes only slowly. The trend is now a number the filter estimates, forecasts with and revises by every surprise.
+
+Once the gains have settled, the two updates of step 7 are
+
+```math
+\ell_t = \hat y_t + K_1\,e_t, \qquad s_t = s_{t-1} + K_2\,e_t, \qquad \hat y_t = \ell_{t-1} + s_{t-1}
+```
+
+which is Holt's linear method, the classical exponential smoothing with a trend (Holt, 1957, reprinted 2004), with smoothing constants $`\alpha = K_1`$ for the level and $`\beta = K_2 / K_1`$ for the trend (our derivation). The Kalman filter adds what Holt's method lacks: a model from which the two constants follow, and an uncertainty for each.
+
+The slope is the first derivative of the price, its direction and speed. Two consequences matter for what follows.
+
+- **The trend reading is the slope.** A positive slope means the filter estimates a rising trend, with a standard deviation that says how sure it is.
+- **Price against the level changes meaning.** The level has already been projected along the trend, so price below the level means that price rose less than the projected trend, not that the trend has turned. It measures how far price is stretched from its trend, which is the kind of quantity behind overbought and oversold readings. Practitioner write-ups use the two in exactly these roles: the slope as the trend signal, the gap between price and level as a stretch filter (QuanterLab, 2026).
+
+### 2.3 Level + slope + acceleration: the change in the trend
+
+A third state variable models the acceleration, the second derivative of the price: whether the trend is strengthening or fading. Because it also enters the forecast, through the $`\tfrac12 a_t`$ term of Table 1.3, it shifts where the filter expects the next price: a fading rise lowers the forecast before the slope itself turns.
+
+The acceleration is the noisiest of the three state variables: estimating a change in a trend amplifies the noise in prices twice over, once for the trend and once for its change.
+
+**Why stop at acceleration?** Further derivatives, often called jerk and snap, could be added as state variables in the same way. Each one amplifies the noise further and makes the filter overshoot more, and oscillate, after a jump (Table 2.2). Practice therefore stops at acceleration. By analogy, high-order polynomials fitted to recent points swing wildly when extrapolated; this is the Runge phenomenon, strictly a property of interpolation.
+
+### 2.4 What each design can follow
+
+The designs are best compared on synthetic prices, which contain no noise and no market history, so that any difference comes from the design alone.
+
+**Table 2.1. Synthetic test: setup** (notebook §6)
+
+| Test | Price path (3,000 bars) | Measured |
+|---|---|---|
+| Jump | 0 until bar 100, then 1 | Overshoot: the highest estimated level after the jump minus 1, as a % of the jump |
+| Steady trend | Rises by 0.01 a bar | Gap: price minus level at the end |
+| Parabolic move | $`10^{-5}\,t^2`$ | Gap at bars 1,500 and 2,999 |
+
+Price noise $`r = 1`$; slow setting $`(q_\ell, q_s, q_a) = (10^{-4}, 10^{-6}, 10^{-8})`$, fast setting $`(10^{-2}, 10^{-3}, 10^{-4})`$.
+
+**Table 2.2. What each design follows, slow / fast setting**
+
+| Design | Jump: overshoot | Steady trend: gap | Parabolic move: gap |
+|---|---|---|---|
+| L | 0% / 0% | 0.99 / 0.095, constant | 2.8 → 5.8 / 0.28 → 0.57, growing |
+| LS | 20% / 17% | 0 / 0 | 0.02 / 0.0006, constant |
+| LSA | 29% / 23% | 0 / 0 | 0 / 0 |
+
+Three rules follow. Each additional state variable lets the filter follow one more kind of motion with no lasting gap: a flat price, a steady trend, a steady acceleration. Faster settings shrink a gap but never remove it; only adding a state variable does. And the price of following more is overshoot: the level-only design never overshoots a jump, while the slope designs always do, because they extrapolate.
+
+### 2.5 From smoothing to trend systems
+
+**Table 2.3. What each design delivers**
+
+| Design | State variables | What it delivers | Equivalent bottom-up method | Cost |
+|---|---|---|---|---|
+| L | Level | A smoothed price, with a band | EMA | Lags every trend |
+| LS | Level, slope | A trend estimate, its uncertainty, and the stretch of price from the trend | Holt's linear method | Overshoots jumps |
+| LSA | Level, slope, acceleration | In addition, whether the trend is strengthening or fading | — | More noise, larger overshoot |
+
+For trend following, the slope designs are the natural starting point. With the level alone, a trend exists only as price against a lagging average, which is the EMA's logic. With a slope, the trend is a quantity in its own right, measured with a confidence band, and with an acceleration, so is its change. Turning these quantities into positions is the subject of Part II; this lecture stays with what they are and how they behave.
 
 ## References (so far)
 
+- Holt, C.C. (2004). Forecasting seasonals and trends by exponentially weighted moving averages. *International Journal of Forecasting* 20(1), 5–10. Reprint of a 1957 Office of Naval Research report. — exponential smoothing with a trend (§2.2).
+- QuanterLab (2026). Kalman filter: trend following. https://quanterlab.com/articles/stochastic-kalman-trend (practitioner article, accessed 11 October 2026). — the slope as the trend signal, the gap between price and level as a stretch filter (§2.2).
 - Rauch, H.E., Tung, F. and Striebel, C.T. (1965). Maximum likelihood estimates of linear dynamic systems. *AIAA Journal* 3(8), 1445–1450. — the smoother (§1.4).
