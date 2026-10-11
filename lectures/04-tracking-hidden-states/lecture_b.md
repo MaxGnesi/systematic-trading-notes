@@ -83,18 +83,19 @@ Today's price enters only at step 6: everything before it, the gain included, is
 
 Here $`x_{t\mid t-1}`$ is the estimate before today's price is seen and $`x_{t\mid t}`$ the estimate after; $`P`$ is the uncertainty of the estimate, the covariance of its error. The gain $`K_t`$ is a vector with one entry per hidden quantity, so a single price surprise updates the level, the slope and the acceleration at once. This is how the filter learns a trend it never observes: when prices keep beating the forecast, the surprises are persistently positive, and each one nudges the slope up by its share.
 
-**Table 1.4. The first 500 bars of LS on QQQ** (log closes from 10 March 1999; $`r = 10^{-4}`$, a 1% daily price noise; $`q_\ell = 0.1\,r`$ and $`q_s = 5.3 \times 10^{-6}\,r`$, settings whose choice is explained in §5; start $`x_0`$ = (first price, 0), $`P_0 = I`$; notebook §2b, which prints every matrix and vector of the first three bars)
+**How the filter starts.** The start is easiest to see on four made-up prices, 50, 52, 55 and 57, filtered with the three-state design LSA. The filter is initialised with the level at the first price and the slope and acceleration at zero, together with a very large starting uncertainty $`P_0`$, which tells it that these zeros are guesses to be overwritten.
 
-| Bar | Date | Price | Forecast | Surprise $`e_t`$ | Gain on level | Gain on slope | Level | Slope (% a year) | Standard deviation of slope (% a year) |
-|---|---|---|---|---|---|---|---|---|---|
-| 1 | 10 Mar 1999 | 42.98 | 42.98 | 0.00% | 1.000 | 0.500 | 42.98 | 0 | 17,820 |
-| 2 | 11 Mar 1999 | 43.19 | 42.98 | +0.49% | 1.000 | 0.999 | 43.19 | +123 | 365 |
-| 3 | 12 Mar 1999 | 42.14 | 43.40 | −2.95% | 0.839 | 0.500 | 42.34 | −249 | 187 |
-| 10 | 23 Mar 1999 | 41.09 | 43.28 | −5.20% | 0.416 | 0.059 | 42.36 | −60 | 39 |
-| 100 | 30 Jul 1999 | 47.64 | 48.60 | −2.00% | 0.279 | 0.003 | 48.33 | +30 | 8.9 |
-| 500 | 1 Mar 2001 | 41.08 | 42.11 | −2.49% | 0.275 | 0.002 | 41.82 | −71 | 6.9 |
+**Table 1.4. The first four bars of LSA on made-up prices** ($`P_0 = 10^6\,I`$, $`r = 1`$)
 
-Three phases are visible. On bar 1 the gain on the level is 1: the first price simply overwrites the starting guess. On bar 2 the gain on the slope is close to 1 as well, so the slope is set to the first daily change, 0.49%, or 123% a year: one observation's worth of trend. From then on both gains fall as evidence accumulates. The slope still swings widely (−249% a year on bar 3), but its standard deviation of 187% a year says that the estimate means little yet. By bar 100 the gains have nearly settled and the slope's standard deviation is under 9% a year; by bar 500 the gains are constant to the third decimal, the steady state in which the filter is a fixed weighted average of past prices. The gain columns depend only on the noise settings and the start, never on the prices: any price series would produce the same gains. The standard filter therefore does not react faster when markets turn volatile; that requires noise that depends on the data (§7).
+| Bar | Price | Forecast | Surprise | Level | Slope | Acceleration | What happens |
+|---|---|---|---|---|---|---|---|
+| 0 | — | — | — | **50** | **0** | **0** | **Initialised:** level at the first price, slope and acceleration at zero, all highly uncertain |
+| 1 | 50 | 50 | 0 | 50 | 0 | 0 | **Nothing moves:** the price equals the forecast, so there is no surprise to distribute |
+| 2 | 52 | 50 | +2 | **52** | 2.6 | 1.2 | **The level is set; slope and acceleration are provisional.** Two prices fix the level and one change, but cannot separate a trend from its acceleration; the split shown depends only on $`P_0`$ |
+| 3 | 55 | 55.2 | −0.2 | **55** | **3.5** | **1.0** | **All three are pinned down:** the filter reproduces the parabola through the three prices, whose acceleration is $`(55-52)-(52-50) = 1`$ |
+| 4 | 57 | **59.0** | −2.0 | 57.1 | 2.4 | 0.0 | **Averaging begins:** the first forecast to use all three ($`55 + 3.5 + \tfrac12 \times 1`$); from now on the gains are below one and each price is blended with the past |
+
+The filter needs as many prices as it has hidden quantities before each is determined: one for the level, two for the slope, three for the acceleration. The level-only design is set after one bar, the level + slope design after two, LSA after three; afterwards, every design averages. The gains that drive this sequence depend only on the noise settings and the start, never on the prices: any price series would produce the same gains. The standard filter therefore does not react faster when markets turn volatile; that requires noise that depends on the data (§7). On real data the gains take longer to settle, as §6 shows.
 
 **The filter runs online.** Each bar needs only three things: yesterday's estimate $`x_{t-1\mid t-1}`$, its uncertainty $`P_{t-1\mid t-1}`$ and today's price. Everything the filter knows about the past is condensed into those two objects, so live, the price can be discarded once it has been processed; a backtest simply loops through the history one bar at a time. A full price history is needed in only two cases. The first is estimating the noise settings from the data (§5). The second is *smoothing*: running a second pass backwards through the history so that each past estimate also uses the prices that came after it (Rauch, Tung and Striebel, 1965). Smoothed estimates are useful for describing the past, but in a trading system they are a serious and common mistake: each one uses prices that were not yet known, so a backtest built on them looks far better than anything that can be traded. The same caution applies to the first case: noise settings estimated on the whole history and then used to backtest that same history leak future information; they must be estimated on data before the evaluation period, or re-estimated as it rolls forward.
 
