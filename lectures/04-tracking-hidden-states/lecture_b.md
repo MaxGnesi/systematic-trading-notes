@@ -199,45 +199,17 @@ A third state variable models the acceleration, the second derivative of the pri
 
 The acceleration is the noisiest of the three state variables: estimating a change in a trend amplifies the noise in prices twice over, once for the trend and once for its change.
 
-**Why stop at acceleration?** Further derivatives, often called jerk and snap, could be added as state variables in the same way. Each one amplifies the noise further and makes the filter overshoot more, and oscillate, after a jump (Table 2.2). Practice therefore stops at acceleration. By analogy, high-order polynomials fitted to recent points swing wildly when extrapolated; this is the Runge phenomenon, strictly a property of interpolation.
+**Why stop at acceleration?** Further derivatives, often called jerk and snap, could be added as state variables in the same way. Each one amplifies the noise further and makes the filter overshoot more, and oscillate, after a jump (§2.4). Practice therefore stops at acceleration. By analogy, high-order polynomials fitted to recent points swing wildly when extrapolated; this is the Runge phenomenon, strictly a property of interpolation.
 
 ### 2.4 What each design can follow
 
-The designs are best compared on synthetic prices, which contain no noise and no market history, so that any difference comes from the design alone.
+On synthetic prices without noise (notebook §6), three rules stand out. The level-only design follows a flat price but lags a steady trend forever; the level + slope design follows a steady trend exactly but overshoots a jump by 17–20%; the three-state design follows a steady acceleration exactly but overshoots by 23–29%. Faster settings shrink a lag but never remove it; only an additional state variable does. And following more has a price: the slope designs overshoot because they extrapolate.
 
-**Table 2.1. Synthetic test: setup** (notebook §6)
+### 2.5 What can be read from the filter
 
-| Test | Price path (3,000 bars) | Measured |
-|---|---|---|
-| Jump | 0 until bar 100, then 1 | Overshoot: the highest estimated level after the jump minus 1, as a % of the jump |
-| Steady trend | Rises by 0.01 a bar | Gap: price minus level at the end |
-| Parabolic move | $`10^{-5}\,t^2`$ | Gap at bars 1,500 and 2,999 |
+Every quantity the filter produces on each bar can be read directly, and each is charted on QQQ in the appendix.
 
-Price noise $`r = 1`$; slow setting $`(q_\ell, q_s, q_a) = (10^{-4}, 10^{-6}, 10^{-8})`$, fast setting $`(10^{-2}, 10^{-3}, 10^{-4})`$.
-
-**Table 2.2. What each design follows, slow / fast setting**
-
-| Design | Jump: overshoot | Steady trend: gap | Parabolic move: gap |
-|---|---|---|---|
-| L | 0% / 0% | 0.99 / 0.095, constant | 2.8 → 5.8 / 0.28 → 0.57, growing |
-| LS | 20% / 17% | 0 / 0 | 0.02 / 0.0006, constant |
-| LSA | 29% / 23% | 0 / 0 | 0 / 0 |
-
-Three rules follow. Each additional state variable lets the filter follow one more kind of motion with no lasting gap: a flat price, a steady trend, a steady acceleration. Faster settings shrink a gap but never remove it; only adding a state variable does. And the price of following more is overshoot: the level-only design never overshoots a jump, while the slope designs always do, because they extrapolate.
-
-### 2.5 Looking ahead: from smoothing to trend systems
-
-**Table 2.3. What each design delivers**
-
-| Design | State variables | What it delivers | Equivalent bottom-up method | Cost |
-|---|---|---|---|---|
-| L | Level | A smoothed price, with a band | EMA | Lags every trend |
-| LS | Level, slope | A trend estimate, its uncertainty, and the stretch of price from the trend | Holt's linear method | Overshoots jumps |
-| LSA | Level, slope, acceleration | In addition, whether the trend is strengthening or fading | — | More noise, larger overshoot |
-
-Every quantity the filter produces on each bar can be read directly; nothing beyond Table 1.3 is needed.
-
-**Table 2.4. What can be read from the filter on every bar**
+**Table 2.1. What can be read from the filter on every bar**
 
 | Quantity | Computed in | What it shows | Where it leads (Part II) |
 |---|---|---|---|
