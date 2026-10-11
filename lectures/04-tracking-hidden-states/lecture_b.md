@@ -85,21 +85,25 @@ Here $`x_{t\mid t-1}`$ is the estimate before today's price is seen and $`x_{t\m
 
 **How the filter starts.** The start is easiest to see on four made-up prices, 50, 52, 55 and 57, filtered with the three-state design LSA. The filter is initialised with the level at the first price and the slope and acceleration at zero, together with a very large starting uncertainty $`P_0`$, which tells it that these zeros are guesses to be overwritten.
 
-**Table 1.4. The first four bars of LSA on made-up prices, step by step** ($`P_0 = 10^6\,I`$, $`r = 1`$; triples are level / slope / acceleration; step numbers as in Table 1.3)
+**Table 1.4. The first four bars of LSA on made-up prices, step by step** ($`P_0 = 10^6\,I`$, $`r = 1`$; triples are level / slope / acceleration; each column runs down the eight steps of Table 1.3)
 
-| Bar | Price | Forecast $`\hat y_t`$ (step 3) | Expected size of the surprise $`\sqrt{S_t}`$ (step 4) | Gains $`K_t`$ (step 5) | Surprise $`e_t`$ (step 6) | Estimates after the bar (step 7) | Their standard deviations (step 8) |
-|---|---|---|---|---|---|---|---|
-| 0 | — | — | — | — | — | **50 / 0 / 0** (initialised) | 1,000 / 1,000 / 1,000 |
-| 1 | 50 | 50 | 1,500 | 1.00 / 0.67 / 0.22 | 0 | 50 / 0 / 0 | **1** / 1,000 / 943 |
-| 2 | 52 | 50 | 1,374 | 1.00 / 1.29 / 0.59 | +2.0 | 52 / 2.6 / 1.2 | 1 / **243 / 485** |
-| 3 | 55 | 55.2 | 485 | 1.00 / 1.50 / 1.00 | −0.2 | 55 / **3.5 / 1.0** | 1 / **2.6 / 2.4** |
-| 4 | 57 | **59.0** | 4.5 | **0.95** / 1.05 / 0.50 | −2.0 | 57.1 / 2.4 / 0.0 | 1.0 / 1.6 / 1.0 |
+| Step | Bar 0 (start) | Bar 1 | Bar 2 | Bar 3 | Bar 4 |
+|---|---|---|---|---|---|
+| Price $`y_t`$ | — | 50 | 52 | 55 | 57 |
+| 1. Predicted state | — | 50 / 0 / 0 | 50 / 0 / 0 | 55.2 / 3.8 / 1.2 | 59.0 / 4.5 / 1.0 |
+| 2. Its standard deviations | — | 1,500 / 1,414 / 1,000 | 1,374 / 1,795 / 943 | 485 / 728 / 485 | 4.4 / 4.9 / 2.4 |
+| 3. Forecast $`\hat y_t`$ | — | 50 | 50 | 55.2 | **59.0** |
+| 4. Expected size of the surprise $`\sqrt{S_t}`$ | — | 1,500 | 1,374 | 485 | 4.5 |
+| 5. Gains $`K_t`$ | — | 1.00 / 0.67 / 0.22 | 1.00 / 1.29 / 0.59 | 1.00 / 1.50 / 1.00 | **0.95** / 1.05 / 0.50 |
+| 6. Surprise $`e_t`$ | — | 0 | +2.0 | −0.2 | −2.0 |
+| 7. Estimates after the bar | **50 / 0 / 0** (initialised) | 50 / 0 / 0 | 52 / 2.6 / 1.2 | 55 / **3.5 / 1.0** | 57.1 / 2.4 / 0.0 |
+| 8. Their standard deviations | 1,000 / 1,000 / 1,000 | **1** / 1,000 / 943 | 1 / **243 / 485** | 1 / **2.6 / 2.4** | 1.0 / 1.6 / 1.0 |
 
-Steps 1 and 2 are implicit in each row: the forecast of step 3 is the predicted level, and the expected size of the surprise in step 4 comes from the predicted uncertainty. Read row by row:
+Read column by column:
 
 - **Bar 0: initialisation.** The level is set to the first price, slope and acceleration to zero, and all three are declared highly uncertain (standard deviation 1,000).
 - **Bar 1: nothing moves.** The price equals the forecast, so there is no surprise to distribute. The level's uncertainty nonetheless collapses to 1, the size of the price noise: one price is enough to know roughly where the level is.
-- **Bar 2: the level is set; slope and acceleration are provisional.** Two prices fix one change but cannot separate a trend from its acceleration. The estimates of 2.6 and 1.2 depend only on the starting uncertainty, and their standard deviations of 243 and 485 say exactly that: ignore them.
+- **Bar 2: the level is set; slope and acceleration are provisional.** The predicted level is uncertain again (1,374) although the level was known after bar 1: projecting it with a slope that is still unknown spreads the slope's uncertainty into the level. Two prices fix one change but cannot separate a trend from its acceleration. The estimates of 2.6 and 1.2 depend only on the starting uncertainty, and their standard deviations of 243 and 485 say exactly that: ignore them.
 - **Bar 3: all three are pinned down.** The filter reproduces the parabola through the three prices, whose acceleration is $`(55-52)-(52-50) = 1`$, and the standard deviations of slope and acceleration fall from the hundreds to about 2.5. Gains above one are normal in these first bars: a single surprise must be converted into a whole slope or acceleration.
 - **Bar 4: averaging begins.** The forecast of 59.0 is the first to use all three quantities ($`55 + 3.5 + \tfrac12 \times 1`$). The gain on the level falls below one, so each new price is now blended with the past rather than copied.
 
