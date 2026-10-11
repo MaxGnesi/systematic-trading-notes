@@ -235,6 +235,18 @@ Three rules follow. Each additional state variable lets the filter follow one mo
 | LS | Level, slope | A trend estimate, its uncertainty, and the stretch of price from the trend | Holt's linear method | Overshoots jumps |
 | LSA | Level, slope, acceleration | In addition, whether the trend is strengthening or fading | — | More noise, larger overshoot |
 
+Every quantity the filter produces on each bar can be read directly; nothing beyond Table 1.3 is needed.
+
+**Table 2.4. What can be read from the filter on every bar**
+
+| Quantity | Computed in | What it shows | Where it leads (Part II) |
+|---|---|---|---|
+| Level $`\ell_t`$, with band $`\pm\sqrt{P_{\ell\ell}}`$ | Steps 7 and 8 | The smoothed price, and how sure the filter is of it | A cleaner price to trade against |
+| Slope $`s_t`$, with its standard deviation | Steps 7 and 8 | Direction and speed of the trend; whether it is distinguishable from zero | The core of a trend-following signal |
+| Acceleration $`a_t`$, with its standard deviation | Steps 7 and 8 | Whether the trend is strengthening or fading | An early warning that a trend is tiring |
+| Stretch $`y_t - \ell_t`$ | Step 7 | How far price has run from its projected trend | Overbought and oversold judgements |
+| Normalised surprise $`e_t / \sqrt{S_t}`$ | Steps 4 and 6 | How unusual today's bar is, compared with what the model expects | Flagging shocks, and checking whether the model fits |
+
 A short preview of what comes next. With the level alone, a trend shows only as price against a lagging average, which is the EMA's logic. With a slope, the trend is a quantity in its own right, measured with a confidence band; with an acceleration, so is its change. Part II introduces trend-following systems and shows how such quantities become trading decisions. This lecture stays with what they are and how they behave.
 
 ## References (so far)
