@@ -10,22 +10,20 @@ Every method of Lecture 2 ends up as a weighted average of past prices, and in s
 
 ### 1.1 What sets the Kalman filter apart
 
-Adapting to the data is not what distinguishes it. Several methods of Lecture 2 already adapt: the EMA weights recent bars more, KAMA speeds up when the market trends, VWAP weights bars by their volume. The standard Kalman filter, by contrast, does not adapt to the data at all once it has warmed up. What does distinguish it appears dimension by dimension in Table 1.1.
+Adapting to the data is not what distinguishes it: the EMA already favours recent bars, KAMA speeds up in trends, VWAP weights by volume. Four things do.
 
-**Table 1.1. Bottom-up averages and the top-down Kalman filter**
+**Table 1.1. Bottom-up averages and the top-down Kalman filter: the highlights**
 
-| Dimension | Bottom-up (SMA, EMA, KAMA, VWAP) | Top-down (Kalman filter) |
+| | Bottom-up (SMA, EMA, KAMA, VWAP) | Top-down (Kalman filter) |
 |---|---|---|
-| **What it estimates** | **One line:** the level, smoothed directly from past prices. A trend must be approximated separately, for instance from differences of averages | **One to three hidden states:** level; level and slope; level, slope and acceleration. Prices are treated as noisy observations of them |
-| **Joint estimation** | **None:** separate averages run in isolation, with disconnected parameters, and can contradict each other | **Joint:** one surprise moves every hidden quantity, through one gain vector $`K_t`$ and one covariance matrix $`P_t`$, so the estimates stay consistent |
-| **What gives a bar its influence** | **A rule:** recency (EMA), volume (VWAP) or trend efficiency (KAMA); a bar counts because it is recent, heavy or part of a clean trend | **Its surprise:** a bar moves the estimate in proportion to how far it lands from the forecast, scaled by a gain derived from the model; a bar on the forecast changes nothing |
-| **Window and memory** | **A fixed window** of N bars (SMA), or an infinite, exponentially fading memory (EMA) | **No window:** an infinite, exponentially fading memory, as for an EMA, with a separate memory for each hidden quantity, set through $`Q`$ relative to $`r`$ (§5) |
-| **Forecast and lag** | **Flat:** the forecast is today's average, so the line lags any trend | **Along the trend:** $`\ell_t + s_t + \tfrac12 a_t`$, so with a slope state there is no lasting lag on a steady trend |
-| **Uncertainty and statistics** | **None:** a point estimate only | **A covariance matrix $`P_t`$:** a confidence band around every hidden quantity; a test of whether a bar is unusual (its surprise against $`\sqrt{S_t}`$); and the likelihood of the data, from which the noise settings can be estimated (§5) |
+| **What it estimates** | **The level only.** A trend needs a separate average | **Level, slope and acceleration, jointly,** from the same surprises |
+| **What gives a bar its influence** | **Recency, volume or trend efficiency** | **Its surprise:** how far the bar lands from the forecast |
+| **Forecast and lag** | **Flat,** so the line lags every trend | **Along the trend,** so there is no lasting lag on a steady trend |
+| **Uncertainty** | **None** | **A confidence band for every hidden quantity,** a test for unusual bars, and a likelihood for calibrating the model |
 
-Every row except the window is genuinely distinctive. One nuance concerns surprise: an EMA also updates by the gap between price and its own last value, which is why the level-only filter is an EMA (§2). The difference appears once a trend enters the forecast, because the surprise is then measured against the projected trend and moves the trend as well.
+An EMA also updates by the gap between price and its last value, which is why the level-only filter is an EMA (§2); surprise becomes distinctive once the forecast includes a trend, because the surprise then also moves the trend.
 
-Three properties are often claimed and do not hold for the standard filter. It does not widen its uncertainty and react faster when markets turn volatile: its uncertainty and its gain depend only on the noise settings and the starting uncertainty, never on the prices, so the whole sequence of gains could be computed before the first price arrives (Benhamou, 2018); it reacts to volatility only when its noise is made to depend on the data (§7). Its infinite, exponentially fading memory is not distinctive either: an EMA has the same. And it is not optimal in general: it is the best possible estimator when its model is true, the best linear one when only the model's variances are right, and otherwise a well-defined smoother.
+Three claims about the standard filter do not hold. It does not react faster when markets turn volatile: its gains depend only on the noise settings and the starting uncertainty, never on the prices, so they could be computed before the first price arrives (Benhamou, 2018); only data-dependent noise makes it react (§7). Its infinite, fading memory is not special: an EMA has the same. And it is optimal only if its model is true.
 
 ### 1.2 The blueprint
 
