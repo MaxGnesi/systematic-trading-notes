@@ -21,9 +21,7 @@ Adapting to the data is not what distinguishes it: the EMA already favours recen
 | **Forecast and lag** | **Flat,** so the line lags every trend | **Along the trend,** so there is no lasting lag on a steady trend |
 | **Uncertainty** | **None** | **A confidence band for every hidden quantity,** a test for unusual bars, and a likelihood for calibrating the model |
 
-An EMA also updates by the gap between price and its last value, which is why the level-only filter is an EMA (§2); surprise becomes distinctive once the forecast includes a trend, because the surprise then also moves the trend.
-
-Three claims about the standard filter do not hold. It does not react faster when markets turn volatile: its gains depend only on the noise settings and the starting uncertainty, never on the prices, so they could be computed before the first price arrives (Benhamou, 2018); only data-dependent noise makes it react (§7). Its infinite, fading memory is not special: an EMA has the same. And it is optimal only if its model is true.
+Each of these is built up in the sections that follow.
 
 ### 1.2 The blueprint
 
@@ -82,7 +80,7 @@ Each design adds one hidden quantity, one row and column to $`F`$ and $`Q`$, and
 
 Here $`x_{t\mid t-1}`$ is the estimate before today's price is seen and $`x_{t\mid t}`$ the estimate after; $`P`$ is the uncertainty of the estimate, the covariance of its error. The gain $`K_t`$ is a vector with one entry per hidden quantity, so a single price surprise updates the level, the slope and the acceleration at once. This is how the filter learns a trend it never observes: when prices keep beating the forecast, the surprises are persistently positive, and each one nudges the slope up by its share.
 
-**Table 1.4. The first 500 bars of LS on QQQ** (log closes from 10 March 1999; $`r = 10^{-4}`$, a 1% daily price noise; $`q_\ell = 0.1\,r`$ and $`q_s = 5.3 \times 10^{-6}\,r`$, the long-horizon settings of §6, under which the slope remembers like EMA(252); start $`x_0`$ = (first price, 0), $`P_0 = I`$; notebook §2b, which prints every matrix and vector of the first three bars)
+**Table 1.4. The first 500 bars of LS on QQQ** (log closes from 10 March 1999; $`r = 10^{-4}`$, a 1% daily price noise; $`q_\ell = 0.1\,r`$ and $`q_s = 5.3 \times 10^{-6}\,r`$, settings whose choice is explained in §5; start $`x_0`$ = (first price, 0), $`P_0 = I`$; notebook §2b, which prints every matrix and vector of the first three bars)
 
 | Bar | Date | Price | Forecast | Surprise $`e_t`$ | Gain on level | Gain on slope | Level | Slope (% a year) | Standard deviation of slope (% a year) |
 |---|---|---|---|---|---|---|---|---|---|
@@ -116,25 +114,14 @@ The blueprint names four objects: $`F`$, $`H`$, $`Q`$ and $`r`$. An implementati
 | **Settings: chosen by the user** | `start_state` | $`x_0`$ | $`n`$ | The starting guess: first price as level, zero slope and acceleration |
 | | `start_uncertainty` | $`P_0`$ | $`n \times n`$ | How much the starting guess is trusted; large means a diffuse start |
 | | `Q_REL`, `q_scale` | ratios within $`Q`$ | — | The relative speeds of level, slope and acceleration, and their overall scale |
-| **Outputs and extensions** | `states`, `sds` | $`x_{t\mid t}`$, $`\sqrt{\mathrm{diag}\,P_{t\mid t}}`$ | $`T \times n`$ | The history of the estimates and of their standard deviations, for charts and readings |
-| | `z` | $`e_t / \sqrt{S_t}`$ | scalar | The normalised surprise: should look like standard normal noise if the model fits (§6) |
-| | `cap`, `z_var` | — | scalar | The robust update: caps surprises beyond a multiple of their recent typical size (§7) |
-| | `r_series` | $`r_t`$ | $`T`$ | Price noise that changes bar by bar, for instance with the day's range (§7) |
-| | `damping` | entry of $`F`$ | scalar | Lets the slope fade by a fixed share each bar (§7) |
+| **Outputs** | `states`, `sds` | $`x_{t\mid t}`$, $`\sqrt{\mathrm{diag}\,P_{t\mid t}}`$ | $`T \times n`$ | The history of the estimates and of their standard deviations, for charts and readings |
 
-Only the first layer is the model. The second is the machinery of Table 1.3, the same for every design. The third is where most practical mistakes are made, so it deserves its own table.
+Only the first layer is the model. The second is the machinery of Table 1.3, the same for every design. The third is chosen by the user, and the rest of the lecture shows how; the code's remaining arguments belong to the extensions of §7.
 
-**Table 1.6. Setting what the blueprint leaves open**
+**Table 1.6. What the user must choose, and where the lecture covers it**
 
-| Choice | How it is set in practice | Where in this lecture |
-|---|---|---|
-| The design: $`F`$ and $`H`$ | A modelling decision: which hidden quantities to track (level; level and slope; level, slope and acceleration) | §2–4 |
-| The scale of $`Q`$ and $`r`$ | Irrelevant on its own: only the ratios of the $`q`$ to $`r`$ matter, so $`r`$ can be fixed at 1 | §2.4 |
-| The ratios of the $`q`$ to $`r`$ | One of three routes: match the memory of a known average (for instance give the slope the memory of EMA(252)); estimate them by maximum likelihood, choosing the values under which the observed surprises are most probable; or tune them to a trading objective, at a high risk of overfitting (Benhamou, 2018) | §5, §6 |
-| The start: $`x_0`$ and $`P_0`$ | Level at the first price, slope and acceleration at zero, with a large $`P_0`$ so that the first prices overwrite the guess | §6 |
-| The burn-in | Load one to two horizons of history before the evaluation starts | §6 |
-
-
-## References (so far)
-
-- Benhamou, E. (2018). Kalman filter demystified: from intuition to probabilistic graphical model to real case in financial markets. arXiv:1811.11618. — the gain sequence does not depend on the observations (§1.1); noise parameters tuned to a trading objective (§1.5).
+| Choice | Covered in |
+|---|---|
+| The design: which hidden quantities to track ($`F`$ and $`H`$) | §2–4 |
+| How fast each hidden quantity may change, relative to the price noise ($`Q`$ and $`r`$) | §5 |
+| The start ($`x_0`$, $`P_0`$) and how much history to load first | §6 |
