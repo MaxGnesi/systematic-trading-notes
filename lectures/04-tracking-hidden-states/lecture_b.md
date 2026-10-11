@@ -219,6 +219,14 @@ Every quantity the filter produces on each bar can be read directly, and each is
 | Stretch $`y_t - \ell_t`$ | Step 7 | How far price has run from its projected trend ([chart C.3](#c3-stretch-25)) | Overbought and oversold judgements |
 | Normalised surprise $`e_t / \sqrt{S_t}`$ | Steps 4 and 6 | How unusual today's bar is, compared with what the model expects; clusters of large surprises mark periods the model does not fit ([chart C.4](#c4-normalised-surprises-25)) | Flagging shocks, and checking whether the model fits |
 
+**What the charts show.** On QQQ, with the level reacting like EMA(15) and the slope remembering like EMA(252):
+
+- **The level's band does not move.** It stays at about ±1.3% through the 2020 crash and the 2022 decline ([chart C.1](#c1-level-and-its-uncertainty-band-25)). Once the filter has settled, its uncertainty is constant, so the band is a yardstick, not a gauge of volatility.
+- **The slope separates trend from noise.** Over 2019–2023 it was more than two standard deviations above zero on 67% of days and below on 13%; on the other 20% the trend could not be told apart from noise ([chart C.2](#c2-slope-and-acceleration-with-their-uncertainty-25)).
+- **The acceleration moves first, but not cleanly.** It turned negative before the slope fell through zero in early 2022 and positive before the slope turned up in early 2023, yet it also swings in between ([chart C.2](#c2-slope-and-acceleration-with-their-uncertainty-25)).
+- **The stretch is usually small.** On nine days in ten price lay between 4.5% below and 3.7% above its projected trend; the extremes came only in fast moves, −17% in the March 2020 crash ([chart C.3](#c3-stretch-25)).
+- **Large surprises come in clusters.** 2000–2002, 2008–2009 and 2022 hold most of the days beyond ±3: periods when volatility outgrew the model's fixed noise ([chart C.4](#c4-normalised-surprises-25)). The surprises, not the band, carry the information about volatility.
+
 A short preview of what comes next. With the level alone, a trend shows only as price against a lagging average, which is the EMA's logic. With a slope, the trend is a quantity in its own right, measured with a confidence band; with an acceleration, so is its change. Part II introduces trend-following systems and shows how such quantities become trading decisions. This lecture stays with what they are and how they behave.
 
 ## Appendix: charts
