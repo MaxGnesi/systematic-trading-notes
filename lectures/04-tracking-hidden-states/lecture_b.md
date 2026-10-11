@@ -162,7 +162,7 @@ Only the first layer is the model. The second is the machinery of Table 1.3, the
 
 ## 2. Choosing the design: which state variables to track
 
-The design is the first choice and the most consequential: it fixes which kinds of price motion the filter can follow and what it can report about them. This lecture is still about smoothing, but the design is where smoothing turns into the raw material of trend systems. Each state variable added to the design is one more property of the price, estimated separately and consistently with the others: where the price is, which way and how fast it is moving, and whether that movement is speeding up. Part II builds trend systems on these quantities; this section shows what each design delivers.
+The design is the first choice and the most consequential: it fixes which kinds of price motion the filter can follow and what it can report about them. Each state variable added to the design is one more property of the price, estimated separately and consistently with the others: where the price is, which way and how fast it is moving, and whether that movement is speeding up. This lecture is about smoothing, and this section describes what each design delivers. It also offers a first glimpse of what comes next: in Part II, these same quantities become the inputs of trend-following systems.
 
 ### 2.1 Level only: an EMA with a model behind it
 
@@ -174,7 +174,7 @@ The simplest design tracks the level alone. Once the gain has settled (§1.4), s
 
 This is an EMA whose smoothing constant $`\alpha`$ is the steady gain $`K`$. The gain follows from the ratio $`q_\ell / r`$ alone: with $`q_\ell / r = 1/6`$ it is exactly $`1/3`$, the $`\alpha`$ of EMA(5) (our derivation; notebook §3).
 
-Trend following is possible with this design, exactly as with an EMA: price above the level is read as an up-trend, because the level lags. Nothing is gained over the EMA except the uncertainty band, and nothing is lost. The design is the bridge from Lecture 2: it shows that the Kalman filter contains the EMA as its simplest case.
+It inherits the EMA's character entirely, including its lag behind any trend; nothing is gained except the uncertainty band, and nothing is lost. The design is the bridge from Lecture 2: it shows that the Kalman filter contains the EMA as its simplest case.
 
 ### 2.2 Level + slope: the trend becomes a state
 
@@ -190,8 +190,8 @@ which is Holt's linear method, the classical exponential smoothing with a trend 
 
 The slope is the first derivative of the price, its direction and speed. Two consequences matter for what follows.
 
-- **The trend reading is the slope.** A positive slope means the filter estimates a rising trend, with a standard deviation that says how sure it is.
-- **Price against the level changes meaning.** The level has already been projected along the trend, so price below the level means that price rose less than the projected trend, not that the trend has turned. It measures how far price is stretched from its trend, which is the kind of quantity behind overbought and oversold readings. Practitioner write-ups use the two in exactly these roles: the slope as the trend signal, the gap between price and level as a stretch filter (QuanterLab, 2026).
+- **The trend is the slope.** A positive slope means the filter estimates a rising trend, with a standard deviation that says how sure it is.
+- **Price against the level changes meaning.** The level has already been projected along the trend, so price below the level means that price rose less than the projected trend, not that the trend has turned. It measures how far price is stretched from its trend. As a preview of Part II: practitioners use the slope to judge the trend and the stretch to judge whether price has run too far, the idea behind overbought and oversold readings (QuanterLab, 2026).
 
 ### 2.3 Level + slope + acceleration: the change in the trend
 
@@ -225,7 +225,7 @@ Price noise $`r = 1`$; slow setting $`(q_\ell, q_s, q_a) = (10^{-4}, 10^{-6}, 10
 
 Three rules follow. Each additional state variable lets the filter follow one more kind of motion with no lasting gap: a flat price, a steady trend, a steady acceleration. Faster settings shrink a gap but never remove it; only adding a state variable does. And the price of following more is overshoot: the level-only design never overshoots a jump, while the slope designs always do, because they extrapolate.
 
-### 2.5 From smoothing to trend systems
+### 2.5 Looking ahead: from smoothing to trend systems
 
 **Table 2.3. What each design delivers**
 
@@ -235,7 +235,7 @@ Three rules follow. Each additional state variable lets the filter follow one mo
 | LS | Level, slope | A trend estimate, its uncertainty, and the stretch of price from the trend | Holt's linear method | Overshoots jumps |
 | LSA | Level, slope, acceleration | In addition, whether the trend is strengthening or fading | — | More noise, larger overshoot |
 
-For trend following, the slope designs are the natural starting point. With the level alone, a trend exists only as price against a lagging average, which is the EMA's logic. With a slope, the trend is a quantity in its own right, measured with a confidence band, and with an acceleration, so is its change. Turning these quantities into positions is the subject of Part II; this lecture stays with what they are and how they behave.
+A short preview of what comes next. With the level alone, a trend shows only as price against a lagging average, which is the EMA's logic. With a slope, the trend is a quantity in its own right, measured with a confidence band; with an acceleration, so is its change. Part II introduces trend-following systems and shows how such quantities become trading decisions. This lecture stays with what they are and how they behave.
 
 ## References (so far)
 
