@@ -266,6 +266,57 @@ The reliable route is to look at what the filter actually does with past prices.
 
 One limit applies: within a single filter, the slope cannot keep a longer memory than the acceleration, because the slope accumulates the acceleration. A faster acceleration drags the slope with it; when both a slow trend and a fast acceleration are wanted, two filters are needed.
 
+## 4. Starting and running the filter
+
+Every filter starts from a guess, and every live filter must be restarted, moved or rebuilt at some point. This section covers how long the start takes to be forgotten, how much history to load, and the rule that keeps a live filter's readings from changing after the fact.
+
+### 4.1 Warm-up grows with the number of state variables
+
+**Table 4.1. Warm-up by design** (designs matched to EMA(20) as in chart C.7; starting error 10% in the level, zero slope; notebook §4)
+
+| Design | Gain settles within 1% | Memory reaches back | Level error below 0.1%: diffuse / confident start | Slope within 1% a year for good: diffuse / confident start |
+|---|---|---|---|---|
+| L | 26 bars | 70 bars | 0 / 73 bars | — |
+| LS | 86 bars | 197 bars | 0 / 137 bars | 24 / 163 bars |
+| LSA | 184 bars | 436 bars | 23 / 145 bars | 174 / 346 bars |
+
+Three points follow.
+
+- **Each state variable lengthens everything.** Gain, memory and the time to forget a wrong start all grow from one design to the next: the three-state design needs about twice as long as level + slope, and six to seven times as long as the level alone.
+- **A diffuse start removes the guess at once.** A very large starting uncertainty $`P_0`$ tells the filter that its starting values are worthless, so the first prices overwrite them (Table 1.4). With a confident but wrong start, the level + slope design takes 137 bars to forget a 10% error, twice as long as EMA(20) ([chart C.8](#c8-how-a-wrong-start-fades-41)).
+- **The numbers can be computed in advance.** Since the gains do not depend on prices (§1.4), the warm-up of any design and setting is known before the first price arrives.
+
+### 4.2 How much history to load
+
+Forgetting the guess is not the whole story. A filter started on a given date also differs from the same filter run on a longer history, because it has seen fewer prices. How much history must be loaded before the readings agree depends on the memory, not on the guess. With the trend memory placed on the slope (§3.3), the answer matches the rule for moving averages:
+
+**Table 4.2. Burn-in test** (level + slope, slope remembering like EMA(N); diffuse start at 22 dates across SPY, QQQ, GLD and AGG; agreement with the same filter run on the full history over the following year; notebook §4)
+
+| Trend memory N | Burn-in | Slope direction agrees | Slope gap (% a year) | Price above or below level agrees |
+|---|---|---|---|---|
+| 252 | N bars | 99% | 1.0 | 99% |
+| 252 | 2N bars | 100% | 0.16 | 100% |
+| 500 | N bars | 100% | 1.3 | 99% |
+| 500 | 2N bars | 100% | 0.18 | 100% |
+
+A practical cut-off follows: load at least twice the longest memory before the first date that counts. For the three-state design, which this test does not cover, three times is the prudent choice. The early bars are not wasted: with a diffuse start each estimate is exactly what a trader starting on that date would have computed, with no look-ahead; it simply rests on fewer prices.
+
+### 4.3 Running live: the same dates must give the same readings
+
+A filter carries its whole past in two objects, the state $`x_t`$ and its uncertainty $`P_t`$ (§1.4). Restart it from a different date, with different settings or on revised data, and it produces different readings on the same historical dates. A trading record built on one run cannot then be reproduced, and yesterday's readings may silently change. The rule is to treat the filter's history as fixed once produced.
+
+**Table 4.3. What to store to keep readings reproducible**
+
+| Store | Why |
+|---|---|
+| The start date and the data used from it | The same start on the same data reproduces every reading exactly |
+| The settings: design, every $`q`$, $`r`$ and $`P_0`$ | Different settings give different readings from the first bar |
+| The state $`x_t`$ and uncertainty $`P_t`$ after each bar | Live, each new bar continues from the stored state; nothing is recomputed |
+| The readings themselves, with their dates | They are the record; they are never overwritten by a later run |
+| A version for every change of settings, with its effective date | A re-estimated $`r`$ or a new memory applies from a stated date onwards, not to the past |
+
+The same rule appeared for moving averages in Lecture 2 (§9.2); for the Kalman filter it matters more, because the state includes the slope and the acceleration, whose memories are long.
+
 ## Appendix: charts
 
 From the companion notebook, section 2 ([04b_tracking_hidden_states.ipynb](04b_tracking_hidden_states.ipynb)). All four charts use QQQ daily closes in logs. The level, the slope, the stretch and the surprises come from the level + slope design, with the level reacting to each surprise like EMA(15) and the slope remembering like EMA(90). The acceleration comes from a three-state design whose acceleration remembers like EMA(45): within one filter the slope cannot keep a longer memory than the acceleration, so a second filter is needed. The ratios of the noise variances set these memories; their common scale, which sets the uncertainty, is calibrated so that the normalised surprises have a standard deviation of 1 over 2014–2018, before the period charted. It corresponds to a daily price noise of 1.8%.
@@ -311,6 +362,12 @@ Four settings of the three-state design through 2020, each raising one $`q`$ a h
 ![Weight given to a price k bars old: EMA(20), and the three designs matched to it](figures/c03_weights.png)
 
 The weight each design gives to a price $`k`$ bars old, with the three designs matched to EMA(20) on how much they smooth. The level-only design is EMA(20) exactly. The slope designs weight the middle of their window more and put small negative weights on older prices: this is how a weighted average extrapolates a trend, and why the slope designs overshoot.
+
+### C.8 How a wrong start fades (§4.1)
+
+![How a 10% starting error fades: Kalman filter with a confident and a diffuse start, and EMA(20)](figures/c07_warmup.png)
+
+The share of a 10% starting error that remains, on a log scale. With a diffuse start the error vanishes within a bar; with a confident but wrong start the level + slope design needs 137 bars to forget it, EMA(20) 70.
 
 ## References (so far)
 
