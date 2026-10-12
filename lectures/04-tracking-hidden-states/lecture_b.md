@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 11, 2026 · Max Gnesi · draft, written section by section*
 
-Lecture 2 smoothed prices from the bottom up, by averaging past bars. The Kalman filter works from the top down: it states a model of the state hidden behind prices (a level, and possibly a trend and its acceleration) and revises its estimate of them as each new bar arrives. This lecture builds the linear filter from a single level up to trend speed and acceleration, examines the information each state variable carries, and covers the nonlinear extensions, the extended and unscented filters, for tracking unobserved volatility. Companion notebook: [04b_tracking_hidden_states.ipynb](04b_tracking_hidden_states.ipynb).
+Lecture 2 smoothed prices from the bottom up, by averaging past bars. The Kalman filter works from the top down: it states a model of the state hidden behind prices (a level, and possibly a trend and its acceleration) and revises its estimate of them as each new bar arrives. This lecture builds the linear filter from a single level up to trend speed and acceleration, examines the information each state variable carries, measures where the model fails, and applies the same machinery to two other hidden quantities: volatility and the hedge ratio. Companion notebook: [04b_tracking_hidden_states.ipynb](04b_tracking_hidden_states.ipynb).
 
 ## 1. From averaging to modelling
 
@@ -317,6 +317,141 @@ A filter carries its whole past in two objects, the state $`x_t`$ and its uncert
 
 The same rule appeared for moving averages in Lecture 2 (§9.2); for the Kalman filter it matters more, because the state includes the slope and the acceleration, whose memories are long.
 
+## 5. When the model is wrong: fat-tailed surprises
+
+The blueprint assumes that the price noise is normal and that its variance never changes. Markets break both assumptions, and the normalised surprises show it. This section measures how far the model is off and presents two remedies; neither changes the design, only the way the noise is treated.
+
+### 5.1 How fat are the tails?
+
+If the model were right, the normalised surprises $`e_t/\sqrt{S_t}`$ would follow a standard normal distribution. They do so in the calibration period, by construction, and nowhere else.
+
+**Table 5.1. Normalised surprises against the normal distribution** (QQQ, level + slope with the chart settings of §2.5, scale calibrated on 2014–2018; 2000–2026 after the first 250 bars; notebook §5)
+
+| | QQQ surprises | Normal distribution |
+|---|---|---|
+| Days beyond ±3 | 6.46% | 0.27% |
+| Days beyond ±4 | 2.96% | 0.0063% |
+| Days beyond ±5 | 1.45% | 0.0001% |
+| Excess kurtosis | 4.8 | 0 |
+| Skewness | −0.29 | 0 |
+| Days beyond ±3 in 2014–2018 (calibration) | 1.43% | 0.27% |
+
+Three points follow.
+
+- **Two causes, one larger than the other.** Volatility changes over time, so a noise variance that is right on average is too small in turbulent periods and too large in calm ones; this produces the clusters of [chart C.4](#c4-normalised-surprises-25). On top of that, single days are fat-tailed even when volatility is known. §5.2 shows that the first cause accounts for most of the excess.
+- **The band misleads in both directions.** With a fixed noise the uncertainty band has the same width in 2017 and in October 2008 (§2.5): too wide in the first, far too narrow in the second.
+- **A single large surprise moves every state.** The correction is gain × surprise, with no limit: a 10% gap moves the level by 1.25% with the chart settings, and the slope with it ([chart C.9](#c9-fat-tailed-surprises-51)).
+
+### 5.2 Two remedies: let the noise follow, or cap the surprise
+
+Both remedies use a running scale $`s_t`$: an exponential average of past squared normalised surprises over about three months (weight 1/63), computed before each price arrives, so with no look-ahead. A scale of 4 means that recent surprises have been twice their expected size.
+
+**Table 5.2. Two remedies on the same filter** (QQQ, level + slope as in Table 5.1; notebook §5)
+
+| Remedy | What changes | Effect |
+|---|---|---|
+| (a) Every noise variance, $`q`$'s and $`r`$, multiplied by $`s_t`$ | Uncertainty and expected surprise only; level and slope unchanged, since the ratios are unchanged (§3.1) | Days beyond ±3: 0.73% instead of 6.46%; beyond ±4: 0.27%; excess kurtosis 1.2. The band in October 2008 is 4.2 times as wide as in mid-2017 |
+| (b) Price noise $`r`$ alone multiplied by $`s_t`$ | The ratios, hence the gains: the filter trusts prices less when they are noisy | Level gain between 0.042 and 0.198 (1st and 99th percentile), against a fixed 0.125 |
+| (c) Surprises capped at 3 times the recent typical surprise | The correction on extreme days only | Slope direction agrees with the uncapped filter on 99.7% of days; the largest one-day move of the level falls from 3.0% to 2.3% |
+
+- **Remedy (a) repairs the measurement, not the readings.** Because only the ratios set the speed, scaling every variance together leaves level, slope and acceleration exactly as before; the band and the surprises now follow volatility. What remains beyond ±3, 0.73% against 0.27% for a normal distribution, is the fat tail of single days. It is the default: it costs nothing and makes the uncertainty and the surprises usable.
+- **Remedy (b) slows the filter when markets move fast.** Raising the price noise alone lowers the gain in turbulent periods, so the level lags most when prices move most. This is where gains move with the data, as announced in §1.4. Whether that helps is a trading question for Part II.
+- **Remedy (c) guards against single outliers.** A capped filter ignores the part of a surprise beyond the cap, which protects the slope from one bad print or one gap; a genuine break is then absorbed over several bars instead of one. The cap is measured against recent surprises, so it widens on its own in turbulent periods.
+
+The running scale $`s_t`$ is itself an estimate of hidden volatility, built from closing prices only. A better one uses the whole day's trading range; it is the first example of §6.
+
+## 6. Other hidden states
+
+The blueprint of §1.2 is not tied to prices. Any hidden quantity that moves slowly and is measured linearly, with noise, can be tracked by the same eight steps of Table 1.3. Two quantities that a trader uses every day are treated here: volatility and the hedge ratio.
+
+### 6.1 Hidden volatility from daily ranges
+
+Volatility is never observed; only its effects are. The day's range, the log of high over low, is one such effect: it is proportional to the day's volatility, times a random factor. Taking logs turns the product into a sum, so the measurement becomes linear in the hidden state and the standard filter applies (Alizadeh, Brandt and Diebold, 2002):
+
+```math
+\begin{aligned}
+h_t &= h_{t-1} + w_t && \text{hidden state: log daily variance, a random walk}\\
+\ln R_t &= \tfrac12 h_t + \mathbb{E}[\ln \rho] + \varepsilon_t && \text{measurement: log of the day's range } R_t = \ln(\text{high}_t/\text{low}_t)
+\end{aligned}
+```
+
+Here $`\rho`$ is the range of a day with unit volatility. Its log has mean 0.4093 and variance 0.0850 (simulated; notebook §6); the variance is the measurement noise $`r`$. The one remaining setting, the noise $`q`$ of the hidden state, is chosen by maximum likelihood, the value under which the observed ranges are most probable (Durbin and Koopman, 2012): $`q = 0.126`$ for SPY. Annualised volatility is then $`\sqrt{252\,e^{h_t}}`$.
+
+**Table 6.1. Kalman volatility against the rolling standard deviation** (SPY 1993–2026; Kalman filter on the log range against the 21-day standard deviation of close-to-close returns, both annualised; notebook §6)
+
+| | Kalman filter on the log range | Rolling 21-day standard deviation |
+|---|---|---|
+| Data used | Each day's high and low | The last 21 closes, equally weighted |
+| How the past is forgotten | Gradually, at a speed set by $`q`$ | All at once, 21 days later |
+| Correlation between the two | 0.82 | |
+| Day-to-day change (standard deviation, vol points) | 2.90 | 1.16 |
+| First day above 40% in 2008 | 17 September | 29 September |
+| Autumn 2008 peak | 110% on 13 October | 93% on 28 October |
+| 6 May 2010 (flash crash) | 39% | 21% |
+
+- **Faster, not smoother.** Each range is a fresh measurement of the whole day, while a standard deviation needs several returns before a change shows. The Kalman estimate crossed 40% twelve days earlier in 2008 and peaked two weeks earlier ([chart C.10](#c10-hidden-volatility-against-the-rolling-standard-deviation-61)). The price of speed is a noisier estimate: the $`q`$ chosen by maximum likelihood favours reaction. A smoother estimate is obtained by lowering $`q`$, exactly as for the level in §3.2.
+- **No cliff.** The rolling standard deviation drops abruptly when a large return leaves its window, 21 days after the event; the Kalman estimate forgets gradually.
+- **Session volatility only.** The range covers trading hours; a gap between yesterday's close and today's open is missed. Close-to-close returns include it.
+
+This estimate can drive the noise of a price filter in place of the running scale of §5.2.
+
+### 6.2 A time-varying hedge ratio
+
+The hedge ratio $`\beta`$ is the amount of one asset that offsets the market exposure of another. With QQQ hedged by SPY, $`\beta = 1.3`$ means that a long position of USD 1 million in QQQ is hedged by a short position of USD 1.3 million in SPY. It is the slope of a regression of QQQ's daily return on SPY's, usually estimated by least squares over a rolling window of 63 days. The Kalman filter treats it instead as a hidden state that drifts (Chan, 2013):
+
+```math
+\begin{aligned}
+\begin{pmatrix}\alpha_t\\ \beta_t\end{pmatrix} &= \begin{pmatrix}\alpha_{t-1}\\ \beta_{t-1}\end{pmatrix} + w_t && \text{hidden states: intercept and hedge ratio, random walks}\\
+r^{\mathrm{QQQ}}_t &= \begin{pmatrix}1 & r^{\mathrm{SPY}}_t\end{pmatrix}\begin{pmatrix}\alpha_t\\ \beta_t\end{pmatrix} + v_t && \text{measurement: today's QQQ return}
+\end{aligned}
+```
+
+In the language of §1.2, the transition matrix is the identity and the measurement row $`H_t = (1,\ r^{\mathrm{SPY}}_t)`$ changes every day: it is SPY's return. The model remains linear in the states, so the standard filter is exact; nothing else in Table 1.3 changes. Settings: $`q_\alpha = 10^{-8}`$, $`q_\beta = 10^{-5}`$, $`r`$ equal to the variance of the return difference; start at $`\alpha = 0`$, $`\beta = 1`$. The scale is set on the full sample here for illustration; live, it is set on prior data as in §3.1.
+
+- **The two estimates agree on the level.** Correlation 0.85 since 2000: QQQ's hedge ratio near 2 in the dot-com years, below 1 in 2009–2010, and drifting back to about 1.3 since ([chart C.11](#c11-hedge-ratio-kalman-filter-against-rolling-regression-62)).
+- **The Kalman ratio is far steadier.** Its day-to-day change has a standard deviation of 0.0034, against 0.0193 for the rolling regression, six times smaller. For a hedge this matters: every change of $`\beta`$ is a trade.
+- **It moves on the days that carry information.** The gain on $`\beta`$ is proportional to SPY's return that day. On a quiet day the ratio barely moves; on a large market day, such as in October 2008 or March 2020, it steps. A rolling regression instead jumps twice for each large day: when it enters the window and when it leaves 63 days later.
+
+## 7. Summary
+
+### 7.1 Takeaways
+
+- **The Kalman filter is a model, not an average.** The design states what is hidden and how it moves; the same eight steps then serve every design.
+- **The design sets what can be read.** Level, slope, acceleration: each state variable adds a reading and lengthens the warm-up.
+- **The gains do not depend on prices.** They settle, after which the filter is a fixed weighted average of past prices.
+- **Ratios set the speed, the scale sets the uncertainty.** Calibrate the scale on data before the period of use.
+- **Set the memory by the weights, not by the gain.** The shortcut 2/(N + 1) does not hold for the slope.
+- **Start diffuse, load twice the longest memory, and store what was produced.**
+- **Surprises are fat-tailed and come in clusters.** Let the noise follow a running scale; the readings stay as they are.
+- **The same machinery tracks volatility and hedge ratios.**
+
+### 7.2 A practitioner's checklist
+
+**Table 7.1. From blueprint to a running filter**
+
+| Step | What to do | Section |
+|---|---|---|
+| 1. Choose the design | Level for a smoothed price; add the slope for a trend reading; add the acceleration only if its reading is needed | §2 |
+| 2. Set the memories | Choose the memory of each reading as an EMA length and solve for the $`q`$'s through the weights | §3.3 |
+| 3. Calibrate the scale | Set $`r`$ so that the normalised surprises have variance 1 on data before the period of use | §3.1 |
+| 4. Start diffuse and burn in | Large starting uncertainty; load at least twice the longest memory (three times for three states) | §4.1–§4.2 |
+| 5. Store start, settings and state | Keep the start date, every setting with its effective date, and the state after each bar | §4.3 |
+| 6. Read | Level and band, slope, stretch, normalised surprises | §2.5 |
+| 7. Watch for clusters | Large surprises in a row mean volatility has changed: scale the noise, and recalibrate if it persists | §5 |
+
+### 7.3 What comes next
+
+This lecture has measured: where the price is, which way it moves, how stretched it is, how volatile the market is and how two assets move together. Part II turns these measurements into positions. The slope and the stretch become trend and pullback signals, the volatility estimate sizes positions, and the hedge ratio builds the spread of a statistical-arbitrage trade. Whether any of these readings pays is a question this lecture has deliberately left open.
+
+### 7.4 Exercises
+
+All four use the companion notebook.
+
+1. **Memory and turns.** Set the slope's memory to EMA(45) and to EMA(180) instead of EMA(90). How many times a year does the slope change sign on QQQ, and how much later does it turn at the 2020 and 2022 turning points? (§3.3)
+2. **Burn-in.** Start the filter on 1 January 2008 and on 1 January 2010. From which date does each agree with the run on the full history to within 1% a year in the slope? Compare with twice the memory. (§4.2)
+3. **Calibration period.** Calibrate the scale on 2000–2004 instead of 2014–2018 and recompute Table 5.1. Which numbers change, and why? (§3.1, §5.1)
+4. **Hedge ratio speed.** Multiply $`q_\beta`$ by 10 and by 0.1. For each, compute the correlation with the rolling 63-day regression and the day-to-day variability of the ratio. Which setting would you trade, and what does the choice cost? (§6.2)
+
 ## Appendix: charts
 
 From the companion notebook, section 2 ([04b_tracking_hidden_states.ipynb](04b_tracking_hidden_states.ipynb)). All four charts use QQQ daily closes in logs. The level, the slope, the stretch and the surprises come from the level + slope design, with the level reacting to each surprise like EMA(15) and the slope remembering like EMA(90). The acceleration comes from a three-state design whose acceleration remembers like EMA(45): within one filter the slope cannot keep a longer memory than the acceleration, so a second filter is needed. The ratios of the noise variances set these memories; their common scale, which sets the uncertainty, is calibrated so that the normalised surprises have a standard deviation of 1 over 2014–2018, before the period charted. It corresponds to a daily price noise of 1.8%.
@@ -369,8 +504,32 @@ The weight each design gives to a price $`k`$ bars old, with the three designs m
 
 The share of a 10% starting error that remains, on a log scale. With a diffuse start the error vanishes within a bar; with a confident but wrong start the level + slope design needs 137 bars to forget it, EMA(20) 70.
 
-## References (so far)
+### C.9 Fat-tailed surprises (§5.1)
 
+![Histogram of normalised surprises against a standard normal curve, log scale, QQQ 2000-2026](figures/b_c09_surprise_tails.png)
+
+The normalised surprises of Table 5.1 against a standard normal curve, on a log scale so that the tails are visible. Near zero the two agree. Beyond ±3 the curve falls towards zero while the surprises keep coming: days four, six and even ten standard deviations away occur, where the normal distribution expects none in a century. The skewness is negative (−0.29): large surprises are more often falls than rises.
+
+### C.10 Hidden volatility against the rolling standard deviation (§6.1)
+
+![SPY annualised volatility 2007-2010: Kalman filter on daily ranges against rolling 21-day standard deviation](figures/b_c10_vol_vs_std.png)
+
+SPY's annualised volatility, 2007–2010. The two estimates tell the same story, between 10% and 30% before the crisis, above 80% at its peak, back to 20% by late 2009, but the Kalman estimate moves first: it crosses 40% on 17 September 2008, twelve days before the rolling estimate, and it peaks two weeks earlier. The rolling estimate falls in steps as the large days of October 2008 leave its 21-day window. On 6 May 2010, the flash crash, the Kalman estimate jumps to 39% on the day's range; the rolling estimate rises later, as the following volatile days enter its window.
+
+### C.11 Hedge ratio: Kalman filter against rolling regression (§6.2)
+
+![Hedge ratio of QQQ on SPY since 1999: Kalman filter against rolling 63-day least squares](figures/c14_hedge_ratio.png)
+
+QQQ's hedge ratio on SPY. The rolling 63-day regression swings between 0.8 and 2.6; the Kalman ratio follows its broad path, about 2 in 2000–2002, below 1 in 2009, about 1.3 in recent years, with a fraction of the movement. Its visible steps fall on large market days, such as in late 2008 and in March 2020, the days that carry most information about how the two move together.
+
+## References
+
+- Alizadeh, S., Brandt, M.W. and Diebold, F.X. (2002). Range-based estimation of stochastic volatility models. *Journal of Finance* 57(3), 1047–1091. — the log range as a linear measurement of log volatility (§6.1).
+- Chan, E.P. (2013). *Algorithmic Trading: Winning Strategies and Their Rationale.* Wiley. — the Kalman filter for a time-varying hedge ratio (§6.2).
+- Durbin, J. and Koopman, S.J. (2012). *Time Series Analysis by State Space Methods* (2nd ed.). Oxford University Press. — state-space models, the filter and maximum likelihood estimation of the noise (§1, §6.1).
 - Holt, C.C. (2004). Forecasting seasonals and trends by exponentially weighted moving averages. *International Journal of Forecasting* 20(1), 5–10. Reprint of a 1957 Office of Naval Research report. — exponential smoothing with a trend (§2.2).
+- Kalman, R.E. (1960). A new approach to linear filtering and prediction problems. *Journal of Basic Engineering* 82(1), 35–45. — the filter (§1).
+- Masreliez, C.J. and Martin, R.D. (1977). Robust Bayesian estimation for the linear model and robustifying the Kalman filter. *IEEE Transactions on Automatic Control* 22(3), 361–371. — limiting the influence of large surprises (§5.2).
+- Mehra, R.K. (1970). On the identification of variances and adaptive Kalman filtering. *IEEE Transactions on Automatic Control* 15(2), 175–184. — estimating the noise from the surprises (§5.2).
 - QuanterLab (2026). Kalman filter: trend following. https://quanterlab.com/articles/stochastic-kalman-trend (practitioner article, accessed 11 October 2026). — the slope as the trend signal, the gap between price and level as a stretch filter (§2.2).
 - Rauch, H.E., Tung, F. and Striebel, C.T. (1965). Maximum likelihood estimates of linear dynamic systems. *AIAA Journal* 3(8), 1445–1450. — the smoother (§1.4).
