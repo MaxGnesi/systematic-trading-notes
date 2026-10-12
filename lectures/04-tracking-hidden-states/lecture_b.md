@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 11, 2026 · Max Gnesi · draft, written section by section*
 
-Lecture 2 smoothed prices from the bottom up, by averaging past bars. The Kalman filter works from the top down: it states a model of the state hidden behind prices (a level, and possibly a trend and its acceleration) and revises its estimate of them as each new bar arrives. This lecture builds the linear filter from a single level up to trend speed and acceleration, examines the information each state variable carries, and covers the nonlinear extensions, the extended and unscented filters, for tracking unobserved volatility. Companion notebook: [04_tracking_hidden_states.ipynb](04_tracking_hidden_states.ipynb).
+Lecture 2 smoothed prices from the bottom up, by averaging past bars. The Kalman filter works from the top down: it states a model of the state hidden behind prices (a level, and possibly a trend and its acceleration) and revises its estimate of them as each new bar arrives. This lecture builds the linear filter from a single level up to trend speed and acceleration, examines the information each state variable carries, and covers the nonlinear extensions, the extended and unscented filters, for tracking unobserved volatility. Companion notebook: [04b_tracking_hidden_states.ipynb](04b_tracking_hidden_states.ipynb).
 
 ## 1. From averaging to modelling
 
@@ -87,7 +87,7 @@ Here $`x_{t\mid t-1}`$ is the estimate before today's price is seen and $`x_{t\m
 
 **How the filter starts.** The start is easiest to see on four made-up prices, 50, 52, 55 and 57, filtered with the three-state design LSA. The filter is initialised with the level at the first price and the slope and acceleration at zero, together with a very large starting uncertainty $`P_0`$, which tells it that these zeros are guesses to be overwritten.
 
-**Table 1.4. The first four bars of LSA on made-up prices, step by step** ($`P_0 = 10^6\,I`$, $`r = 1`$; triples are level / slope / acceleration; each column runs down the eight steps of Table 1.3)
+**Table 1.4. The first four bars of LSA on made-up prices, step by step** ($`P_0 = 10^6\,I`$, $`r = 1`$; triples are level / slope / acceleration; each column runs down the eight steps of Table 1.3; notebook §1)
 
 | Step | Bar 0 (start) | Bar 1 | Bar 2 | Bar 3 | Bar 4 |
 |---|---|---|---|---|---|
@@ -129,7 +129,7 @@ From bar 121 on, every gain is within 1% of its final value: the filter has beco
 
 ### 1.5 From the blueprint to the code
 
-The blueprint names four objects: $`F`$, $`H`$, $`Q`$ and $`r`$. An implementation handles many more, because the filter needs working quantities of its own and a set of choices the blueprint leaves open. They fall into three layers, and keeping them apart is the easiest way to read any Kalman filter code, including the companion notebook's `kalman()` function.
+The blueprint names four objects: $`F`$, $`H`$, $`Q`$ and $`r`$. An implementation handles many more, because the filter needs working quantities of its own and a set of choices the blueprint leaves open. They fall into three layers, and keeping them apart is the easiest way to read any Kalman filter code, including the `kalman()` function of the companion notebook.
 
 **Table 1.6. Every object in an implementation, by layer** (names as in the notebook)
 
@@ -172,7 +172,7 @@ Once the gain has settled (§1.4), the level-only filter reduces to one line:
 \ell_t = \ell_{t-1} + K\,(y_t - \ell_{t-1}) = K\,y_t + (1-K)\,\ell_{t-1}
 ```
 
-This is an EMA with smoothing constant $`\alpha = K`$; with $`q_\ell / r = 1/6`$, for instance, $`K = 1/3`$, the $`\alpha`$ of EMA(5) (our derivation; notebook §3). It behaves like a classic moving average, lag included. Three things differ: the smoothing constant follows from a model rather than a chosen window; the filter reports how sure it is of the level; and the same machinery extends to a trend without changing anything else.
+This is an EMA with smoothing constant $`\alpha = K`$; with $`q_\ell / r = 1/6`$, for instance, $`K = 1/3`$, the $`\alpha`$ of EMA(5) (our derivation; notebook §2). It behaves like a classic moving average, lag included. Three things differ: the smoothing constant follows from a model rather than a chosen window; the filter reports how sure it is of the level; and the same machinery extends to a trend without changing anything else.
 
 ### 2.2 Level + slope: read the slope, not the crossing
 
@@ -188,7 +188,7 @@ A third state variable tracks the acceleration, the change in the slope: whether
 
 ### 2.4 What each design can follow
 
-On synthetic prices without noise (notebook §6), the level-only design follows a flat price but lags a steady trend forever; the level + slope design follows a steady trend exactly but overshoots a jump by 17–20%; the three-state design follows a steady acceleration exactly but overshoots by 23–29%. Faster settings shrink a lag but never remove it; only an additional state variable does, and the slope designs pay for it with overshoot, because they extrapolate.
+On synthetic prices without noise (notebook §2), the level-only design follows a flat price but lags a steady trend forever; the level + slope design follows a steady trend exactly but overshoots a jump by 17–20%; the three-state design follows a steady acceleration exactly but overshoots by 23–29%. Faster settings shrink a lag but never remove it; only an additional state variable does, and the slope designs pay for it with overshoot, because they extrapolate.
 
 ### 2.5 What can be read from the filter
 
@@ -215,9 +215,60 @@ The resemblances are analogies, not equivalences: each Kalman quantity comes fro
 
 A short preview of what comes next. Part II introduces trend-following systems and shows how such quantities become trading decisions. This lecture stays with what they are and how they behave.
 
+## 3. Setting the knobs: memory and noise
+
+Once the design is chosen, the filter's behaviour is set by a handful of numbers: one $`q`$ for each state variable and the price noise $`r`$. They are the knobs of the filter. This section shows what each one does, how to set them to a target memory, and how to fix their overall scale.
+
+### 3.1 Ratios set the speed; the scale sets the uncertainty
+
+The estimates depend only on the ratios of the $`q`$ to $`r`$. Scale every noise variance by the same factor and the level, slope and acceleration do not move; only the filter's uncertainty changes, by the square root of that factor. The same ten prices, filtered with the level-only design at two scales, show it (notebook §3):
+
+**Table 3.1. Same ratio, two scales**
+
+| Bar | Price | Level at $`(q_\ell, r) = (1, 4)`$ | Level at $`(10, 40)`$ | Gain, both | Band ±1 sd at $`(1, 4)`$ | Band at $`(10, 40)`$ |
+|---|---|---|---|---|---|---|
+| 1 | 101 | 100.556 | 100.556 | 0.556 | 1.49 | 4.71 |
+| 4 | 104 | 102.036 | 102.036 | 0.398 | 1.26 | 3.99 |
+| 9 | 110 | 107.633 | 107.633 | 0.390 | 1.25 | 3.95 |
+
+The levels and gains are identical; only the band is $`\sqrt{10}`$ times wider ([chart C.5](#c5-same-ratio-two-scales-31)). An analogy helps: if one variance describes how far a room's temperature can drift in an hour and the other how noisy the thermometer is, scaling both leaves the estimate unchanged and only the stated uncertainty larger.
+
+Two practical rules follow. To change how fast the filter follows prices, change the ratios. To make its uncertainty meaningful, set the scale from data: choose $`r`$ so that the normalised surprises $`e_t / \sqrt{S_t}`$ have a variance of 1 over a period before the one being studied. Set by hand, the scale is easily wrong by a large factor, and every band and normalised surprise with it. The charts of this lecture calibrate it on 2014–2018, which gives a daily price noise of 1.8% for QQQ.
+
+### 3.2 What each knob does
+
+Raising one $`q`$ relative to the others shifts the filter's attention towards that state variable; raising $`r`$ relative to all of them makes every state smoother and slower. Because only ratios matter, "raise $`q_s`$" and "lower everything else" are the same instruction. Four settings of the three-state design on QQQ show the trade-offs, each raising one $`q`$ a hundredfold from a balanced case ($`r = 10^{-4}`$; $`q_\ell, q_s, q_a = 10^{-6}, 10^{-8}, 10^{-11}`$; notebook §8; [chart C.6](#c6-the-knobs-at-work-32)):
+
+**Table 3.2. Turning one knob at a time** (QQQ; 2020 for the turning points)
+
+| Knob raised | What it buys | What it costs |
+|---|---|---|
+| $`q_\ell`$, the level | The level hugs price: its gap to price (root mean square) is 0.64% instead of 2.24% | The slope barely moves, because the level absorbs every move; the design drifts back towards a moving average |
+| $`q_s`$, the slope | Faster turns: the slope turned 3 days after the February 2020 peak and 3 days after the March low, instead of 6 and 15 | Many more false turns: 24.7 sign changes a year instead of 8.0 |
+| $`q_a`$, the acceleration | The acceleration responds within days | Overshoot: in April 2020 the slope peaked at +532% a year, nearly twice the fastest 20-day pace QQQ actually reached (285%), and the level ran 7% above price |
+| $`r`$, the price noise | Smoother states everywhere | More lag everywhere |
+
+Every knob buys speed in one place and pays for it in noise or overshoot somewhere else; there is no setting that is fast, smooth and accurate at once.
+
+### 3.3 Setting the memory in practice
+
+Practitioners think in memories: "a 15-day level", "a 90-day trend". For the level-only design the translation is exact, because the filter is an EMA: a gain of $`2/(N+1)`$ is EMA(N). For the slope designs it is not, and a common shortcut fails. The gain on the slope is not a memory: with the slope remembering like EMA(90), its steady gain is 0.0023, about a tenth of $`2/91 = 0.022`$. Setting the gain to 0.022 instead produces a slope that remembers like EMA(17), five times faster than intended (our measurement; notebook §3).
+
+The reliable route is to look at what the filter actually does with past prices. In steady state each state variable is a fixed weighted average of past prices, and the weights can be computed from the gains alone. The slope designs put positive weights on recent prices and small negative weights on older ones, which is how a weighted average extrapolates a trend ([chart C.7](#c7-weights-on-past-prices-33)). A memory target is then met by adjusting the $`q`$ until the weights reach back as far as those of the target average. The charts of this lecture were set this way (notebook §2):
+
+**Table 3.3. Memory targets and the settings that meet them** (relative to $`r`$)
+
+| Target | Setting found |
+|---|---|
+| Level reacts to each surprise like EMA(15) | $`q_\ell = 0.0129\,r`$ (level gain 0.125 = 2/16) |
+| Slope remembers like EMA(90) | $`q_s = 6.05 \times 10^{-6}\,r`$ |
+| Acceleration remembers like EMA(45), in a separate three-state filter | $`q_a = 2.99 \times 10^{-7}\,r`$ |
+
+One limit applies: within a single filter, the slope cannot keep a longer memory than the acceleration, because the slope accumulates the acceleration. A faster acceleration drags the slope with it; when both a slow trend and a fast acceleration are wanted, two filters are needed.
+
 ## Appendix: charts
 
-From the companion notebook, section 2c ([04_tracking_hidden_states.ipynb](04_tracking_hidden_states.ipynb)). All four charts use QQQ daily closes in logs. The level, the slope, the stretch and the surprises come from the level + slope design, with the level reacting to each surprise like EMA(15) and the slope remembering like EMA(90). The acceleration comes from a three-state design whose acceleration remembers like EMA(45): within one filter the slope cannot keep a longer memory than the acceleration, so a second filter is needed. The ratios of the noise variances set these memories; their common scale, which sets the uncertainty, is calibrated so that the normalised surprises have a standard deviation of 1 over 2014–2018, before the period charted. It corresponds to a daily price noise of 1.8%.
+From the companion notebook, section 2 ([04b_tracking_hidden_states.ipynb](04b_tracking_hidden_states.ipynb)). All four charts use QQQ daily closes in logs. The level, the slope, the stretch and the surprises come from the level + slope design, with the level reacting to each surprise like EMA(15) and the slope remembering like EMA(90). The acceleration comes from a three-state design whose acceleration remembers like EMA(45): within one filter the slope cannot keep a longer memory than the acceleration, so a second filter is needed. The ratios of the noise variances set these memories; their common scale, which sets the uncertainty, is calibrated so that the normalised surprises have a standard deviation of 1 over 2014–2018, before the period charted. It corresponds to a daily price noise of 1.8%.
 
 ### C.1 Level and its uncertainty band (§2.5)
 
@@ -242,6 +293,24 @@ Price minus level, in %. On nine days in ten the stretch lay between −4.4% and
 ![Normalised surprises of the level + slope design, QQQ 2000–2026, with ±3 lines](figures/b_c04_surprises.png)
 
 Each bar's surprise divided by its expected size $`\sqrt{S_t}`$. Calibrated on 2014–2018, they have a standard deviation of 1 there; over 2000–2026 it is 1.60, and 6.5% of days lie beyond ±3, against 0.27% for a normal distribution. The large surprises come in clusters: 2000–2002, 2008, 2020 and 2022 hold most of them. A cluster means that the model's fixed price noise is too small for that period: volatility has risen, and the standard filter's uncertainty does not follow it. The surprises, not the band, are therefore the filter's gauge of volatility; making the noise follow them is the subject of §5.
+
+### C.5 Same ratio, two scales (§3.1)
+
+![Gain and level with ±1 sd bands for (q, r) = (1, 4) and (10, 40)](figures/c02_ratio_invariance.png)
+
+Left, the gain; right, the level with its ±1 standard deviation band, for the same ten prices at two scales. The gains coincide and so do the levels; only the band is wider at the larger scale, by a factor of $`\sqrt{10}`$.
+
+### C.6 The knobs at work (§3.2)
+
+![Level, slope and acceleration of the three-state design for four noise settings, QQQ 2020](figures/c06_dials.png)
+
+Four settings of the three-state design through 2020, each raising one $`q`$ a hundredfold from the balanced case. Emphasising the level makes it hug price while its slope barely moves; emphasising the slope makes it turn within days at both 2020 turning points, at the price of many more sign changes over the years; emphasising the acceleration makes slope and level overshoot in the April rebound.
+
+### C.7 Weights on past prices (§3.3)
+
+![Weight given to a price k bars old: EMA(20), and the three designs matched to it](figures/c03_weights.png)
+
+The weight each design gives to a price $`k`$ bars old, with the three designs matched to EMA(20) on how much they smooth. The level-only design is EMA(20) exactly. The slope designs weight the middle of their window more and put small negative weights on older prices: this is how a weighted average extrapolates a trend, and why the slope designs overshoot.
 
 ## References (so far)
 
