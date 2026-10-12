@@ -409,8 +409,26 @@ r^{\mathrm{QQQ}}_t &= \begin{pmatrix}1 & r^{\mathrm{SPY}}_t\end{pmatrix}\begin{p
 In the language of §1.2, the transition matrix is the identity and the measurement row $`H_t = (1,\ r^{\mathrm{SPY}}_t)`$ changes every day: it is SPY's return. The model remains linear in the states, so the standard filter is exact; nothing else in Table 1.3 changes. Settings: $`q_\alpha = 10^{-8}`$, $`q_\beta = 10^{-5}`$, $`r`$ equal to the variance of the return difference; start at $`\alpha = 0`$, $`\beta = 1`$. The scale is set on the full sample here for illustration; live, it is set on prior data as in §3.1.
 
 - **The two estimates agree on the level.** Correlation 0.85 since 2000: QQQ's hedge ratio near 2 in the dot-com years, below 1 in 2009–2010, and drifting back to about 1.3 since ([chart C.11](#c11-hedge-ratio-kalman-filter-against-rolling-regression-62)).
-- **The Kalman ratio is far steadier.** Its day-to-day change has a standard deviation of 0.0034, against 0.0193 for the rolling regression, six times smaller. For a hedge this matters: every change of $`\beta`$ is a trade.
+- **The Kalman ratio is far steadier.** Its day-to-day change has a standard deviation of 0.0034, against 0.0193 for the rolling regression, six times smaller.
 - **It moves on the days that carry information.** The gain on $`\beta`$ is proportional to SPY's return that day. On a quiet day the ratio barely moves; on a large market day, such as in October 2008 or March 2020, it steps. A rolling regression instead jumps twice for each large day: when it enters the window and when it leaves 63 days later.
+
+A steadier line is not yet a better hedge. The test is the hedged position itself: long QQQ and short $`\beta`$ times as much SPY, with each day's $`\beta`$ taken from the previous close, so that no hedge uses information from the day it covers. Two things count: how volatile the hedged return is, and how much SPY must be bought and sold to keep the hedge up to date. The second is measured by the turnover of $`\beta`$, the sum of its absolute daily changes over a year.
+
+**Table 6.2. Hedging QQQ with SPY, out of sample** (daily returns 2000–2026; hedge set at the previous close; notebook §6)
+
+| Hedge ratio | Hedged volatility (% a year) | Correlation of the hedged return with SPY | Turnover of the hedge ratio (a year) |
+|---|---|---|---|
+| No hedge | 25.86 | 0.86 | 0 |
+| $`\beta = 1`$ | 13.39 | 0.25 | 0 |
+| Full-sample $`\beta`$ (uses future data) | 12.98 | −0.03 | 0 |
+| Rolling 63-day least squares | 11.51 | −0.02 | 2.75 |
+| Rolling 252-day least squares | 11.64 | −0.04 | 0.68 |
+| Kalman filter, $`q_\beta = 10^{-5}`$ (chart C.11) | 11.68 | −0.04 | 0.34 |
+| Kalman filter, $`q_\beta = 10^{-4}`$ | 11.41 | −0.02 | 1.04 |
+
+- **Every time-varying ratio hedges about equally well.** Hedged volatility lies between 11.41 and 11.68% for the rolling and Kalman ratios, less than half the unhedged 25.86%, and lower than with the full-sample $`\beta`$ (12.98%), which knows the future but cannot follow the drift. The remaining correlation with SPY is close to zero for every estimated ratio.
+- **The Kalman ratio needs far less trading.** At the chart's setting it reaches the volatility of the rolling regressions with an eighth of the turnover of the 63-day window and half that of the 252-day window.
+- **The speed is a knob.** Raising $`q_\beta`$ tenfold gives the lowest hedged volatility of all, 11.41%, still with about 40% of the turnover of the 63-day regression. Choosing $`q_\beta`$ is a choice between hedge precision and trading cost, which Part II prices.
 
 ## 7. Summary
 
@@ -423,7 +441,7 @@ In the language of §1.2, the transition matrix is the identity and the measurem
 - **Set the memory by the weights, not by the gain.** The shortcut 2/(N + 1) does not hold for the slope.
 - **Start diffuse, load twice the longest memory, and store what was produced.**
 - **Surprises are fat-tailed and come in clusters.** Let the noise follow a running scale; the readings stay as they are.
-- **The same machinery tracks volatility and hedge ratios.**
+- **The same machinery tracks volatility and hedge ratios.** A Kalman hedge ratio hedges as well as a rolling regression with far less trading.
 
 ### 7.2 A practitioner's checklist
 
@@ -450,7 +468,7 @@ All four use the companion notebook.
 1. **Memory and turns.** Set the slope's memory to EMA(45) and to EMA(180) instead of EMA(90). How many times a year does the slope change sign on QQQ, and how much later does it turn at the 2020 and 2022 turning points? (§3.3)
 2. **Burn-in.** Start the filter on 1 January 2008 and on 1 January 2010. From which date does each agree with the run on the full history to within 1% a year in the slope? Compare with twice the memory. (§4.2)
 3. **Calibration period.** Calibrate the scale on 2000–2004 instead of 2014–2018 and recompute Table 5.1. Which numbers change, and why? (§3.1, §5.1)
-4. **Hedge ratio speed.** Multiply $`q_\beta`$ by 10 and by 0.1. For each, compute the correlation with the rolling 63-day regression and the day-to-day variability of the ratio. Which setting would you trade, and what does the choice cost? (§6.2)
+4. **Hedge ratio speed.** Compute the hedged volatility and the turnover of Table 6.2 for $`q_\beta`$ from $`10^{-7}`$ to $`10^{-3}`$, and plot one against the other. Where does the rolling 63-day regression lie relative to this curve, and which setting would you trade? (§6.2)
 
 ## Appendix: charts
 
