@@ -237,7 +237,7 @@ Two practical rules follow. To change how fast the filter follows prices, change
 
 ### 3.2 What each knob does
 
-Raising one $`q`$ relative to the others shifts the filter's attention towards that state variable; raising $`r`$ relative to all of them makes every state smoother and slower. Because only ratios matter, "raise $`q_s`$" and "lower everything else" are the same instruction. Four settings of the three-state design on QQQ show the trade-offs, each raising one $`q`$ a hundredfold from a balanced case ($`r = 10^{-4}`$; $`q_\ell, q_s, q_a = 10^{-6}, 10^{-8}, 10^{-11}`$; notebook §8; [chart C.6](#c6-the-knobs-at-work-32)):
+Raising one $`q`$ relative to the others shifts the filter's attention towards that state variable; raising $`r`$ relative to all of them makes every state smoother and slower. Because only ratios matter, "raise $`q_s`$" and "lower everything else" are the same instruction. Four settings of the three-state design on QQQ show the trade-offs, each raising one $`q`$ a hundredfold from a balanced case ($`r = 10^{-4}`$; $`q_\ell, q_s, q_a = 10^{-6}, 10^{-8}, 10^{-11}`$; notebook §3; [chart C.6](#c6-the-knobs-at-work-32)):
 
 **Table 3.2. Turning one knob at a time** (QQQ; 2020 for the turning points)
 
