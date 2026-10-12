@@ -162,76 +162,62 @@ Only the first layer is the model. The second is the machinery of Table 1.3, the
 
 ## 2. Choosing the design: which state variables to track
 
-The design is the first choice and the most consequential: it fixes which kinds of price motion the filter can follow and what it can report about them. Each state variable added to the design is one more property of the price, estimated separately and consistently with the others: where the price is, which way and how fast it is moving, and whether that movement is speeding up. This lecture is about smoothing, and this section describes what each design delivers. It also offers a first glimpse of what comes next: in Part II, these same quantities become the inputs of trend-following systems.
+The design fixes what the filter can follow and what it can report. Each state variable added is one more property of the price, estimated consistently with the others: where the price is, which way and how fast it is moving, and whether that movement is speeding up. This lecture is about smoothing; the section closes with a short preview of how Part II uses these quantities.
 
-### 2.1 Level only: an EMA with a model behind it
+### 2.1 Level only: a moving average with a model behind it
 
-The simplest design tracks the level alone. Once the gain has settled (§1.4), steps 1 to 7 of Table 1.3 reduce to one line:
+Once the gain has settled (§1.4), the level-only filter reduces to one line:
 
 ```math
 \ell_t = \ell_{t-1} + K\,(y_t - \ell_{t-1}) = K\,y_t + (1-K)\,\ell_{t-1}
 ```
 
-This is an EMA whose smoothing constant $`\alpha`$ is the steady gain $`K`$. The gain follows from the ratio $`q_\ell / r`$ alone: with $`q_\ell / r = 1/6`$ it is exactly $`1/3`$, the $`\alpha`$ of EMA(5) (our derivation; notebook §3).
+This is an EMA with smoothing constant $`\alpha = K`$; with $`q_\ell / r = 1/6`$, for instance, $`K = 1/3`$, the $`\alpha`$ of EMA(5) (our derivation; notebook §3). It behaves like a classic moving average, lag included. Three things differ: the smoothing constant follows from a model rather than a chosen window; the filter reports how sure it is of the level; and the same machinery extends to a trend without changing anything else.
 
-It inherits the EMA's character entirely, including its lag behind any trend; nothing is gained except the uncertainty band, and nothing is lost. The design is the bridge from Lecture 2: it shows that the Kalman filter contains the EMA as its simplest case.
+### 2.2 Level + slope: read the slope, not the crossing
 
-### 2.2 Level + slope: the trend becomes a state
+Adding a slope gives the *local linear trend* model: the level drifts by the slope each bar, and the slope changes slowly. Once settled, the filter is Holt's linear method, the classical exponential smoothing with a trend (Holt, 1957, reprinted 2004), with smoothing constants $`\alpha = K_1`$ and $`\beta = K_2 / K_1`$ (our derivation).
 
-Adding a slope gives the *local linear trend* model. The level drifts by the slope each bar, and the slope itself changes only slowly. The trend is now a number the filter estimates, forecasts with and revises by every surprise.
+The practical consequence is a change in what to read. With a moving average, price crossing the average is the usual trend reading. Here the level has already been projected along the trend, so price below the level means only that price rose less than the projected trend. The trend is read from the **slope**: its sign gives the direction, its size the speed, and its standard deviation says whether it can be told apart from zero. The gap between price and level, the **stretch**, says how far price has run from its trend.
 
-Once the gains have settled, the two updates of step 7 are
+### 2.3 Level + slope + acceleration: is the trend tiring?
 
-```math
-\ell_t = \hat y_t + K_1\,e_t, \qquad s_t = s_{t-1} + K_2\,e_t, \qquad \hat y_t = \ell_{t-1} + s_{t-1}
-```
+A third state variable tracks the acceleration, the change in the slope: whether the trend is strengthening or fading. Because it enters the forecast through the $`\tfrac12 a_t`$ term, a fading rise lowers the forecast before the slope itself turns. It is also the noisiest state variable, since estimating a change in a trend amplifies the noise in prices twice over.
 
-which is Holt's linear method, the classical exponential smoothing with a trend (Holt, 1957, reprinted 2004), with smoothing constants $`\alpha = K_1`$ for the level and $`\beta = K_2 / K_1`$ for the trend (our derivation). The Kalman filter adds what Holt's method lacks: a model from which the two constants follow, and an uncertainty for each.
-
-The slope is the first derivative of the price, its direction and speed. Two consequences matter for what follows.
-
-- **The trend is the slope.** A positive slope means the filter estimates a rising trend, with a standard deviation that says how sure it is.
-- **Price against the level changes meaning.** The level has already been projected along the trend, so price below the level means that price rose less than the projected trend, not that the trend has turned. It measures how far price is stretched from its trend. As a preview of Part II: practitioners use the slope to judge the trend and the stretch to judge whether price has run too far, the idea behind overbought and oversold readings (QuanterLab, 2026).
-
-### 2.3 Level + slope + acceleration: the change in the trend
-
-A third state variable models the acceleration, the second derivative of the price: whether the trend is strengthening or fading. Because it also enters the forecast, through the $`\tfrac12 a_t`$ term of Table 1.3, it shifts where the filter expects the next price: a fading rise lowers the forecast before the slope itself turns.
-
-The acceleration is the noisiest of the three state variables: estimating a change in a trend amplifies the noise in prices twice over, once for the trend and once for its change.
-
-**Why stop at acceleration?** Further derivatives, often called jerk and snap, could be added as state variables in the same way. Each one amplifies the noise further and makes the filter overshoot more, and oscillate, after a jump (§2.4). Practice therefore stops at acceleration. By analogy, high-order polynomials fitted to recent points swing wildly when extrapolated; this is the Runge phenomenon, strictly a property of interpolation.
+**Why stop at acceleration?** Further derivatives, often called jerk and snap, could be added in the same way, but each amplifies the noise further and makes the filter overshoot more, and oscillate, after a jump (§2.4). By analogy, high-order polynomials fitted to recent points swing wildly when extrapolated, the Runge phenomenon of interpolation.
 
 ### 2.4 What each design can follow
 
-On synthetic prices without noise (notebook §6), three rules stand out. The level-only design follows a flat price but lags a steady trend forever; the level + slope design follows a steady trend exactly but overshoots a jump by 17–20%; the three-state design follows a steady acceleration exactly but overshoots by 23–29%. Faster settings shrink a lag but never remove it; only an additional state variable does. And following more has a price: the slope designs overshoot because they extrapolate.
+On synthetic prices without noise (notebook §6), the level-only design follows a flat price but lags a steady trend forever; the level + slope design follows a steady trend exactly but overshoots a jump by 17–20%; the three-state design follows a steady acceleration exactly but overshoots by 23–29%. Faster settings shrink a lag but never remove it; only an additional state variable does, and the slope designs pay for it with overshoot, because they extrapolate.
 
 ### 2.5 What can be read from the filter
 
-Every quantity the filter produces on each bar can be read directly, and each is charted on QQQ in the appendix.
+**Table 2.1. What can be read from the filter on every bar, and what it resembles**
 
-**Table 2.1. What can be read from the filter on every bar**
-
-| Quantity | Computed in | What it shows | Where it leads (Part II) |
+| Quantity | What it shows | Plays a role similar to | Typical use (preview of Part II) |
 |---|---|---|---|
-| Level $`\ell_t`$, with band $`\pm\sqrt{P_{\ell\ell}}`$ | Steps 7 and 8 | The smoothed price, and how sure the filter is of it; once the filter has settled, the band keeps a constant width ([chart C.1](#c1-level-and-its-uncertainty-band-25)) | A cleaner price to trade against |
-| Slope $`s_t`$, with its standard deviation | Steps 7 and 8 | Direction and speed of the trend; whether it is distinguishable from zero ([chart C.2](#c2-slope-and-acceleration-with-their-uncertainty-25)) | The core of a trend-following signal |
-| Acceleration $`a_t`$, with its standard deviation | Steps 7 and 8 | Whether the trend is strengthening or fading ([chart C.2](#c2-slope-and-acceleration-with-their-uncertainty-25)) | An early warning that a trend is tiring |
-| Stretch $`y_t - \ell_t`$ | Step 7 | How far price has run from its projected trend ([chart C.3](#c3-stretch-25)) | Overbought and oversold judgements |
-| Normalised surprise $`e_t / \sqrt{S_t}`$ | Steps 4 and 6 | How unusual today's bar is, compared with what the model expects; clusters of large surprises mark periods the model does not fit ([chart C.4](#c4-normalised-surprises-25)) | Flagging shocks, and checking whether the model fits |
+| Level, with band $`\pm 2\sqrt{P_{\ell\ell}}`$ | A smoothed price; once settled, the band has constant width ([chart C.1](#c1-level-and-its-uncertainty-band-25)) | A moving average | A reference price |
+| Slope | The direction and speed of the trend ([chart C.2](#c2-slope-and-acceleration-with-their-uncertainty-25)) | The slope of a moving average | Tracking the general direction: long while positive, out or short while negative |
+| Slope ÷ its standard deviation | How clearly the trend stands out from noise | ADX, a trend-strength gauge | Acting only on trends that stand out |
+| Stretch $`y_t - \ell_t`$ | How far price has run from its projected trend ([chart C.3](#c3-stretch-25)) | RSI, an overbought and oversold gauge | Buying dips within an uptrend; taking profit when price is stretched far above it |
+| Acceleration | Whether the trend is strengthening or fading ([chart C.2](#c2-slope-and-acceleration-with-their-uncertainty-25)) | The MACD histogram, the change in a trend measure | An early warning that a trend is tiring |
+| Normalised surprise $`e_t / \sqrt{S_t}`$ | How unusual today's bar is; clusters mark periods the model does not fit ([chart C.4](#c4-normalised-surprises-25)) | No common equivalent | Flagging shocks and checking the model |
 
-**What the charts show.** On QQQ, with the level reacting like EMA(15) and the slope remembering like EMA(252):
+The resemblances are analogies, not equivalences: each Kalman quantity comes from one model and one surprise, while the classic indicators are separate calculations with separate windows.
 
-- **The level's band does not move.** It stays at about ±1.3% through the 2020 crash and the 2022 decline ([chart C.1](#c1-level-and-its-uncertainty-band-25)). Once the filter has settled, its uncertainty is constant, so the band is a yardstick, not a gauge of volatility.
-- **The slope separates trend from noise.** Over 2019–2023 it was more than two standard deviations above zero on 67% of days and below on 13%; on the other 20% the trend could not be told apart from noise ([chart C.2](#c2-slope-and-acceleration-with-their-uncertainty-25)).
-- **The acceleration moves first, but not cleanly.** It turned negative before the slope fell through zero in early 2022 and positive before the slope turned up in early 2023, yet it also swings in between ([chart C.2](#c2-slope-and-acceleration-with-their-uncertainty-25)).
-- **The stretch is usually small.** On nine days in ten price lay between 4.5% below and 3.7% above its projected trend; the extremes came only in fast moves, −17% in the March 2020 crash ([chart C.3](#c3-stretch-25)).
-- **Large surprises come in clusters.** 2000–2002, 2008–2009 and 2022 hold most of the days beyond ±3: periods when volatility outgrew the model's fixed noise ([chart C.4](#c4-normalised-surprises-25)). The surprises, not the band, carry the information about volatility.
+**What the charts show.** On QQQ, with the level reacting like EMA(15), the slope remembering like EMA(90) and the acceleration like EMA(45):
 
-A short preview of what comes next. With the level alone, a trend shows only as price against a lagging average, which is the EMA's logic. With a slope, the trend is a quantity in its own right, measured with a confidence band; with an acceleration, so is its change. Part II introduces trend-following systems and shows how such quantities become trading decisions. This lecture stays with what they are and how they behave.
+- **The slope tracks the general direction.** It turned negative in the March 2020 crash, through most of 2022 and briefly in late 2023, and was positive in the rallies. Over 2019–2023 it lay more than two standard deviations above zero on 59% of days and below on 17%; on the other 24% the trend could not be told apart from noise ([chart C.2](#c2-slope-and-acceleration-with-their-uncertainty-25)).
+- **The acceleration moves first, and often.** It turned up at the March 2020 low and at the 2022 lows before the slope recovered, and down in late 2021 before the slope fell; it also cycles every two to three months in between ([chart C.2](#c2-slope-and-acceleration-with-their-uncertainty-25)).
+- **The stretch is usually small.** On nine days in ten price lay between 4.4% below and 4.0% above its projected trend; the extremes came in fast moves, −17% in the March 2020 crash and +9% in the rebound ([chart C.3](#c3-stretch-25)).
+- **The level's band does not move.** It stays at about ±1.3% through the crash and the 2022 decline ([chart C.1](#c1-level-and-its-uncertainty-band-25)): a yardstick, not a gauge of volatility.
+- **Large surprises come in clusters.** 2000–2002, 2008, 2020 and 2022 hold most of the days beyond ±3: periods when volatility outgrew the model's fixed noise ([chart C.4](#c4-normalised-surprises-25)). The surprises, not the band, carry the information about volatility.
+
+A short preview of what comes next. Part II introduces trend-following systems and shows how such quantities become trading decisions. This lecture stays with what they are and how they behave.
 
 ## Appendix: charts
 
-From the companion notebook, section 2c ([04_tracking_hidden_states.ipynb](04_tracking_hidden_states.ipynb)). All four charts use QQQ daily closes in logs. The level, the slope, the stretch and the surprises come from the level + slope design, with the level reacting to each surprise like EMA(15) and the slope remembering like EMA(252). The acceleration comes from a three-state design whose acceleration remembers like EMA(156): within one filter the slope cannot keep a longer memory than the acceleration, so a second filter is needed. The ratios of the noise variances set these memories; their common scale, which sets the uncertainty, is calibrated so that the normalised surprises have a standard deviation of 1 over 2014–2018, before the period charted. It corresponds to a daily price noise of 1.8%.
+From the companion notebook, section 2c ([04_tracking_hidden_states.ipynb](04_tracking_hidden_states.ipynb)). All four charts use QQQ daily closes in logs. The level, the slope, the stretch and the surprises come from the level + slope design, with the level reacting to each surprise like EMA(15) and the slope remembering like EMA(90). The acceleration comes from a three-state design whose acceleration remembers like EMA(45): within one filter the slope cannot keep a longer memory than the acceleration, so a second filter is needed. The ratios of the noise variances set these memories; their common scale, which sets the uncertainty, is calibrated so that the normalised surprises have a standard deviation of 1 over 2014–2018, before the period charted. It corresponds to a daily price noise of 1.8%.
 
 ### C.1 Level and its uncertainty band (§2.5)
 
@@ -243,19 +229,19 @@ The level follows price closely. Its band, ±2 standard deviations of the level 
 
 ![QQQ close and level; slope ± 2 standard deviations; acceleration ± 2 standard deviations, 2019–2023](figures/b_c02_slope_acceleration.png)
 
-The slope is the trend in % a year, the grey band ±2 standard deviations. Over 2019–2023 the slope lay more than two standard deviations above zero on 67% of days and below on 13%; on the remaining 20% the trend could not be told apart from noise. The acceleration turned negative in late 2021, before the slope fell through zero in early 2022, and positive in late 2022, before the slope turned up in early 2023. It also swings in between: an earlier and noisier layer than the slope.
+The slope is the trend in % a year, the grey band ±2 standard deviations. It turned negative in the March 2020 crash, through most of 2022 and briefly in late 2023. Over 2019–2023 it lay more than two standard deviations above zero on 59% of days and below on 17%; on the remaining 24% the trend could not be told apart from noise. The acceleration turned up at the March 2020 low and at the 2022 lows before the slope recovered, and down in late 2021 before the slope fell; it also cycles every two to three months in between, an earlier and noisier layer than the slope.
 
 ### C.3 Stretch (§2.5)
 
 ![QQQ close and level; stretch, price minus level in %, 2019–2023](figures/b_c03_stretch.png)
 
-Price minus level, in %. On nine days in ten the stretch lay between −4.5% and +3.7% (5th to 95th percentile, 2019–2023); the extremes came in fast moves, −17% in the March 2020 crash and +8% in the rebound. A strongly negative stretch while the slope stays positive marks a pullback within a rising trend; what such readings are worth is a question for Part II.
+Price minus level, in %. On nine days in ten the stretch lay between −4.4% and +4.0% (5th to 95th percentile, 2019–2023); the extremes came in fast moves, −17% in the March 2020 crash and +9% in the rebound. A strongly negative stretch while the slope stays positive marks a pullback within a rising trend; what such readings are worth is a question for Part II.
 
 ### C.4 Normalised surprises (§2.5)
 
 ![Normalised surprises of the level + slope design, QQQ 2000–2026, with ±3 lines](figures/b_c04_surprises.png)
 
-Each bar's surprise divided by its expected size $`\sqrt{S_t}`$. Calibrated on 2014–2018, they have a standard deviation of 1 there; over 2000–2026 it is 1.61, and 6.4% of days lie beyond ±3, against 0.27% for a normal distribution. The large surprises come in clusters: 2000–2002, 2008–2009 and 2022 hold most of them, with a short burst in 2020. A cluster means that the model's fixed price noise is too small for that period: volatility has risen, and the standard filter's uncertainty does not follow it. The surprises, not the band, are therefore the filter's gauge of volatility; making the noise follow them is the subject of §5.
+Each bar's surprise divided by its expected size $`\sqrt{S_t}`$. Calibrated on 2014–2018, they have a standard deviation of 1 there; over 2000–2026 it is 1.60, and 6.5% of days lie beyond ±3, against 0.27% for a normal distribution. The large surprises come in clusters: 2000–2002, 2008, 2020 and 2022 hold most of them. A cluster means that the model's fixed price noise is too small for that period: volatility has risen, and the standard filter's uncertainty does not follow it. The surprises, not the band, are therefore the filter's gauge of volatility; making the noise follow them is the subject of §5.
 
 ## References (so far)
 
