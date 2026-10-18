@@ -123,17 +123,19 @@ The literature points to the mechanisms behind such episodes.
 
 A large weekly move is slightly more likely to be followed by a move the other way, and a large fall by a small rebound: the first days overshoot. What persists is the regime the shock starts, which can last for months, as the fire sales above did. A monthly trend rule is positioned for that persistence, not for the first shock.
 
-### 2.5 Trend or reversion: the horizon decides
+### 2.5 Trend or reversion: patterns, not laws
 
-Trend following and mean reversion use the same estimate, the past return, and act on it in opposite directions (Bruder, Dao, Richard and Roncalli, 2011). Which one works depends on the horizon:
+Trend following and mean reversion use the same estimate, the past return, and act on it in opposite directions (Bruder, Dao, Richard and Roncalli, 2011). The literature documents statistical patterns at different horizons, but each was found in particular markets and periods:
 
-| Horizon | What past returns predict | Evidence |
+| Horizon | Pattern documented | Where it was found |
 |---|---|---|
-| A week to a month | Reversal | Jegadeesh (1990); Lehmann (1990); Table 2.4 above |
-| Three to twelve months | Continuation | Jegadeesh and Titman (1993); Moskowitz, Ooi and Pedersen (2012) |
-| Three to five years | Reversal | De Bondt and Thaler (1985); Moskowitz, Ooi and Pedersen find partial reversal of time-series momentum beyond a year |
+| A week to a month | Reversal | Individual US stocks (Jegadeesh, 1990; Lehmann, 1990) |
+| Three to twelve months | Continuation | US stocks, ranked against each other (Jegadeesh and Titman, 1993); 58 futures markets, each against its own past (Moskowitz, Ooi and Pedersen, 2012) |
+| Three to five years | Reversal | US stocks (De Bondt and Thaler, 1985); partial reversal of time-series momentum beyond a year in futures (Moskowitz, Ooi and Pedersen) |
 
-Trend and reversion are therefore not rival beliefs about markets but the same quantity read at different horizons. The same tools serve both: a band around a moving average can be traded as a breakout or as a fade; a breakout that fails is a reversion signal; the Kalman filter that tracks a trend in Lecture 4 tracks the spread of a pair in mean-reversion trading. What decides the use is the horizon, and the mechanism behind the persistence or reversal at that horizon.
+These are tendencies, not rules that every market obeys. Our own weekly data show how much they vary (Table 2.4, notebook §2.4): after a large weekly move, the next week had the same sign 46% of the time at the median, a mild tendency to reverse, but 63% of the time for oil (USO) and 56% for silver (SLV), where large moves tended to continue.
+
+The patterns therefore inform the design; they do not make it. The **designer decides** which behaviour to exploit, at which horizon and in which market, after checking that the pattern exists there and understanding the mechanism behind it (§3). The same tools serve either choice: a band around a moving average can be traded as a breakout or as a fade; a breakout that fails is a reversion signal; the Kalman filter that tracks a trend in Lecture 4 can track the spread of a pair in mean-reversion trading. Some tools suit one side better: breakouts are built for persistence, oscillators that measure stretch for reversion. But the choice of side is the designer's, not the tool's.
 
 **Watch out for** reading the absence of autocorrelation as the absence of trends. Persistence that appears in episodes, at inflection points and in cascades, is invisible to an average over all months and is exactly what a trend rule harvests. Equally, do not credit timing with what is drift: in a rising market, a rule that is mostly long earns the drift whatever its timing.
 
