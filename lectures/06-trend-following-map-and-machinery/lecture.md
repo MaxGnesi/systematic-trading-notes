@@ -15,45 +15,25 @@ Lecture 5 was about the market; this lecture is about the system. Given a market
 | Key message | Trend profits have two sources, drift and timing | Design decides what is captured: direction and speed choose between drift and crisis protection; horizon matters more than the family of the rule |
 | Afterwards the reader can | Judge a market before building anything | Read any trend rule as a set of design choices, predict what it captures, and turn it into positions |
 
-## 2. The map: three families, two dimensions, five design choices
+## 2. The map: three families, five design choices
 
-Trend models appear countless, but they come from three families with distinct literatures. A second dimension says whether an asset is compared with its own past or with other assets, and five design choices explain how members of the same family differ.
+Trend rules come from three families with distinct literatures, and they differ along five design choices. The map is kept short on purpose: once one rule per family is understood, the variants add little, and what separates systems in practice is their design, above all their speed (§2.3).
 
-### 2.1 Three families of trend signals
+### 2.1 Three families
 
-| Family | How the signal is built | Members | Literature | Sees | Misses |
-|---|---|---|---|---|---|
-| **1. Linear filters** | A weighted average of past prices or returns | Moving averages and crossovers, MACD, time-series momentum, EWMAC, the Hodrick–Prescott filter, the Kalman filter once its gains have settled | Econometric trend filtering (Bruder et al., 2011; Levine and Pedersen, 2016) | A smooth, continuous reading of direction | Turning points arrive late; choppy markets cause whipsaws |
-| **2. Price-extreme rules** | Running highs and lows: the signal changes when price crosses a level set by its own recent path | Filter rules, support and resistance, channel breakouts (Donchian, the Turtle rules), trailing stops | Technical analysis tested academically (Alexander, 1961; Brock, Lakonishok and LeBaron, 1992; Sullivan, Timmermann and White, 1999) | The moment price escapes its recent range, and how far it has come back from its peak | The signal is on or off, so noise near the level triggers false entries and stop-outs |
-| **3. Nonlinear and model-based filters** | A statistical model of the trend that is not a fixed weighted average | L1 filtering, wavelets, nonparametric regression, regime switching, machine learning | Nonlinear filtering (Bruder et al., 2011); regime switching (Hamilton, 1989) | Breaks in the trend, changes of regime, the uncertainty of the estimate | Results depend on the model and its calibration; the more flexible the model, the greater the risk of overfitting |
+| Family | How the signal is built | Members | Literature |
+|---|---|---|---|
+| Linear filters | A weighted average of past prices or returns | Moving averages and crossovers, MACD, time-series momentum, EWMAC, the Kalman filter once its gains have settled | Bruder, Dao, Richard and Roncalli (2011); Levine and Pedersen (2016) |
+| Price-extreme rules | Running highs and lows: the signal changes when price crosses a level set by its own recent path | Filter rules, channel breakouts (Donchian, the Turtle rules), trailing stops | Alexander (1961); Brock, Lakonishok and LeBaron (1992); Sullivan, Timmermann and White (1999) |
+| Nonlinear and model-based filters | A statistical model of the trend that is not a fixed weighted average | Regime switching, L1 filtering, wavelets, machine learning | Bruder et al. (2011); Hamilton (1989) |
 
-Two links between the families matter later.
+The boundaries blur. Once its gains have settled, the Kalman filter is an exponential moving average (Bruder et al.; Lecture 4), so its level and slope are linear; only its uncertainty and surprises are model-based. Breakouts and stops share one building block, the running high: a breakout acts at it, a chandelier stop at a fixed distance below it.
 
-- **The Kalman filter sits on the boundary.** Bruder et al. show that, once its gains have settled, the Kalman filter is an exponential moving average, as Lecture 4 found for the level. Its level and slope therefore belong to the linear family; what it adds beyond that, the uncertainty and the surprises, is model-based.
-- **Breakouts and stops share one building block.** A Donchian breakout enters when price reaches its highest high of the last $`N`$ bars; a chandelier stop exits when price falls a fixed multiple of ATR below that same high. One rule acts at the extreme, the other at a distance from it.
+Each family can also be applied in two ways: to an asset against its own past (time series), or to assets ranked against each other (cross-sectional; Jegadeesh and Titman, 1993). Goyal and Jegadeesh (2018) find that the difference lies mainly in net exposure. This lecture is about time-series systems; cross-sectional rules come with the portfolio in Lecture 9. Some tools do not produce a signal but act on one, such as filters on trend strength or volatility, or entries on pullbacks; Lecture 8 treats these modifiers.
 
-### 2.2 The second dimension: own past or other assets
+One model per family is described in the appendix, as a model card: its rules, sensible parameters, what it captures and where it fails.
 
-Each family can be used in two ways. A **time-series** rule compares an asset with its own past and decides whether to be long or short that asset; a **cross-sectional** rule ranks assets against each other and decides which to prefer.
-
-| | Time-series: each asset against its own past | Cross-sectional: assets ranked against each other |
-|---|---|---|
-| Linear filters | Time-series momentum, EWMAC per asset | Relative-strength momentum: buy past winners, sell past losers (Jegadeesh and Titman, 1993) |
-| Price-extreme rules | A breakout or a stop per asset | Rank assets by their distance from the channel high |
-| Nonlinear and model-based | A regime or a slope estimate per asset | Rank assets by estimated slope or by the strength of the evidence for a trend |
-
-The two answer different questions. A time-series portfolio can be long everything in a broad rally and short everything in a crash, so its net exposure varies; a cross-sectional portfolio is long some assets and short others, usually with no net exposure. Goyal and Jegadeesh (2018) find that across international asset classes, cross-sectional strategies scaled the same way as time-series ones performed better. Lectures 7 and 8 build time-series systems asset by asset; cross-sectional rules come with the portfolio, in the last lecture of Part II.
-
-### 2.3 Modifiers: filters, overlays and hybrids
-
-Some tools do not produce a trend signal; they act on one.
-
-- **Filters and overlays** decide whether a signal is traded: trend strength (ADX and the efficiency ratio of Lecture 3), the volatility regime, or a regime model.
-- **Hybrids** combine the trend with another idea, such as entering on a pullback within an uptrend, using the stretch of Lecture 4.
-
-A filter is a second signal. It removes some losing trades and also some winning ones, so it has to be tested like a signal, which Lecture 10 does.
-
-### 2.4 Five design choices
+### 2.2 Five design choices
 
 Within each family, rules differ along five choices. Each option sees something and misses something.
 
@@ -72,9 +52,9 @@ Within each family, rules differ along five choices. Each option sees something 
 | Horizon | Short | Turns early; catches fast crises | More trades, more cost, more false signals |
 | | Long | Fewer trades; more robust to noise | Late at turning points; misses fast crises |
 
-These choices, not the names of the rules, decide how two systems differ. §2.5 measures how much.
+These choices, not the names of the rules, decide how two systems differ. §2.3 measures how much.
 
-### 2.5 Why a few representatives suffice
+### 2.3 Why a few representatives suffice
 
 **Every linear rule is a set of weights on past returns** (Levine and Pedersen, 2016). Price minus its $`N`$-day average, for instance, is a weighted sum of the last $`N-1`$ price changes, with weight $`(N-1-k)/N`$ on the change $`k`$ days ago. For $`N = 4`$ and prices 100, 101, 103, 102, 105:
 
@@ -95,7 +75,7 @@ Recent changes count most. The 12-month return sign weights the last 252 returns
 | Donchian 55/20 | Price extremes | Long above the 55-day high, out below the 20-day low; short symmetrically |
 | Chandelier 55 | Price extremes, with a stop | Enter on the 55-day breakout; exit when price falls 3 ATR(20) below its highest close since entry |
 
-**Table 2.1. Correlation of the rules' daily portfolio returns** (2000–2026; notebook §2.6)
+**Table 2.1. Correlation of the rules' daily portfolio returns** (2000–2026; notebook §2.3)
 
 | | TSMOM-12 | SMA-200 | EWMAC 16/64 | Donchian 55/20 |
 |---|---|---|---|---|
@@ -108,27 +88,26 @@ Recent changes count most. The 12-month return sign weights the last 252 returns
 - **The exit matters least here.** The Donchian and chandelier systems share their entry and differ only in how they exit; their returns correlate 0.97.
 - **A few representatives cover the field.** What separates trend systems is mainly speed and, as §3 shows, direction; within a speed, the choice of family changes less than its name suggests.
 
-**A fairer comparison: across parameters, at equal trading frequency.** Table 2.1 compares one setting per rule, which mixes the family with the speed that setting happens to give it. Running each family over a range of parameters and plotting its Sharpe ratio against how often it changes direction separates the two ([chart E.2](#e2-sharpe-ratio-against-trading-frequency-25)):
+**A fairer comparison: across parameters, at equal trading frequency.** Table 2.1 compares one setting per rule, which mixes the family with the speed that setting happens to give it. Running each family over a range of parameters and plotting its Sharpe ratio against how often it changes direction separates the two ([chart E.2](#e2-sharpe-ratio-against-trading-frequency-23)):
 
 - **Speed dominates.** Within each family, the Sharpe ratio before costs ranges from about −0.2 at 30–45 changes of direction a year to 0.45–0.55 at one to six.
 - **At equal frequency, the families are close.** The gaps between families, about 0.1–0.3, are far smaller than the spread across parameters within any one of them.
 - **How trading frequency is counted is itself a choice.** EWMAC adjusts its position continuously between changes of sign, and a Donchian system passes through flat; a change of direction is not the same trade in every family.
 
-This is a first look, kept deliberately simple. Which point on these curves to choose, and whether the gaps between families are real, are questions for [Lecture 9, Comparing Trend Systems](../09-comparing-trend-systems/lecture.md) and for Part V: picking the best point on a curve is the multiple-testing problem of Lecture 5, §4.3.
+This is a first look, kept deliberately simple. Which point on these curves to choose, and whether the gaps between families are real, are questions for [Lecture 7, Comparing Trend Systems](../07-comparing-trend-systems/lecture.md) and for Part V: picking the best point on a curve is the multiple-testing problem of Lecture 5, §4.3.
 
-### 2.6 Where each part of the map is taught
+### 2.4 Where the rest of Part II goes
 
-| Part of the map | Where |
+| Topic | Where |
 |---|---|
-| Linear filters and model-based estimates, as continuous forecasts | Lecture 7 |
-| Price-extreme rules: breakouts and stops | Lecture 8 |
-| Measuring performance | Lecture 9 |
-| Modifiers: filters, overlays, regime models, hybrids | Lecture 10 |
-| Cross-sectional rules and the trend portfolio | Lecture 11 |
+| One model per family: rules, parameters, what it captures, where it fails | Appendix: model cards |
+| Comparing trend systems fairly | Lecture 7 |
+| Filters and overlays, regime models, pullback entries | Lecture 8 |
+| Cross-sectional rules and the trend portfolio | Lecture 9 |
 | Trends on bars cut by price (point-and-figure, Renko) | Part III |
 | Machine learning | After Part V, once honest testing is in place |
 
-Lecture numbers after 6 are planned and may change as the roadmap is settled.
+Lecture numbers after 7 are planned and may change.
 
 ## 3. Design choices and what they capture
 
@@ -259,11 +238,49 @@ Each rule here is one setting, one point on its curve in chart E.2; the profile 
 - [ ] Add a 1-month and a 6-month long-and-short rule to Table 3.1. At which speed does the smile become significant, and which crises does each catch? (notebook §3.2)
 - [ ] Replace the 60-day volatility estimate with a range estimator from Lecture 3. Does Table 5.1 change? (notebook §5.2)
 - [ ] Trade only when the desired position differs from the current one by more than 20%. How much turnover does this remove, and what does it cost in gross Sharpe ratio? (notebook §6)
-- [ ] Combine the five rules with equal weights. Is the combination's Sharpe ratio higher than the best single rule's, and how does Table 2.1 explain the answer? (notebook §2.6)
+- [ ] Combine the five rules with equal weights. Is the combination's Sharpe ratio higher than the best single rule's, and how does Table 2.1 explain the answer? (notebook §2.3)
 
 ### 9.3 Reading
 
 The full reference list closes the lecture. A short path: Levine and Pedersen (2016) for linear rules as weights on past returns; Moskowitz, Ooi and Pedersen (2012) for the smile; Kim, Tse and Wald (2016) for volatility scaling; Fung and Hsieh (2001) for the option-like payoff.
+
+## Appendix: model cards
+
+One model per family, chosen to overlap as little as possible. Parameters are sensible ranges, not recommendations.
+
+### Model card 1: EWMAC (linear filters)
+
+| | |
+|---|---|
+| Signal | Fast exponential average minus slow exponential average of price, divided by the asset's price volatility |
+| Parameters | Slow span four times the fast one; fast spans from 2 to 64 days cover fast to slow trends |
+| Forecast | Scaled to an average absolute value of 10 and capped at ±20 (Carver); several speeds can be averaged |
+| Position | Forecast/10 × target volatility / asset volatility (§5) |
+| Captures | Direction continuously, long and short; drift and timing according to speed |
+| Fails | Fast speeds in choppy markets (§6: costs); slow speeds at turning points and in fast crises (§3.1) |
+| Variants | Price against a moving average, two-average crossovers, MACD, time-series momentum, adaptive averages (KAMA) |
+
+### Model card 2: Turtle-style breakout (price extremes)
+
+| | |
+|---|---|
+| Signal | Enter long when price exceeds its highest close of the last N days, short when it falls below the lowest; exit on the opposite channel of a shorter length |
+| Parameters | The Turtle rules used two speeds, 20-day and 55-day entries, with 10-day and 20-day exits (Faith, 2007); the sweep in §2.3 runs from 10 to 200 days |
+| Position | On or off; sized so that one ATR move costs a fixed fraction of capital, which is volatility targeting with the true range |
+| Captures | The moment price escapes its range; persistent moves after a break |
+| Fails | False breakouts near the channel; gives back part of each trend before the exit channel is hit |
+| Variants | Chandelier stop (exit a multiple of ATR below the high since entry), percentage trailing stops, Parabolic SAR, volatility breakouts |
+
+### Model card 3: Kalman slope (model-based)
+
+| | |
+|---|---|
+| Signal | The slope of the level-plus-slope Kalman filter of Lecture 4, optionally divided by its standard deviation to weigh it by the evidence |
+| Parameters | The slope's memory, set through its steady-state weights as in Lecture 4 (an EMA-equivalent of 45–250 days) |
+| Position | Forecast proportional to the slope, or to slope over its uncertainty, then volatility targeting |
+| Captures | A smooth trend estimate together with how sure the model is of it; the surprises flag when the model is wrong |
+| Fails | When the model is wrong: fat-tailed surprises and shifts in volatility (Lecture 4, §5) |
+| Variants | Regression slope and its t-statistic, regime-switching models, L1 trend filtering, machine learning |
 
 ## Appendix: charts
 
@@ -275,7 +292,7 @@ From the companion notebook, [06_trend_following_map_and_machinery.ipynb](06_tre
 
 Long or flat (blue) loses in SPY's worst months and gains in its best: it holds the market. Short or flat (orange) does the opposite: insurance. Long and short at 12 months (green) is close to neutral; at 3 months (pink) it gains in the worst months, because it turns short in time.
 
-### E.2 Sharpe ratio against trading frequency (§2.5)
+### E.2 Sharpe ratio against trading frequency (§2.3)
 
 ![Sharpe ratio before costs of five trend families across their parameters, against changes of direction per year](figures/06_03_sharpe_vs_trades.png)
 
@@ -292,13 +309,14 @@ The same curves after costs of 5 basis points per unit traded. The fast end of e
 - Alexander, S. (1961). Price movements in speculative markets: trends or random walks. *Industrial Management Review* 2, 7–26. — filter rules (§2.1).
 - Brock, W., Lakonishok, J. and LeBaron, B. (1992). Simple technical trading rules and the stochastic properties of stock returns. *Journal of Finance* 47(5), 1731–1764. — moving-average and trading-range-break rules (§2.1).
 - Bruder, B., Dao, T.-L., Richard, J.-C. and Roncalli, T. (2011). *Trend Filtering Methods for Momentum Strategies.* Lyxor White Paper. — linear and nonlinear filtering, the Kalman filter as an exponential moving average (§2.1).
-- Carver, R. (2015). *Systematic Trading.* Harriman House. — forecasts on a common scale (§4).
+- Carver, R. (2015). *Systematic Trading.* Harriman House. — forecasts on a common scale (§4, model card 1).
 - Carver, R. (2016). pysystemtrade: estimated forecast scalars. Blog post, qoppac.blogspot.com, 18 January 2016. — the average absolute forecast of 10 and the cap of 20 (§4).
+- Faith, C. (2007). *Way of the Turtle.* McGraw-Hill. — the Turtle rules (model card 2).
 - Fung, W. and Hsieh, D. (2001). The risk in hedge fund strategies: theory and evidence from trend followers. *Review of Financial Studies* 14(2), 313–341. — the option-like payoff (§7).
-- Goyal, A. and Jegadeesh, N. (2018). Cross-sectional and time-series tests of return predictability: what is the difference? *Review of Financial Studies* 31(5), 1784–1824. — time-series against cross-sectional (§2.2).
+- Goyal, A. and Jegadeesh, N. (2018). Cross-sectional and time-series tests of return predictability: what is the difference? *Review of Financial Studies* 31(5), 1784–1824. — time-series against cross-sectional (§2.1).
 - Hamilton, J. (1989). A new approach to the economic analysis of nonstationary time series and the business cycle. *Econometrica* 57(2), 357–384. — regime switching (§2.1).
-- Jegadeesh, N. and Titman, S. (1993). Returns to buying winners and selling losers: implications for stock market efficiency. *Journal of Finance* 48(1), 65–91. — cross-sectional momentum (§2.2).
+- Jegadeesh, N. and Titman, S. (1993). Returns to buying winners and selling losers: implications for stock market efficiency. *Journal of Finance* 48(1), 65–91. — cross-sectional momentum (§2.1).
 - Kim, A., Tse, Y. and Wald, J. (2016). Time series momentum and volatility scaling. *Journal of Financial Markets* 30, 103–124. — volatility scaling (§5.2).
-- Levine, A. and Pedersen, L.H. (2016). Which trend is your friend? *Financial Analysts Journal* 72(3), 51–66. — linear trend rules as weights on past returns (§2.1, §2.5).
+- Levine, A. and Pedersen, L.H. (2016). Which trend is your friend? *Financial Analysts Journal* 72(3), 51–66. — linear trend rules as weights on past returns (§2.1, §2.3).
 - Moskowitz, T., Ooi, Y.H. and Pedersen, L.H. (2012). Time series momentum. *Journal of Financial Economics* 104(2), 228–250. — the time-series momentum smile (§3.1).
 - Sullivan, R., Timmermann, A. and White, H. (1999). Data-snooping, technical trading rule performance, and the bootstrap. *Journal of Finance* 54(5), 1647–1691. — technical rules tested with an adjustment for data snooping (§2.1).

@@ -1,4 +1,4 @@
-# Lecture 9: Comparing Trend Systems
+# Lecture 7: Comparing Trend Systems
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 18, 2026 · Max Gnesi*
 
@@ -76,6 +76,21 @@ The best point on a curve combines skill with luck, and the luck does not repeat
 6. **Only then test formally**, pairwise with Ledoit and Wolf, and across the grid with Romano and Wolf or the probability of backtest overfitting (§4).
 
 **Watch out for** declaring a winner from a single backtest. Speed, noise and selection each produce differences between systems that are not differences between ideas; the procedure above removes them one at a time.
+
+## 7. The charts this lecture needs
+
+Comparisons are understood visually before they are tested. Each question gets a chart designed to answer it at a glance.
+
+| Question | Chart | What the reader should see |
+|---|---|---|
+| At what speed? (§2) | Performance against speed: one curve per family across its parameters, on each of the three speed axes | Whether the families separate or collapse onto one curve, and how much that depends on the axis |
+| At what speed? (§2) | Trend signatures: the weight each rule puts on past returns at each horizon | Which horizons each rule actually uses |
+| Does it add anything? (§3) | Heat map of correlations between families at matched speeds | Which families are near copies and which are different |
+| Does it add anything? (§3) | Breakeven cost against speed, one curve per family | Where each family's edge is eaten by costs |
+| Is it real? (§4) | The performance curves with block-bootstrap bands | Whether the gaps between curves lie outside the noise |
+| Is it real? (§4) | Rank of each parameter in one half of the history against its rank in the other | Whether the best in-sample choice stays good out of sample, the picture behind the probability of backtest overfitting |
+| Will it last? (§5) | Median against peak performance per family, side by side | How much of each family's best result is selection |
+| Will it last? (§5) | Scatter of Sharpe ratio against skewness or drawdown, one point per system, with the systems no other beats marked | The trade-offs a single number hides |
 
 ## References
 
