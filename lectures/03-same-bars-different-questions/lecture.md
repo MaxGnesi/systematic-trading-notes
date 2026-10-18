@@ -70,6 +70,8 @@ In dollars, SPY's ATR has grown 35-fold since 1994; as a percentage of price it 
 
 **Example: salaries across decades.** A USD 50,000 salary in 1994 and in 2026 are not the same pay. Nobody compares them without adjusting for prices. A dollar ATR needs the same adjustment, and the "price level" here is the asset's own price.
 
+**Watch out for** any figure quoted in price units: a dollar volatility, a dollar ATR, a dollar stop distance. Across assets or decades it is not comparable, and it can point the wrong way, as for QQQ. Divide by price first.
+
 ## 3. Volatility: true range and Wilder's ATR
 
 ### 3.1 Definitions
@@ -112,6 +114,25 @@ The largest one-day fall in SPY since 1987. $`H = 233.59`$, $`L = 215.82`$, prev
 | $`\lvert L - C_{\text{prev}}\rvert`$ | **29.06** |
 
 The gap from the previous close dominates: the true range is 29.06, 64% more than the day's own high-low range. One step of Wilder's recursion ($`n = 14`$): 11.23 + (29.06 − 11.23) / 14 = 12.51, matching the library value.
+
+### 3.4 Which range, and which average: what each sees and misses
+
+ATR combines two choices, and each has its own blind spot. First, which distance measures a bar's movement:
+
+| Measure of one bar | Sees | Misses |
+|---|---|---|
+| Close-to-close change | The net move, overnight gap included | Movement that reverses within the bar |
+| High minus low | The whole path within the session | The gap from the previous close: on 16 March 2020, 17.77 against a true range of 29.06 |
+| True range | Both the session's path and the gap | Direction; and it is a range, not a standard deviation (§4) |
+
+Second, how the true ranges are averaged:
+
+| Average | Sees | Misses |
+|---|---|---|
+| Wilder's ATR($`n`$) | The platform standard: a one-line recursion, comparable with published values | Its memory is $`2n-1`$ bars, not $`n`$; it needs about $`7n`$ bars to warm up and forgets spikes slowly, 25% higher than the plain mean in April and May 2020 |
+| Plain $`n`$-bar mean of true ranges | Memory of exactly $`n`$ bars, exact after $`n-1`$ | A spike drops out all at once $`n`$ bars later, the hard edge of a rolling window (Lecture 2) |
+
+**Watch out for** the period: ATR(14) looks back 27 bars, not 14. A position sized on ATR stays small for weeks after a spike, and the two averages can differ by 20–25% exactly when it matters.
 
 ## 4. From a range to a volatility
 
@@ -229,6 +250,8 @@ A 27-bar kurtosis has a standard error near 1 before fat tails make it worse, so
 
 **Example: polling.** A poll of 27 people can tell you roughly what share prefer tea to coffee. It cannot tell you how lopsided their opinions are, or how many hold extreme views. Those are higher moments, and they need a much bigger sample.
 
+**Watch out for** windows set by habit. The defaults 14 and 20 share no basis; a 27-bar kurtosis has a standard error near 1. Match memory for statistics read together, and give each higher moment more data.
+
 ## 6. Trend strength: how one-sided is the recent path
 
 Both statistics here measure how one-sided recent movement has been, not its direction. A high value says "one direction has dominated", which a single enormous bar can produce on its own.
@@ -276,6 +299,17 @@ Bar 8's close falls sharply (108.5 → 102.5), yet $`-\mathrm{DM}`$ is only 0.40
 
 Up move 233.59 − 246.85 = −13.26; down move 225.97 − 215.82 = +10.15. So $`+\mathrm{DM} = 0`$ and $`-\mathrm{DM} = 10.15`$. After smoothing, $`+\mathrm{DI} = 9.66`$ and $`-\mathrm{DI} = 38.82`$, giving $`\mathrm{DX} = 100 \times \lvert 9.66 - 38.82\rvert/(9.66 + 38.82) = 60.16`$ and $`\mathrm{ADX} = 41.10 + (60.16 - 41.10)/14 = 42.46`$. The 27-bar efficiency ratio on the same day was 84.57 / 210.67 = 0.40: a large net fall, but along a path that swung hard both ways. Both values match the library. [Chart B.5](#b5-trend-strength-through-the-2020-crash-6) plots both through the 2020 crash.
 
+### 6.5 Efficiency ratio or ADX: what each sees and misses
+
+| Measure | Uses | Sees | Misses |
+|---|---|---|---|
+| Efficiency ratio | Closes: net move divided by the total path | A reversal in the close at once: in the toy, 1.00 at the spike and 0.12 one bar later | Direction, since it takes an absolute value; the range within each bar; one very large bar can dominate the path |
+| ADX | Ranges: new highs against new lows, Wilder-smoothed | Persistent pressure in one direction, confirmed by highs and lows | Direction (the ±DI lines carry it); any reversal that does not set new lows: in the toy it stays near 95 after bar 8; a long memory, 27 bars |
+
+On SPY on 16 March 2020 the two disagree for exactly these reasons: ADX read 42, a strong one-sided market, while the efficiency ratio read 0.40, a large net fall along a path that swung hard both ways.
+
+**Watch out for** reading either as a direction or as calm. A high value says that one direction has dominated recently, which a single violent bar can produce, and ADX can stay high through a reversal.
+
 ## 7. Order flow: who is doing the buying
 
 OBV's level is meaningless and cannot be compared across assets; its change over a window, divided by volume, is a standard order-imbalance measure that can.
@@ -310,6 +344,18 @@ On SPY over the 27 bars to 16 March 2020: signed volume −2.25bn / total 4.90bn
 The tick rule gives a bar's whole volume to one side. **Bulk volume classification** (Easley, López de Prado and O'Hara, 2012) splits it: the buyer-initiated fraction is $`\Phi(\Delta p / \sigma_{\Delta p})`$, where $`\Phi`$ is the standard normal distribution function. A small move splits volume almost evenly; only a large move assigns most of it to one side. Here $`\sigma`$ comes from the preceding 252 bars, so no future data is used.
 
 On 16 March 2020 SPY's log return was −11.6% against a $`\sigma`$ of 1.45%: $`z = -8.0`$ and $`\Phi(z) \approx 0`$, so essentially all the day's volume is classified as selling. Over the full histories the two imbalance measures correlate at 0.84 (SPY), 0.89 (GLD) and 0.82 (AGG). [Chart B.6](#b6-from-obv-to-a-comparable-order-imbalance-7) compares OBV with the order imbalance across assets.
+
+### 7.4 OBV, tick rule or bulk volume: what each sees and misses
+
+| Measure | Sees | Misses |
+|---|---|---|
+| OBV | The direction of volume flow over time, through its changes | Its level means nothing; it ignores the size of each move and never forgets (the toy's round trip stays banked) |
+| Order imbalance, tick rule | A comparable figure in [−1, 1]: OBV's change over a window divided by volume | It gives a bar's entire volume to one side, whether the bar moved 0.01% or 10% |
+| Order imbalance, bulk volume classification | Splits each bar's volume by the size of its move: small moves split evenly, large moves go mostly to one side | It assumes normal moves and depends on the volatility estimate; daily bars are coarse for it, as it was introduced for bars of equal volume |
+
+The two imbalance measures agree closely on daily data, with correlations of 0.82 to 0.89.
+
+**Watch out for** what all three infer: who traded is deduced from how price moved, not observed. None of them sees actual buy and sell orders; that requires trade data (Part III).
 
 ## 8. Relationship between series: do two assets still move together
 
@@ -422,6 +468,8 @@ The sign of skew correctly tracks the outlier: +1.5 when the window holds the up
 
 Even at $`n = 63`$ the adjustment moves kurtosis by about 10%. Both adjusted values match `pandas`.
 
+**Watch out for** short windows: they pin skewness and kurtosis at their maximum possible values, so an extreme reading may say more about the window than about the market. Use the adjusted estimators and at least 63 bars.
+
 ## 10. Signal or noise: bootstrap bands and what they reveal
 
 A rolling skewness or kurtosis wanders even when nothing about the market changes, because each window is a small sample. The bootstrap measures how far it would wander for that reason alone, and on the way it explains where the famous fat tails of daily returns come from.
@@ -517,7 +565,25 @@ with $`Q_i`$ the quartiles, $`E_i`$ the octiles and 1.233 the normal-distributio
 
 One day can move classical kurtosis by eight times its typical daily variation; on 27 February 2007 kurtosis moved by 8.1 of its typical daily changes while Moors moved by 0.02 of its own. The two families are almost uncorrelated (skewness with Bowley −0.02, kurtosis with Moors +0.13) because they answer different questions. For tail risk, use the classical moments read against the block band; for the asymmetry of ordinary days, the quantile measures are far more stable.
 
-## 11. Side by side, and practical notes
+**Watch out for** reading a rolling skewness or kurtosis on its own. Outside the block band it may be signal; inside it is noise. It measures surprise relative to recent volatility, not danger: for crises, count the extreme days (§10.5); for the asymmetry of ordinary days, use the quantile measures.
+
+## 11. The toolkit
+
+### 11.1 One question, a few tools, one warning each
+
+Each section ended by setting its measures side by side. Collected, they form a small toolkit. No tool answers every question, and each comes with the warning that matters most.
+
+| Question | Tools | Watch out for |
+|---|---|---|
+| Is the number comparable? | Divide by price (§2) | Dollar figures can point the wrong way |
+| How much is it moving? | Yang–Zhang for the level; ATR% / $`\sqrt{8/\pi}`$ for comparing and sizing; Parkinson or Garman–Klass for precision (§4.6) | The overnight gap; Wilder's long memory; ranges read low under discrete trading |
+| How one-sided is the move? | Efficiency ratio on closes; ADX on ranges (§6.5) | Neither gives direction; ADX can stay high through a reversal |
+| Who is pushing? | Order imbalance, by tick rule or bulk volume classification (§7.4) | Inferred from price, not observed; OBV's level means nothing |
+| Does it move with something else? | Correlation and beta; concordance; alpha (§8.4) | Shocks, not drift: low correlation diversifies the path, not the outcome; beta jumps on one-off spikes |
+| Is the path lopsided or fat-tailed? | Adjusted skewness and kurtosis against the block band; Bowley and Moors for ordinary days (§10) | One day dominates the classical moments; kurtosis measures surprise, not danger |
+| Do extreme days cluster? | Count of extreme days; chance of another within five days (§10.5) | The threshold depends on the history behind it |
+
+### 11.2 Units, memory and windows
 
 | Quantity | Units | Comparable across assets | Memory | Window used, and why | Common mistake |
 |---|---|---|---|---|---|
@@ -534,6 +600,8 @@ One day can move classical kurtosis by eight times its typical daily variation; 
 | Skewness, kurtosis | Unitless | Yes | Rolling | 63 bars, by standard error | Reading short-window values as precise; ignoring that one day dominates |
 | Count of extreme days | Days out of 63 | Yes | Rolling | 63 bars, as kurtosis | Setting the threshold on the full history, which uses future data |
 
+### 11.3 Practical notes
+
 Implementations of Wilder's smoothing differ in how the first value is seeded: Wilder used the simple average of the first $`n`$ values, the `trading_models` package starts from the first value. The two converge after a few dozen bars.
 
 **Using libraries knowingly.** A library's indicator is a bundle of choices: the averaging scheme, how the first value is seeded, and default settings. Before relying on one, know those choices, check one value by hand against it, and handle the warm-up explicitly. When the built-in version makes a choice you do not want, compose the indicator from simpler parts rather than rewriting it. For example, ATR built two ways from the same true ranges in pandas:
@@ -548,14 +616,15 @@ atr_wilder = tr.ewm(alpha=1 / 14, adjust=False).mean()  # Wilder's smoothing, se
 
 ## 12. Summary, exercises and reading
 
-### 12.1 Six takeaways
+### 12.1 Seven takeaways
 
-1. **Units.** Dollar measures are not comparable across assets or time and can point the wrong way (QQQ). Divide by price.
-2. **From range to volatility.** $`\mathbb{E}[H - L] = \sigma\sqrt{8/\pi}`$ follows from the reflection principle. Range estimators are efficient but session-only; Yang–Zhang adds the overnight gap. Discrete sampling biases every range down by about $`0.73/\sqrt{n}`$; bid-ask bounce biases it up.
-3. **Memory.** Wilder's $`n`$ equals a $`2n-1`$ bar window; statistics read together should be memory-matched.
-4. **Precision.** Each higher moment needs more data. With 5 points, skewness and kurtosis cannot exceed 1.5 and 0.25; adjusted estimators ($`G_1`$, $`G_2`$) correct small-sample bias.
-5. **Signal or noise.** Judge rolling statistics against a **block**-bootstrap band. Fat tails come largely from volatility changing over time (mixture of distributions). Volatility clusters strongly; kurtosis barely does, and it measures surprise, not danger. Extreme days cluster: counting them shows the crises that kurtosis misses.
-6. **Different questions.** ADX near 95 through a reversal, OBV never giving back a round trip, and correlation falling while beta rises are all correct answers to narrow questions, not bugs.
+1. **Every statistic has a blind spot.** Each answers one question well and misses something else. Read it with its blind spot, and pair it with a tool that covers it (§11).
+2. **Units.** Dollar measures are not comparable across assets or time and can point the wrong way (QQQ). Divide by price.
+3. **Which prices enter decides the volatility.** Session-only estimators read 67–86% of close-to-close; Yang–Zhang adds the overnight gap back. $`\mathbb{E}[H - L] = \sigma\sqrt{8/\pi}`$ turns a range into a volatility, and discrete sampling biases every range down by about $`0.73/\sqrt{n}`$.
+4. **Memory and precision.** Wilder's $`n`$ equals a $`2n-1`$ bar window; statistics read together should be memory-matched. Each higher moment needs more data, and adjusted estimators ($`G_1`$, $`G_2`$) correct small-sample bias.
+5. **Signal or noise.** Judge rolling statistics against a **block**-bootstrap band. Fat tails come largely from volatility changing over time. Kurtosis measures surprise, not danger; extreme days cluster, and counting them shows the crises kurtosis misses.
+6. **Correlation measures shocks, not drift.** Low correlation diversifies the path, not the outcome; high correlation hedges daily risk, not the trend. Drift decides outcomes over years and is the hardest quantity to measure.
+7. **Different questions, not bugs.** ADX near 95 through a reversal, OBV never giving back a round trip, and correlation falling while beta rises are all correct answers to narrow questions.
 
 ### 12.2 Exercises
 
