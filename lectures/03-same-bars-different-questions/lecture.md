@@ -672,7 +672,7 @@ atr_wilder = tr.ewm(alpha=1 / 14, adjust=False).mean()  # Wilder's smoothing, se
 
 ## Appendix: main charts
 
-From the companion notebook, [03_same_bars_different_questions.ipynb](03_same_bars_different_questions.ipynb), where every real-data number in this lecture is computed and each formula is checked against the library on a real date.
+From the companion notebook, [03_same_bars_different_questions.ipynb](03_same_bars_different_questions.ipynb), where every real-data number in this lecture is computed and each formula is checked against the library on a real date. Its sections carry the lecture's numbers: section 8.4 of the notebook computes §8.4.
 
 ### B.1 The same volatility in two units (§2)
 
