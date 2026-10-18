@@ -108,6 +108,14 @@ Recent changes count most. The 12-month return sign weights the last 252 returns
 - **The exit matters least here.** The Donchian and chandelier systems share their entry and differ only in how they exit; their returns correlate 0.97.
 - **A few representatives cover the field.** What separates trend systems is mainly speed and, as §3 shows, direction; within a speed, the choice of family changes less than its name suggests.
 
+**A fairer comparison: across parameters, at equal trading frequency.** Table 2.1 compares one setting per rule, which mixes the family with the speed that setting happens to give it. Running each family over a range of parameters and plotting its Sharpe ratio against how often it changes direction separates the two ([chart E.2](#e2-sharpe-ratio-against-trading-frequency-25)):
+
+- **Speed dominates.** Within each family, the Sharpe ratio before costs ranges from about −0.2 at 30–45 changes of direction a year to 0.45–0.55 at one to six.
+- **At equal frequency, the families are close.** The gaps between families, about 0.1–0.3, are far smaller than the spread across parameters within any one of them.
+- **How trading frequency is counted is itself a choice.** EWMAC adjusts its position continuously between changes of sign, and a Donchian system passes through flat; a change of direction is not the same trade in every family.
+
+This is a first look, kept deliberately simple. Which point on these curves to choose, and whether the gaps between families are real, are questions for the lecture on measuring performance and for Part V: picking the best point on a curve is the multiple-testing problem of Lecture 5, §4.3.
+
 ### 2.6 Where each part of the map is taught
 
 | Part of the map | Where |
@@ -191,7 +199,7 @@ At the same overall risk, volatility scaling lifts the Sharpe ratio by half and 
 
 Every change of position is a trade. Faster rules change position more often and pay more.
 
-**Table 6.1. Turnover and the Sharpe ratio after costs** (daily rules, 2000–2026; turnover = notional traded per year as a multiple of the capital assigned to each asset; cost per unit traded; notebook §6)
+**Table 6.1. Turnover and the Sharpe ratio after costs** (one setting per family, as in Table 2.1; daily rules, 2000–2026; turnover = notional traded per year as a multiple of the capital assigned to each asset; cost per unit traded; notebook §6)
 
 | Rule | Turnover per year | Sharpe ratio, no costs | 5 bp | 20 bp |
 |---|---|---|---|---|
@@ -203,6 +211,7 @@ Every change of position is a trade. Faster rules change position more often and
 
 - **Volatility targeting itself creates turnover.** Even the slow 12-month rule trades about ten times its capital a year, because positions are resized every day as volatility changes; SMA-200 trades more, because price crosses its average often.
 - **Costs decide which rules survive.** At 5 basis points per unit traded, roughly the cost of trading liquid ETFs, every rule keeps most of its Sharpe ratio; at 20 basis points, only the 12-month rule stays positive.
+- **Across parameters the pattern is the same.** After costs of 5 basis points, every family's Sharpe ratio turns negative above about 20–25 changes of direction a year ([chart E.3](#e3-after-costs-6)).
 - **Turnover can be reduced without changing the signal**, by trading only when the desired position moves far enough from the current one. Later lectures return to this.
 
 ## 7. The payoff profile
@@ -217,7 +226,7 @@ Every change of position is a trade. Faster rules change position more often and
 | Donchian 55/20 | 0.21 | 0.86 | 50% | 1.19 | −2.6% | −10.9% |
 | Chandelier 55 | 0.20 | 0.99 | 51% | 1.13 | −2.8% | −11.5% |
 
-The portfolio volatility is 4–7% a year although each asset targets 10%, because the 16 assets diversify each other ([chart E.2](#e2-five-trend-rules-cumulative-return-7)).
+Each rule here is one setting, one point on its curve in chart E.2; the profile changes with speed. The portfolio volatility is 4–7% a year although each asset targets 10%, because the 16 assets diversify each other.
 
 - **Positive skewness belongs to the faster and breakout rules.** Their monthly returns have skewness of 0.7 to 1.0: many small losses and occasional large gains, the long-option profile of Lecture 5, §4.4. The slow 12-month rule, diversified over 16 assets, has none.
 - **Trend systems do not win most of the time, nor lose most of the time.** Half to 57% of months are positive, and the average win is only 12–23% larger than the average loss. The edge is small and must be compounded over many markets and years.
@@ -240,7 +249,7 @@ The portfolio volatility is 4–7% a year although each asset targets 10%, becau
 
 1. **Design decides what a trend system captures.** The same signal collects drift, buys protection, or both, depending on direction.
 2. **Crisis protection is built, not given.** It comes from the short side and from enough speed for the crisis at hand: the 3-month rule caught March 2020, the 12-month rule did not.
-3. **Horizon matters more than family.** A linear rule and a breakout at similar speed correlate 0.91; the same family at different speeds correlates far less. A few representatives cover the map.
+3. **Horizon matters more than family.** A linear rule and a breakout at similar speed correlate 0.91; across parameters, the Sharpe ratio varies far more with speed than between families at equal speed. Compare families at equal trading frequency, never one setting against another.
 4. **The machinery is part of the result.** Volatility targeting lifted the Sharpe ratio from 0.50 to 0.75 at the same risk; credit it as machinery, not as signal.
 5. **Costs select the survivors.** Faster rules and volatility targeting create turnover; at 20 basis points per unit traded only the slow rule stayed positive.
 6. **The payoff profile is a design outcome too.** Positive skewness came from fast and breakout rules; monthly win rates were 50–57% with small win-to-loss ratios.
@@ -266,11 +275,17 @@ From the companion notebook, [06_trend_following_map_and_machinery.ipynb](06_tre
 
 Long or flat (blue) loses in SPY's worst months and gains in its best: it holds the market. Short or flat (orange) does the opposite: insurance. Long and short at 12 months (green) is close to neutral; at 3 months (pink) it gains in the worst months, because it turns short in time.
 
-### E.2 Five trend rules, cumulative return (§7)
+### E.2 Sharpe ratio against trading frequency (§2.5)
 
-![Cumulative log return of five trend rules on 16 ETFs, 2000-2026](figures/06_02_five_rules.png)
+![Sharpe ratio before costs of five trend families across their parameters, against changes of direction per year](figures/06_03_sharpe_vs_trades.png)
 
-The three faster rules move together, the two breakout systems almost exactly; the 12-month rule follows its own path. Gross of costs, positions sized to 10% volatility per asset.
+Each line is one family run over a range of parameters, from fast (right) to slow (left). All five fall as trading frequency rises; at equal frequency they lie close together. The horizontal axis counts changes of direction per asset per year, on a log scale.
+
+### E.3 After costs (§6)
+
+![The same comparison after costs of 5 basis points per unit traded](figures/06_04_sharpe_vs_trades_net.png)
+
+The same curves after costs of 5 basis points per unit traded. The fast end of every family turns negative; the slow end barely changes.
 
 ## References
 
