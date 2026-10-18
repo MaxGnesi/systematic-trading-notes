@@ -29,7 +29,7 @@ Trend rules come from three families with distinct literatures, and they differ 
 
 The boundaries blur. Once its gains have settled, the Kalman filter is an exponential moving average (Bruder et al.; Lecture 4), so its level and slope are linear; only its uncertainty and surprises are model-based. Breakouts and stops share one building block, the running high: a breakout acts at it, a chandelier stop at a fixed distance below it.
 
-Each family can also be applied in two ways: to an asset against its own past (time series), or to assets ranked against each other (cross-sectional; Jegadeesh and Titman, 1993). Goyal and Jegadeesh (2018) find that the difference lies mainly in net exposure. This lecture is about time-series systems; cross-sectional rules come with the portfolio in Lecture 9. Some tools do not produce a signal but act on one, such as filters on trend strength or volatility, or entries on pullbacks; Lecture 8 treats these modifiers.
+Each family can also be applied in two ways: to an asset against its own past (time series), or to assets ranked against each other (cross-sectional; Jegadeesh and Titman, 1993). Goyal and Jegadeesh (2018) find that the difference lies mainly in net exposure. This lecture is about time-series systems; cross-sectional rules come with the portfolio in Lecture 10. Some tools do not produce a signal but act on one, such as filters on trend strength or volatility, or entries on pullbacks; Lecture 8 treats these modifiers.
 
 One model per family is described in the appendix, as a model card: its rules, sensible parameters, what it captures and where it fails.
 
@@ -103,7 +103,8 @@ This is a first look, kept deliberately simple. Which point on these curves to c
 | One model per family: rules, parameters, what it captures, where it fails | Appendix: model cards |
 | Comparing trend systems fairly | Lecture 7 |
 | Filters and overlays, regime models, pullback entries | Lecture 8 |
-| Cross-sectional rules and the trend portfolio | Lecture 9 |
+| Sizing: per trade, per asset, over time, after losses, by edge | Lecture 9 |
+| Cross-sectional rules and the trend portfolio | Lecture 10 |
 | Trends on bars cut by price (point-and-figure, Renko) | Part III |
 | Machine learning | After Part V, once honest testing is in place |
 
@@ -161,7 +162,7 @@ A forecast becomes a position by sizing it to a target risk:
 | $`\hat\sigma_t`$ | The asset's volatility, estimated with data up to day $`t`$ only: any estimator from Lectures 3 and 4 (a rolling standard deviation, a range estimator, the Kalman filter on log ranges); here an exponential average with a 60-day span |
 | position | The exposure as a multiple of the capital assigned to the asset: 0.5 means half the capital, 2 means twice |
 
-Sizing by volatility makes each asset contribute similar risk: without it, a portfolio of bonds and oil is a portfolio of oil.
+Sizing by volatility makes each asset contribute similar risk: without it, a portfolio of bonds and oil is a portfolio of oil. It is one of several ways of sizing; Lecture 9 compares the others.
 
 ### 5.2 What volatility scaling adds
 

@@ -50,7 +50,9 @@ Strategy returns are noisy, fat-tailed and serially dependent. Before reading a 
 | Block-bootstrap bands | Resample blocks of strategy returns, as in Lecture 3, §10, and redraw each curve many times | Whether the gaps between curves exceed what noise alone produces |
 | Test of a Sharpe-ratio difference | Jobson and Korkie (1981), corrected by Memmel (2003), assumes normal returns; Ledoit and Wolf (2008) use a bootstrap that allows fat tails and dependence | Whether two specific systems differ |
 | Tests across the whole grid | White's (2000) reality check; Hansen's (2005) test for superior predictive ability; the stepwise procedure of Romano and Wolf (2005) | Whether any system in the grid truly beats a benchmark, given everything that was tried |
-| Probability of backtest overfitting (Bailey, Borwein, López de Prado and Zhu, 2017) | Split the history many ways; record how often the best system in one half ranks poorly in the other | How much choosing the best point overfits |
+| Probability of backtest overfitting (Bailey, Borwein, López de Prado and Zhu, 2017) | Split the history into many combinations of sub-periods; record how often the best system in one combination ranks poorly in its complement | How much choosing the best point overfits |
+
+**Splitting history is not neutral.** Different periods are different macro regimes: a system chosen in a decade of falling rates and tested in a decade of zero rates is compared across regimes, not on skill. Three things reduce the problem. Using many combinations of sub-periods, as the probability of backtest overfitting does, mixes regimes on both sides of each split. Splitting the **assets** instead of the history, choosing on half the markets and testing on the other half over the same period, holds the regime fixed. And splitting by regime explicitly, for example zero-rate months against the rest (Lecture 5, §3.5), turns the problem into a question.
 
 *To measure:* bootstrap bands on the curves of Lecture 6; the Ledoit–Wolf test for the closest pairs of families at equal speed; the probability of backtest overfitting for choosing the best parameter in each family.
 
@@ -88,7 +90,7 @@ Comparisons are understood visually before they are tested. Each question gets a
 | Does it add anything? (§3) | Heat map of correlations between families at matched speeds | Which families are near copies and which are different |
 | Does it add anything? (§3) | Breakeven cost against speed, one curve per family | Where each family's edge is eaten by costs |
 | Is it real? (§4) | The performance curves with block-bootstrap bands | Whether the gaps between curves lie outside the noise |
-| Is it real? (§4) | Rank of each parameter in one half of the history against its rank in the other | Whether the best in-sample choice stays good out of sample, the picture behind the probability of backtest overfitting |
+| Is it real? (§4) | Rank of each parameter on half of the assets against its rank on the other half, over the same period | Whether the best choice stays good in markets it was not chosen on, with the regime held fixed |
 | Will it last? (§5) | Median against peak performance per family, side by side | How much of each family's best result is selection |
 | Will it last? (§5) | Scatter of Sharpe ratio against skewness or drawdown, one point per system, with the systems no other beats marked | The trade-offs a single number hides |
 
