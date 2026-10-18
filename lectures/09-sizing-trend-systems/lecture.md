@@ -16,7 +16,7 @@ Sizing methods answer six different questions. For each, the table says how it w
 | **How much total risk now?** Sizing over time | Every day, measure the recent volatility of the whole strategy, not of each asset, and scale every position by the same multiplier: down when the strategy has been turbulent, up when it has been calm. Inverse variance cuts harder than inverse volatility: twice the volatility means a quarter of the exposure, not half | Volatility-managed portfolios (Moreira and Muir, 2017); risk-managed momentum (Barroso and Santa-Clara, 2015; Daniel and Moskowitz, 2016); volatility targeting helps mainly in risk assets but cuts extreme returns everywhere (Harvey et al., 2018); gains weaken out of sample and after costs (DeMiguel, Martín-Utrera and Uppal, 2024) |
 | **How much to trade?** Partial trading | Every day, compute the target position as usual, but trade only a fixed fraction of the gap between the current position and the target. With a fraction of a quarter, a position of 0.2 facing a target of 0.5 moves to 0.275 today, then closes a quarter of the remaining gap tomorrow, and so on. Small, noisy changes in the target are mostly never traded | With transaction costs, the optimal policy is to "aim in front of the target" and "trade partially toward the current aim" (Gârleanu and Pedersen, 2013) |
 | **How much after losses?** Drawdown control | Fix a floor at a fraction of the highest wealth reached, for example 80% of the peak, and keep exposure proportional to the cushion above it. At a new peak the strategy runs in full; after a 10% loss half the cushion is gone and exposure halves; near the floor exposure goes to zero, and it rebuilds as wealth recovers | Grossman and Zhou (1993) derive this as optimal under a drawdown constraint |
-| **Where to stop?** Stop-loss rules | Exit to cash when the loss over a recent window exceeds a threshold, and re-enter after a recovery. A stop is itself a trend rule on the strategy's own returns: it pays only if losses tend to continue | Under a random walk, stops always lower expected return; with momentum they can add value (Kaminski and Lo, 2014) |
+| **Where to stop?** Stop-loss rules | Exit to cash when the loss over a recent window exceeds a threshold, and re-enter after a recovery. A stop is itself a trend rule on the strategy's own returns: it pays only if losses tend to continue. On a trend system, which already exits on its signal, an extra stop mainly changes its speed | Under a random walk, stops always lower expected return; with momentum they can add value (Kaminski and Lo, 2014) |
 | **How much on a strong signal?** Conviction | Make the position proportional to the forecast rather than to its sign: a forecast of 20 holds twice the position of a forecast of 10, with a cap so that no single reading dominates | Continuous signals scaled by the strength of the trend (Baltas and Kosowski); forecasts scaled to an average absolute value of 10, capped at ±20 (Carver, 2015) |
 | **How much per trade, and given the edge?** Stop distance; Kelly | Stop distance: choose the loss you accept if the stop is hit, say 1% of capital, and divide by the distance to the stop: with a stop 6 points away, risk of USD 10,000 buys 1,667 shares. Kelly: leverage equal to expected excess return over variance | The Turtles' sizing by ATR (Faith, 2007); growth-optimal leverage (Kelly, 1956) |
 
@@ -99,6 +99,29 @@ The methods of §4 decide the relative size of positions; the methods here decid
 - **Volatility management changes the returns most, and is the most fragile.** It cut exposure to 0.38 of normal in late 2008 and gained a high Sharpe ratio and positive skewness here; the literature reports that such gains weaken out of sample and after costs.
 - **Drawdown control changes the tails.** It cut the worst drawdown from 13.6% to 11.1% at the cost of Sharpe ratio: a trend system recovers through a few large gains (Lecture 5, §2.4), and cutting exposure after losses misses part of them.
 
+### Sizing on the strategy's own performance: contrarian or momentum?
+
+A related family of rules sizes the strategy by its own recent results, measured against what is expected of it.
+
+**How it works.** Each evening, compute the strategy's Sharpe ratio over the past year and compare it with an expected Sharpe ratio, for example the long-run estimate or a round 1. Then:
+
+| Rule | Multiplier | Idea |
+|---|---|---|
+| Contrarian | 1 + k × (expected − rolling Sharpe ratio) | The edge is stable and recent performance is mostly noise: add after a poor year, as when an allocator rebalances back to a risk budget |
+| Momentum, or equity-curve trading | 1 + k × (rolling Sharpe ratio − expected) | Performance persists: cut after a poor year, as when a risk manager reduces a strategy in drawdown; drawdown control is a cousin |
+
+**Table 5.2. Sizing on the rolling 1-year Sharpe ratio** (base at 10% volatility, multipliers between 0.25 and 2, same overall volatility; notebook §4.2)
+
+| Rule | Sharpe ratio | Maximum drawdown |
+|---|---|---|
+| Constant size | 0.56 | −24.7% |
+| Contrarian, k = 0.25 to 0.5 | 0.63 to 0.68 | −27.2% to −28.6% |
+| Momentum, k = 0.25 to 0.5 | 0.35 to 0.47 | −23.6% to −24.0% |
+
+On this strategy the contrarian rule raised the Sharpe ratio at the cost of deeper drawdowns, and the momentum rule lowered it, consistent with drawdown control above. The reason is that performance mean-reverted: the rolling 1-year Sharpe ratio correlated −0.35 with the next year's return. The evidence is thin, for a structural reason. For independent returns, the standard error of a Sharpe ratio estimated over $`T`$ years is about $`\sqrt{(1 + \text{SR}^2/2)/T}`$ (Lo, 2002), roughly 1 for a single year; here the rolling 1-year Sharpe ratio had a standard deviation of 0.88, as large as the edge itself, and the correlation rests on 26 independent years. Both rules are bets on the predictability of performance, and that predictability is weak and must be tested for each strategy.
+
+**Watch out for** overlays that change the system's speed. A trend system already has a stop built in: its signal reverses. An extra stop, or an equity-curve rule, is itself a trend rule on the system's returns, and it changes the system's trading frequency and average holding period. Before crediting the overlay, compare it with the same system at another parameter, at equal speed (Lecture 6, §2.3; Lecture 7, §2). If the overlay helps, the original speed may simply have been wrong.
+
 ## 6. How much to trade
 
 The target position is recomputed every day; the question is how much of the gap to close.
@@ -140,6 +163,7 @@ This is the method with the most practical value in the lecture, and the one the
 | Total risk over time | The returns and the leverage | Leverage that peaks just before correlations rise; gains that fail out of sample |
 | How much to trade | The costs | Trading every day in full when partial trading would keep the signal at a fraction of the cost |
 | Drawdown control | The tails | Cutting exposure before the large gains that end a drawdown |
+| Overlays on own performance: extra stops, equity-curve rules | The speed and the holding period | Crediting the overlay for what a different parameter would have done |
 
 ## 9. Summary, exercises and reading
 
@@ -154,6 +178,7 @@ This is the method with the most practical value in the lecture, and the one the
 
 - [ ] Combine partial trading (λ = 0.1) with drawdown control. Do the cost savings and the shallower drawdowns add up? (notebook §4–§5)
 - [ ] Repeat Table 6.1 for λ between 0.02 and 1 and plot the Sharpe ratio after 20 basis points against turnover. Where is the best λ, and how flat is the curve around it? (notebook §5)
+- [ ] Add a stop-loss overlay to TSMOM-12, then find the TSMOM lookback with the same turnover. Does the overlay beat the plain rule at equal speed? (notebook §5)
 - [ ] Set the drawdown limit to 10% and to 30%. How do the Sharpe ratio and the worst drawdown move? (notebook §4)
 - [ ] Test conviction directly: sort days by the size of the EWMAC forecast and compare the next day's absolute return in each group. (notebook §3.3)
 
@@ -185,5 +210,6 @@ Top: the portfolio target (blue) runs the book at about twice its base size; the
 - Kaminski, K. and Lo, A. (2014). When do stop-loss rules stop losses? *Journal of Financial Markets* 18, 234–254. — when stops add value (§1).
 - Kelly, J.L. (1956). A new interpretation of information rate. *Bell System Technical Journal* 35(4), 917–926. — growth-optimal sizing, as a ceiling (§7).
 - Kim, A., Tse, Y. and Wald, J. (2016). Time series momentum and volatility scaling. *Journal of Financial Markets* 30, 103–124. — how much of the result comes from volatility scaling (§1).
+- Lo, A. (2002). The statistics of Sharpe ratios. *Financial Analysts Journal* 58(4), 36–52. — the standard error of a Sharpe ratio (§5).
 - Moreira, A. and Muir, T. (2017). Volatility-managed portfolios. *Journal of Finance* 72(4), 1611–1644. — scaling exposure by inverse variance (§1, §5).
 - Moskowitz, T., Ooi, Y.H. and Pedersen, L.H. (2012). Time series momentum. *Journal of Financial Economics* 104(2), 228–250. — sizing each position to an ex ante volatility of 40% (§1).
