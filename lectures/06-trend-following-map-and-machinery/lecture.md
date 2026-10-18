@@ -114,7 +114,7 @@ Recent changes count most. The 12-month return sign weights the last 252 returns
 - **At equal frequency, the families are close.** The gaps between families, about 0.1–0.3, are far smaller than the spread across parameters within any one of them.
 - **How trading frequency is counted is itself a choice.** EWMAC adjusts its position continuously between changes of sign, and a Donchian system passes through flat; a change of direction is not the same trade in every family.
 
-This is a first look, kept deliberately simple. Which point on these curves to choose, and whether the gaps between families are real, are questions for the lecture on measuring performance and for Part V: picking the best point on a curve is the multiple-testing problem of Lecture 5, §4.3.
+This is a first look, kept deliberately simple. Which point on these curves to choose, and whether the gaps between families are real, are questions for [Lecture 9, Comparing Trend Systems](../09-comparing-trend-systems/lecture.md) and for Part V: picking the best point on a curve is the multiple-testing problem of Lecture 5, §4.3.
 
 ### 2.6 Where each part of the map is taught
 
