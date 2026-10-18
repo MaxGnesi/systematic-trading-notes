@@ -101,6 +101,16 @@ The choice between counting idle capital or not resolves into two steps. This fr
 
 The second row is how switching across strategies becomes practical: capital does not move between systems, only risk does. A portfolio volatility target reallocates risk every day, so the budget of a system that goes flat flows to those that are active, without pulling cash from anyone.
 
+The set-up, and above all the instrument, decides which row applies:
+
+| Instrument | How positions are funded | What is usually scarce |
+|---|---|---|
+| Futures | Margin of a fraction of the notional; the rest of the cash is collateral earning the cash rate | Risk budget |
+| ETFs and cash equities | Fully funded; leverage means borrowing, and shorting has its own costs | Cash |
+| Swaps and CFDs | Margin, as for futures, with financing built into the price | Risk budget, at a financing cost |
+
+The 16-ETF results of Lectures 5, 6 and 9 size every position to a volatility target. For a bond ETF with 4% volatility, a 10% target means holding about 2.5 times the capital, which requires borrowing. Those results are therefore measured as if risk, not cash, were the constraint, as a futures trader would face it; a fully funded ETF portfolio could not run them without leverage.
+
 **Step 2: decide by marginal contribution.** Whatever the unit, the question that matters for allocation is not how good a system is on its own but what it adds to the systems already run. Take the system's returns over the whole period, zero or the cash rate when it is flat, and regress them on the returns of the existing portfolio, as in §3. The intercept is what the system adds; its idle time is accounted for automatically. A system that is often flat but strong and uncorrelated when active shows a positive intercept; one whose Sharpe ratio while invested only looks good shows none.
 
 Marginal contribution is the criterion that runs through the rest of Part II: it decides which systems to combine, how much risk each receives, and whether a filter or a new market earns its place (Lectures 8 to 10).
