@@ -427,7 +427,34 @@ Volatility clusters strongly everywhere, the best-documented property of returns
 
 The highest-kurtosis quarters are revealing. For SPY they are **not** the crises: the top quarter ends on 5 February 2018 (a 4.3% fall, with no other day in the quarter beyond 2.2%), and the second contains 27 February 2007. In a prolonged crisis volatility is high throughout, so no single day stands out. AGG's top quarters, by contrast, are the 2008 and 2020 crises: in a calm bond market a few days of dislocation stand out sharply. **Rolling kurtosis measures surprise relative to recent volatility, not the level of danger.**
 
-### 10.5 Robust alternatives
+### 10.5 Extreme days come in clusters: counting them
+
+§10.4 leaves a puzzle. SPY's most fat-tailed quarters were calm ones, while the 2008 crisis barely registers. Kurtosis is not wrong; it answers a narrower question. It divides by the window's own volatility, so in a crisis, when every day is large, no single day stands out. To see crises, count the large days instead.
+
+**The measure.** An extreme day is a move beyond 3 standard deviations of all returns *before* that day, so no future data enter. The count is the number of extreme days in the same 63-bar window that kurtosis uses. Under a normal distribution 0.27% of days would qualify, about one every eighteen months.
+
+| | SPY | GLD | AGG |
+|---|---|---|---|
+| Extreme days, share of all days | 2.08% | 1.31% | 1.32% |
+| Another extreme day within 5 days, after an extreme day | 53% | 30% | 45% |
+| Another extreme day within 5 days, after any day | 7.5% | 5.6% | 4.7% |
+| Correlation of the count with kurtosis, across quarters | 0.08 | 0.25 | 0.65 |
+
+- **Extreme days arrive in clusters.** After an extreme day, the chance of another within a week is seven times the usual for SPY, five times for GLD and ten times for AGG.
+- **In equities, count and kurtosis point to different periods.** SPY's count peaks at 29 extreme days out of 63 on 2 December 2008, when kurtosis was low: its three busiest quarters, two in 2008 and one in 2020, have kurtosis of 3.4, 0.3 and 1.3. The highest-kurtosis window, ending on 1 March 2007, held a single extreme day ([chart B.8](#b8-kurtosis-against-the-count-of-extreme-days-105)).
+- **In bonds they agree.** AGG's 2008 and 2020 crises top both lists. In a calm bond market a crisis is many large days and a surprise at the same time.
+
+Each measure catches something the others miss:
+
+| Measure | Catches | Misses |
+|---|---|---|
+| Kurtosis, 63 bars | A shock that is large for the current regime: one surprise in a calm market | Crises: when every day is large, none stands out |
+| Count of extreme days, 63 bars | Crises: how many large days the window holds | Depends on the threshold and the history behind it: 3 standard deviations meant a 2.0% move in 1997 but 3.8% in 2010, so early counts run high; ignores how large each extreme day was |
+| Chance of another extreme day within five days | Clustering itself, in one number | Needs many extreme days to be reliable; a summary of the whole history, not a reading for today |
+
+Read together, kurtosis says whether today's move is unusual for the current regime, and the count says whether the regime itself is one of large moves.
+
+### 10.6 Robust alternatives
 
 Classical moments are driven by the few most extreme returns. Quantile-based measures describe the typical return instead (Kim and White, 2004):
 
@@ -457,6 +484,7 @@ One day can move classical kurtosis by eight times its typical daily variation; 
 | Order imbalance | Unitless, [−1, 1] | Yes | Rolling | 27 bars | Forgetting the tick rule gives a bar's whole volume to one side |
 | Correlation, beta | Unitless | Yes | Rolling | 63 bars, by standard error | Reading a crisis jump as a change in dependence |
 | Skewness, kurtosis | Unitless | Yes | Rolling | 63 bars, by standard error | Reading short-window values as precise; ignoring that one day dominates |
+| Count of extreme days | Days out of 63 | Yes | Rolling | 63 bars, as kurtosis | Setting the threshold on the full history, which uses future data |
 
 Implementations of Wilder's smoothing differ in how the first value is seeded: Wilder used the simple average of the first $`n`$ values, the `trading_models` package starts from the first value. The two converge after a few dozen bars.
 
@@ -478,7 +506,7 @@ atr_wilder = tr.ewm(alpha=1 / 14, adjust=False).mean()  # Wilder's smoothing, se
 2. **From range to volatility.** $`\mathbb{E}[H - L] = \sigma\sqrt{8/\pi}`$ follows from the reflection principle. Range estimators are efficient but session-only; Yang–Zhang adds the overnight gap. Discrete sampling biases every range down by about $`0.73/\sqrt{n}`$; bid-ask bounce biases it up.
 3. **Memory.** Wilder's $`n`$ equals a $`2n-1`$ bar window; statistics read together should be memory-matched.
 4. **Precision.** Each higher moment needs more data. With 5 points, skewness and kurtosis cannot exceed 1.5 and 0.25; adjusted estimators ($`G_1`$, $`G_2`$) correct small-sample bias.
-5. **Signal or noise.** Judge rolling statistics against a **block**-bootstrap band. Fat tails come largely from volatility changing over time (mixture of distributions). Volatility clusters strongly; kurtosis barely does, and it measures surprise, not danger.
+5. **Signal or noise.** Judge rolling statistics against a **block**-bootstrap band. Fat tails come largely from volatility changing over time (mixture of distributions). Volatility clusters strongly; kurtosis barely does, and it measures surprise, not danger. Extreme days cluster: counting them shows the crises that kurtosis misses.
 6. **Different questions.** ADX near 95 through a reversal, OBV never giving back a round trip, and correlation falling while beta rises are all correct answers to narrow questions, not bugs.
 
 ### 12.2 Exercises
@@ -489,6 +517,7 @@ atr_wilder = tr.ewm(alpha=1 / 14, adjust=False).mean()  # Wilder's smoothing, se
 - [ ] Construct a low for toy bar 8 that makes $`-\mathrm{DM}_8`$ exceed $`+\mathrm{DM}_7`$. What price action does that require?
 - [ ] Prove that for $`n`$ points the sample skewness cannot exceed $`(n-2)/\sqrt{n-1}`$. Which configuration attains it?
 - [ ] Re-run the bootstrap of §10.2 with block lengths of 5, 21 and 63 days. How does the kurtosis band change, and why?
+- [ ] Recompute the count of §10.5 with the threshold set at 3 standard deviations of the trailing 252 days instead of all earlier returns. Which crises disappear from the count, and why does it start to behave like kurtosis?
 - [ ] Construct a 5-bar window of two series where correlation and beta move in the **same** direction. What must be true of their relative move sizes?
 - [ ] Show that Wilder's smoothing with period $`n`$ has average age $`n-1`$, and hence that ATR(14) matches a 27-bar window. Then recompute the toy ATR in §3.2 with a plain 5-bar mean of the true ranges instead: how do the peak and the decay change?
 
@@ -567,3 +596,9 @@ OBV's scale depends on each asset's volume, so its levels cannot be compared; th
 ![SPY ATR(14) as a percent of price, February to June 2020, from a plain 14-bar mean and from Wilder's smoothing of the same true ranges](figures/12_07_atr_two_ways.png)
 
 Same true ranges, two smoothings. The plain mean reacts to the spike faster and drops back faster; Wilder's version peaks lower and stays above the plain mean for about two months.
+
+### B.8 Kurtosis against the count of extreme days (§10.5)
+
+![SPY rolling 63-bar excess kurtosis above, and the number of extreme days in the same window below, 1994-2026](figures/12_08_extremes_vs_kurtosis.png)
+
+SPY, 63-bar windows. Kurtosis (top) spikes in 2007, 2018 and 2025, calm periods interrupted by one large fall. The count of extreme days (bottom) spikes in 1998, 2002, 2008 and 2020, the crises, when kurtosis stays low. The early counts run high because the threshold then rests on the calm years 1993–1996.
