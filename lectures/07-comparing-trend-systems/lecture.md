@@ -79,9 +79,11 @@ A looks better while it trades; over the whole period it has the lower Sharpe ra
 
 | Situation | What matters | Which system |
 |---|---|---|
-| Idle capital can be redeployed, to other strategies or by scaling A up when it trades | Sharpe ratio while invested, and how well A's active periods fit with the rest | A can be the better component |
+| Idle capital can be redeployed, to other strategies or by scaling A up when it trades | Sharpe ratio while invested, and how well A's active periods fit with the rest | A can be the better component, but only if switching works in practice |
 | Capital is committed and leverage is limited | Return per unit of capital and Sharpe ratio over the whole period | B, despite its lower Sharpe ratio while invested |
 | Leverage is available without limit | Sharpe ratio over the whole period, since any Sharpe ratio can be scaled to any return | B here, unless A's idle capital is reused |
+
+Switching allocations is rarely easy. When A becomes active, capital must be pulled from other strategies at short notice, which disturbs their positions, costs money to trade, and runs into margin, mandate and liquidity limits; when A goes flat, the capital must find a use again. In practice the first row of the table is the exception, and the second is the common case.
 
 There is no single right number. Report time in the market, the Sharpe ratio both while invested and over the whole period, and the return per unit of capital, and decide with the capital and leverage constraints in view. Capital that one system leaves idle can be used by another, which turns the comparison into a portfolio question (Lecture 10); how much leverage to run is a sizing question (Lecture 9).
 
