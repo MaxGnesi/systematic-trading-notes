@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 18, 2026 · Max Gnesi*
 
-Before building a trend system, it pays to know what a trend system earns. This lecture splits trend profits into two sources, the drift of a market and the persistence of its returns, shows that the second is concentrated in a few episodes, and turns both into questions to ask about any market before trading it. Data: 16 liquid ETFs across equities, bonds, commodities and real estate. Companion notebook: [05_what_trend_following_captures.ipynb](05_what_trend_following_captures.ipynb).
+Before building a trend system, it pays to know what a trend system earns. This lecture splits trend profits into two sources, the drift of a market and the persistence of its returns, shows that the second is concentrated in a few episodes, turns both into questions to ask about any market before trading it, and ends with the choice of what to capture. Data: 16 liquid ETFs across equities, bonds, commodities and real estate. Companion notebook: [05_what_trend_following_captures.ipynb](05_what_trend_following_captures.ipynb).
 
 ## 1. The question of this lecture
 
@@ -135,22 +135,120 @@ Trend following and mean reversion use the same estimate, the past return, and a
 
 These are tendencies, not rules that every market obeys. Our own weekly data show how much they vary (Table 2.4, notebook §2.4): after a large weekly move, the next week had the same sign 46% of the time at the median, a mild tendency to reverse, but 63% of the time for oil (USO) and 56% for silver (SLV), where large moves tended to continue.
 
-The patterns therefore inform the design; they do not make it. The **designer decides**, and the decision rests on two questions:
-
-| Question | Trend | Reversion |
-|---|---|---|
-| What do we want to capture? | The drift, and persistence in episodes: cascades, rebalancing waves, slow diffusion of news (§2.1–§2.4) | The overshoot after shocks and the pull back towards a level |
-| Which risk profile do we accept? | Many small losses in choppy markets, a few large gains when a move persists: the profile of a long option, as Fung and Hsieh (2001) and Moskowitz, Ooi and Pedersen (2012) document | Many small gains while prices oscillate, occasional large losses when a move persists: the mirror image, the profile of a short option |
-
-Only then comes the check that the chosen behaviour exists in the market at hand, and why (§3). The same tools serve either choice: a band around a moving average can be traded as a breakout or as a fade; a breakout that fails is a reversion signal; the Kalman filter that tracks a trend in Lecture 4 can track the spread of a pair in mean-reversion trading. Some tools suit one side better: breakouts are built for persistence, oscillators that measure stretch for reversion. But the choice of side follows from what the designer wants to capture and which risks to carry, not from the tool. Lecture 6 takes this further: within trend following itself, design choices such as direction and speed decide which part of the trend profit a system captures.
+Which behaviour to exploit is therefore a choice, not a fact of the market. It is made after understanding the market (§3) and deciding what to capture (§4).
 
 **Watch out for** reading the absence of autocorrelation as the absence of trends. Persistence that appears in episodes, at inflection points and in cascades, is invisible to an average over all months and is exactly what a trend rule harvests. Equally, do not credit timing with what is drift: in a rising market, a rule that is mostly long earns the drift whatever its timing.
 
-## 3. Before any system: five questions about a market
+## 3. Understanding the market first: five questions
 
-*To follow:* is there a drift; which frictions create persistence; how fast cascades can happen and how liquid the market is; how mature the market is; how much intervention there is. For each: why it matters, how to check it on data, and what the literature documents.
+Before deciding what to capture, understand the market. Five questions do most of the work. For each, the table below says why it matters for a trend rule; the subsections measure it on the 16 ETFs and say what the literature documents. Where only practitioner experience exists, the text says so.
 
-## 4. The evidence, and who uses trend
+| Question | Why it matters for a trend rule |
+|---|---|
+| 1. Is there a drift? | It feeds the long side, and it is what the short side pays (§2.2–§2.3) |
+| 2. Which frictions create persistence? | They feed the timing part, which is earned in episodes (§2.4) |
+| 3. How fast can it fall, and how liquid is it? | A rule on daily bars cannot act inside a gap; stops slip when liquidity disappears |
+| 4. How mature is the market, and is the edge decaying? | Patterns that are learned and crowded tend to fade |
+| 5. How much intervention is there? | Policy can cut moves short, or create them |
+
+### 3.1 Is there a drift?
+
+**Table 3.1. Average annual return and how precisely it is known** (log returns; standard error = annual volatility / √years; notebook §3.1)
+
+| ETF | Years | Drift (% a year) | Standard error | t-statistic |
+|---|---|---|---|---|
+| SPY | 33.7 | 10.3 | 2.6 | 4.0 |
+| AGG | 23.0 | 2.8 | 0.9 | 3.1 |
+| GLD | 21.8 | 9.8 | 3.7 | 2.7 |
+| SLV | 20.4 | 6.7 | 7.2 | 0.9 |
+| USO | 20.4 | −6.6 | 8.9 | −0.7 |
+| **Median of 16** | 24.6 | 6.9 | 4.2 | 2.0 |
+
+Drift is the least precisely measured quantity in this lecture. After a quarter of a century, the median t-statistic is about 2, and for silver, gold miners and oil the drift cannot be told apart from zero. Whether a market has a drift therefore has to come from economics as much as from data: equities and bonds pay a premium for bearing risk; a commodity has no such premium of its own, and an oil fund that rolls futures can drift downwards for reasons unrelated to the price of oil.
+
+### 3.2 Which frictions create persistence?
+
+The timing part of §2 is earned in episodes, and the episodes have causes. The question for a given market is which of them operate there:
+
+| Friction | Where it is strong |
+|---|---|
+| Forced selling: margin calls, redemptions, liquidations | Markets with high leverage or fragile funding (§2.4: Coval and Stafford; Brunnermeier and Pedersen) |
+| Hedging flows | Markets with large option positions or leveraged products (§2.4: Baltussen et al.) |
+| Slow diffusion of information | Markets where news is complex or investors are dispersed (§2.4: Hong and Stein) |
+| Rebalancing waves | Markets held by large investors who rebalance on rules or schedules (practitioner experience) |
+
+On the 16 ETFs, the timing part ranges from −1.4% a year (silver) to 7.4% (oil), and volatility after a downtrend is about 60% higher than after an uptrend (Tables 2.1–2.2): the frictions differ by market, and they show up when markets are stressed.
+
+### 3.3 How fast can it fall, and how liquid is it?
+
+**Table 3.2. Worst moves and what happens while the market is closed** (daily data; worst day in units of the trailing 252-day volatility; overnight share = variance of the open-to-previous-close gap as a share of daily variance; notebook §3.3)
+
+| ETF | Worst day | Worst overnight gap | Worst day, in standard deviations | Days beyond 5 sd, per 1,000 | Overnight share of variance |
+|---|---|---|---|---|---|
+| SPY | −11.6% (16 Mar 2020) | −11.0% | −9.2 | 2.8 | 33% |
+| EFA | −11.8% (29 Sep 2008) | −12.7% | −11.2 | 2.6 | 58% |
+| USO | −29.2% (9 Mar 2020) | −24.7% | −14.0 | 1.8 | 50% |
+| SLV | −33.6% (30 Jan 2026) | −16.7% | −14.6 | 3.3 | 56% |
+| AGG | −7.1% (10 Oct 2008) | −3.9% | −17.1 | 2.0 | 44% |
+| **Median of 16** | −14.6% | −11.9% | −9.8 | 2.2 | 36% |
+
+- **The worst moves arrive when the market is closed.** The median worst overnight gap, −11.9%, is close to the median worst day, −14.6%. A rule on daily bars, or a stop order, cannot act inside a gap.
+- **Extremes are far more common than a normal distribution allows.** Days beyond 5 standard deviations occur about twice in every 1,000 days; a normal distribution expects one in about 1.7 million.
+- **Where the underlying trades around the clock, much of the risk is overnight.** For international equities, gold, silver and oil, more than half the variance arrives while the US fund is closed, as Lecture 3 found for GLD.
+
+Cascades can be fast. On 6 May 2010, US equity prices fell and recovered within minutes, a sequence reconstructed by the staffs of the CFTC and SEC (2010). On 10–11 October 2025, more than USD 19 billion of leveraged crypto positions were liquidated, about 90% of them long, as Bitcoin fell 14% from its high within hours (industry reports, CoinGecko and CoinShares). Flash crashes can happen in any market; how far they go depends on liquidity and leverage. A trend system has to be built for the gaps of its market, not for the average day.
+
+### 3.4 How mature is the market, and is the edge decaying?
+
+**Table 3.3. The 12-month rule by period** (% a year; median across the ETFs available in each period; notebook §3.4)
+
+| Period | ETFs | Trend return | Drift part | Timing part | Long side | Short side |
+|---|---|---|---|---|---|---|
+| 2000–2009 | 11 | 9.1 | 1.3 | **9.2** | 5.2 | 3.3 |
+| 2010–2019 | 16 | 2.1 | 2.3 | **−2.5** | 3.2 | −1.9 |
+| 2020–2026 | 16 | 6.0 | 4.1 | **−0.3** | 9.7 | −3.1 |
+
+On these ETFs, the timing part was large in the 2000s and has been negative since; what the rule earned after 2010 came from drift, through the long side. The panel changes over time, from 11 ETFs to 16, so the comparison is indicative.
+
+The literature documents such decay. In foreign exchange, trend rules earned genuine excess returns in the 1970s and 1980s, after the end of fixed exchange rates, and had lost them by the early 1990s (Neely, Weller and Ulrich, 2009), a pattern consistent with Lo's (2004) adaptive markets hypothesis: opportunities attract traders, and traders erode them. In US equities, the returns of 97 published predictors fell by 58% after publication (McLean and Pontiff, 2016). New markets, where prices are still being discovered, show strong time-series momentum, as cryptocurrencies did (Liu and Tsyvinski, 2021). Practitioners add that novel markets tend to trend more than mature ones; the evidence above is consistent with that view.
+
+### 3.5 How much intervention is there?
+
+**Table 3.4. Zero rates against the rest** (months with the 3-month US Treasury bill below 0.25%, roughly December 2008 to late 2015 and March 2020 to early 2022; 2000–2026; % a year, median across ETFs; notebook §3.5)
+
+| Months | Number (SPY) | Trend return | Drift part | Timing part | Long side | Short side |
+|---|---|---|---|---|---|---|
+| Zero rates | 108 | 3.3 | 2.9 | **−2.7** | 7.4 | **−4.1** |
+| Other months | 213 | 7.2 | 1.2 | **6.2** | 5.0 | **2.1** |
+
+When policy rates were at zero, the timing part was negative and the short side lost; in other months both were positive. This is consistent with a view common among practitioners: when central banks lean against every sell-off, downtrends are cut short, and the short side of a trend system suffers.
+
+The evidence is not conclusive. Zero rates coincide with the 2010s (Table 3.3), so the table cannot separate intervention from other changes of that decade. Baltas and Kosowski attribute the weaker trend-following returns after 2008 to higher correlations across markets. And intervention can also create trends: LeBaron (1999) found that most of the profits of trend rules in foreign exchange came on days when the Federal Reserve intervened, when policy leaned against a move that then continued.
+
+**Watch out for** treating a measured pattern as permanent. Every table in this section describes a history; before relying on a pattern, ask whether its cause is still there.
+
+## 4. What to capture: choose what should last
+
+Understanding the market says what has been available. Choosing what to capture is a judgement about what will remain: which sources are stable, which will decay least, and how the market is likely to behave over the medium to long term, given crowding, investor behaviour and the actions of policymakers.
+
+| Criterion | Question to ask | Example from §2–§3 |
+|---|---|---|
+| A durable mechanism | Is there a reason for the pattern that will outlast its discovery? | Drift in equities is compensation for risk; forced selling and hedging flows follow from leverage and option positions that do not disappear when the pattern is published |
+| Decay and crowding | How widely is it known and traded? | FX trend profits faded by the early 1990s; published equity predictors lost 58%; the timing part of our trend rule turned negative after 2009 |
+| The secular regime | How will policy, market structure and investor behaviour evolve? | Zero rates coincided with a losing short side; markets that trade around the clock carry more of their risk overnight |
+
+The choice between trend and reversion, and within trend between drift and timing, follows from this judgement and from the risk profile the designer is willing to carry:
+
+| Question | Trend | Reversion |
+|---|---|---|
+| What do we want to capture? | The drift, and persistence in episodes: cascades, rebalancing waves, slow diffusion of news (§2) | The overshoot after shocks and the pull back towards a level |
+| Which risk profile do we accept? | Many small losses in choppy markets, a few large gains when a move persists: the profile of a long option, as Fung and Hsieh (2001) and Moskowitz, Ooi and Pedersen (2012) document | Many small gains while prices oscillate, occasional large losses when a move persists: the mirror image, the profile of a short option |
+
+The same tools serve either choice: a band around a moving average can be traded as a breakout or as a fade; a breakout that fails is a reversion signal; the Kalman filter that tracks a trend in Lecture 4 can track the spread of a pair in mean-reversion trading. Some tools suit one side better, breakouts for persistence and stretch oscillators for reversion, but the choice of side follows from what the designer wants to capture and which risks to carry, not from the tool. Lecture 6 takes the next step: within trend following, design choices such as direction and speed decide which part of the trend profit a system captures.
+
+**Watch out for** choosing what to capture from the backtest alone. The sources that looked best in the past are often the ones most exposed to decay and crowding; the mechanism, not the history, is the better guide to what will last.
+
+## 5. The evidence, and who uses trend
 
 *To follow:* the long-run record and its caveats; CTAs and their history; trend in other hedge-fund strategies; newer forms.
 
@@ -172,15 +270,22 @@ The timing contribution of each tenth of months, from the calmest to the largest
 
 ## References (so far)
 
+- Baltas, N. and Kosowski, R. Demystifying time-series momentum strategies: volatility estimators, trading rules and pairwise correlations. Working paper, SSRN 2140091. — correlations and trend returns after 2008 (§3.5).
 - Baltussen, G., Da, Z., Lammers, S. and Martens, M. (2021). Hedging demand and market intraday momentum. *Journal of Financial Economics* 142(1), 377–403. — hedging flows (§2.4).
 - Brunnermeier, M. and Pedersen, L.H. (2009). Market liquidity and funding liquidity. *Review of Financial Studies* 22(6), 2201–2238. — liquidity spirals (§2.4).
 - Bruder, B., Dao, T.-L., Richard, J.-C. and Roncalli, T. (2011). *Trend Filtering Methods for Momentum Strategies.* Lyxor White Paper. — trend following and mean reversion from one estimate (§2.5).
+- CFTC and SEC (2010). *Findings Regarding the Market Events of May 6, 2010.* Report of the staffs of the CFTC and SEC, 30 September 2010. — the flash crash (§3.3).
 - Coval, J. and Stafford, E. (2007). Asset fire sales (and purchases) in equity markets. *Journal of Financial Economics* 86(2), 479–512. — forced selling and its reversal (§2.4).
 - De Bondt, W. and Thaler, R. (1985). Does the stock market overreact? *Journal of Finance* 40(3), 793–805. — long-term reversal (§2.5).
-- Fung, W. and Hsieh, D. (2001). The risk in hedge fund strategies: theory and evidence from trend followers. *Review of Financial Studies* 14(2), 313–341. — trend following as a long-option payoff (§2.5).
+- Fung, W. and Hsieh, D. (2001). The risk in hedge fund strategies: theory and evidence from trend followers. *Review of Financial Studies* 14(2), 313–341. — trend following as a long-option payoff (§4).
 - Hong, H. and Stein, J. (1999). A unified theory of underreaction, momentum trading, and overreaction in asset markets. *Journal of Finance* 54(6), 2143–2184. — slow diffusion (§2.4).
 - Jegadeesh, N. (1990). Evidence of predictable behavior of security returns. *Journal of Finance* 45(3), 881–898. — short-term reversal (§2.5).
 - Jegadeesh, N. and Titman, S. (1993). Returns to buying winners and selling losers: implications for stock market efficiency. *Journal of Finance* 48(1), 65–91. — medium-term continuation (§2.5).
+- LeBaron, B. (1999). Technical trading rule profitability and foreign exchange intervention. *Journal of International Economics* 49(1), 125–143. — trend profits on intervention days (§3.5).
 - Lehmann, B. (1990). Fads, martingales, and market efficiency. *Quarterly Journal of Economics* 105(1), 1–28. — short-term reversal (§2.5).
+- Liu, Y. and Tsyvinski, A. (2021). Risks and returns of cryptocurrency. *Review of Financial Studies* 34(6), 2689–2727. — time-series momentum in a new market (§3.4).
+- Lo, A. (2004). The adaptive markets hypothesis: market efficiency from an evolutionary perspective. *Journal of Portfolio Management* 30, 15–29. — opportunities that attract traders and fade (§3.4).
 - Lo, A. and MacKinlay, A.C. (1990). When are contrarian profits due to stock market overreaction? *Review of Financial Studies* 3(2), 175–205. — the decomposition of strategy profits (§2.1).
+- McLean, R.D. and Pontiff, J. (2016). Does academic research destroy stock return predictability? *Journal of Finance* 71(1), 5–32. — decay after publication (§3.4, §4).
 - Moskowitz, T., Ooi, Y.H. and Pedersen, L.H. (2012). Time series momentum. *Journal of Financial Economics* 104(2), 228–250. — the rule, the decomposition, persistence and reversal (§1, §2.1, §2.5).
+- Neely, C., Weller, P. and Ulrich, J. (2009). The adaptive markets hypothesis: evidence from the foreign exchange market. *Journal of Financial and Quantitative Analysis* 44(2), 467–488. — trend profits in FX and their decay (§3.4).
