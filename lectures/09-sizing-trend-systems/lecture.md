@@ -17,7 +17,17 @@ Lecture 6 used one way of sizing, inverse volatility per asset. There are others
 | How much after losses? | Drawdown control | Reduce exposure as the drawdown deepens (Grossman and Zhou, 1993) | §4 |
 | How much given the edge? | Kelly | Leverage proportional to expected return over variance (Kelly, 1956); mentioned for completeness | §5 |
 
-Two related questions are left to other lectures: how much in each of several correlated assets belongs to the portfolio (Lecture 10), and Kelly on bounded payoffs is treated fully in Part IV.
+**Sizing or filtering?** The two are easy to mix, so the line is drawn by the information used. Sizing decides how much using risk and cost information only: volatility, drawdown, stop distance, trading costs. A rule that decides whether to trade, or how much, using conditioning information, such as a market or macro regime, trend strength or the policy environment, is a filter, and belongs to Lecture 8. How much to hold in each of several correlated assets belongs to the portfolio (Lecture 10), and Kelly on bounded payoffs to Part IV.
+
+**What the literature does.**
+
+| Question | Literature |
+|---|---|
+| Per asset | Inverse volatility is the academic standard: Moskowitz, Ooi and Pedersen (2012) size each position to an ex ante volatility of 40%, a scale they call inconsequential; Kim, Tse and Wald (2016) show how much of the result comes from it |
+| Over time | Volatility management (Moreira and Muir, 2017) and risk-managed momentum (Barroso and Santa-Clara, 2015; Daniel and Moskowitz, 2016), with later evidence that such gains weaken out of sample and after costs (DeMiguel, Martín-Utrera and Uppal, 2024) |
+| How much to trade | With transaction costs, aim in front of the target and trade only part of the way towards it (Gârleanu and Pedersen, 2013) |
+| Stops and drawdowns | Stop-loss rules lower expected return under a random walk but can add value with momentum (Kaminski and Lo, 2014); exposure proportional to the surplus above a drawdown floor (Grossman and Zhou, 1993) |
+| Per trade | Mostly practitioner rules, such as the Turtles' sizing by ATR (Faith, 2007) |
 
 ## 2. Five formulas, by hand
 
@@ -82,7 +92,7 @@ Kelly (1956) sizing maximises the long-run growth of wealth: for a strategy with
 
 ## 6. More advanced techniques
 
-The approaches above are the building blocks. More advanced methods refine them:
+The approaches above are the building blocks. More advanced methods refine them; regime-dependent sizing is left to Lecture 8, since it conditions on information beyond risk and cost:
 
 | Technique | What it refines |
 |---|---|
@@ -90,7 +100,7 @@ The approaches above are the building blocks. More advanced methods refine them:
 | Risk budgets in expected shortfall rather than volatility | Sizing for the tail, which volatility understates in fat-tailed markets |
 | Bet sizing from a predicted probability of success | Conviction, estimated by a model rather than read from the signal's size |
 | Correlation-aware risk budgets: equal risk contribution, correlation-adjusted leverage | Inverse volatility, which ignores how assets move together (Lecture 10) |
-| Regime-dependent sizing | Sizing over time, conditioned on a regime model (Lecture 8) |
+| Partial trading towards a target (Gârleanu and Pedersen, 2013) | How much to trade each day, rather than how big the position should be: the theory behind buffering |
 
 *To follow:* each technique measured against the building blocks on the same signals, with references.
 
@@ -136,9 +146,15 @@ Top: the portfolio target (blue) runs the book at about twice its base size; the
 
 ## References
 
+- Barroso, P. and Santa-Clara, P. (2015). Momentum has its moments. *Journal of Financial Economics* 116(1), 111–120. — risk-managed momentum (§1).
+- Daniel, K. and Moskowitz, T. (2016). Momentum crashes. *Journal of Financial Economics* 122(2), 221–247. — forecastable crashes and dynamic weighting (§1).
 - DeMiguel, V., Martín-Utrera, A. and Uppal, R. (2024). A multifactor perspective on volatility-managed portfolios. *Journal of Finance.* — out-of-sample and cost evidence on volatility management (§4).
 - Faith, C. (2007). *Way of the Turtle.* McGraw-Hill. — sizing by stop distance (§1, §3.1).
+- Gârleanu, N. and Pedersen, L.H. (2013). Dynamic trading with predictable returns and transaction costs. *Journal of Finance* 68(6), 2309–2340. — how much to trade towards the target (§1, §6).
 - Grossman, S. and Zhou, Z. (1993). Optimal investment strategies for controlling drawdowns. *Mathematical Finance* 3(3), 241–276. — drawdown control (§4).
 - Harvey, C., Hoyle, E., Korgaonkar, R., Rattray, S., Sargaison, M. and Van Hemert, O. (2018). The impact of volatility targeting. *Journal of Portfolio Management* 45(1), 14–33. — where volatility targeting helps (§4).
+- Kaminski, K. and Lo, A. (2014). When do stop-loss rules stop losses? *Journal of Financial Markets* 18, 234–254. — when stops add value (§1).
+- Kim, A., Tse, Y. and Wald, J. (2016). Time series momentum and volatility scaling. *Journal of Financial Markets* 30, 103–124. — how much of the result comes from volatility scaling (§1).
 - Kelly, J.L. (1956). A new interpretation of information rate. *Bell System Technical Journal* 35(4), 917–926. — growth-optimal sizing, as a ceiling (§5).
 - Moreira, A. and Muir, T. (2017). Volatility-managed portfolios. *Journal of Finance* 72(4), 1611–1644. — scaling exposure by inverse variance (§4).
+- Moskowitz, T., Ooi, Y.H. and Pedersen, L.H. (2012). Time series momentum. *Journal of Financial Economics* 104(2), 228–250. — sizing each position to an ex ante volatility of 40% (§1).
