@@ -61,15 +61,29 @@ Compare each system's long and short trades separately. Lecture 5 found that the
 
 ### 4.3 Systems that are not always in the market
 
-Systems that can be flat, such as long-or-flat designs or breakouts waiting for a break, are invested only part of the time. Comparing them with systems that are always in the market needs care, because the basis of comparison changes the answer:
+Systems that can be flat, such as long-or-flat designs or breakouts waiting for a break, are invested only part of the time. The temptation is to drop the idle periods and compute the Sharpe ratio on the active ones only. That number is real but answers a narrow question, and it can point the wrong way when capital has to be allocated.
 
-| Basis | What it does | Bias |
+If a system is in the market a fraction $`p`$ of the time, earns excess return $`\mu`$ with volatility $`\sigma`$ while invested, and its idle capital earns the cash rate, then over the whole period:
+
+```math
+\text{Sharpe ratio} \;=\; \frac{p\,\mu}{\sqrt{p}\,\sigma} \;=\; \text{Sharpe ratio while invested} \times \sqrt{p}, \qquad \text{excess return} \;=\; p\,\mu
+```
+
+| | System A: in the market 30% of the time | System B: always in the market |
 |---|---|---|
-| Return per unit of capital | Counts idle capital as earning nothing | Penalises systems that are often flat, unless idle capital is credited with the cash rate |
-| Return while invested | Counts only the days in the market | Flatters such systems: ignores the time capital waits |
-| Equal volatility, or equal average exposure | Scales every system to the same risk | Fair on risk, but the leverage it implies may not be available |
+| Sharpe ratio while invested | 1.00 | 0.60 |
+| Sharpe ratio over the whole period | 1.00 × √0.3 = 0.55 | 0.60 |
+| Excess return per unit of capital, if both run at 10% volatility while invested | 0.3 × 10% = 3.0% | 6.0% |
 
-Report time in the market next to every performance figure, credit idle capital with the cash rate, and compare at equal risk. Capital that one system leaves idle can be used by another, which turns the comparison into a portfolio question (Lecture 10).
+A looks better while it trades; over the whole period it has the lower Sharpe ratio and half the return per unit of capital. Which system deserves the capital depends on what the idle capital can do:
+
+| Situation | What matters | Which system |
+|---|---|---|
+| Idle capital can be redeployed, to other strategies or by scaling A up when it trades | Sharpe ratio while invested, and how well A's active periods fit with the rest | A can be the better component |
+| Capital is committed and leverage is limited | Return per unit of capital and Sharpe ratio over the whole period | B, despite its lower Sharpe ratio while invested |
+| Leverage is available without limit | Sharpe ratio over the whole period, since any Sharpe ratio can be scaled to any return | B here, unless A's idle capital is reused |
+
+There is no single right number. Report time in the market, the Sharpe ratio both while invested and over the whole period, and the return per unit of capital, and decide with the capital and leverage constraints in view. Capital that one system leaves idle can be used by another, which turns the comparison into a portfolio question (Lecture 10); how much leverage to run is a sizing question (Lecture 9).
 
 *To measure:* trade statistics and the long and short split for each family; time in the market and return while invested for the long-or-flat and breakout designs.
 
