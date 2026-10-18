@@ -87,6 +87,24 @@ Switching allocations is rarely easy. When A becomes active, capital must be pul
 
 There is no single right number. Report time in the market, the Sharpe ratio both while invested and over the whole period, and the return per unit of capital, and decide with the capital and leverage constraints in view. Capital that one system leaves idle can be used by another, which turns the comparison into a portfolio question (Lecture 10); how much leverage to run is a sizing question (Lecture 9).
 
+### 4.4 A framework: marginal contribution, measured in what is scarce
+
+The choice between counting idle capital or not resolves into two steps. This framing is a synthesis of standard ideas, opportunity cost, risk budgeting and the spanning test of §3, rather than an established named result.
+
+**Step 1: measure in the unit that is scarce.**
+
+| What is scarce | Typical setting | What idle capital is worth | How to measure a system |
+|---|---|---|---|
+| Cash | Fully funded, unlevered portfolios such as ETF or long-only mandates | The cash rate, or what that cash would earn elsewhere | Return and Sharpe ratio over the whole period, idle periods earning the cash rate |
+| Risk budget | Futures and margin accounts, where cash is mostly collateral and leverage is available | Nothing is wasted: a flat system uses no risk, and a portfolio volatility target (Lecture 9, §4) hands its budget to the active systems | Sharpe ratio while invested, together with its correlation with the other systems |
+| Neither | Leverage without limit or cost, which is rare | — | Sharpe ratio over the whole period |
+
+The second row is how switching across strategies becomes practical: capital does not move between systems, only risk does. A portfolio volatility target reallocates risk every day, so the budget of a system that goes flat flows to those that are active, without pulling cash from anyone.
+
+**Step 2: decide by marginal contribution.** Whatever the unit, the question that matters for allocation is not how good a system is on its own but what it adds to the systems already run. Take the system's returns over the whole period, zero or the cash rate when it is flat, and regress them on the returns of the existing portfolio, as in §3. The intercept is what the system adds; its idle time is accounted for automatically. A system that is often flat but strong and uncorrelated when active shows a positive intercept; one whose Sharpe ratio while invested only looks good shows none.
+
+Marginal contribution is the criterion that runs through the rest of Part II: it decides which systems to combine, how much risk each receives, and whether a filter or a new market earns its place (Lectures 8 to 10).
+
 *To measure:* trade statistics and the long and short split for each family; time in the market and return while invested for the long-or-flat and breakout designs.
 
 ## 5. Is the difference real?
@@ -121,6 +139,7 @@ The best point on a curve combines skill with luck, and the luck does not repeat
 1. **Sweep the parameters** of every family and plot performance against a common measure of speed (§2).
 2. **Judge each family by its whole curve**, its median across parameters, not its peak (§6).
 3. **Look at the trades and the sides**: concentration of profits, long against short, time in the market (§4).
+4. **Decide by marginal contribution**, measured in what is scarce, cash or risk (§4.4).
 4. **Put bootstrap bands on the curves** before reading any gap as real (§5).
 4. **Compute the breakeven cost** of each family across its parameters (§3).
 5. **Ask what each family adds** to the others at equal speed, with correlations and spanning regressions (§3).
