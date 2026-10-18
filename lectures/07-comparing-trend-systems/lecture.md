@@ -101,13 +101,14 @@ The choice between counting idle capital or not resolves into two steps. This fr
 
 The second row is how switching across strategies becomes practical: capital does not move between systems, only risk does. A portfolio volatility target reallocates risk every day, so the budget of a system that goes flat flows to those that are active, without pulling cash from anyone.
 
-The set-up, and above all the instrument, decides which row applies:
+The set-up decides which row applies, and two properties of what is traded decide the set-up: how positions are funded, and how liquid they are.
 
-| Instrument | How positions are funded | What is usually scarce |
+| | Liquid | Illiquid |
 |---|---|---|
-| Futures | Margin of a fraction of the notional; the rest of the cash is collateral earning the cash rate | Risk budget |
-| ETFs and cash equities | Fully funded; leverage means borrowing, and shorting has its own costs | Cash |
-| Swaps and CFDs | Margin, as for futures, with financing built into the price | Risk budget, at a financing cost |
+| **Margined** (futures, swaps, CFDs: cash is mostly collateral) | Risk budget is scarce; switching risk across systems is cheap and fast. Example: major equity, bond and currency futures | Risk budget is scarce, and so is liquidity: switching costs market impact and is limited by capacity. Example: small or alternative futures markets, bespoke swaps |
+| **Fully funded** (ETFs, cash equities: leverage means borrowing) | Cash is scarce; switching is possible but every move uses cash. Example: large ETFs and large-cap stocks | Cash and liquidity are both scarce; capital is effectively locked in, and switching is slow and costly. Example: small caps, niche ETFs |
+
+The further a set-up sits from the top-left corner, the more a system's idle time costs and the more its standalone performance has to be judged on the whole period.
 
 The 16-ETF results of Lectures 5, 6 and 9 size every position to a volatility target. For a bond ETF with 4% volatility, a 10% target means holding about 2.5 times the capital, which requires borrowing. Those results are therefore measured as if risk, not cash, were the constraint, as a futures trader would face it; a fully funded ETF portfolio could not run them without leverage.
 
