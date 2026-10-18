@@ -21,11 +21,14 @@ The input never changes: the same OHLCV bars, run through a trailing window. Wha
 
 Flow is the one place volume does real work, and correlation needs a second asset; otherwise it is the same data every time.
 
-### 1.1 Three checks for every statistic
+**The thread of this lecture.** Every statistic answers one question well and is blind to something else. No measure is the right one; each is right for its question. The sections therefore set their measures side by side, what each sees and what it misses, and §11 collects them into a small toolkit in which every tool comes with its warning.
+
+### 1.1 Four checks for every statistic
 
 1. **Units.** Is the number comparable across assets and across decades, or only within one series?
 2. **Memory.** Do indicators that will be read together look back over comparable spans?
 3. **Precision.** How much of the statistic's movement is real, and how much is sampling noise?
+4. **Blind spot.** What can it not see, and which other measure covers that?
 
 ### 1.2 Two datasets
 
@@ -189,6 +192,21 @@ on each side (the Broadie–Glasserman–Kou correction, an asymptotic result fo
 
 Two standard steps: divide by price (§2), then by $`\sqrt{8/\pi}`$. The result is in the units of a standard deviation and can be annualised with $`\sqrt{252}`$. Remaining caveats: true range includes part of the overnight gap, Wilder's smoothing is an EMA rather than a plain mean, and the Brownian model ignores drift and jumps. Here it reads 81–91% of close-to-close, so it is reliable for **comparing** volatility across assets and over time and for sizing positions in proportion to it, as in the Turtle rules (Faith, 2007). Where the **level** must be right, use Yang–Zhang.
 
+### 4.6 Which volatility measure: what each sees and misses
+
+All six estimators measure the same $`\sigma`$, but each sees a different part of the day. Two choices explain every difference between them: which prices enter (the closes, the session's range, or the overnight gap as well), and which model turns them into a standard deviation.
+
+| Measure | Sees | Misses | Level, vs close-to-close (§4.3) | Use it for |
+|---|---|---|---|---|
+| Close-to-close | Everything between two closes, overnight gaps included; needs no model | The path within the day, so it is noisy: it needs about five times as many days as Parkinson for the same precision | 1.00 | The reference level |
+| Parkinson | The session's high and low | The overnight gap; biased down by drift and by discrete trading (§4.4) | 0.67–0.85 | Precise estimates where gaps are small |
+| Garman–Klass | The range plus the open and close: the most precise of the session estimators | The overnight gap; assumes no drift | 0.68–0.86 | As Parkinson, with more precision |
+| Rogers–Satchell | The session's range, unaffected by drift | The overnight gap | 0.68–0.86 | Strongly trending markets |
+| Yang–Zhang | The whole day: overnight gap, open to close, and the range | Needs all four prices and a window of several bars; keeps the range biases within the session | 1.00–1.10 | When the level must be right |
+| ATR% / $`\sqrt{8/\pi}`$ | The true range: the session plus part of the gap | Reads low; inherits Wilder's long memory (§3.1) and the Brownian model | 0.81–0.91 | Comparing volatility across assets and over time, and sizing positions |
+
+**Watch out for** the overnight gap: it divides the estimators into two groups. On GLD, whose underlying trades around the clock, the session-only estimators see two-thirds of the volatility, because half the variance arrives while GLD is closed.
+
 ## 5. Memory and precision: choosing windows for a reason
 
 Windows in this lecture are set by two rules, not by convention: match memory for statistics read together, and match precision for statistics that are noisy.
@@ -295,7 +313,7 @@ On 16 March 2020 SPY's log return was −11.6% against a $`\sigma`$ of 1.45%: $`
 
 ## 8. Relationship between series: do two assets still move together
 
-Correlation and beta answer different questions and can move in opposite directions during the same event.
+Correlation and beta answer different questions and can move in opposite directions during the same event. Neither sees drift, which §8.4 shows can matter more.
 
 ### 8.1 Rolling correlation and beta
 
@@ -330,6 +348,34 @@ The correlation between SPY and AGG returns, over 63 bars (§5), is one of the m
 The sign flipped with the inflation regime, as Campbell, Pflueger and Viceira (2020) document: when inflation shocks dominate, stocks and bonds fall together. [Chart B.3](#b3-the-stockbond-relationship-changed-sign-83) plots the full history.
 
 **A caution.** When volatility rises, measured correlation rises with it even if the underlying dependence is unchanged (Forbes and Rigobon, 2002). A jump in rolling correlation during a sell-off is therefore not, on its own, evidence that the relationship has changed.
+
+### 8.4 What correlation cannot see
+
+Two pairs, two puzzles ([chart B.9](#b9-correlation-measures-shocks-not-outcomes-84)). QQQ and GLD were almost uncorrelated from June 2018 to May 2020, yet ended within four points of each other. EEM, emerging-market equities, and SPY were 0.90 correlated from July 2011 to June 2013, yet their log returns were −18% and +22%.
+
+The cause is in the formula of §8.1: correlation subtracts each asset's mean before multiplying. It measures how the daily **shocks** move together and is blind to the **drift**. Over a day the shock dominates; over years the drift does, because drift grows in proportion to time and noise only with its square root. Over these two years EEM's hedged drift came to −47 points against 16 points of noise.
+
+| | QQQ and GLD, Jun 2018–May 2020 | EEM and SPY, Jul 2011–Jun 2013 |
+|---|---|---|
+| Daily correlation | 0.04 | 0.90 |
+| Two-year log return | +31.8% and +28.5% | −18.3% and +22.4% |
+| What correlation suggests | Diversification | A good hedge |
+| What happened | A 50/50 portfolio had 15.7% volatility against QQQ's 27.7%, with the same return: the path was diversified, the outcome was not | Shorting 1.28 SPY per EEM removed 82% of the daily variance, yet the hedged position lost 23.7% a year |
+| Concordance, 126-day phases (expected if independent) | 64% (64%) | 74% (50%) |
+| Alpha of the hedge, a year (standard error) | +15.0% (19.6%), with a beta of 0.07 | −23.7% (8.0%) |
+
+Two simple measures look at the drift that correlation removes:
+
+- **Concordance** (Harding and Pagan, 2002): the share of days on which both assets are in the same phase, up or down, here the sign of the trailing 126-day return. It is read against its value for independent assets, $`p_x p_y + (1-p_x)(1-p_y)`$, where $`p`$ is each asset's share of up days.
+- **Alpha**: the intercept of the regression that gives beta in §8.1, $`r_x = \alpha + \beta r_y + e`$, annualised. It is the drift a beta hedge leaves behind. Its standard error is the hedge's tracking error divided by the square root of the number of years.
+
+| Measure | Catches | Misses |
+|---|---|---|
+| Correlation | Whether daily shocks move together: how much daily risk a mix diversifies or a hedge removes | The drift, which decides outcomes over months and years |
+| Concordance | Whether both trend the same way at the same time, drift included; against its benchmark, whether that is more than chance. For QQQ and GLD it is not: two assets that each rose most of the time agree this often anyway | Size: EEM and SPY shared 74% of their phases and still ended 41 points apart. It also depends on the phase length: 39% for QQQ and GLD with 63-day phases |
+| Alpha | The drift a hedge leaves: EEM's −23.7% a year, three standard errors from zero | Precision: even here the standard error is 8% a year, and usually it is far larger; it is known only afterwards, and it means nothing when beta is near zero, as for QQQ and GLD |
+
+**Watch out for** the difference between path and outcome. Low correlation diversifies the path, not the outcome; high correlation hedges the daily risk, not the trend. Look at the drift as well, knowing that it is the least precisely measured quantity in finance. Whether two prices stay together over time, rather than just their returns, is the subject of cointegration, on which the statistical-arbitrage trades of Part II rest.
 
 ## 9. Distribution shape: is the recent path lopsided or fat-tailed
 
@@ -483,6 +529,8 @@ One day can move classical kurtosis by eight times its typical daily variation; 
 | OBV | Shares, cumulative | No | Cumulative, no decay | — | Reading its level |
 | Order imbalance | Unitless, [−1, 1] | Yes | Rolling | 27 bars | Forgetting the tick rule gives a bar's whole volume to one side |
 | Correlation, beta | Unitless | Yes | Rolling | 63 bars, by standard error | Reading a crisis jump as a change in dependence |
+| Concordance | Share of days, [0, 1] | Yes | Rolling | 126-day phases | Reading it without its value for independent assets |
+| Alpha of a hedge | Return a year | Yes | Rolling | Years: drift is measured slowly | Trusting it without its standard error |
 | Skewness, kurtosis | Unitless | Yes | Rolling | 63 bars, by standard error | Reading short-window values as precise; ignoring that one day dominates |
 | Count of extreme days | Days out of 63 | Yes | Rolling | 63 bars, as kurtosis | Setting the threshold on the full history, which uses future data |
 
@@ -518,6 +566,7 @@ atr_wilder = tr.ewm(alpha=1 / 14, adjust=False).mean()  # Wilder's smoothing, se
 - [ ] Prove that for $`n`$ points the sample skewness cannot exceed $`(n-2)/\sqrt{n-1}`$. Which configuration attains it?
 - [ ] Re-run the bootstrap of §10.2 with block lengths of 5, 21 and 63 days. How does the kurtosis band change, and why?
 - [ ] Recompute the count of §10.5 with the threshold set at 3 standard deviations of the trailing 252 days instead of all earlier returns. Which crises disappear from the count, and why does it start to behave like kurtosis?
+- [ ] Repeat §8.4 for QQQ and SPY over the EEM window, July 2011 to June 2013. What do correlation, concordance and alpha say, and why do all three agree here?
 - [ ] Construct a 5-bar window of two series where correlation and beta move in the **same** direction. What must be true of their relative move sizes?
 - [ ] Show that Wilder's smoothing with period $`n`$ has average age $`n-1`$, and hence that ATR(14) matches a 27-bar window. Then recompute the toy ATR in §3.2 with a plain 5-bar mean of the true ranges instead: how do the peak and the decay change?
 
@@ -536,6 +585,7 @@ atr_wilder = tr.ewm(alpha=1 / 14, adjust=False).mean()  # Wilder's smoothing, se
 - Chordia, T., Roll, R. and Subrahmanyam, A. (2002). Order imbalance, liquidity, and market returns. *Journal of Financial Economics.*
 - Easley, D., López de Prado, M. and O'Hara, M. (2012). Flow toxicity and liquidity in a high-frequency world. *Review of Financial Studies.*
 - Forbes, K. and Rigobon, R. (2002). No contagion, only interdependence. *Journal of Finance.*
+- Harding, D. and Pagan, A. (2002). Dissecting the cycle: a methodological investigation. *Journal of Monetary Economics.* — the concordance index (§8.4).
 - Campbell, J., Pflueger, C. and Viceira, L. (2020). Macroeconomic drivers of bond and stock risks. *Journal of Political Economy.*
 - Joanes, D. and Gill, C. (1998). Comparing measures of sample skewness and kurtosis. *The Statistician.*
 - Efron, B. (1979). Bootstrap methods: another look at the jackknife. *Annals of Statistics.*
@@ -602,3 +652,9 @@ Same true ranges, two smoothings. The plain mean reacts to the spike faster and 
 ![SPY rolling 63-bar excess kurtosis above, and the number of extreme days in the same window below, 1994-2026](figures/12_08_extremes_vs_kurtosis.png)
 
 SPY, 63-bar windows. Kurtosis (top) spikes in 2007, 2018 and 2025, calm periods interrupted by one large fall. The count of extreme days (bottom) spikes in 1998, 2002, 2008 and 2020, the crises, when kurtosis stays low. The early counts run high because the threshold then rests on the calm years 1993–1996.
+
+### B.9 Correlation measures shocks, not outcomes (§8.4)
+
+![Cumulative returns of QQQ and GLD, June 2018 to May 2020, and of EEM and SPY, July 2011 to June 2013](figures/12_09_correlation_vs_outcome.png)
+
+Left, QQQ and GLD: their daily moves are unrelated (correlation 0.04), with QQQ's sharp fall in late 2018 absent from GLD, yet both end more than 30% higher. Right, EEM and SPY: they move together day by day (0.90), and both fall in August 2011, but SPY climbs steadily while EEM drifts sideways and down, ending about 40 points apart.
