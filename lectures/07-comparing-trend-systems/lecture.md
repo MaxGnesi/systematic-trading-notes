@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 18, 2026 · Max Gnesi*
 
-Two trend systems with different Sharpe ratios may not differ at all: one may simply trade at a different speed, the gap may be noise, or the better one may have been picked from many tries. This lecture builds a fair way to compare trend systems, in four questions: compared at what speed, does a system add anything, is the difference real, and will it last?
+Two trend systems with different Sharpe ratios may not differ at all: one may simply trade at a different speed, the gap may be noise, or the better one may have been picked from many tries. This lecture builds a fair way to compare trend systems, in five questions: compared at what speed, does a system add anything, what do its trades show, is the difference real, and will it last?
 
 *Draft. The structure and methods are fixed; the measurements on the 16 ETFs of Lectures 5 and 6, the notebook and the charts follow. The lecture's position in Part II may change.*
 
@@ -14,8 +14,9 @@ Lecture 6 compared five trend families across their parameters and found that sp
 |---|---|---|
 | Compared at what speed? | A slow rule and a fast rule differ by speed before they differ by idea | §2 |
 | Does a system add anything? | The useful question is not which system is better but whether a second one improves the first | §3 |
-| Is the difference real? | Strategy returns are noisy; a gap of 0.2 in Sharpe ratio over 25 years may be chance | §4 |
-| Will it last? | The best point on a curve is the one most likely to disappoint | §5 |
+| What do the trades show? | Two systems with the same return series can earn it from different trades, on different sides, with different time in the market | §4 |
+| Is the difference real? | Strategy returns are noisy; a gap of 0.2 in Sharpe ratio over 25 years may be chance | §5 |
+| Will it last? | The best point on a curve is the one most likely to disappoint | §6 |
 
 ## 2. A fair axis for speed
 
@@ -41,7 +42,38 @@ A second system is worth adding if it improves the first, not if it beats it. Tw
 
 *To measure:* correlations and alphas between the five families at matched speeds; breakeven costs across each family's parameters.
 
-## 4. Is the difference real?
+## 4. Beyond the return series: trades, sides and time in the market
+
+A daily return series hides how a system earns. Three views open it up.
+
+### 4.1 Trades
+
+| Measure | What it shows |
+|---|---|
+| Number of trades and average holding period | Speed in the units traders use |
+| Win rate and average win against average loss | Whether the edge comes from winning often or from winning big |
+| Distribution of trade returns: skewness, largest trades | The shape of the payoff, trade by trade |
+| Share of profit from the largest tenth of trades | Concentration: Lecture 5 found the timing profit in a tenth of the months; a system that depends on a few trades is fragile to missing them |
+
+### 4.2 The long side and the short side
+
+Compare each system's long and short trades separately. Lecture 5 found that the long side collects drift and the short side earns only in persistent declines; Lecture 6 that the short side carries the crisis protection. Two systems with the same Sharpe ratio can earn it on different sides, and so behave differently in a crash.
+
+### 4.3 Systems that are not always in the market
+
+Systems that can be flat, such as long-or-flat designs or breakouts waiting for a break, are invested only part of the time. Comparing them with systems that are always in the market needs care, because the basis of comparison changes the answer:
+
+| Basis | What it does | Bias |
+|---|---|---|
+| Return per unit of capital | Counts idle capital as earning nothing | Penalises systems that are often flat, unless idle capital is credited with the cash rate |
+| Return while invested | Counts only the days in the market | Flatters such systems: ignores the time capital waits |
+| Equal volatility, or equal average exposure | Scales every system to the same risk | Fair on risk, but the leverage it implies may not be available |
+
+Report time in the market next to every performance figure, credit idle capital with the cash rate, and compare at equal risk. Capital that one system leaves idle can be used by another, which turns the comparison into a portfolio question (Lecture 10).
+
+*To measure:* trade statistics and the long and short split for each family; time in the market and return while invested for the long-or-flat and breakout designs.
+
+## 5. Is the difference real?
 
 Strategy returns are noisy, fat-tailed and serially dependent. Before reading a gap between two curves as a difference between two ideas, test it.
 
@@ -56,7 +88,7 @@ Strategy returns are noisy, fat-tailed and serially dependent. Before reading a 
 
 *To measure:* bootstrap bands on the curves of Lecture 6; the Ledoit–Wolf test for the closest pairs of families at equal speed; the probability of backtest overfitting for choosing the best parameter in each family.
 
-## 5. Will it last? Robustness instead of the best point
+## 6. Will it last? Robustness instead of the best point
 
 The best point on a curve combines skill with luck, and the luck does not repeat. Three habits reduce the dependence on it.
 
@@ -68,18 +100,19 @@ The best point on a curve combines skill with luck, and the luck does not repeat
 
 *To measure:* median and peak Sharpe ratio per family; walk-forward parameter choice against the fixed best; the systems that survive on several measures at once.
 
-## 6. A procedure, simplest first
+## 7. A procedure, simplest first
 
 1. **Sweep the parameters** of every family and plot performance against a common measure of speed (§2).
-2. **Judge each family by its whole curve**, its median across parameters, not its peak (§5).
-3. **Put bootstrap bands on the curves** before reading any gap as real (§4).
+2. **Judge each family by its whole curve**, its median across parameters, not its peak (§6).
+3. **Look at the trades and the sides**: concentration of profits, long against short, time in the market (§4).
+4. **Put bootstrap bands on the curves** before reading any gap as real (§5).
 4. **Compute the breakeven cost** of each family across its parameters (§3).
 5. **Ask what each family adds** to the others at equal speed, with correlations and spanning regressions (§3).
-6. **Only then test formally**, pairwise with Ledoit and Wolf, and across the grid with Romano and Wolf or the probability of backtest overfitting (§4).
+6. **Only then test formally**, pairwise with Ledoit and Wolf, and across the grid with Romano and Wolf or the probability of backtest overfitting (§5).
 
 **Watch out for** declaring a winner from a single backtest. Speed, noise and selection each produce differences between systems that are not differences between ideas; the procedure above removes them one at a time.
 
-## 7. The charts this lecture needs
+## 8. The charts this lecture needs
 
 Comparisons are understood visually before they are tested. Each question gets a chart designed to answer it at a glance.
 
@@ -89,19 +122,22 @@ Comparisons are understood visually before they are tested. Each question gets a
 | At what speed? (§2) | Trend signatures: the weight each rule puts on past returns at each horizon | Which horizons each rule actually uses |
 | Does it add anything? (§3) | Heat map of correlations between families at matched speeds | Which families are near copies and which are different |
 | Does it add anything? (§3) | Breakeven cost against speed, one curve per family | Where each family's edge is eaten by costs |
-| Is it real? (§4) | The performance curves with block-bootstrap bands | Whether the gaps between curves lie outside the noise |
-| Is it real? (§4) | Rank of each parameter on half of the assets against its rank on the other half, over the same period | Whether the best choice stays good in markets it was not chosen on, with the regime held fixed |
-| Will it last? (§5) | Median against peak performance per family, side by side | How much of each family's best result is selection |
-| Will it last? (§5) | Scatter of Sharpe ratio against skewness or drawdown, one point per system, with the systems no other beats marked | The trade-offs a single number hides |
+| What do the trades show? (§4) | Histogram of trade returns per family, with the largest tenth of trades marked | Whether profits rest on a few trades |
+| What do the trades show? (§4) | Long-side and short-side contributions per system, side by side | Where each system earns |
+| What do the trades show? (§4) | Sharpe ratio against time in the market | How much of a gap is exposure rather than skill |
+| Is it real? (§5) | The performance curves with block-bootstrap bands | Whether the gaps between curves lie outside the noise |
+| Is it real? (§5) | Rank of each parameter on half of the assets against its rank on the other half, over the same period | Whether the best choice stays good in markets it was not chosen on, with the regime held fixed |
+| Will it last? (§6) | Median against peak performance per family, side by side | How much of each family's best result is selection |
+| Will it last? (§6) | Scatter of Sharpe ratio against skewness or drawdown, one point per system, with the systems no other beats marked | The trade-offs a single number hides |
 
 ## References
 
-- Bailey, D., Borwein, J., López de Prado, M. and Zhu, Q. (2017). The probability of backtest overfitting. *Journal of Computational Finance* 20(4). — how much selecting the best backtest overfits (§4).
-- Hansen, P.R. (2005). A test for superior predictive ability. *Journal of Business and Economic Statistics* 23, 365–380. — testing the best of many models (§4).
+- Bailey, D., Borwein, J., López de Prado, M. and Zhu, Q. (2017). The probability of backtest overfitting. *Journal of Computational Finance* 20(4). — how much selecting the best backtest overfits (§5).
+- Hansen, P.R. (2005). A test for superior predictive ability. *Journal of Business and Economic Statistics* 23, 365–380. — testing the best of many models (§5).
 - Huberman, G. and Kandel, S. (1987). Mean-variance spanning. *Journal of Finance* 42(4), 873–888. — whether one set of assets adds to another (§3).
-- Jobson, J.D. and Korkie, B. (1981). Performance hypothesis testing with the Sharpe and Treynor measures. *Journal of Finance* 36(4), 889–908. — the classical test of a Sharpe-ratio difference (§4).
-- Ledoit, O. and Wolf, M. (2008). Robust performance hypothesis testing with the Sharpe ratio. *Journal of Empirical Finance* 15(5), 850–859. — a bootstrap test robust to fat tails and dependence (§4).
+- Jobson, J.D. and Korkie, B. (1981). Performance hypothesis testing with the Sharpe and Treynor measures. *Journal of Finance* 36(4), 889–908. — the classical test of a Sharpe-ratio difference (§5).
+- Ledoit, O. and Wolf, M. (2008). Robust performance hypothesis testing with the Sharpe ratio. *Journal of Empirical Finance* 15(5), 850–859. — a bootstrap test robust to fat tails and dependence (§5).
 - Levine, A. and Pedersen, L.H. (2016). Which trend is your friend? *Financial Analysts Journal* 72(3), 51–66. — trend signatures (§2).
-- Memmel, C. (2003). Performance hypothesis testing with the Sharpe ratio. *Finance Letters* 1(1), 21–23. — correction of the Jobson–Korkie test (§4).
-- Romano, J. and Wolf, M. (2005). Stepwise multiple testing as formalized data snooping. *Econometrica* 73(4), 1237–1282. — controlling false discoveries across many strategies (§4).
-- White, H. (2000). A reality check for data snooping. *Econometrica* 68(5), 1097–1126. — testing the best of many rules (§4).
+- Memmel, C. (2003). Performance hypothesis testing with the Sharpe ratio. *Finance Letters* 1(1), 21–23. — correction of the Jobson–Korkie test (§5).
+- Romano, J. and Wolf, M. (2005). Stepwise multiple testing as formalized data snooping. *Econometrica* 73(4), 1237–1282. — controlling false discoveries across many strategies (§5).
+- White, H. (2000). A reality check for data snooping. *Econometrica* 68(5), 1097–1126. — testing the best of many rules (§5).
