@@ -8,7 +8,7 @@ A filter decides whether, or how much, to trade a signal, using information the 
 
 A trend signal says which way; a filter says whether to listen. It can be built from anything: the price itself, the volume, other markets, the economy, flows, the calendar. That freedom is the attraction and the danger. The more ideas can be tried, the larger the multiple-testing problem of Lecture 5, §4.3, and a filter is also a second signal: it removes some losing trades and some winning ones, and it changes how often the system trades.
 
-**The bottom line.** Be creative about sources and disciplined about testing. A filter earns its place only if its mechanism is stated before it is tested, if it beats the unfiltered system at equal speed, and if it adds to the unfiltered system after costs. Of the filters tested in §4, none passed all three; how a filter is attached to the signal turned out to matter as much as the regime it uses.
+**The bottom line.** Be creative about sources and disciplined about testing. Filter research has two purposes, and both are legitimate: to test whether a mechanism we believe in improves a signal, and to explore which variables determine a signal's performance, improve it, or have predictive power for it. What matters is keeping exploration and confirmation apart. A filter earns its place only if what was found is confirmed on data it was not found in, if it beats the unfiltered system at equal speed, and if it adds to the unfiltered system after costs. Of the filters tested in §4, none passed all three; how a filter is attached to the signal turned out to matter as much as the regime it uses.
 
 **Filter or sizing?** As in Lecture 9, §1.2: a rule that uses only risk and cost information, such as volatility, drawdown or trading costs, is sizing; a rule that uses conditioning information, such as a regime, trend strength, macro data or the calendar, is a filter.
 
@@ -39,11 +39,11 @@ A trend signal says which way; a filter says whether to listen. It can be built 
 
 ## 3. One test for every filter
 
-Every filter, however creative, goes through the same five steps.
+Every filter, whether it comes from a stated mechanism or from exploring which variables matter, goes through the same five steps.
 
 | Step | What to do | Why |
 |---|---|---|
-| 1. State the mechanism first | Write down why the filter should work before testing it | The test then confirms or rejects an idea, rather than finding a story for a result (Lecture 5, §4.2) |
+| 1. Know which route you are on | Either state the mechanism before the test, or say that you are exploring which variables determine or predict the signal's performance; then confirm what exploration finds on data it was not found in | Exploration finds candidates and confirmation tests them; mixing the two turns every pattern into a story found after the result (Lecture 5, §4.2) |
 | 2. Compare at equal speed | Compare the filtered system with the unfiltered rule at the same turnover, not only with the rule it was applied to | A filter changes how often the system trades; it may only have moved the system along the speed curve of Lecture 6, §2.3 |
 | 3. Use only information known at the time | Lag every input; respect publication lags and data revisions; never label a regime with hindsight | Otherwise the filter trades on the future |
 | 4. Judge after costs, by marginal contribution | Regress the filtered system's returns on the unfiltered system's; the intercept is what the filter adds | The question is what the filter adds, not whether the filtered system looks good alone (Lecture 7, §4.4) |
@@ -98,7 +98,7 @@ One filter per source and per action, each applied to the 12-month rule. Each me
 
 ### 4.2 Three more regimes: volatility, correlation across asset classes, stock–bond correlation
 
-Three further variables, each with a hypothesis stated before the test. First the simplest check: does the unfiltered rule perform differently in the two regimes at all? If not, no filter on that variable can help.
+Three further variables, each examined both ways. Exploration first: does the signal's performance depend on the variable, so that the variable carries information about when the signal works (Table 4.2)? Then confirmation of a stated hypothesis: does a filter built on the variable improve the signal (Table 4.3)? A hypothesis was written down for each variable before the test.
 
 | Variable | How it is measured | Hypothesis, stated first |
 |---|---|---|
@@ -129,7 +129,7 @@ Three further variables, each with a hypothesis stated before the test. First th
 
 What these results say, so far:
 
-- **Patterns are signals too.** Two of the three hypotheses were wrong as stated, but the patterns in Table 4.2 are information in their own right: trend earned 0.88 when asset classes moved independently and 0.51 when they did not, and Baltas and Kosowski had found the same direction. Research works both ways (Lecture 5, §4.2): from a hypothesis to a test, and from a clear pattern to an explanation, to be confirmed on data it was not found in.
+- **Exploration found what the hypotheses missed.** Two of the three hypotheses were wrong as stated, but exploring how performance depends on each variable is a goal in its own right, and it found information: trend earned 0.88 when asset classes moved independently and 0.51 when they did not, the direction Baltas and Kosowski had found. Cross-asset-class correlation is therefore a candidate variable with predictive power for trend performance, to be confirmed on data it was not found in (exercise 1 of §6.2).
 - **Volatility depends.** Trend did slightly better in calm periods here, and a gate on low volatility was the only filter in Table 4.3 to beat the unfiltered rule, yet the result depends on how volatility is measured and on the rule it is applied to.
 - **A large gap between regimes did not, so far, make a better filter.** Scaling exposure by the regime did not help in either direction. §4.3 shows that the reason lies partly in how the filter was attached to the signal.
 
@@ -186,7 +186,7 @@ Filters that our daily ETF data cannot test, each with its mechanism and the dat
 ### 6.1 Five takeaways
 
 1. **Filters can use any information, which is why they need discipline.** Sources range from the price itself to flows, macro data and the calendar; actions from gating to switching speed.
-2. **One test for all.** State the mechanism first, compare at equal speed, use only information known at the time, judge after costs by marginal contribution, and count the tries.
+2. **Two purposes, one test.** Explore which variables determine or predict a signal's performance, or confirm a mechanism you believe in; then compare at equal speed, use only information known at the time, judge after costs by marginal contribution, count the tries, and confirm on data the idea was not found in.
 3. **Most filters fail, but patterns are information.** Of the filters tested, none added significantly; two of three regime hypotheses were wrong as stated, yet the regime patterns themselves, such as 0.88 against 0.51 by cross-asset-class correlation, are candidates to explain and confirm.
 4. **How a filter attaches to the signal matters as much as which regime it uses.** Letting the filter open and close positions on its own hurt; attaching it to the trend's entries and exits recovered most of the loss.
 5. **The most promising filters work through mechanisms with a known timing:** flows and positioning, scheduled events, and regimes that change how fast markets move.
