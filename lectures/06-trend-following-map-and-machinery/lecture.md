@@ -29,9 +29,9 @@ Trend rules come from three families with distinct literatures, and they differ 
 
 The boundaries blur. Once its gains have settled, the Kalman filter is an exponential moving average (Bruder et al.; Lecture 4), so its level and slope are linear; only its uncertainty and surprises are model-based. Breakouts and stops share one building block, the running high: a breakout acts at it, a chandelier stop at a fixed distance below it.
 
-Each family can also be applied in two ways: to an asset against its own past (time series), or to assets ranked against each other (cross-sectional; Jegadeesh and Titman, 1993). Goyal and Jegadeesh (2018) find that the difference lies mainly in net exposure. This lecture is about time-series systems; cross-sectional rules come with the portfolio in Lecture 10. Some tools do not produce a signal but act on one, such as filters on trend strength or volatility, or entries on pullbacks; Lecture 8 treats these modifiers.
+Each family can also be applied in two ways: to an asset against its own past (time series), or to assets ranked against each other (cross-sectional; Jegadeesh and Titman, 1993). Goyal and Jegadeesh (2018) find that the difference lies mainly in net exposure. §2.4 explains the cross-sectional form, and card 11 shows it. Some tools do not produce a signal but act on one, such as filters on trend strength or volatility, or entries on pullbacks; Lecture 8 treats these modifiers.
 
-The appendix is a gallery of model cards: ten common rules across the three families, each with its formula, how it trades, and a chart of it on QQQ from September 2021 to March 2023.
+The appendix is a gallery of model cards: ten common time-series rules across the three families and one cross-sectional rule, each with its formula, how it trades, and a chart of it from September 2021 to March 2023.
 
 ### 2.2 Five design choices
 
@@ -96,19 +96,52 @@ Recent changes count most. The 12-month return sign weights the last 252 returns
 
 This is a first look, kept deliberately simple. Which point on these curves to choose, and whether the gaps between families are real, are questions for [Lecture 7, Comparing Trend Systems](../07-comparing-trend-systems/lecture.md) and for Part V: picking the best point on a curve is the multiple-testing problem of Lecture 5, §4.3.
 
-### 2.4 Where the rest of Part II goes
+### 2.4 Time series or cross-sectional
+
+Every rule above can be applied in two ways. A **time-series** rule compares an asset with its own past and decides its direction: long if it has risen, short if it has fallen. A **cross-sectional** rule compares assets with each other and decides which to prefer: long the strongest, short the weakest, whatever the market as a whole does. The two are a second choice on top of the family, not a fourth family:
+
+| Family | Time series | Cross-sectional |
+|---|---|---|
+| Linear filters | Cards 1–4 | Rank by past return or by EWMAC forecast: card 11, the classic form |
+| Channel breakouts | Cards 5–8 | Rank by distance from the channel |
+| Model-based | Cards 9–10 | Rank by the slope's t-statistic |
+
+**How it works.** At each month end, rank the assets by their return over the past twelve months divided by its volatility, so that a calm bond fund and a volatile oil fund are comparable. Hold the top third long and the bottom third short, each at equal risk, and the middle third flat. Repeat the next month.
+
+**On 30 June 2022**, with the 16 ETFs of Lectures 5 to 9 ([card 11](#card-11-cross-sectional-momentum)):
+
+| | ETFs | 12-month returns | Position |
+|---|---|---|---|
+| Top five | USO, XLE, XLU, GLD, VNQ | +61%, +39%, +14%, +2%, −8% | Long |
+| Middle six | XLK, SPY, XLF, GDX, QQQ, EFA | −11% to −20% | Flat |
+| Bottom five | SLV, IWM, TLT, EEM, AGG | −10% to −26% | Short |
+
+Twelve of the sixteen had fallen over the year, so a time-series rule (card 1) was long four and short twelve. The cross-sectional rule was long five and short five. It held VNQ long although it had fallen 8%, because it fell less than most, and held AGG short although it had fallen only 10%, because for a bond fund with low volatility that is a large fall.
+
+| | Time series | Cross-sectional |
+|---|---|---|
+| Bets on | Each asset's own direction | Relative strength |
+| Net exposure | Anything from all long to all short | Close to zero by construction |
+| In a broad sell-off | Short almost everything: the crisis payoff of §3.1 | Long the assets falling least, short those falling most |
+| Needs | One asset | A universe; results depend on which assets are in it |
+| Sees | Trends of the market as a whole | Which assets lead and which lag, hedged against moves of the whole market |
+| Misses | Differences between assets moving the same way | The direction of the market as a whole; with few assets the ranking is coarse, and a small move can push an asset from one third to the next |
+
+The literature began with stocks: Jegadeesh and Titman (1993) found that past winners keep outperforming past losers for several months. Asness, Moskowitz and Pedersen (2013) found the same across countries and asset classes. On futures, Moskowitz, Ooi and Pedersen (2012) found that time-series momentum is not explained by the cross-sectional kind, and Goyal and Jegadeesh (2018) showed that the main difference between the two is net exposure: time-series rules can be all long or all short, cross-sectional rules are balanced.
+
+### 2.5 Where the rest of Part II goes
 
 | Topic | Where |
 |---|---|
-| Ten common rules, each with its formula and a chart | Appendix: model cards |
+| Eleven common rules, each with its formula and a chart | Appendix: model cards |
 | Comparing trend systems fairly | Lecture 7 |
 | Filters and overlays, regime models, pullback entries | Lecture 8 |
 | Sizing: per trade, per asset, over time, after losses, by edge | Lecture 9 |
-| Cross-sectional rules and the trend portfolio | Lecture 10 |
+| The trend portfolio, with time-series and cross-sectional systems | Lecture 11 |
 | Trends on bars cut by price (point-and-figure, Renko) | Part III |
-| Machine learning | After Part V, once honest testing is in place |
+| Machine learning | Later in the course, once honest testing is in place |
 
-Lecture numbers after 7 are planned and may change.
+The trend portfolio, planned as Lecture 10, is built in the capstone, Lecture 11.
 
 ## 3. Design choices and what they capture
 
@@ -247,7 +280,7 @@ The full reference list closes the lecture. A short path: Levine and Pedersen (2
 
 ## Appendix: model cards
 
-Ten common trend rules, kept practical: the formula, how the rule trades, typical settings, one strength and one weakness, and a chart on the same window, QQQ from September 2021 to March 2023, covering the top, the 2022 bear market and the turn. Green shading marks long positions, red short, white flat. The number of position changes in the window gives a feel for each rule's speed; it counts every change, including to and from flat.
+Eleven common trend rules, kept practical: the formula, how the rule trades, typical settings, one strength and one weakness, and a chart on the same window, September 2021 to March 2023, covering the top, the 2022 bear market and the turn. Cards 1 to 10 show QQQ; card 11 needs several assets and shows the 16 ETFs of Lectures 5 to 9. Green shading marks long positions, red short, white flat. The number of position changes in the window gives a feel for each rule's speed; it counts every change, including to and from flat.
 
 ### Linear filters
 
@@ -385,6 +418,21 @@ Ten common trend rules, kept practical: the formula, how the rule trades, typica
 
 ![Kalman level and slope on QQQ, 2021-2023](figures/06_c10_kalman.png)
 
+### Cross-sectional
+
+#### Card 11: Cross-sectional momentum
+
+| | |
+|---|---|
+| Formula | Score $`z_{i,t} = \dfrac{\ln P_{i,t} - \ln P_{i,t-252}}{\sigma_{i,t}\sqrt{252}}`$, the 12-month log return of asset $`i`$ divided by its volatility over the same year; rank the assets by $`z`$ at each month end |
+| Trades | Long the top third, short the bottom third, each at equal risk; flat in between; rebalanced monthly (§2.4) |
+| Typical settings | Lookback 6 to 12 months, often skipping the latest month for stocks; top and bottom third, quintile or decile on larger universes |
+| Strength | A different payoff from time-series rules: balanced long and short, hedged against moves of the whole market |
+| Weakness | Needs a universe and depends on it; misses the direction of the market as a whole; coarse with few assets |
+| In the chart | 16 ETFs instead of QQQ alone, since a ranking needs several assets; sorted by their rank on 30 June 2022; 69 position changes in total, about four per ETF |
+
+![Cross-sectional momentum on 16 ETFs, 2021-2023](figures/06_c11_cross_sectional.png)
+
 ## Appendix: charts
 
 From the companion notebook, [06_trend_following_map_and_machinery.ipynb](06_trend_following_map_and_machinery.ipynb). Its sections carry the lecture's numbers.
@@ -416,10 +464,11 @@ The same curves after costs of 5 basis points per unit traded. The fast end of e
 - Carver, R. (2016). pysystemtrade: estimated forecast scalars. Blog post, qoppac.blogspot.com, 18 January 2016. — the average absolute forecast of 10 and the cap of 20 (§4).
 - Faith, C. (2007). *Way of the Turtle.* McGraw-Hill. — the Turtle rules (model card 2).
 - Fung, W. and Hsieh, D. (2001). The risk in hedge fund strategies: theory and evidence from trend followers. *Review of Financial Studies* 14(2), 313–341. — the option-like payoff (§7).
-- Goyal, A. and Jegadeesh, N. (2018). Cross-sectional and time-series tests of return predictability: what is the difference? *Review of Financial Studies* 31(5), 1784–1824. — time-series against cross-sectional (§2.1).
+- Asness, C., Moskowitz, T. and Pedersen, L.H. (2013). Value and momentum everywhere. *Journal of Finance* 68(3), 929–985. — cross-sectional momentum across asset classes (§2.4).
+- Goyal, A. and Jegadeesh, N. (2018). Cross-sectional and time-series tests of return predictability: what is the difference? *Review of Financial Studies* 31(5), 1784–1824. — time-series against cross-sectional (§2.1, §2.4).
 - Hamilton, J. (1989). A new approach to the economic analysis of nonstationary time series and the business cycle. *Econometrica* 57(2), 357–384. — regime switching (§2.1).
-- Jegadeesh, N. and Titman, S. (1993). Returns to buying winners and selling losers: implications for stock market efficiency. *Journal of Finance* 48(1), 65–91. — cross-sectional momentum (§2.1).
+- Jegadeesh, N. and Titman, S. (1993). Returns to buying winners and selling losers: implications for stock market efficiency. *Journal of Finance* 48(1), 65–91. — cross-sectional momentum (§2.1, §2.4).
 - Kim, A., Tse, Y. and Wald, J. (2016). Time series momentum and volatility scaling. *Journal of Financial Markets* 30, 103–124. — volatility scaling (§5.2).
 - Levine, A. and Pedersen, L.H. (2016). Which trend is your friend? *Financial Analysts Journal* 72(3), 51–66. — linear trend rules as weights on past returns (§2.1, §2.3).
-- Moskowitz, T., Ooi, Y.H. and Pedersen, L.H. (2012). Time series momentum. *Journal of Financial Economics* 104(2), 228–250. — the time-series momentum smile (§3.1).
+- Moskowitz, T., Ooi, Y.H. and Pedersen, L.H. (2012). Time series momentum. *Journal of Financial Economics* 104(2), 228–250. — the time-series momentum smile (§3.1); time series against cross-sectional on futures (§2.4).
 - Sullivan, R., Timmermann, A. and White, H. (1999). Data-snooping, technical trading rule performance, and the bootstrap. *Journal of Finance* 54(5), 1647–1691. — technical rules tested with an adjustment for data snooping (§2.1).
