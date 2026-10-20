@@ -1,0 +1,153 @@
+# Lecture 8: Filters and Overlays
+
+*Systematic Trading: Lecture Notes (MSc) · Oct 20, 2026 · Max Gnesi*
+
+A filter decides whether, or how much, to trade a signal, using information the signal does not contain. Filters are where creativity has most room: almost any data can condition a trend system. This lecture maps the sources and the ways a filter can act, sets one common test for all of them, and applies it to four filters on the 16 ETFs of Lectures 5 to 9. Companion notebook: [08_filters_and_overlays.ipynb](08_filters_and_overlays.ipynb).
+
+## 1. The question of this lecture
+
+A trend signal says which way; a filter says whether to listen. It can be built from anything: the price itself, the volume, other markets, the economy, flows, the calendar. That freedom is the attraction and the danger. The more ideas can be tried, the larger the multiple-testing problem of Lecture 5, §4.3, and a filter is also a second signal: it removes some losing trades and some winning ones, and it changes how often the system trades.
+
+**The bottom line.** Be creative about sources and disciplined about testing. A filter earns its place only if its mechanism is stated before it is tested, if it beats the unfiltered system at equal speed, and if it adds to the unfiltered system after costs. Of the four filters tested in §4, none passed all three.
+
+**Filter or sizing?** As in Lecture 9, §1.2: a rule that uses only risk and cost information, such as volatility, drawdown or trading costs, is sizing; a rule that uses conditioning information, such as a regime, trend strength, macro data or the calendar, is a filter.
+
+## 2. The map
+
+### 2.1 Where the information comes from
+
+| Source | Examples | Notes |
+|---|---|---|
+| The price itself, and its transformations | Trend strength (efficiency ratio, ADX), volatility regime, distribution shape, persistence, stretch from the trend | Always available; but it is the data the signal already uses, so the filter may be a second trend rule in disguise |
+| Bar data beyond the close | Volume, order imbalance, range expansion, open interest | Open interest needs futures data |
+| High-frequency data | Intraday order flow and trade signs, realised volatility from intraday returns, liquidity and spreads | Daily filters built from intraday information; Part III |
+| Cross-market structure | Correlations, breadth, dispersion, lead–lag, the futures term structure | Correlation regimes matter for trend (Baltas and Kosowski) |
+| Macro data | Policy-rate regime, yield-curve slope, inflation, growth surprises | Only data known at the time: publication lags and revisions |
+| Flows and positioning | Trader positioning (Commitments of Traders), ETF and fund flows, dealer gamma estimated from options open interest, estimates of CTA positioning, implied volatility and skew | The mechanism is often clear: who must buy or sell, and when |
+| Alternative data | Sentiment, news, search, satellite | Short histories, costly, easy to overfit |
+| Calendar and events | Earnings dates and index rebalances for single equities; option expiries and scheduled announcements for volatility strategies; central-bank meetings, data releases, month-end rebalancing and futures rolls for short-term strategies | Key for these strategies, because flows arrive at known times: the rebalancing waves of Lecture 5, scheduled. The risk of data mining is in seasonality without a mechanism, not in scheduled events |
+
+### 2.2 What a filter does to the signal
+
+| Action | How it works | Example |
+|---|---|---|
+| Gate | The position is held only while a condition is true; flat otherwise | Trade only while the efficiency ratio exceeds a threshold |
+| Scale | Every position is multiplied by a factor that depends on the condition | Halve positions while cross-market correlation is high |
+| Restrict direction | One side, long or short, is switched off while the condition holds | No short positions while policy rates are at zero |
+| Switch speed | A different version of the rule is used in each state | The fast rule in turbulent markets, the slow one in calm markets |
+| Delay or confirm | A signal is acted on only once a second condition confirms it | Enter a breakout only if volume is above normal |
+
+## 3. One test for every filter
+
+Every filter, however creative, goes through the same five steps.
+
+| Step | What to do | Why |
+|---|---|---|
+| 1. State the mechanism first | Write down why the filter should work before testing it | The test then confirms or rejects an idea, rather than finding a story for a result (Lecture 5, §4.2) |
+| 2. Compare at equal speed | Compare the filtered system with the unfiltered rule at the same turnover, not only with the rule it was applied to | A filter changes how often the system trades; it may only have moved the system along the speed curve of Lecture 6, §2.3 |
+| 3. Use only information known at the time | Lag every input; respect publication lags and data revisions; never label a regime with hindsight | Otherwise the filter trades on the future |
+| 4. Judge after costs, by marginal contribution | Regress the filtered system's returns on the unfiltered system's; the intercept is what the filter adds | The question is what the filter adds, not whether the filtered system looks good alone (Lecture 7, §4.4) |
+| 5. Count the tries | Report every threshold and variant tried, and judge the whole range, not the best one | Many tries make some look good by chance (Lecture 5, §4.3) |
+
+**How step 2 works.** Run the unfiltered rule at several speeds and record its turnover and Sharpe ratio: this is the yardstick curve. A filtered system is then placed on the same chart; it is better only if it lies above the curve at its own turnover.
+
+**Table 3.1. The yardstick: time-series momentum at several speeds** (16 ETFs, positions sized to 10% volatility per asset, 2001–2026; notebook §3)
+
+| Lookback | Turnover per year | Sharpe ratio, no costs | Sharpe ratio, 5 bp |
+|---|---|---|---|
+| 378 days | 8.1 | 0.46 | 0.39 |
+| 252 days | 10.0 | 0.60 | 0.51 |
+| 189 days | 11.0 | 0.59 | 0.48 |
+| 126 days | 14.0 | 0.53 | 0.40 |
+| 63 days | 19.4 | 0.32 | 0.14 |
+| 42 days | 24.4 | 0.45 | 0.21 |
+
+The curve is not smooth: the 63-day rule lies below both its neighbours. Comparisons against it near that point carry the curve's own noise.
+
+## 4. Four filters, tested
+
+One filter per source and per action, each applied to the 12-month rule. Each mechanism was stated before the test.
+
+| Filter | Source | Action | How it works | Mechanism |
+|---|---|---|---|---|
+| Efficiency-ratio gate | Price | Gate | Each evening, compute each asset's 63-day efficiency ratio (Lecture 3, §6); hold the position only while it exceeds a threshold, flat otherwise | Trends that move in a straight line persist; choppy ones whipsaw |
+| Correlation scale | Cross-market | Scale | Each evening, compute the average pairwise 63-day correlation of the 16 ETFs; halve every position while it is above its median to date | When all markets move together, diversification collapses and positions are effectively one bet |
+| Zero-rate regime | Macro | Restrict direction | Each evening, check the previous day's 3-month Treasury bill yield; while it is below 0.25%, close short positions | Central banks that hold rates at zero lean against sell-offs, so downtrends are cut short (Lecture 5, §3.5) |
+| VIX regime | Implied volatility | Switch speed | Each evening, compare the previous day's VIX with its median to date; above it, use the 3-month signal, below it the 12-month signal | Turbulent markets move fast, and the fast rule catches fast crises (Lecture 6, §3.1) |
+
+**Table 4.1. The four filters against the unfiltered rule** (2001–2026; alpha is the intercept of the filtered system's returns regressed on the unfiltered system's; notebook §4)
+
+| System | Turnover per year | Sharpe ratio, no costs | Unfiltered curve at the same turnover | Sharpe ratio, 5 bp | Alpha over the unfiltered rule, % a year (t) |
+|---|---|---|---|---|---|
+| Unfiltered 12-month rule | 10.0 | 0.60 | — | 0.51 | — |
+| Efficiency-ratio gate, 0.1 | 20.1 | 0.43 | 0.34 | 0.17 | −0.31 (−0.8) |
+| Efficiency-ratio gate, 0.2 | 11.2 | 0.21 | 0.58 | −0.03 | −0.37 (−1.0) |
+| Efficiency-ratio gate, 0.3 | 4.5 | −0.16 | 0.46 | −0.35 | −0.45 (−2.2) |
+| Correlation scale | 10.4 | 0.59 | 0.59 | 0.48 | 0.03 (0.1) |
+| Zero-rate regime, no shorts | 8.9 | 0.66 | 0.52 | 0.58 | 0.50 (1.5) |
+| VIX regime, fast when high | 17.8 | 0.51 | 0.39 | 0.35 | 0.43 (0.6) |
+
+([chart G.1](#g1-the-filters-against-the-yardstick-4) places each filtered system against the yardstick curve.)
+
+- **The efficiency-ratio gate hurts at every threshold.** A likely reason is that it throws away the timing of Lecture 5: large moves often begin in choppy markets, before the efficiency ratio rises. At a threshold of 0.1 it even doubles turnover, because the gate opens and closes so often. Its alpha is negative throughout, significantly so at 0.3.
+- **The correlation scale does nothing.** Its returns correlate 0.97 with the unfiltered rule's and its alpha is zero. A likely reason is that volatility targeting per asset already responds to much of what high correlation signals, since correlations rise when volatility does.
+- **The zero-rate regime looks best, and is the trap.** It lies above the curve and earned the highest Sharpe ratio, 0.66. But its idea came from Table 3.4 of Lecture 5, which was measured on the same data; the test is therefore not out of sample, and the alpha, at t = 1.5, is not significant even so. It is the clearest example in these lectures of step 5: an idea found in the data has to be tested on data it was not found in.
+- **The VIX regime beats the curve but not the rule.** Switching speed by regime earned more than a fixed rule of the same turnover, 0.51 against 0.39, but less than the 12-month rule itself, and its alpha is not significant. It is the most interesting result and the least conclusive one.
+
+None of the four passes all three requirements: a stated mechanism, a gain at equal speed, and a significant addition after costs. That is the usual fate of filters, and the reason for the discipline.
+
+## 5. Further ideas
+
+Filters that our daily ETF data cannot test, each with its mechanism and the data it needs. They are starting points, to be put through the test of §3.
+
+| Idea | Source | Mechanism | Data needed |
+|---|---|---|---|
+| Trade breakouts only on high volume | Bar data | A break on heavy volume reflects real buying or selling | Volume (available) |
+| Trend in the futures curve | Cross-market | Backwardation signals scarcity that tends to persist | Futures term structures |
+| Positioning extremes | Flows and positioning | When speculators are crowded on one side, trends are prone to reverse | Commitments of Traders reports |
+| Dealer gamma | Flows and positioning | When dealers are short gamma, their hedging pushes prices in the direction they move, as in Baltussen et al. (Lecture 5, §2.4) | Options open interest |
+| Index events | Calendar | Index additions and rebalances move prices at known dates | Index calendars |
+| Growth surprises | Macro | Trends in bonds and currencies follow surprises in growth and inflation | Real-time macro data, as first published |
+
+## 6. Summary, exercises and reading
+
+### 6.1 Four takeaways
+
+1. **Filters can use any information, which is why they need discipline.** Sources range from the price itself to flows, macro data and the calendar; actions from gating to switching speed.
+2. **One test for all.** State the mechanism first, compare at equal speed, use only information known at the time, judge after costs by marginal contribution, and count the tries.
+3. **Most filters fail.** Of four reasonable filters, one hurt, one did nothing, one looked good only on the data that suggested it, and one beat the speed curve without beating the rule.
+4. **The most promising filters work through mechanisms with a known timing:** flows and positioning, scheduled events, and regimes that change how fast markets move.
+
+### 6.2 Exercises
+
+- [ ] Test the zero-rate filter out of sample: choose it on 2001–2012 only, and apply it to 2013–2026. Does it still help? (notebook §4)
+- [ ] Replace the VIX median with fixed thresholds of 20 and 30. How sensitive is the result? Count your tries. (notebook §4)
+- [ ] Gate breakouts by volume: enter a Donchian breakout only when volume exceeds its 50-day average. Compare at equal speed. (notebook §4)
+- [ ] Combine the correlation scale with the VIX switch. Do two weak filters add up to a strong one? (notebook §4)
+
+### 6.3 Reading
+
+The full reference list closes the lecture. A short path: Baltas and Kosowski for correlations and trend; Lo (2004) for why edges fade; Harvey, Liu and Zhu (2016) for the bar a new idea must clear.
+
+## Appendix: charts
+
+From the companion notebook, [08_filters_and_overlays.ipynb](08_filters_and_overlays.ipynb).
+
+### G.1 The filters against the yardstick (§4)
+
+![Four filters plotted against the unfiltered rule at every speed, Sharpe ratio against turnover](figures/08_01_filters_vs_curve.png)
+
+The grey curve is the unfiltered rule at six lookbacks; each diamond is a filtered system. A filter helps only if it lies above the curve at its own turnover. The zero-rate filter (yellow) and the VIX switch (blue) lie above it; the efficiency-ratio gates lie below.
+
+### G.2 The four filter variables (§4)
+
+![Efficiency ratio of SPY, average correlation of the 16 ETFs, 3-month Treasury bill yield and VIX, 2001-2026](figures/08_02_filter_variables.png)
+
+The efficiency ratio swings within weeks; average correlation rises in sell-offs, as in 2008, 2020 and 2022, and starts in 2006, when enough of the 16 ETFs exist; the Treasury bill sits at zero from late 2008 to 2015 and from 2020 to 2022; the VIX spikes in 2008 and 2020.
+
+## References
+
+- Baltas, N. and Kosowski, R. Demystifying time-series momentum strategies: volatility estimators, trading rules and pairwise correlations. Working paper, SSRN 2140091. — correlations and trend returns (§2.1, §4).
+- Baltussen, G., Da, Z., Lammers, S. and Martens, M. (2021). Hedging demand and market intraday momentum. *Journal of Financial Economics* 142(1), 377–403. — hedging flows (§5).
+- Harvey, C., Liu, Y. and Zhu, H. (2016). … and the cross-section of expected returns. *Review of Financial Studies* 29(1), 5–68. — the bar for new findings (§3).
+- Lo, A. (2004). The adaptive markets hypothesis: market efficiency from an evolutionary perspective. *Journal of Portfolio Management* 30, 15–29. — why edges fade (§1).
