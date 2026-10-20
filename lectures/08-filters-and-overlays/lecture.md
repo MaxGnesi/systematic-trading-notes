@@ -27,6 +27,8 @@ A trend signal says which way; a filter says whether to listen. It can be built 
 | Alternative data | Sentiment, news, search, satellite | Short histories, costly, easy to overfit |
 | Calendar and events | Earnings dates and index rebalances for single equities; option expiries and scheduled announcements for volatility strategies; central-bank meetings, data releases, month-end rebalancing and futures rolls for short-term strategies | Key for these strategies, because flows arrive at known times: the rebalancing waves of Lecture 5, scheduled. The risk of data mining is in seasonality without a mechanism, not in scheduled events |
 
+The map covers the main ground without claiming to be complete. Two further sources are common in practice: signals from other strategies used as filters, such as trading a trend only when carry or value agrees, and fundamental data, such as earnings revisions for single equities.
+
 ### 2.2 What a filter does to the signal
 
 | Action | How it works | Example |
