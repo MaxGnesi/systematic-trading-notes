@@ -210,6 +210,23 @@ The cross-asset-class correlation pattern was found on 2006–2026. The final st
 
 This is the confirmation step done once, and its result is typical: the variable kept some predictive information, but not enough to make a filter that adds after it is chosen. A pattern that weakens out of sample is still worth knowing; it is not yet worth trading.
 
+### 4.7 A calendar example: payroll days
+
+US payroll reports are released on announced dates, usually the first Friday of the month; the dates here come from the archive of the Bureau of Labor Statistics. For a trend system the question is diagnostic, not a filter: how much of its profit and risk arrives on these days?
+
+**Table 4.7. The unfiltered 12-month rule on payroll days** (302 release days, 2001–2026; notebook §4.7)
+
+| Asset class | Share of days | Share of trend profit | Size of moves, payroll days against other days |
+|---|---|---|---|
+| Equities | 5% | 9% | 1.08 times |
+| Bonds | 5% | −10% | 1.35 times |
+| Commodities | 5% | −6% | 1.07 times |
+| All 16 ETFs | 5% | 5% | 1.09 times |
+
+- **Overall, payroll days carry their fair share**: 5% of the days, 5% of the profit. There is no reason for a trend system to skip them.
+- **Bonds are the exception.** They move a third more on payroll days, and the trend system loses on them: a surprise in the data often runs against the bond trend.
+- **Where calendar filters matter.** For short-term and relative-value strategies, and for single stocks around earnings, scheduled events decide much of the risk, and positioning around them is a filter in its own right.
+
 None of the examples in §4.1 to §4.6 passes all three requirements: a stated mechanism, a gain at equal speed, and a significant addition after costs. That says little about filters in general and much about the test: with millions of possible variants, a filter that does pass has to be checked for how many variants were tried before it.
 
 ## 5. Further ideas
