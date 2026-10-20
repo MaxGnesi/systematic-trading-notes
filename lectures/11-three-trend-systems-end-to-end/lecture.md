@@ -556,6 +556,21 @@ Allow a long EWMAC position only when the market is in backwardation by more tha
 
 The filter does not raise EWMAC's Sharpe ratio at any threshold ([chart J.9](#j9-filter-curves-10)). At 0% it removes almost a third of the positions at hardly any cost, and it beats 87% of random filters that remove positions as often and for as long: the positions it removes are worse than average. But removing them earns nothing either. In these markets the term structure is too one-sided to filter on (gold and the yen were almost never in backwardation, wheat on 7% of days, corn on 13%), and a trend rule already sees the roll, because the adjusted series contain it.
 
+**Exploratory: relative to its own past, and decided at entry.** The variants below were designed after seeing the result above, so they explore rather than confirm. The roll yield is compared with its own past year (lowest and highest quartile) instead of zero; it is applied every day, or decided once when a trend starts and kept until the trend changes sign (Lecture 8, attachment C).
+
+| Variant | Sharpe ratio, EWMAC | Sharpe ratio, portfolio | Maximum drawdown, EWMAC | Gross exposure | Turnover |
+|---|---|---|---|---|---|
+| No filter | 0.54 | 0.66 | −16.8% | 100% | 100% |
+| Sign rule, every day (above) | 0.53 | 0.66 | −21.2% | 75% | 83% |
+| Quartiles, every day | 0.38 | 0.59 | −25.8% | 76% | 121% |
+| Carry at entry: no long in the lowest quartile, no short in the highest | 0.56 | 0.68 | −30.8% | 85% | 84% |
+| Contrarian at entry: no long in the highest quartile, no short in the lowest | 0.47 | 0.66 | −17.9% | 69% | 69% |
+
+- **Applied every day, a relative threshold switches positions on and off** as the roll yield moves within its own range: turnover rises by a fifth. Decided at entry, turnover falls instead.
+- **No sign that extreme curves revert.** Dropping trends that start in an extreme curve lowers EWMAC's Sharpe ratio from 0.54 to 0.47: those trades earned money on average.
+- **The useful finding is efficiency, not return.** The contrarian variant keeps the portfolio's Sharpe ratio and drawdown with 31% less exposure and turnover; the carry variant gains 0.02, far inside the noise, at the price of a much deeper drawdown.
+- **To confirm** the efficiency result, it would have to hold on other markets or a later period before entering a design.
+
 ### 10.2 Correlation regime (the whole portfolio)
 
 Halve the portfolio's risk when the average correlation between the 14 markets over the past 63 days is above a percentile of its own history to date.
