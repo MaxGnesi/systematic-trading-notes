@@ -104,7 +104,7 @@ This is a first look, kept deliberately simple. Which point on these curves to c
 | Comparing trend systems fairly | Lecture 7 |
 | Filters and overlays, regime models, pullback entries | Lecture 8 |
 | Sizing: per trade, per asset, over time, after losses, by edge | Lecture 9 |
-| Cross-sectional rules and the trend portfolio | Lecture 10 |
+| Cross-sectional rules and the trend portfolio | Lecture 11 |
 | Trends on bars cut by price (point-and-figure, Renko) | Part III |
 | Machine learning | After Part V, once honest testing is in place |
 

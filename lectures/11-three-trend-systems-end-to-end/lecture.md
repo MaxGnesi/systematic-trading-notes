@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 20, 2026 · Max Gnesi*
 
-Part II built the pieces one at a time: what a market offers (Lecture 5), how a design decides what is captured (Lecture 6), how to compare systems (Lecture 7), filters (Lecture 8) and sizing (Lecture 9). This capstone puts them together, building three trend systems end to end on futures, one from each family of Lecture 6, from the raw data to a running system. *Draft: written step by step; §1 to §4 so far.*
+Part II built the pieces one at a time: what a market offers (Lecture 5), how a design decides what is captured (Lecture 6), how to compare systems (Lecture 7), filters (Lecture 8) and sizing (Lecture 9). This capstone puts them together, building three trend systems end to end on futures, from the raw data to a combined portfolio. *Draft: written step by step; §1 to §4 so far.*
 
 ## 1. The question of this lecture
 
@@ -12,7 +12,9 @@ What does it take to build a trend system properly, from data to positions, and 
 |---|---|---|
 | EWMAC, blended over a few speeds | Linear filters | A continuous forecast that is always in the market; partial trading, costs and the choice of speed matter most |
 | Turtle-style breakout | Channel breakouts | On-or-off positions with flat periods; stops built into the system; time in the market and the marginal contribution of a system that is often idle |
-| Kalman slope, weighted by its uncertainty | Model-based | A system that knows how sure it is: positions scale with the evidence, and the surprises flag when the model is wrong |
+| Cross-sectional momentum | Applied across markets rather than over time (Lecture 6, §2.1) | A relative trend: long the strongest markets and short the weakest at the same time, so its net exposure, and its payoff, differ from the other two |
+
+A model-based system, the Kalman slope of Lecture 4, was the first candidate for the third place. On these markets it trades almost like EWMAC, with daily returns that correlate 0.93 to 0.95 at equal speed, and it earns less; it appears in §5 as a variant of EWMAC. Cross-sectional momentum correlates 0.65 to 0.71 with the other two and takes the third place.
 
 Each system goes through the same steps:
 
@@ -24,7 +26,7 @@ Each system goes through the same steps:
 | Signal, forecast, sizing, partial trading, costs | Lectures 6 and 9 |
 | Compare fairly; marginal contribution to the other systems | Lecture 7 |
 | Filters, if any earn their place | Lecture 8 |
-| Combine the three; run them live | This lecture, and Lecture 4b, §4.3, for storing state |
+| Combine the three into one portfolio; test out of sample | This lecture |
 
 The capstone uses futures rather than the ETFs of Lectures 5 to 9. Futures are what trend followers trade: they are margined, so risk rather than cash is the scarce resource (Lecture 7, §4.4), they cover every asset class, and they are cheap to trade. They also bring a problem ETFs hide: every contract expires, so a backtest needs one series stitched together from many contracts. §3 builds it. Only for government bonds, which the free futures data lack, two Treasury funds stand in (§2.2).
 
