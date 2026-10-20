@@ -8,7 +8,7 @@ A filter decides whether, or how much, to trade a signal, using information the 
 
 A trend signal says which way; a filter says whether to listen. It can be built from anything: the price itself, the volume, other markets, the economy, flows, the calendar. That freedom is the attraction and the danger. The more ideas can be tried, the larger the multiple-testing problem of Lecture 5, §4.3, and a filter is also a second signal: it removes some losing trades and some winning ones, and it changes how often the system trades.
 
-**The bottom line.** Be creative about sources and disciplined about testing. A filter earns its place only if its mechanism is stated before it is tested, if it beats the unfiltered system at equal speed, and if it adds to the unfiltered system after costs. Of the nine filters tested in §4, none passed all three.
+**The bottom line.** Be creative about sources and disciplined about testing. A filter earns its place only if its mechanism is stated before it is tested, if it beats the unfiltered system at equal speed, and if it adds to the unfiltered system after costs. Of the filters tested in §4, none passed all three; how a filter is attached to the signal turned out to matter as much as the regime it uses.
 
 **Filter or sizing?** As in Lecture 9, §1.2: a rule that uses only risk and cost information, such as volatility, drawdown or trading costs, is sizing; a rule that uses conditioning information, such as a regime, trend strength, macro data or the calendar, is a filter.
 
@@ -127,13 +127,46 @@ Three further variables, each with a hypothesis stated before the test. First th
 | The same, reversed after seeing Table 4.2 | 0.55 | 0.55 | 0.12% (0.2) |
 | Stock–bond correlation: 1.5 times when positive, 0.5 when negative (the hypothesis) | 0.58 | 0.53 | 0.28% (0.7) |
 
-Three lessons, each more useful than any single filter:
+What these results say, so far:
 
-- **Intuition is a poor guide; the literature can be a better one.** Two of the three hypotheses were wrong. For correlations, Baltas and Kosowski had already found that trend following suffers when correlations across markets are high; the mechanism from the literature beat the intuition.
-- **A large difference between regimes is not a filter.** Trend earned a Sharpe ratio of 0.88 when asset classes moved independently and 0.51 when they did not, yet scaling exposure by the regime did not help in either direction, even when the direction was chosen with hindsight. Scaling up in the good regime also raises turnover and risk at the moment the regime turns, and the regime is known only with a lag.
-- **What looks good was found in the data.** The two filters that came out ahead, the low-volatility gate and the reversed correlation scale, are the opposite of what was hypothesised; their gains are not significant, and they would have to be confirmed on data they were not found in.
+- **Patterns are signals too.** Two of the three hypotheses were wrong as stated, but the patterns in Table 4.2 are information in their own right: trend earned 0.88 when asset classes moved independently and 0.51 when they did not, and Baltas and Kosowski had found the same direction. Research works both ways (Lecture 5, §4.2): from a hypothesis to a test, and from a clear pattern to an explanation, to be confirmed on data it was not found in.
+- **Volatility depends.** Trend did slightly better in calm periods here, and a gate on low volatility was the only filter in Table 4.3 to beat the unfiltered rule, yet the result depends on how volatility is measured and on the rule it is applied to.
+- **A large gap between regimes did not, so far, make a better filter.** Scaling exposure by the regime did not help in either direction. §4.3 shows that the reason lies partly in how the filter was attached to the signal.
 
-None of the filters in §4.1 and §4.2 passes all three requirements: a stated mechanism, a gain at equal speed, and a significant addition after costs. That is the usual fate of filters, and the reason for the discipline.
+### 4.3 How the filter attaches to the signal
+
+All the filters above act on every day: the position is the trend signal times the filter, so whenever the regime switches, the filter opens or closes a position by itself, in the middle of a trend. A filter can instead be attached to the trend's own entries and exits.
+
+| Attachment | How it works |
+|---|---|
+| A. Independent | Position = trend signal × filter, every day. The filter creates its own entries and exits |
+| B. Entry only, at the next signal | A new position is opened only if the filter is on when the trend signal turns; it is then held until the signal turns again |
+| C. Entry only, joining the trend | A position is opened when the signal turns with the filter on, or when the filter turns on during an existing trend; it is closed only when the trend signal turns |
+
+**Table 4.4. The same regimes, attached three ways** (12-month rule, 2001–2026; the unfiltered rule has a Sharpe ratio of 0.60 and is always in the market; notebook §4.3)
+
+| Regime the filter requires | Attachment | Time in the market | Sharpe ratio | Sharpe ratio, 5 bp | Alpha over the unfiltered rule (t) |
+|---|---|---|---|---|---|
+| Efficiency ratio above 0.2 | A | 20% | 0.22 | −0.01 | −0.33% (−0.9) |
+| | B | 16% | 0.35 | 0.31 | −0.05% (−0.2) |
+| | C | 74% | **0.51** | 0.46 | −0.36% (−1.5) |
+| Cross-asset-class correlation low | A | 32% | 0.44 | 0.31 | 0.38% (0.8) |
+| | B | 35% | 0.43 | 0.37 | 0.19% (0.5) |
+| | C | 65% | **0.58** | 0.52 | 0.37% (0.8) |
+| Stock–bond correlation positive | A | 19% | 0.36 | 0.28 | 0.22% (0.5) |
+| | B | 17% | 0.35 | 0.29 | 0.15% (0.4) |
+| | C | 37% | **0.50** | 0.46 | 0.39% (0.8) |
+| Asset volatility low | A | 52% | **0.65** | 0.52 | 0.56% (1.4) |
+| | B | 51% | 0.59 | 0.50 | 0.29% (0.8) |
+| | C | 72% | 0.58 | 0.50 | 0.10% (0.3) |
+| Asset volatility high | A | 38% | 0.21 | 0.11 | −0.61% (−1.5) |
+| | C | 66% | 0.39 | 0.34 | −0.64% (−1.9) |
+
+- **How the filter is attached matters as much as which regime it uses.** For three of the four regimes, attaching the filter to the trend's exits (C) raised the Sharpe ratio sharply: the efficiency-ratio gate from 0.22 to 0.51, the correlation regimes from about 0.4 to 0.5–0.6. A filter that closes positions in the middle of a trend cuts the large gains of Lecture 5, §2.4.
+- **These systems are often out of the market.** By Lecture 7, §4.3, the Sharpe ratio over the whole period is the Sharpe ratio while invested times the square root of the time in the market. The cross-asset-class correlation filter (C) earned 0.58 while in the market 65% of the time, about 0.72 while invested. Whether that is worth having depends on what the idle capital or risk can do.
+- **Still no significant addition.** The best alphas, for the correlation regimes, are positive but with t-statistics below 1. The yardstick curve of §3 does not extend to such low turnover and time in the market, so the comparison at equal speed is left to the alpha.
+
+None of the filters in §4.1 to §4.3 passes all three requirements: a stated mechanism, a gain at equal speed, and a significant addition after costs. That is the usual fate of filters, and the reason for the discipline.
 
 ## 5. Further ideas
 
@@ -150,12 +183,13 @@ Filters that our daily ETF data cannot test, each with its mechanism and the dat
 
 ## 6. Summary, exercises and reading
 
-### 6.1 Four takeaways
+### 6.1 Five takeaways
 
 1. **Filters can use any information, which is why they need discipline.** Sources range from the price itself to flows, macro data and the calendar; actions from gating to switching speed.
 2. **One test for all.** State the mechanism first, compare at equal speed, use only information known at the time, judge after costs by marginal contribution, and count the tries.
-3. **Most filters fail, and intuition is a poor guide.** Of nine filters, none added significantly; two of three regime hypotheses were wrong; and a large difference between regimes, 0.88 against 0.51 in Sharpe ratio, did not make a profitable filter even with hindsight.
-4. **The most promising filters work through mechanisms with a known timing:** flows and positioning, scheduled events, and regimes that change how fast markets move.
+3. **Most filters fail, but patterns are information.** Of the filters tested, none added significantly; two of three regime hypotheses were wrong as stated, yet the regime patterns themselves, such as 0.88 against 0.51 by cross-asset-class correlation, are candidates to explain and confirm.
+4. **How a filter attaches to the signal matters as much as which regime it uses.** Letting the filter open and close positions on its own hurt; attaching it to the trend's entries and exits recovered most of the loss.
+5. **The most promising filters work through mechanisms with a known timing:** flows and positioning, scheduled events, and regimes that change how fast markets move.
 
 ### 6.2 Exercises
 
