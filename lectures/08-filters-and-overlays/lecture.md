@@ -210,22 +210,32 @@ The cross-asset-class correlation pattern was found on 2006–2026. The final st
 
 This is the confirmation step done once, and its result is typical: the variable kept some predictive information, but not enough to make a filter that adds after it is chosen. A pattern that weakens out of sample is still worth knowing; it is not yet worth trading.
 
-### 4.7 A calendar example: payroll days
+### 4.7 A calendar example: earnings
 
-US payroll reports are released on announced dates, usually the first Friday of the month; the dates here come from the archive of the Bureau of Labor Statistics. For a trend system the question is diagnostic, not a filter: how much of its profit and risk arrives on these days?
+Scheduled events matter most where a single piece of news can reprice an asset at once. Single stocks around their earnings reports are the clearest case. Twelve large US stocks, 2003–2026: each move on the day the market reacts to an earnings report (the next day for a report after the close) is measured against the stock's normal daily volatility, known the day before.
 
-**Table 4.7. The unfiltered 12-month rule on payroll days** (302 release days, 2001–2026; notebook §4.7)
+**Table 4.8. Twelve large US stocks on earnings days and on all other days** (AAPL, MSFT, AMZN, NVDA, META, GOOGL, NFLX, TSLA, JPM, XOM, JNJ, WMT; 1,065 earnings reactions; notebook §4.8)
 
-| Asset class | Share of days | Share of trend profit | Size of moves, payroll days against other days |
+| | Earnings days | All other days |
+|---|---|---|
+| Average move, in multiples of a normal day | **2.8** | 0.7 |
+| Moves beyond 3 normal days | **35%** | 0.9% |
+| Moves beyond 5 normal days | **15%** | 0.1% |
+| Share of the move that is an overnight gap (median) | **88%** | 47% |
+
+| Largest reactions | Date | Move | In normal days |
 |---|---|---|---|
-| Equities | 5% | 9% | 1.08 times |
-| Bonds | 5% | −10% | 1.35 times |
-| Commodities | 5% | −6% | 1.07 times |
-| All 16 ETFs | 5% | 5% | 1.09 times |
+| NVDA | August 2004 | −43% | 15 |
+| META | February 2022 | −31% | 14 |
+| NFLX | January 2022 | −25% | 14 |
+| META | July 2018 | −21% | 14 |
+| MSFT | April 2006 | −12% | 15 |
 
-- **Overall, payroll days carry their fair share**: 5% of the days, 5% of the profit. There is no reason for a trend system to skip them.
-- **Bonds are the exception.** They move a third more on payroll days, and the trend system loses on them: a surprise in the data often runs against the bond trend.
-- **Where calendar filters matter.** For short-term and relative-value strategies, and for single stocks around earnings, scheduled events decide much of the risk, and positioning around them is a filter in its own right.
+- **The moves are brutal.** One earnings reaction in three exceeds three normal days, one in seven exceeds five; on ordinary days such moves are almost absent ([chart G.7](#g7-earnings-days-47)).
+- **They arrive while the market is closed.** The median reaction is almost entirely an overnight gap: no stop can act, and no position can be cut once the news is out.
+- **For single-stock strategies the calendar is a filter in its own right.** Holding through earnings, reducing before them, or trading the reaction are design decisions with a known date; a system that ignores them carries risk that no volatility estimate based on ordinary days will show.
+
+**Macro releases, by contrast,** matter more for short-term and relative-value trading than for trend following. On our trend system, payroll days carried their fair share of profit overall, 5% of the days for 5% of the profit, and the effect on bonds changed sign over time: the bond trend lost on payroll days through 2015 and gained on them in 2016–2022 (notebook §4.7).
 
 None of the examples in §4.1 to §4.6 passes all three requirements: a stated mechanism, a gain at equal speed, and a significant addition after costs. That says little about filters in general and much about the test: with millions of possible variants, a filter that does pass has to be checked for how many variants were tried before it.
 
@@ -304,6 +314,12 @@ Grey: Sharpe ratios of 200 random filters with the same share of time on and the
 ![Efficiency ratio of SPY, average correlation of the 16 ETFs, 3-month Treasury bill yield and VIX, 2001-2026](figures/08_02_filter_variables.png)
 
 The efficiency ratio swings within weeks; average correlation rises in sell-offs, as in 2008, 2020 and 2022, and starts in 2006, when enough of the 16 ETFs exist; the Treasury bill sits at zero from late 2008 to 2015 and from 2020 to 2022; the VIX spikes in 2008 and 2020.
+
+### G.7 Earnings days (§4.7)
+
+![Distribution of daily moves of twelve large US stocks, earnings days against other days, in multiples of a normal day](figures/08_07_earnings.png)
+
+The share of days with moves of each size, on a log scale. Ordinary days (grey) cluster below two normal days; earnings days (orange) spread to five, ten and more.
 
 ## References
 
