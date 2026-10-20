@@ -26,7 +26,7 @@ Each system goes through the same steps:
 | Filters, if any earn their place | Lecture 8 |
 | Combine the three; run them live | This lecture, and Lecture 4b, §4.3, for storing state |
 
-The capstone uses futures rather than the ETFs of Lectures 5 to 9. Futures are what trend followers trade: they are margined, so risk rather than cash is the scarce resource (Lecture 7, §4.4), they cover every asset class, and they are cheap to trade. They also bring a problem ETFs hide: every contract expires, so a backtest needs one series stitched together from many contracts. §3 builds it.
+The capstone uses futures rather than the ETFs of Lectures 5 to 9. Futures are what trend followers trade: they are margined, so risk rather than cash is the scarce resource (Lecture 7, §4.4), they cover every asset class, and they are cheap to trade. They also bring a problem ETFs hide: every contract expires, so a backtest needs one series stitched together from many contracts. §3 builds it. Only for government bonds, which the free futures data lack, two Treasury funds stand in (§2.4).
 
 ## 2. Getting futures data
 
@@ -115,14 +115,25 @@ What to watch. The raw files are never changed: problem rows are flagged, not de
 | A few rows after expiry, for example four in the E-mini file | Stale rows; keep them in the raw files, but flag them so that no position is held after the contract's last trading day |
 | The expiry is not in the files, and the rule differs by market | Take it from the exchange's contract specifications. E-mini contracts expire on the third Friday of the month; WTI crude three business days before the 25th of the month before delivery |
 | A few missing values in volume or open interest (cocoa, dollar index, crude oil, Nasdaq) | The prices are complete; the roll rule needs a fallback when volume or open interest is missing |
-| The close may differ from the official settlement price | Spot-check a few dates against another source, for example Yahoo's front-month series |
-| No government bond futures | A trend portfolio without bonds misses one of its main sources of profit in equity sell-offs (Lecture 5); a bond market can be added from another source (§2.5) |
+| The close may differ from the official settlement price | Check against another source. Against Yahoo's front-month series, 93% to 100% of closes are identical and daily returns differ by less than 1 basis point on average (the yen excepted: Yahoo quotes it per yen, Kaggle per 100 yen) |
+| No government bond futures | Bonds enter through two Treasury funds (below) |
 | The data end in December 2022 | Enough for a backtest over 22 years; a live system needs a current source |
 | File prefixes are those of the uploader, for example `CME_` for NYMEX and COMEX contracts | Only a name; all four exchanges belong to CME Group |
 
+**Bonds: two Treasury funds.** A trend portfolio without bonds misses one of its main sources of profit in equity sell-offs (Lecture 5). The first Treasury ETFs (IEF, TLT) started only in July 2002, but two Vanguard index funds have daily prices from long before 2000 and take the place of bond futures for the whole period:
+
+| Fund | Holds | Daily prices from | Close to |
+|---|---|---|---|
+| VFITX, Vanguard Intermediate-Term Treasury | US Treasuries of intermediate maturity; volatility 4.7% a year against 6.7% for the IEF ETF (2002–2022), so somewhat shorter | October 1991 | 5-year Treasury note future; daily returns correlate 0.94 with IEF |
+| VUSTX, Vanguard Long-Term Treasury | US Treasuries of long maturity; volatility 12.5% a year against 14.3% for the TLT ETF | May 1986 | Treasury bond future; daily returns correlate 0.98 with TLT |
+
+A fund holds the bonds themselves, so its return includes the interest that the invested money earns; a future's return does not, because a future ties up only margin. To put the funds on the same footing as the futures, the capstone uses their **excess return**: the fund's daily total return, with interest reinvested, minus the daily three-month Treasury bill rate. A fund needs no roll and no adjustment. It is priced once a day, which is all a daily system needs, but it stands in for a future and is not what a trend follower would trade.
+
+A free front-month bond series, such as Yahoo's ZN=F, would not be a better choice. It never shows two contracts on the same day, so the gap at each roll cannot be measured, only estimated. The capstone uses only rolls it can observe.
+
 ### 2.5 Extending the data: a Databento account
 
-To add markets, such as the 10-year Treasury note, or to extend the series past 2022:
+The capstone needs no more data than §2.3 and §2.4 provide. To add markets later, such as Treasury futures, or to extend the series past 2022, a paid source with every contract month is needed; Databento is one:
 
 1. **Sign up** at databento.com. The free credit is added to the account; check its terms and expiry in the portal. Payment goes through card checks, and some cards, prepaid ones for example, may be declined.
 2. **Create an API key** in the portal and store it like the Kaggle token: as the environment variable `DATABENTO_API_KEY`, or in a `.env` file that is never committed (the repository's `.gitignore` excludes `.env` files).
