@@ -8,7 +8,7 @@ A filter decides whether, or how much, to trade a signal, using information the 
 
 A trend signal says which way; a filter says whether to listen. It can be built from anything: the price itself, the volume, other markets, the economy, flows, the calendar. That freedom is the attraction and the danger. The more ideas can be tried, the larger the multiple-testing problem of Lecture 5, §4.3, and a filter is also a second signal: it removes some losing trades and some winning ones, and it changes how often the system trades.
 
-**The bottom line.** Be creative about sources and disciplined about testing. A filter earns its place only if its mechanism is stated before it is tested, if it beats the unfiltered system at equal speed, and if it adds to the unfiltered system after costs. Of the four filters tested in §4, none passed all three.
+**The bottom line.** Be creative about sources and disciplined about testing. A filter earns its place only if its mechanism is stated before it is tested, if it beats the unfiltered system at equal speed, and if it adds to the unfiltered system after costs. Of the nine filters tested in §4, none passed all three.
 
 **Filter or sizing?** As in Lecture 9, §1.2: a rule that uses only risk and cost information, such as volatility, drawdown or trading costs, is sizing; a rule that uses conditioning information, such as a regime, trend strength, macro data or the calendar, is a filter.
 
@@ -66,6 +66,8 @@ The curve is not smooth: the 63-day rule lies below both its neighbours. Compari
 
 ## 4. Four filters, tested
 
+### 4.1 Four filters, one per source and per action
+
 One filter per source and per action, each applied to the 12-month rule. Each mechanism was stated before the test.
 
 | Filter | Source | Action | How it works | Mechanism |
@@ -94,7 +96,44 @@ One filter per source and per action, each applied to the 12-month rule. Each me
 - **The zero-rate regime looks best, and is the trap.** It lies above the curve and earned the highest Sharpe ratio, 0.66. But its idea came from Table 3.4 of Lecture 5, which was measured on the same data; the test is therefore not out of sample, and the alpha, at t = 1.5, is not significant even so. It is the clearest example in these lectures of step 5: an idea found in the data has to be tested on data it was not found in.
 - **The VIX regime beats the curve but not the rule.** Switching speed by regime earned more than a fixed rule of the same turnover, 0.51 against 0.39, but less than the 12-month rule itself, and its alpha is not significant. It is the most interesting result and the least conclusive one.
 
-None of the four passes all three requirements: a stated mechanism, a gain at equal speed, and a significant addition after costs. That is the usual fate of filters, and the reason for the discipline.
+### 4.2 Three more regimes: volatility, correlation across asset classes, stock–bond correlation
+
+Three further variables, each with a hypothesis stated before the test. First the simplest check: does the unfiltered rule perform differently in the two regimes at all? If not, no filter on that variable can help.
+
+| Variable | How it is measured | Hypothesis, stated first |
+|---|---|---|
+| Volatility | Each asset's 60-day volatility against its median to date | Trend earns in turbulent periods (Lecture 5, §2.4), so it should do better when volatility is high |
+| Correlation across asset classes | Average 63-day correlation between equal-weighted baskets of equities, bonds and commodities, against its median to date | When one macro driver moves every asset class, its shocks persist, so trend should do better when this correlation is high |
+| Stock–bond correlation | 6-month correlation of SPY and TLT returns | A positive correlation marks an inflation regime (Lecture 3, §8.3), when shocks hit stocks and bonds together and persist, so trend should do better |
+
+**Table 4.2. The unfiltered rule by regime** (Sharpe ratio, 2001–2026; regimes measured with data up to the previous day; notebook §4.2)
+
+| Regime | Sharpe ratio | Hypothesis |
+|---|---|---|
+| Asset volatility above its median | 0.59 | Rejected: no better than in calm periods |
+| Asset volatility below its median | 0.65 | |
+| Cross-asset-class correlation above its median | 0.51 | Rejected, and reversed: trend did better when asset classes moved independently |
+| Cross-asset-class correlation below its median | **0.88** | |
+| Stock–bond correlation positive (21% of days) | **0.97** | Supported |
+| Stock–bond correlation negative | 0.45 | |
+
+**Table 4.3. Filters built on these regimes** (notebook §4.2)
+
+| Filter | Sharpe ratio | Curve at the same turnover | Alpha over the unfiltered rule (t) |
+|---|---|---|---|
+| Trade only when asset volatility is high (the hypothesis) | 0.21 | 0.46 | −0.61% (−1.5) |
+| Trade only when asset volatility is low (the opposite) | 0.65 | 0.59 | 0.59% (1.4) |
+| Cross-asset-class correlation: 1.5 times above its median, 0.5 below (the hypothesis) | 0.52 | 0.48 | −0.12% (−0.2) |
+| The same, reversed after seeing Table 4.2 | 0.55 | 0.55 | 0.12% (0.2) |
+| Stock–bond correlation: 1.5 times when positive, 0.5 when negative (the hypothesis) | 0.58 | 0.53 | 0.28% (0.7) |
+
+Three lessons, each more useful than any single filter:
+
+- **Intuition is a poor guide; the literature can be a better one.** Two of the three hypotheses were wrong. For correlations, Baltas and Kosowski had already found that trend following suffers when correlations across markets are high; the mechanism from the literature beat the intuition.
+- **A large difference between regimes is not a filter.** Trend earned a Sharpe ratio of 0.88 when asset classes moved independently and 0.51 when they did not, yet scaling exposure by the regime did not help in either direction, even when the direction was chosen with hindsight. Scaling up in the good regime also raises turnover and risk at the moment the regime turns, and the regime is known only with a lag.
+- **What looks good was found in the data.** The two filters that came out ahead, the low-volatility gate and the reversed correlation scale, are the opposite of what was hypothesised; their gains are not significant, and they would have to be confirmed on data they were not found in.
+
+None of the filters in §4.1 and §4.2 passes all three requirements: a stated mechanism, a gain at equal speed, and a significant addition after costs. That is the usual fate of filters, and the reason for the discipline.
 
 ## 5. Further ideas
 
@@ -115,7 +154,7 @@ Filters that our daily ETF data cannot test, each with its mechanism and the dat
 
 1. **Filters can use any information, which is why they need discipline.** Sources range from the price itself to flows, macro data and the calendar; actions from gating to switching speed.
 2. **One test for all.** State the mechanism first, compare at equal speed, use only information known at the time, judge after costs by marginal contribution, and count the tries.
-3. **Most filters fail.** Of four reasonable filters, one hurt, one did nothing, one looked good only on the data that suggested it, and one beat the speed curve without beating the rule.
+3. **Most filters fail, and intuition is a poor guide.** Of nine filters, none added significantly; two of three regime hypotheses were wrong; and a large difference between regimes, 0.88 against 0.51 in Sharpe ratio, did not make a profitable filter even with hindsight.
 4. **The most promising filters work through mechanisms with a known timing:** flows and positioning, scheduled events, and regimes that change how fast markets move.
 
 ### 6.2 Exercises
@@ -123,6 +162,7 @@ Filters that our daily ETF data cannot test, each with its mechanism and the dat
 - [ ] Test the zero-rate filter out of sample: choose it on 2001–2012 only, and apply it to 2013–2026. Does it still help? (notebook §4)
 - [ ] Replace the VIX median with fixed thresholds of 20 and 30. How sensitive is the result? Count your tries. (notebook §4)
 - [ ] Gate breakouts by volume: enter a Donchian breakout only when volume exceeds its 50-day average. Compare at equal speed. (notebook §4)
+- [ ] Choose the cross-asset-class correlation filter on 2006–2015 only and apply it to 2016–2026. Does a regime that separates performance in one decade still do so in the next? (notebook §4.2)
 - [ ] Combine the correlation scale with the VIX switch. Do two weak filters add up to a strong one? (notebook §4)
 
 ### 6.3 Reading
