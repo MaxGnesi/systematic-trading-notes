@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 20, 2026 · Max Gnesi*
 
-Part II built the pieces one at a time: what a market offers (Lecture 5), how a design decides what is captured (Lecture 6), how to compare systems (Lecture 7), filters (Lecture 8) and sizing (Lecture 9). This capstone puts them together, building three trend systems end to end on futures, one from each family of Lecture 6, from the raw data to a running system. *Draft: written step by step; §1 to §3 so far.*
+Part II built the pieces one at a time: what a market offers (Lecture 5), how a design decides what is captured (Lecture 6), how to compare systems (Lecture 7), filters (Lecture 8) and sizing (Lecture 9). This capstone puts them together, building three trend systems end to end on futures, one from each family of Lecture 6, from the raw data to a running system. *Draft: written step by step; §1 to §4 so far.*
 
 ## 1. The question of this lecture
 
@@ -314,7 +314,32 @@ The price alone misses almost the whole return of a bond fund, which comes from 
 
 Both adjusted series are rebuilt from the raw contracts and the roll calendar in seconds. A different roll rule needs no new data, and every number can be traced back to a roll that was observed.
 
-*Next: §4, what the data contain: the crises, regimes and policy periods between 2000 and 2022.*
+## 4. What the data contain
+
+A backtest can only show how a system behaves in the conditions its history contains. Before building systems, it helps to know which conditions those are. Each episode below is defined by a simple rule that anyone can check, using US data from FRED and Yahoo Finance; spells less than three months apart (monthly data) or one month apart (daily data) count as one episode ([chart J.4](#j4-what-the-data-contain-4)).
+
+| Episode | Rule | Number | When | Share of days |
+|---|---|---|---|---|
+| Recession | NBER dates (FRED series USREC) | 3 | 2001; 2008–2009; 2020 | 9% |
+| Equity bear market | S&P 500 down 20% from its previous peak, counted from the peak to the trough | 4 | Mar 2000–Oct 2002; Oct 2007–Mar 2009; Feb–Mar 2020; Jan–Oct 2022 | 21% |
+| High volatility | VIX above 30 for at least five days | 17 | Mostly 2001–2003, 2008–2009, 2011, 2020 and 2022 | 10.5% |
+| Inflation above 4% | Consumer prices up more than 4% on a year earlier | 4 | 2005–2006 (twice, briefly); 2007–2008; 2021–2022, peaking at 9.0% in June 2022 | 13% |
+| Deflation | Consumer prices lower than a year earlier | 2 | Dec 2008–Oct 2009, as low as −2.0%; Jan–Apr 2015 | 5% |
+| Zero rates | Federal funds rate below 0.25% | 2 | Oct 2008–Jan 2016; Mar 2020–Mar 2022 | 40% |
+| QE: the Fed buying bonds | Announced programmes | 4 | Nov 2008–Mar 2010; Nov 2010–Jun 2011; Sep 2012–Oct 2014; Mar 2020–Mar 2022 | 27% |
+| QT: the Fed shrinking its balance sheet | Announced programmes | 2 | Oct 2017–Jul 2019; from Jun 2022 | 11% |
+| The Fed raising rates | From the first to the last increase of a cycle | 3 | Jun 2004–Jun 2006; Dec 2015–Dec 2018; from Mar 2022 | 25% |
+
+What this means for the backtests:
+
+- **Stress is well represented.** Three recessions and four bear markets: on one day in five the S&P 500 was in a bear market. Crisis behaviour can be measured on several episodes, not on 2008 alone. Calm is common too: the VIX was below 15 on 32% of days.
+- **Inflation is not.** There is one sustained inflation shock, 2021–2022, and it comes at the very end of the data. No decade resembles the 1970s, and results on inflation hedging rest on a single episode.
+- **Monetary policy dominates the middle of the sample.** Rates were at zero on 40% of days and the Fed was buying bonds on 27%. Over the whole period the 10-year Treasury yield fell from 6.6% in January 2000 to 0.5% in August 2020, before rising to 3.9% by the end of 2022. A long bull market in bonds, followed by their worst year in decades, shapes every bond result in this lecture.
+- **The rules are US rules.** Other markets had their own episodes, for example negative policy rates in the euro area from 2014 and in Japan from 2016, which the table does not show.
+
+§9 uses these episodes to evaluate the systems in crises and across policy regimes, and some of them return as filters in §10.
+
+*Next: §5, the first system: EWMAC.*
 
 ## Appendix: charts
 
@@ -336,11 +361,18 @@ All three series end at the December 2022 price. Going back, the additive series
 
 Grey: what the price did. Blue: what a holder earned after rolling. Where blue lies left of grey, rolling cost money (contango); for soybeans it earned money (backwardation).
 
+### J.4 What the data contain (§4)
+
+![Timeline of recessions, bear markets, high volatility, inflation, deflation, zero rates, QE, QT and rate increases, 2000-2022](figures/11_04_episodes.png)
+
+Each bar is one episode under the rules of §4. Stress clusters in 2000–2003, 2008–2009, 2020 and 2022; zero rates and QE fill most of 2009–2015; the only sustained inflation comes at the end.
+
 ## References
 
 - Carchano, Ó. and Pardo, Á. (2009). Rolling over stock index futures contracts. *Journal of Futures Markets* 29(7), 684–694. — the roll method matters little for stock index futures (§3.2).
 - Carver, R. (2015). Systems building: futures rolling. *This Blog is Systematic*, 18 May 2015. — the additive ("Panama") method and its limits (§3.3).
 - CME Group (2020). CME Clearing Advisory 20-152, 8 April 2020. — preparing for negative prices in crude oil (§3.1).
+- Federal Reserve Bank of St. Louis. FRED economic data: series USREC (NBER recession indicator), CPIAUCSL, DFF, VIXCLS, DGS10, DTB3. — the episodes of §4 and the bill rate (§2.4, §3.7).
 - Erb, C. and Harvey, C. (2006). The strategic and tactical value of commodity futures. *Financial Analysts Journal* 62(2). — roll yield and the term structure (§3.6).
 - Fuertes, A.-M., Miffre, J. and Rallis, G. (2010). Tactical allocation in commodity futures markets: combining momentum and term structure signals. *Journal of Banking & Finance* 34(10), 2530–2548. — the term structure as a condition on momentum (§3.6).
 - Gorton, G. and Rouwenhorst, K. G. (2006). Facts and fantasies about commodity futures. *Financial Analysts Journal* 62(2). — returns of rolled commodity futures (§3.6).
