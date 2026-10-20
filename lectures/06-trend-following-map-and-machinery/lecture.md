@@ -31,7 +31,7 @@ The boundaries blur. Once its gains have settled, the Kalman filter is an expone
 
 Each family can also be applied in two ways: to an asset against its own past (time series), or to assets ranked against each other (cross-sectional; Jegadeesh and Titman, 1993). Goyal and Jegadeesh (2018) find that the difference lies mainly in net exposure. This lecture is about time-series systems; cross-sectional rules come with the portfolio in Lecture 10. Some tools do not produce a signal but act on one, such as filters on trend strength or volatility, or entries on pullbacks; Lecture 8 treats these modifiers.
 
-One model per family is described in the appendix, as a model card: its rules, sensible parameters, what it captures and where it fails.
+The appendix is a gallery of model cards: ten common rules across the three families, each with its formula, how it trades, and a chart of it on QQQ from September 2021 to March 2023.
 
 ### 2.2 Five design choices
 
@@ -100,7 +100,7 @@ This is a first look, kept deliberately simple. Which point on these curves to c
 
 | Topic | Where |
 |---|---|
-| One model per family: rules, parameters, what it captures, where it fails | Appendix: model cards |
+| Ten common rules, each with its formula and a chart | Appendix: model cards |
 | Comparing trend systems fairly | Lecture 7 |
 | Filters and overlays, regime models, pullback entries | Lecture 8 |
 | Sizing: per trade, per asset, over time, after losses, by edge | Lecture 9 |
@@ -247,41 +247,143 @@ The full reference list closes the lecture. A short path: Levine and Pedersen (2
 
 ## Appendix: model cards
 
-One model per family, chosen to overlap as little as possible. Parameters are sensible ranges, not recommendations.
+Ten common trend rules, kept practical: the formula, how the rule trades, typical settings, one strength and one weakness, and a chart on the same window, QQQ from September 2021 to March 2023, covering the top, the 2022 bear market and the turn. Green shading marks long positions, red short, white flat. The number of position changes in the window gives a feel for each rule's speed; it counts every change, including to and from flat.
 
-### Model card 1: EWMAC (linear filters)
+### Linear filters
 
-| | |
-|---|---|
-| Signal | Fast exponential average minus slow exponential average of price, divided by the asset's price volatility |
-| Parameters | Slow span four times the fast one; fast spans from 2 to 64 days cover fast to slow trends |
-| Forecast | Scaled to an average absolute value of 10 and capped at ±20 (Carver); several speeds can be averaged |
-| Position | Forecast/10 × target volatility / asset volatility (§5) |
-| Captures | Direction continuously, long and short; drift and timing according to speed |
-| Fails | Fast speeds in choppy markets (§6: costs); slow speeds at turning points and in fast crises (§3.1) |
-| Variants | Price against a moving average, two-average crossovers, MACD, time-series momentum, adaptive averages (KAMA) |
-
-### Model card 2: Turtle-style breakout (channel breakouts)
+#### Card 1: Simple momentum
 
 | | |
 |---|---|
-| Signal | Enter long when price exceeds its highest close of the last N days, short when it falls below the lowest; exit on the opposite channel of a shorter length |
-| Parameters | The Turtle rules used two speeds, 20-day and 55-day entries, with 10-day and 20-day exits (Faith, 2007); the sweep in §2.3 runs from 10 to 200 days |
-| Position | On or off; sized so that one ATR move costs a fixed fraction of capital, which is volatility targeting with the true range |
-| Captures | The moment price escapes its range; persistent moves after a break |
-| Fails | False breakouts near the channel; gives back part of each trend before the exit channel is hit |
-| Variants | Chandelier stop (exit a multiple of ATR below the high since entry), percentage trailing stops, Parabolic SAR, volatility breakouts |
+| Formula | $`m_t = P_t / P_{t-N} - 1`$, the return over the last $`N`$ days |
+| Trades | Long if $`m_t > 0`$, short if $`m_t < 0`$ |
+| Typical settings | $`N`$ from 63 to 252 days (3 to 12 months); here 126 |
+| Strength | The simplest trend rule: every past return in the window counts equally |
+| Weakness | The signal depends on the single price $`N`$ days ago, so it can flip when an old price drops out |
+| In the chart | 12 position changes; short from late January 2022 almost to the end of the window |
 
-### Model card 3: Kalman slope (model-based)
+![Simple momentum on QQQ, 2021-2023](figures/06_c01_momentum.png)
+
+#### Card 2: Simple moving averages
 
 | | |
 |---|---|
-| Signal | The slope of the level-plus-slope Kalman filter of Lecture 4, optionally divided by its standard deviation to weigh it by the evidence |
-| Parameters | The slope's memory, set through its steady-state weights as in Lecture 4 (an EMA-equivalent of 45–250 days) |
-| Position | Forecast proportional to the slope, or to slope over its uncertainty, then volatility targeting |
-| Captures | A smooth trend estimate together with how sure the model is of it; the surprises flag when the model is wrong |
-| Fails | When the model is wrong: fat-tailed surprises and shifts in volatility (Lecture 4, §5) |
-| Variants | Regression slope and its t-statistic, regime-switching models, L1 trend filtering, machine learning |
+| Formula | $`\text{SMA}_N = \frac{1}{N}\sum_{k=0}^{N-1} P_{t-k}`$ |
+| Trades | Long if the fast average is above the slow one, short if below; or price against a single average |
+| Typical settings | 50 and 200 days (the "golden cross" and "death cross"); 20 and 100 |
+| Strength | Very few trades; widely watched |
+| Weakness | Very late: the slow average turns months after price does |
+| In the chart | 2 position changes in 19 months |
+
+![50-day and 200-day simple moving averages on QQQ, 2021-2023](figures/06_c02_sma.png)
+
+#### Card 3: Exponential moving averages
+
+| | |
+|---|---|
+| Formula | $`\text{EMA}_t = \alpha P_t + (1-\alpha)\,\text{EMA}_{t-1}`$, with $`\alpha = 2/(N+1)`$ |
+| Trades | Long if the fast EMA is above the slow one, short if below. MACD is the same idea: EMA(12) minus EMA(26), against its own 9-day EMA |
+| Typical settings | 20 and 50; 12 and 26 |
+| Strength | Reacts faster than a simple average of the same length, and has no hard edge when an old price leaves the window (Lecture 2) |
+| Weakness | Faster also means more false turns in a sideways market |
+| In the chart | 10 position changes |
+
+![EMA(20) and EMA(50) on QQQ, 2021-2023](figures/06_c03_ema.png)
+
+#### Card 4: EWMAC, a continuous forecast
+
+| | |
+|---|---|
+| Formula | $`f_t = \dfrac{\text{EMA}_{16} - \text{EMA}_{64}}{P_t\,\sigma_t}`$, scaled to an average absolute value of 10 and capped at ±20 |
+| Trades | Position proportional to $`f_t`$, then sized by volatility (§5): no switch, the position grows and shrinks with the trend |
+| Typical settings | Fast spans from 2 to 64 days, slow span four times the fast; several speeds averaged |
+| Strength | Trades gradually; one scale for every market |
+| Weakness | Rarely flat; small positions are still traded unless trading is buffered |
+| In the chart | 10 changes of sign; the forecast in the lower panel shows how strong the trend was, not only its direction |
+
+![EWMAC 16/64 forecast on QQQ, 2021-2023](figures/06_c04_ewmac.png)
+
+### Channel breakouts
+
+#### Card 5: Donchian channel and the Turtle rules
+
+| | |
+|---|---|
+| Formula | Upper channel $`U_t = \max(P_{t-1}, \dots, P_{t-N})`$, lower channel $`L_t = \min(P_{t-1}, \dots, P_{t-N})`$ |
+| Trades | Long when price closes above the 55-day high, short below the 55-day low; exit on the opposite 20-day channel |
+| Typical settings | The Turtle rules used two speeds, 20-day and 55-day entries with 10-day and 20-day exits, and sized positions so that one ATR equals a fixed fraction of capital (Faith, 2007) |
+| Strength | The classic, and simple to run |
+| Weakness | Gives back a large part of each trend before the exit channel is hit |
+| In the chart | 20 position changes, including spells flat between exit and re-entry |
+
+![Donchian channel on QQQ, 2021-2023](figures/06_c05_donchian.png)
+
+#### Card 6: Bollinger bands
+
+| | |
+|---|---|
+| Formula | Middle band $`\text{SMA}_{20}`$; outer bands $`\text{SMA}_{20} \pm 2\,\sigma_{20}`$, where $`\sigma_{20}`$ is the standard deviation of the last 20 closes |
+| Trades | As a breakout: long above the upper band, short below the lower, exit at the middle band. The same bands are also traded the other way, fading moves to the outer band: the same tool serves trend or reversion (Lecture 5, §4.4) |
+| Typical settings | 20 days, 2 standard deviations |
+| Strength | The bands widen in volatile markets, so a breakout must be large relative to recent noise |
+| Weakness | Short spells in the market; a single extreme close widens the bands |
+| In the chart | 22 position changes, mostly short spells |
+
+![Bollinger bands as a breakout on QQQ, 2021-2023](figures/06_c06_bollinger.png)
+
+#### Card 7: Keltner channel
+
+| | |
+|---|---|
+| Formula | Middle line $`\text{EMA}_{20}`$; outer lines $`\text{EMA}_{20} \pm 2\,\text{ATR}_{10}`$, the modern version of Keltner's channel |
+| Trades | As Bollinger: long above the upper line, short below the lower, exit at the middle |
+| Typical settings | EMA(20), 2 ATR(10) |
+| Strength | Width from the true range rather than the spread of closes, so it reacts less to a single close |
+| Weakness | Narrower than Bollinger here, so it trades more |
+| In the chart | 28 position changes |
+
+![Keltner channel on QQQ, 2021-2023](figures/06_c07_keltner.png)
+
+#### Card 8: Supertrend
+
+| | |
+|---|---|
+| Formula | Mid-price $`(H_t + L_t)/2`$; bands at $`\pm\,m\,\text{ATR}_n`$ around it. The active band only tightens: in an uptrend the lower band may rise but not fall, in a downtrend the upper band may fall but not rise |
+| Trades | Long while price stays above the active band, short while below; the trend flips when the close crosses the band, and the band jumps to the other side. It is a stop-and-reverse system, always in the market, where the line is the stop |
+| Typical settings | $`n = 10`$, $`m = 3`$ |
+| Strength | The trailing line shows exactly where the trade would be stopped and reversed |
+| Weakness | Always in the market, so every crossing is a full reversal |
+| In the chart | 12 reversals |
+
+![Supertrend on QQQ, 2021-2023](figures/06_c08_supertrend.png)
+
+### Model-based
+
+#### Card 9: Regression slope and its t-statistic
+
+| | |
+|---|---|
+| Formula | Fit $`\ln P_{t-k} = a + b\,(-k) + e_k`$ over the last $`N`$ days by least squares; $`t = \hat b / \text{se}(\hat b)`$ |
+| Trades | Long if $`t > 0`$, short if $`t < 0`$; or a position proportional to $`t`$, capped, so that a clean trend gets more than a noisy one |
+| Typical settings | $`N`$ = 63 to 126 days |
+| Strength | Weighs the trend by the evidence: a steady rise scores higher than an erratic one with the same return |
+| Weakness | Overlapping windows make the t-statistic look more significant than it is: read it as a ranking, not a test |
+| In the chart | 8 position changes |
+
+![Regression slope t-statistic on QQQ, 2021-2023](figures/06_c09_regression.png)
+
+#### Card 10: Kalman slope
+
+| | |
+|---|---|
+| Formula | The level-plus-slope filter of Lecture 4; signal $`\hat s_t / \text{sd}(\hat s_t)`$, the slope divided by its standard deviation |
+| Trades | Long if the slope is positive, short if negative, with a position that can grow with the ratio |
+| Typical settings | Level gain about 0.125 and slope memory equivalent to EMA(90), as in Lecture 4; price noise calibrated on prior data |
+| Strength | One model gives the level, the trend and how sure the trend is; the surprises flag when the model is wrong |
+| Weakness | More settings to choose than any other card; once its gains settle, its level and slope are a linear filter (§2.1) |
+| In the chart | 4 position changes: smooth, close to the 50/200 crossover in speed but earlier at the turns |
+
+![Kalman level and slope on QQQ, 2021-2023](figures/06_c10_kalman.png)
 
 ## Appendix: charts
 
