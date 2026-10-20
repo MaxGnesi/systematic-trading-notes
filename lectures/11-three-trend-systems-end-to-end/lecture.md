@@ -26,31 +26,33 @@ Each system goes through the same steps:
 | Filters, if any earn their place | Lecture 8 |
 | Combine the three; run them live | This lecture, and Lecture 4b, §4.3, for storing state |
 
-The capstone uses futures rather than the ETFs of Lectures 5 to 9. Futures are what trend followers trade: they are margined, so risk rather than cash is the scarce resource (Lecture 7, §4.4), they cover every asset class, and they are cheap to trade. They also bring a problem ETFs hide: every contract expires, so a backtest needs one series stitched together from many contracts. §3 builds it. Only for government bonds, which the free futures data lack, two Treasury funds stand in (§2.4).
+The capstone uses futures rather than the ETFs of Lectures 5 to 9. Futures are what trend followers trade: they are margined, so risk rather than cash is the scarce resource (Lecture 7, §4.4), they cover every asset class, and they are cheap to trade. They also bring a problem ETFs hide: every contract expires, so a backtest needs one series stitched together from many contracts. §3 builds it. Only for government bonds, which the free futures data lack, two Treasury funds stand in (§2.2).
 
-## 2. Getting futures data
+## 2. Getting the data
 
 ### 2.1 What a futures backtest needs
 
 | Data | Why |
 |---|---|
-| Daily open, high, low, close and volume for every contract month, not only the front month | To decide when to roll and to build an adjusted continuous series (§3) |
-| Open interest per contract, if possible | One of the rules for when to roll |
+| Daily open, high, low, close and volume for every contract month, not only the front month | To decide when to roll and to build one continuous series (§3) |
+| Open interest per contract | One of the rules for when to roll |
 | The contract specifications: tick size, multiplier, expiry calendar | To turn price moves into money and positions into contracts |
 
-Free sources usually provide only a single front-month series, unadjusted, with a jump on every roll date. A trend rule reads those jumps as moves that never happened, so for this lecture the individual contract months are needed.
+Free sources usually provide only a single front-month series, with a jump on every roll date. A trend rule reads those jumps as moves that never happened, and the size of each jump cannot be measured from that series alone, because it never shows two contracts on the same day. A backtest needs the individual contract months.
 
-### 2.2 Where to get it
+### 2.2 What we use
 
-| Source | What it offers | Cost | Fits this lecture |
+| Data | Source | Covers | Cost |
 |---|---|---|---|
-| Yahoo Finance (for example ES=F) | One front-month series per market, unadjusted | Free | Only to look at and to cross-check; not for a backtest |
-| Kaggle datasets | Community uploads; the ones used here hold every contract month of twelve futures markets, daily, 2000–2022 | Free, with a Kaggle account; no payment card | **Yes**: the data of this lecture |
-| Databento | Every contract month of CME, ICE and other exchanges, daily to tick level, up to the present | Pay per request; USD 125 of free credit on sign-up; the cost of a request can be checked before downloading | To extend the data beyond 2022 or add markets (§2.5) |
-| Interactive Brokers | Historical data through a brokerage account | Free with an account, with request limits and short histories for expired contracts | For live trading more than for long backtests |
-| Paid end-of-day vendors (for example Norgate, Portara, CSI Data) | Clean, already back-adjusted continuous series and contract histories | Subscription or one-off purchase | When long, clean histories are worth paying for |
+| Futures: every contract month of twelve markets, daily | Kaggle datasets | Expiries 2000–2022 | Free, with a Kaggle account |
+| Government bonds: two Treasury index funds, daily | Yahoo Finance | 1986 and 1991 to today | Free |
+| Three-month Treasury bill rate, daily | FRED, Federal Reserve Bank of St. Louis | From 1954 | Free |
 
-### 2.3 Step by step: the data from Kaggle
+The free futures data contain no government bond futures, and a trend portfolio without bonds misses one of its main sources of profit in equity sell-offs (Lecture 5). Two Treasury funds stand in for them over the whole period; the bill rate turns their returns into returns comparable with those of futures (§3).
+
+Paid sources (for example Databento, Norgate Data or a brokerage account) offer every contract month up to the present and Treasury futures as well. The capstone does not need them.
+
+### 2.3 Step by step: the futures from Kaggle
 
 1. **Create an account** at kaggle.com.
 2. **For one dataset, download by hand**: open the dataset page, for example kaggle.com/datasets/choweric/cme-es, click *Download* and unzip the file into its own folder. For twelve datasets the API below is faster.
@@ -58,7 +60,7 @@ Free sources usually provide only a single front-month series, unadjusted, with 
 4. **Store the token outside the code**: save it in the file `.kaggle/access_token` in your home directory, or set it as the environment variable `KAGGLE_API_TOKEN`. Never put it in a notebook or commit it.
 5. **Install the client:** `pip install kagglehub`.
 6. **Download each dataset.** `dataset_download` saves the files in a local cache and returns the folder; copy them into the project's data folder.
-7. **Check the files before using them** (§2.4), and check each dataset's licence on its Kaggle page.
+7. **Check the files before using them** (§2.5), and check each dataset's licence on its Kaggle page.
 
 ```python
 import shutil
@@ -72,9 +74,30 @@ for name in DATASETS:
     shutil.copytree(cache, Path("data/raw/kaggle") / name, dirs_exist_ok=True)
 ```
 
-The twelve datasets take a few seconds to download. Downloaded files are data from a third party: keep them in their own folder and read them only as data.
+The twelve datasets take a few seconds to download. Downloaded files are data from a third party: keep them in their own folder, read them only as data, and do not publish them; the repository publishes results, not data.
 
-### 2.4 The dataset in brief
+### 2.4 Step by step: the bond funds and the bill rate
+
+The funds come from Yahoo Finance and need no account; the bill rate comes from FRED as a CSV file.
+
+```python
+import pandas as pd
+import yfinance as yf
+
+funds = yf.download(["VFITX", "VUSTX"], start="1999-01-01", end="2023-01-01", auto_adjust=False)
+funds.to_csv("data/raw/treasury_funds.csv")                 # Close and Adj Close: §3 explains the difference
+bill = pd.read_csv("https://fred.stlouisfed.org/graph/fredgraph.csv?id=DTB3")
+bill.to_csv("data/raw/fred_DTB3.csv", index=False)          # annual rate in percent
+```
+
+| Fund | Holds | Daily prices from | Stands in for |
+|---|---|---|---|
+| VFITX, Vanguard Intermediate-Term Treasury | US Treasuries of intermediate maturity | October 1991 | 5-year Treasury note future |
+| VUSTX, Vanguard Long-Term Treasury | US Treasuries of long maturity | May 1986 | Treasury bond future |
+
+The first Treasury ETFs, IEF and TLT, started only in July 2002, too late for a backtest from 2000. Over 2002–2022 the funds track them closely: daily returns correlate 0.94 (VFITX with IEF) and 0.98 (VUSTX with TLT). VFITX is somewhat shorter in maturity than IEF, with volatility of 4.7% a year against 6.7%. A fund is priced once a day, which is all a daily system needs; it stands in for a future and is not what a trend follower would trade.
+
+### 2.5 The futures data in brief
 
 Twelve datasets of daily data, one per market, all uploaded by the same author (choweric) with the same layout. Each holds one CSV file per contract month, and the file name gives the contract: `CME_ESZ2022.csv` is the E-mini S&P 500 (ES) contract for December (Z) 2022. In total there are 1,832 contracts, 67 MB.
 
@@ -104,7 +127,7 @@ Twelve datasets of daily data, one per market, all uploaded by the same author (
 | | Wheat | CBOT | Mar, May, Jul, Sep, Dec | 2000–2022 |
 | | Cocoa | ICE US | Mar, May, Jul, Sep, Dec | 2000–2022 |
 
-**The prices are raw.** On 9 September 2022 the September E-mini closed at 4,067.25 and the December contract at 4,085.50. That is two prices for the same market on the same day, and a series that switches from one to the other jumps by 18 points. The gap is the cost of carry: three months of interest minus dividends. The May 2020 crude oil contract closed at −37.63 on 20 April 2020, a price that only raw data show. Building one series out of these contracts is the subject of §3.
+**The prices are raw.** On 9 September 2022 the September E-mini closed at 4,067.25 and the December contract at 4,085.50: two prices for the same market on the same day. A series that switches from one to the other jumps by 18 points that no position earned. The May 2020 crude oil contract closed at −37.63 on 20 April 2020, a price that only raw data show. Turning these contracts into one series is the subject of §3.
 
 What to watch. The raw files are never changed: problem rows are flagged, not deleted, so that every decision can be checked and undone.
 
@@ -112,46 +135,11 @@ What to watch. The raw files are never changed: problem rows are flagged, not de
 |---|---|
 | Files sorted newest first | Sort by date before any calculation |
 | Contracts are listed long before they trade: days with zero volume make up 12% (cocoa) to 67% (yen) of rows, and before the roll volume and open interest are small | On those days the price is a settlement or a stale quote, not a trade. Keep the rows, but flag them: they must not decide the roll or measure a roll gap; a minimum volume and open interest does it |
-| A few rows after expiry, for example four in the E-mini file | Stale rows; keep them in the raw files, but flag them so that no position is held after the contract's last trading day |
+| A few rows after expiry, for example four in the E-mini file | Stale rows; keep them, but flag them so that no position is held after the contract's last trading day |
 | The expiry is not in the files, and the rule differs by market | Take it from the exchange's contract specifications. E-mini contracts expire on the third Friday of the month; WTI crude three business days before the 25th of the month before delivery |
 | A few missing values in volume or open interest (cocoa, dollar index, crude oil, Nasdaq) | The prices are complete; the roll rule needs a fallback when volume or open interest is missing |
 | The close may differ from the official settlement price | Check against another source. Against Yahoo's front-month series, 93% to 100% of closes are identical and daily returns differ by less than 1 basis point on average (the yen excepted: Yahoo quotes it per yen, Kaggle per 100 yen) |
-| No government bond futures | Bonds enter through two Treasury funds (below) |
 | The data end in December 2022 | Enough for a backtest over 22 years; a live system needs a current source |
 | File prefixes are those of the uploader, for example `CME_` for NYMEX and COMEX contracts | Only a name; all four exchanges belong to CME Group |
 
-**Bonds: two Treasury funds.** A trend portfolio without bonds misses one of its main sources of profit in equity sell-offs (Lecture 5). The first Treasury ETFs (IEF, TLT) started only in July 2002, but two Vanguard index funds have daily prices from long before 2000 and take the place of bond futures for the whole period:
-
-| Fund | Holds | Daily prices from | Close to |
-|---|---|---|---|
-| VFITX, Vanguard Intermediate-Term Treasury | US Treasuries of intermediate maturity; volatility 4.7% a year against 6.7% for the IEF ETF (2002–2022), so somewhat shorter | October 1991 | 5-year Treasury note future; daily returns correlate 0.94 with IEF |
-| VUSTX, Vanguard Long-Term Treasury | US Treasuries of long maturity; volatility 12.5% a year against 14.3% for the TLT ETF | May 1986 | Treasury bond future; daily returns correlate 0.98 with TLT |
-
-A fund holds the bonds themselves, so its return includes the interest that the invested money earns; a future's return does not, because a future ties up only margin. To put the funds on the same footing as the futures, the capstone uses their **excess return**: the fund's daily total return, with interest reinvested, minus the daily three-month Treasury bill rate. A fund needs no roll and no adjustment. It is priced once a day, which is all a daily system needs, but it stands in for a future and is not what a trend follower would trade.
-
-A free front-month bond series, such as Yahoo's ZN=F, would not be a better choice. It never shows two contracts on the same day, so the gap at each roll cannot be measured, only estimated. The capstone uses only rolls it can observe.
-
-### 2.5 Extending the data: a Databento account
-
-The capstone needs no more data than §2.3 and §2.4 provide. To add markets later, such as Treasury futures, or to extend the series past 2022, a paid source with every contract month is needed; Databento is one:
-
-1. **Sign up** at databento.com. The free credit is added to the account; check its terms and expiry in the portal. Payment goes through card checks, and some cards, prepaid ones for example, may be declined.
-2. **Create an API key** in the portal and store it like the Kaggle token: as the environment variable `DATABENTO_API_KEY`, or in a `.env` file that is never committed (the repository's `.gitignore` excludes `.env` files).
-3. **Install the client** (`pip install databento`) and **check the cost before every download**: the estimate is free, daily bars are cheap, tick data can be expensive.
-
-```python
-import os
-import databento as db
-
-client = db.Historical(os.environ["DATABENTO_API_KEY"])     # the key comes from the environment
-request = dict(dataset="GLBX.MDP3",                         # CME Globex
-               schema="ohlcv-1d",                           # daily open, high, low, close, volume
-               symbols=["ZN.FUT"], stype_in="parent",       # every contract month of the 10-year Treasury note
-               start="2015-01-01", end="2026-10-01")
-print("estimated cost, USD:", client.metadata.get_cost(**request))
-bars = client.timeseries.get_range(**request).to_df()       # only after checking the cost
-```
-
-Dataset names, symbols and parameters follow Databento's documentation; check them against the current version before running.
-
-*Next: §3, building continuous series: when to roll, how to back-adjust, and what the roll yield is.*
+*Next: §3, from contracts and funds to returns: when to roll, the main back-adjustment techniques for futures, and total and excess returns for the funds.*
