@@ -482,12 +482,13 @@ All at 10% volatility, 2001–2022 ([chart J.10](#j10-the-final-portfolio-11)):
 | EWMAC | 0.54 | 5.6 | −16.8% | −10.8% | +17.5% |
 | Breakout | 0.59 | 6.1 | −21.3% | −11.5% | +13.0% |
 | Cross-sectional | 0.73 | 7.5 | −17.5% | −9.1% | +16.4% |
-| **EWMAC + cross-sectional, 5 bp** | **0.66** | **6.8** | **−16.6%** | **−10.5%** | **+18.5%** |
-| The same, 10 bp | 0.54 | 5.6 | −18.4% | −11.8% | +17.6% |
-| The same, no costs | 0.78 | 8.0 | −15.8% | −9.2% | +19.5% |
+| EWMAC + cross-sectional, 5 bp | 0.66 | 6.8 | −16.6% | −10.5% | +18.5% |
+| **Final: with the correlation filter of §10.2, 5 bp** | **0.75** | **7.5** | **−15.5%** | **−9.3%** | **+14.3%** |
+| Final, 10 bp | 0.64 | 6.4 | −16.4% | −10.7% | +13.6% |
+| Final, no costs | 0.86 | 8.6 | −14.7% | −7.8% | +15.0% |
 | Long the 14 markets, same sizing and weights | 0.50 | 5.1 | −36.7% | −17.1% | −7.2% |
 
-The breakeven cost of the portfolio, at which its Sharpe ratio falls to zero, is 33 basis points per unit traded: more than six times the 5 bp assumed.
+The final portfolio halves its risk when the 14 markets move together, which lowers its average volatility to 8%; its rows are rescaled to an average of 10%, so that every row runs at the same risk. Its breakeven cost, at which the Sharpe ratio falls to zero, is 38 basis points per unit traded, more than seven times the 5 bp assumed. In 2022 the filter cost return: correlation was high, and the portfolio ran at half risk through much of the year in which trend earned most.
 
 **How much these numbers can be trusted.** Over 22.8 years, a Sharpe ratio of 0.5 to 0.7 has a standard error of about 0.22 (Lo, 2002). Differences between the systems of 0.1 or 0.2 lie within that noise; the conclusions below rest on differences in payoff and in what each system adds, which are larger and steadier than differences in Sharpe ratio.
 
@@ -514,26 +515,26 @@ The same plateau blends, with shorts allowed or replaced by flat positions:
 
 Holding the same markets long, with the same sizing and weights, is the natural benchmark: it earns the drift that the trend systems partly collect, without any timing.
 
-| | Long the 14 markets | EWMAC | Breakout | Cross-sectional | Portfolio |
+| | Long the 14 markets | EWMAC | Breakout | Cross-sectional | Final portfolio |
 |---|---|---|---|---|---|
-| Sharpe ratio | 0.50 | 0.54 | 0.59 | 0.73 | 0.66 |
-| Maximum drawdown | −36.7% | −16.8% | −21.3% | −17.5% | −16.6% |
-| Longest time under water | 10.9 years | 3.2 years | 5.0 years | 3.2 years | 3.2 years |
-| Jan 2001–Oct 2002 | +25.6% | +18.2% | +19.0% | +31.6% | +28.4% |
-| Oct 2007–Mar 2009 | +15.1% | +22.7% | +26.7% | +12.6% | +18.3% |
-| Feb–Mar 2020 | −2.2% | +2.3% | −0.7% | +0.3% | +1.8% |
-| Jan–Oct 2022 | −8.1% | +23.1% | +18.6% | +22.7% | +24.6% |
+| Sharpe ratio | 0.50 | 0.54 | 0.59 | 0.73 | 0.75 |
+| Maximum drawdown | −36.7% | −16.8% | −21.3% | −17.5% | −15.5% |
+| Longest time under water | 10.9 years | 3.2 years | 5.0 years | 3.2 years | 3.0 years |
+| Jan 2001–Oct 2002 | +25.6% | +18.2% | +19.0% | +31.6% | +25.8% |
+| Oct 2007–Mar 2009 | +15.1% | +22.7% | +26.7% | +12.6% | +17.6% |
+| Feb–Mar 2020 | −2.2% | +2.3% | −0.7% | +0.3% | +2.2% |
+| Jan–Oct 2022 | −8.1% | +23.1% | +18.6% | +22.7% | +17.9% |
 
-| Correlation with the long portfolio | EWMAC | Portfolio |
+| Correlation with the long portfolio | EWMAC | Final portfolio |
 |---|---|---|
-| When the long portfolio is less than 10% below its peak (58% of days) | +0.42 | +0.42 |
-| When it is more than 10% below its peak (42% of days) | **−0.11** | **−0.06** |
-| Correlation of the drawdown paths | 0.31 | 0.24 |
+| When the long portfolio is less than 10% below its peak (58% of days) | +0.42 | +0.41 |
+| When it is more than 10% below its peak (42% of days) | **−0.11** | **−0.03** |
+| Correlation of the drawdown paths | 0.31 | 0.21 |
 
 - **The long benchmark is not an equity portfolio.** With one sixth of the risk in each class, it holds bonds, gold and commodities as much as equities, which is why it gained in 2001–2002, when bonds, gold and the euro rose while equities fell. Its weakness is elsewhere: from 2008 it went almost eleven years without a new peak, through the fall of commodities, and in 2022 bonds fell with everything else.
 - **Trend gained in the slow bear markets and was roughly flat in the fast one.** The COVID crash took five weeks, too fast for trends at these speeds to turn.
 - **The correlation changes sign when it matters**, and the drawdowns rarely coincide.
-- **Combined, they improve each other.** Half long portfolio and half trend portfolio, rescaled to 10% volatility, has a Sharpe ratio of 0.74 against 0.50 for the long portfolio alone, and a maximum drawdown of −17.5% against −36.7%. The trend portfolio's alpha against the long portfolio is 5.6% a year, with a t-statistic of 2.8.
+- **Combined, they improve each other.** Half long portfolio and half final portfolio, rescaled to 10% volatility, has a Sharpe ratio of 0.80 against 0.50 for the long portfolio alone, and a maximum drawdown of −18.6% against −36.7%. The final portfolio's alpha against the long portfolio is 6.4% a year, with a t-statistic of 3.1.
 
 ### 9.4 Do the systems lose at the same time?
 
@@ -587,7 +588,7 @@ Halve the portfolio's risk when the average correlation between the 14 markets o
 - **On markets it was not chosen on, it mostly holds.** Chosen on one half of the markets, the threshold is the median both times; applied to the other half it raises the Sharpe ratio from 0.51 to 0.63 and from 0.61 to 0.67, while the drawdown improves in one half (−30.1% to −22.0%) and worsens in the other (−19.2% to −24.1%).
 - **It costs return**: 6.0% a year instead of 6.8%, since the portfolio runs at half risk more than half the time.
 
-Lecture 8 found a similar regime on ETFs that weakened out of sample in time. Here it holds across markets, but its evidence still comes from one period. The portfolio of §9 is reported without it; the filter is an option whose case rests on this table.
+Lecture 8 found a similar regime on ETFs that weakened out of sample in time. Here it holds across markets, but its evidence still comes from one period. **The final portfolio uses it** (§11.3), with the median as threshold; since it was chosen after the tests of this section, §9.1 shows the portfolio without it next to it.
 
 ## 11. Building the portfolio
 
@@ -615,7 +616,9 @@ It does worse here for a visible reason: it gives the largest weights to natural
 
 ### 11.3 Across systems
 
-EWMAC and cross-sectional momentum at equal risk (§8.2), the sum scaled to 10% volatility with leverage capped at 3. The equal-risk-contribution version of the same combination has a Sharpe ratio of 0.55 against 0.66.
+EWMAC and cross-sectional momentum at equal risk (§8.2), the sum scaled to 10% volatility with leverage capped at 3, and its risk halved when the average correlation of the markets is above its median to date (§10.2). The equal-risk-contribution version of the combination, before the filter, has a Sharpe ratio of 0.55 against 0.66.
+
+The term-structure filter stays out. Its contrarian variant, decided at entry, kept the Sharpe ratio with about 30% less exposure and turnover (§10.1); it is an option for cutting costs once it has been confirmed on other markets or a later period.
 
 ## 12. Out of sample
 
@@ -623,7 +626,7 @@ Three checks, chosen to guard against three different risks (Lecture 7, §5 and 
 
 ### 12.1 Choices fixed in advance
 
-The main results involve no selection from results: all speeds on the plateau blended with equal weights, equal risk per class and market, the volatility floor, a 10% volatility target, the two systems at equal risk, costs of 5 bp. Choices fixed in advance cannot be overfitted.
+The main results involve almost no selection from results: all speeds on the plateau blended with equal weights, equal risk per class and market, the volatility floor, a 10% volatility target, the two systems at equal risk, costs of 5 bp. Choices fixed in advance cannot be overfitted. The one exception is the correlation filter, adopted after its tests in §10.2; the portfolio without it is shown alongside.
 
 ### 12.2 Split by market
 
@@ -661,8 +664,8 @@ Picking the best of 92 variants would be overfitted one time in ten, and the bes
 2. **The design steps of Part II add up**, from a Sharpe ratio of 0.03 for one speed with naive sizing to 0.54; blending speeds matters most.
 3. **Choose speeds by dropping what fails and blending the rest.** The rule works on markets it was not made on; the plateau, not the peak, is what survives out of sample.
 4. **Three systems, two in the portfolio.** The breakout adds nothing to EWMAC and cross-sectional momentum; the Kalman slope is a variant of EWMAC.
-5. **Trend's value is its payoff.** It gained in the slow bear markets and in 2022, its correlation with a long portfolio turned negative in stress, and half long, half trend beat the long portfolio clearly (0.74 against 0.50). The long-or-flat version earns as much but gives up most of this.
-6. **Simple weights and few filters.** Equal risk beat equal risk contribution; the term-structure filter added nothing, the correlation filter survived its checks but rests on one period.
+5. **Trend's value is its payoff.** It gained in the slow bear markets and in 2022, its correlation with a long portfolio turned negative in stress, and half long, half trend beat the long portfolio clearly (0.80 against 0.50). The long-or-flat version earns as much but gives up most of this.
+6. **Simple weights and one filter.** Equal risk beat equal risk contribution. The correlation filter survived every check and is part of the final portfolio, raising the Sharpe ratio from 0.66 to 0.75, though its evidence comes from one period; the term-structure filter added no return.
 
 ### 13.2 Exercises
 
@@ -734,7 +737,9 @@ The first point of each curve is the system without the filter. The term-structu
 
 ### J.10 The final portfolio (§11)
 
-![Wealth of the final portfolio at 5 and 10 bp against the long benchmark, log scale](figures/11_10_final.png)
+![Wealth of the final portfolio, with and without the correlation filter, against the long benchmark, log scale](figures/11_10_final.png)
+
+All three at 10% average volatility. The filter adds most in 2007, 2015, 2019 and 2020, and costs in years of high correlation such as 2009, 2021 and 2022.
 
 ## References
 
