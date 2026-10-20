@@ -139,9 +139,9 @@ The literature began with stocks: Jegadeesh and Titman (1993) found that past wi
 | Sizing: per trade, per asset, over time, after losses, by edge | Lecture 9 |
 | The trend portfolio, with time-series and cross-sectional systems | Lecture 11 |
 | Trends on bars cut by price (point-and-figure, Renko) | Part III |
-| Machine learning | After Part V, once honest testing is in place |
+| Machine learning | Later in the course, once honest testing is in place |
 
-Lecture numbers after 7 are planned and may change.
+The trend portfolio, planned as Lecture 10, is built in the capstone, Lecture 11.
 
 ## 3. Design choices and what they capture
 
