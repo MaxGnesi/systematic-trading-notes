@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 20, 2026 · Max Gnesi*
 
-Part II built the pieces one at a time: what a market offers (Lecture 5), how a design decides what is captured (Lecture 6), how to compare systems (Lecture 7), filters (Lecture 8) and sizing (Lecture 9). This capstone puts them together, building three trend systems end to end on futures, one from each family of Lecture 6, from the raw data to a running system. *Draft: written step by step; §1 and §2 so far.*
+Part II built the pieces one at a time: what a market offers (Lecture 5), how a design decides what is captured (Lecture 6), how to compare systems (Lecture 7), filters (Lecture 8) and sizing (Lecture 9). This capstone puts them together, building three trend systems end to end on futures, one from each family of Lecture 6, from the raw data to a running system. *Draft: written step by step; §1 to §3 so far.*
 
 ## 1. The question of this lecture
 
@@ -142,4 +142,208 @@ What to watch. The raw files are never changed: problem rows are flagged, not de
 | The data end in December 2022 | Enough for a backtest over 22 years; a live system needs a current source |
 | File prefixes are those of the uploader, for example `CME_` for NYMEX and COMEX contracts | Only a name; all four exchanges belong to CME Group |
 
-*Next: §3, from contracts and funds to returns: when to roll, the main back-adjustment techniques for futures, and total and excess returns for the funds.*
+## 3. From contracts to returns
+
+A futures position is held in one contract at a time and moved to the next before expiry. A backtest needs one series per market that records what such a position experienced. This section builds that series: when to roll (§3.2), how to remove the jump at each roll (§3.3), which series each kind of system needs and how to compute its profit (§3.4), where each method breaks (§3.5), what rolling itself earns or costs (§3.6), and the same steps for the two bond funds (§3.7).
+
+### 3.1 One roll, three series
+
+Crude oil in April 2020 shows the problem at its sharpest. The May contract (CLK20) was about to expire into a market with no storage left; the June contract (CLM20) was priced far higher. A position rolled from May into June at the close of 13 April, six trading days before May's expiry ([chart J.1](#j1-one-roll-three-series-31)).
+
+| | 9 April | 13 April | Change |
+|---|---|---|---|
+| May contract, CLK20 | 22.76 | 22.41 | −0.35 (−1.5%) |
+| June contract, CLM20 | 28.82 | 29.26 | +0.44 |
+| **Raw series** (the contract held each day) | 22.76 (May) | 29.26 (June) | **+6.50 (+28.6%)** |
+| **Additive series** (back-adjusted, §3.3) | 16.94 | 16.59 | −0.35 |
+| **Ratio series** (back-adjusted, §3.3) | 32.02 | 31.53 | −1.5% |
+
+Over these two days the position was in the May contract, which lost 35 cents. The raw series shows a gain of 6.50 dollars, 29%: the gap of 6.85 dollars between June and May on the roll day, which no position earned. A trend rule on the raw series would read it as a strong rally. Both adjusted series show what the position actually did: the additive series the loss in dollars, the ratio series the loss in percent. Their levels, 16.59 and 31.53, are not prices that ever traded; §3.3 explains why.
+
+A week later, on 20 April, the May contract settled at **−37.63 dollars**, the first negative settlement of a major physically delivered futures contract. CME had prepared its systems for negative prices twelve days earlier (CME Clearing Advisory 20-152, 8 April 2020). The rolled position was already in June and was not exposed. A position still in May would have lost 55.90 dollars a barrel in one day, 306% of the previous price.
+
+### 3.2 When to roll
+
+| Rule | How it works | Strengths | Weaknesses |
+|---|---|---|---|
+| Volume crossover | Roll on the first day the next contract trades more than the current one | Follows where trading actually is | Volume swings from day to day and can cross back and forth |
+| Open-interest crossover | Roll on the first day the next contract has more open positions | Steadier: it counts positions held, not one day's trading | Lags volume in some markets |
+| Fixed calendar | Roll a fixed number of trading days before the last trading day, set per market | Known in advance; the same in a backtest and in practice; no look-ahead | Must be set once from the history of crossovers, and checked from time to time |
+| Before first notice | For contracts delivered physically, roll before the first day a holder can be asked to take delivery | Avoids delivery | Applies only to physically delivered contracts; the dates come from the exchange |
+
+On our data, the two crossovers come at these points, in trading days before each contract's last trading day (median, 2000–2022):
+
+| Markets | Volume crossover | Open-interest crossover |
+|---|---|---|
+| E-mini S&P 500, Nasdaq-100 | 5 | 2–3 |
+| Euro, yen, dollar index | 2 | 2 |
+| Crude oil | 2 | 7 |
+| Natural gas | 2 | 10 |
+| Gold | 20 | 23 |
+| Corn, soybeans, wheat | 15–18 | 22–23 |
+| Cocoa | 24 | 27 |
+
+Gold and the agricultural markets roll three to five weeks before the last trading day, because they are delivered physically and positions leave before the first notice day. The financial contracts are settled in cash and roll in the final days.
+
+**Does the rule matter?** It changes the annual return of holding and rolling by less than 0.2 percentage points in equity indices, currencies and gold, by 1 to 2 points in crude oil and the grains, and by 4.6 points in natural gas, where the gap between neighbouring contracts is largest. This matches the literature: Ma, Mercer and Walker (1992) showed that the choice of roll date can change research results, and Carchano and Pardo (2009) found that for stock index futures the choice makes little difference.
+
+**The capstone uses a fixed calendar per market**, set at the median open-interest crossover: 2 to 3 trading days before the last trading day for equity indices and currencies, 7 for crude oil, 10 for natural gas, and 22 to 27 for gold, grains and cocoa.
+
+### 3.3 The adjustment techniques
+
+**The right adjustment depends on how the position is held.** Each adjusted series is the exact record of one way of holding a futures position through its rolls:
+
+| The position | Its exact record | Why |
+|---|---|---|
+| A fixed number of contracts | **Additive series** | The profit of one contract is the sum of the point changes of the contracts held. The additive series keeps every point change, so its change times the contract's multiplier is the profit in dollars |
+| A fixed amount of money, with the number of contracts reset at each roll | **Ratio series** | The return of such a position is the return of each contract held, compounded across rolls. The ratio series keeps every percentage change |
+
+The six techniques in use, each shown on the April 2020 roll:
+
+| Technique | How it works | Keeps exactly | Distorts | Use for |
+|---|---|---|---|---|
+| **No adjustment** (raw series) | Chain the price of the contract held each day | The prices that actually traded | Every roll appears as a move: +6.50 dollars on 13 April 2020 | Contract values, position sizes and costs; never for signals or for profit across a roll |
+| **Additive** (difference, or "Panama", adjustment) | At each roll, add the gap (new minus old on the roll day) to all earlier prices: every price before 13 April 2020 rises by 6.85 dollars. The latest contract stays unchanged | Point changes, hence profit in dollars per contract; distances such as channel widths and the average true range | Levels far in the past, which drift by the sum of all later gaps and can fall below zero; percentage returns | Signals in price points; profit in dollars |
+| **Ratio** (proportional adjustment) | At each roll, multiply all earlier prices by new over old: every price before 13 April 2020 is multiplied by 29.26 / 22.41 = 1.306 | Percentage changes, hence compounded returns and the logarithm of the price | Point changes and distances in the past; fails when a price is zero or negative | Signals on returns or log prices; volatility in percent |
+| **Returns index** | Compound the daily returns of the contract held, starting from 100 | The same as the ratio series, anchored at the start instead of today | As for ratio | Research and portfolio returns; the usual construction in academic studies of trend following, for example Moskowitz, Ooi and Pedersen (2012) |
+| **Rolling over several days** | Move the position in equal parts over several days instead of at once. The S&P GSCI commodity index moves 20% a day from the fifth to the ninth business day of the month | Less dependence on one day's prices; smaller trades in the market | Still needs one of the methods above to build a series | Large positions and indices |
+| **Constant maturity** | Blend the two nearest contracts with weights that keep a fixed time to expiry, for example 60 days | A smooth series, comparable over time | Not one tradable contract: holding it needs two contracts in weights that change every day | Research on the term structure and on carry |
+
+Adjusting backwards, so that the latest prices are the real ones, is the convention: the most recent part of the series, which a live system uses, then shows real prices. Every new roll changes all earlier values of the series again, which is harmless as long as signals use only changes or ratios that the adjustment preserves.
+
+### 3.4 Match the series to the algorithm, and the profit to the position
+
+**Signals.** A signal must be computed on the series whose changes have the same units as the signal.
+
+| What the signal uses | Series | Example in this lecture |
+|---|---|---|
+| Differences of prices in points, divided by volatility in points | Additive | EWMAC: the difference of two moving averages divided by the volatility of daily point changes (§5) |
+| Price levels against recent highs and lows, distances in points | Additive | Breakout: price against its 50-day high and low; stops in multiples of the average true range (§6) |
+| Returns, or the logarithm of the price | Ratio | Kalman filter on the log price (§7) |
+
+When the units match, the choice between the two adjusted series hardly matters; when they do not, it does. On our twelve markets, 2000–2022:
+
+| Comparison | Equity indices, currencies, gold | Crude oil, natural gas, grains |
+|---|---|---|
+| EWMAC forecast, additive against ratio series (correlation) | 1.000 | 0.998–1.000 |
+| Breakout position, additive against ratio series (share of days the same) | 99–100% | 98–100% |
+| EWMAC forecast, additive against **raw** series (correlation) | 0.99–1.00 | 0.93–0.97 |
+| Breakout position, additive against **raw** series (share of days the same) | 96–98% | 85–92% |
+| EWMAC forecast with **mixed units**, a difference in points divided by a volatility in percent of the adjusted price (correlation with the correct forecast) | 0.96–1.00 | 0.81–0.89 |
+
+The raw series and the mixed units do the damage, and they do it where roll gaps are large.
+
+**Profit.** The profit must be computed the way the position is held:
+
+| Step | Calculation | Series |
+|---|---|---|
+| 1. Dollar risk of one contract | Volatility of daily point changes × multiplier | Additive (point changes) |
+| 2. Position in contracts | Risk budget in dollars ÷ dollar risk of one contract | — |
+| 3. Daily profit in dollars | Contracts held × point change of the contract held × multiplier | Additive, or the raw contract held, which have the same point changes |
+| 4. Portfolio return | Total profit in dollars ÷ capital | — |
+
+Two shortcuts are wrong: a percentage return computed from the additive series divides by a price that never traded, and a profit in dollars read from the ratio series uses point changes that the ratio adjustment has rescaled. Booking profit in dollars needs no division by a price, so it works even when a price is negative.
+
+| Market | Multiplier: dollars per point | Tick: size and value |
+|---|---|---|
+| E-mini S&P 500 | 50 | 0.25 = 12.50 |
+| E-mini Nasdaq-100 | 20 | 0.25 = 5.00 |
+| Euro FX (125,000 euros) | 125,000 | 0.00005 = 6.25 |
+| Japanese yen (12.5 million yen; price per 100 yen) | 125,000 | 0.00005 = 6.25 |
+| US dollar index | 1,000 | 0.005 = 5.00 |
+| WTI crude oil (1,000 barrels) | 1,000 | 0.01 = 10.00 |
+| Natural gas (10,000 MMBtu) | 10,000 | 0.001 = 10.00 |
+| Gold (100 troy ounces) | 100 | 0.10 = 10.00 |
+| Corn, soybeans, wheat (5,000 bushels; price in cents) | 50 | 0.25 = 12.50 |
+| Cocoa (10 tonnes) | 10 | 1 = 10.00 |
+
+Contract sizes and ticks follow the exchanges' specifications; check them against the current ones before trading.
+
+### 3.5 Where each adjustment breaks, and what to do
+
+| Problem | Where it shows in our data | What to do |
+|---|---|---|
+| **The ratio series needs positive prices** | A series that held the May 2020 crude contract to its last day records a return of −306% on 20 April and has a negative price as the base of the next day's return: the return is undefined | Roll before expiry (the calendar of §3.2 left May on 13 April); book profit in dollars, which needs no division |
+| **The additive series drifts and can fall below zero** | Soybeans: the additive series is below zero on 61% of the days from 2000 to 2008, for the last time in December 2008, and as low as −408 cents. Crude oil: −1.10 dollars on 21 April 2020 ([chart J.2](#j2-the-same-contracts-three-series-35)) | Never compute percentage returns or log prices from it; measure volatility from point changes; take percentages from the raw contract held |
+| **Level-based rules see levels that never traded** | Both adjusted series: in July 2008 crude oil's ratio series reaches 828 dollars and its additive series 211, against a highest traded price of 146 | Use levels only relative to recent levels of the same series (channels, moving averages), never as absolute prices, for example "buy below 50 dollars" |
+
+**Where the ratio adjustment is unsafe**: markets whose prices can come near zero or go below it, such as crude oil under storage stress, natural gas and power at regional delivery points, calendar spreads, and any series quoted as a difference. **Where the additive adjustment is unsafe for percentages**: long histories in markets with large roll gaps of one sign, such as natural gas, the grains, crude oil and soybeans. For the systems of this lecture the solution is the same in both cases: signals in matching units, profit in dollars.
+
+### 3.6 Roll yield: what rolling earns or costs
+
+When later contracts are more expensive than the one held (**contango**), each roll sells low and buys high, and a holder loses relative to the price; when they are cheaper (**backwardation**), the holder gains. The difference between the change of the price and the return of holding and rolling is the roll yield ([chart J.3](#j3-roll-yield-36)):
+
+| Market | Change of the front-month price, % a year | Return of holding and rolling, % a year | Roll yield, % a year |
+|---|---|---|---|
+| Natural gas | +5.0 | −22.8 | −27.8 |
+| Wheat | +4.8 | −7.8 | −12.6 |
+| Corn | +5.2 | −3.8 | −8.9 |
+| WTI crude oil | +5.1 | −1.8 | −6.9 |
+| Cocoa | +4.9 | +1.1 | −3.7 |
+| Gold | +8.4 | +6.0 | −2.4 |
+| Japanese yen | −1.3 | −3.1 | −1.8 |
+| E-mini Nasdaq-100 | +4.8 | +3.4 | −1.4 |
+| Euro FX | +0.1 | −0.5 | −0.7 |
+| US dollar index | +0.2 | −0.2 | −0.4 |
+| E-mini S&P 500 | +4.3 | +4.3 | −0.1 |
+| Soybeans | +5.1 | +7.2 | +2.1 |
+
+The price of natural gas rose 5% a year from 2000 to 2022; a holder lost 23% a year, because the market was in steep contango almost throughout. In financial futures the roll yield is small and reflects the gap between interest rates and the income of the asset: dividends for equity indices, the interest rate of the other currency for currencies. The literature on commodity futures separates the two sources in the same way (Gorton and Rouwenhorst, 2006; Erb and Harvey, 2006).
+
+For a trend follower this matters in two ways. The adjusted series include the roll, so a trend rule sees the holder's return: a market in steady contango shows a downtrend even when its price is flat, and a long-short rule tends to be short it. And the shape of the curve carries information of its own. Traded on its own, the roll yield is a carry strategy, which is not part of this lecture. Used as a condition on a trend signal, it is a filter: take long trends only in backwardation and short trends only in contango, or only when the roll yield is above or below its own average. Studies of commodity futures combine trend and term-structure signals in this way (Fuertes, Miffre and Rallis, 2010); §10 tests one such filter on our markets.
+
+### 3.7 The bond funds: price, total and excess returns
+
+| Series | What it measures | VFITX, % a year, 2000–2022 | VUSTX, % a year, 2000–2022 |
+|---|---|---|---|
+| Price (Yahoo's Close) | The fund's price, which falls each time it pays out interest | −0.1 | −0.4 |
+| Total return (Yahoo's Adj Close) | Price with the payouts reinvested | +4.1 | +5.1 |
+| **Excess return** | Total return minus the three-month Treasury bill rate (1.5% a year on average) | **+2.5** | **+3.5** |
+
+The price alone misses almost the whole return of a bond fund, which comes from the interest paid out. The total return includes it, but also includes the cash rate that a futures position does not earn, because a future ties up only margin. The excess return removes the cash rate and puts the funds on the same footing as the futures: daily excess return = daily total return − bill rate of the previous day ÷ 252. Volatility is 4.8% a year for VFITX and 12.2% for VUSTX. The funds pay out monthly and have no roll, so the excess-return series is the only series they need.
+
+### 3.8 What to store
+
+| Stored | Used for |
+|---|---|
+| The raw contracts, as downloaded, never changed, with problem rows flagged | The source of everything; the prices actually traded; position sizes and costs |
+| The roll calendar: date, old and new contract, both prices and the gap | Builds both adjusted series; every roll can be checked; the roll yield |
+| The additive series | Signals in points; profit in dollars |
+| The ratio series | Signals on returns or log prices; volatility in percent; compounded returns |
+| For the bond funds: total and excess returns | Signals and profit |
+
+Both adjusted series are rebuilt from the raw contracts and the roll calendar in seconds. A different roll rule needs no new data, and every number can be traced back to a roll that was observed.
+
+*Next: §4, what the data contain: the crises, regimes and policy periods between 2000 and 2022.*
+
+## Appendix: charts
+
+### J.1 One roll, three series (§3.1)
+
+![WTI crude oil, March to April 2020: the May and June contracts, the raw series that switches on 13 April, and the additive and ratio series](figures/11_01_one_roll.png)
+
+Left: the May and June contracts and the raw series, which jumps from May to June on the roll day (dashed line). The May contract's fall to −37.63 on 20 April happens after the roll. Right: both adjusted series move smoothly through the roll; their levels differ from the traded prices because they are adjusted back from December 2022.
+
+### J.2 The same contracts, three series (§3.5)
+
+![Crude oil and soybeans, 2000-2022: raw, additive and ratio series](figures/11_02_three_series.png)
+
+All three series end at the December 2022 price. Going back, the additive series moves away from the traded price by the sum of all later roll gaps, and for soybeans falls below zero; the ratio series moves away by their product, and for crude oil reaches 828 dollars in July 2008.
+
+### J.3 Roll yield (§3.6)
+
+![Change of the front-month price and return of holding and rolling, per market, 2000-2022](figures/11_03_roll_yield.png)
+
+Grey: what the price did. Blue: what a holder earned after rolling. Where blue lies left of grey, rolling cost money (contango); for soybeans it earned money (backwardation).
+
+## References
+
+- Carchano, Ó. and Pardo, Á. (2009). Rolling over stock index futures contracts. *Journal of Futures Markets* 29(7), 684–694. — the roll method matters little for stock index futures (§3.2).
+- Carver, R. (2015). Systems building: futures rolling. *This Blog is Systematic*, 18 May 2015. — the additive ("Panama") method and its limits (§3.3).
+- CME Group (2020). CME Clearing Advisory 20-152, 8 April 2020. — preparing for negative prices in crude oil (§3.1).
+- Erb, C. and Harvey, C. (2006). The strategic and tactical value of commodity futures. *Financial Analysts Journal* 62(2). — roll yield and the term structure (§3.6).
+- Fuertes, A.-M., Miffre, J. and Rallis, G. (2010). Tactical allocation in commodity futures markets: combining momentum and term structure signals. *Journal of Banking & Finance* 34(10), 2530–2548. — the term structure as a condition on momentum (§3.6).
+- Gorton, G. and Rouwenhorst, K. G. (2006). Facts and fantasies about commodity futures. *Financial Analysts Journal* 62(2). — returns of rolled commodity futures (§3.6).
+- Ma, C. K., Mercer, J. M. and Walker, M. A. (1992). Rolling over futures contracts: a note. *Journal of Futures Markets* 12(2), 203–217. — the roll date can change research results (§3.2).
+- Moskowitz, T., Ooi, Y. H. and Pedersen, L. H. (2012). Time series momentum. *Journal of Financial Economics* 104(2), 228–250. — returns indices from the contracts held (§3.3).
+- S&P Dow Jones Indices. S&P GSCI methodology. — the roll over five business days (§3.3).
