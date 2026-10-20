@@ -91,7 +91,7 @@ The filters in this section are examples, not a recommended set. With eight sour
 | Zero-rate regime, no shorts | 8.9 | 0.66 | 0.52 | 0.58 | 0.50 (1.5) |
 | VIX regime, fast when high | 17.8 | 0.51 | 0.39 | 0.35 | 0.43 (0.6) |
 
-([chart G.1](#g1-the-filters-against-the-yardstick-4) places each filtered system against the yardstick curve.)
+([chart G.1](#g1-the-filters-against-the-yardstick-4) places each filtered system against the yardstick curve; [chart G.6](#g6-the-four-filter-variables-4) shows the four filter variables over time.)
 
 - **The efficiency-ratio gate hurts at every threshold.** A likely reason is that it throws away the timing of Lecture 5: large moves often begin in choppy markets, before the efficiency ratio rises. At a threshold of 0.1 it even doubles turnover, because the gate opens and closes so often. Its alpha is negative throughout, significantly so at 0.3.
 - **The correlation scale does nothing.** Its returns correlate 0.97 with the unfiltered rule's and its alpha is zero. A likely reason is that volatility targeting per asset already responds to much of what high correlation signals, since correlations rise when volatility does.
@@ -119,6 +119,8 @@ Three further variables, each examined both ways. Exploration first: does the si
 | Stock–bond correlation positive (21% of days) | **0.97** | Supported |
 | Stock–bond correlation negative | 0.45 | |
 
+[Chart G.2](#g2-regimes-and-attachments-42-43) shows Table 4.2 as bars.
+
 **Table 4.3. Filters built on these regimes** (notebook §4.2)
 
 | Filter | Sharpe ratio | Curve at the same turnover | Alpha over the unfiltered rule (t) |
@@ -131,8 +133,8 @@ Three further variables, each examined both ways. Exploration first: does the si
 
 What these results say, so far:
 
-- **Exploration found what the hypotheses missed.** Two of the three hypotheses were wrong as stated, but exploring how performance depends on each variable is a goal in its own right, and it found information: trend earned 0.88 when asset classes moved independently and 0.51 when they did not, the direction Baltas and Kosowski had found. Cross-asset-class correlation is therefore a candidate variable with predictive power for trend performance, to be confirmed on data it was not found in (the fourth exercise of §6.2).
-- **Volatility depends.** Trend did slightly better in calm periods here, and a gate on low volatility was the only filter in Table 4.3 to beat the unfiltered rule, yet the result depends on how volatility is measured and on the rule it is applied to.
+- **Exploration found what the hypotheses missed.** Two of the three hypotheses were wrong as stated, but exploring how performance depends on each variable is a goal in its own right, and it found information: trend earned 0.88 when asset classes moved independently and 0.51 when they did not, the direction Baltas and Kosowski had found. Cross-asset-class correlation is therefore a candidate variable with predictive power for trend performance, to be confirmed on data it was not found in (§4.6).
+- **Volatility depends.** Trend did slightly better in calm periods here, and a gate on low volatility was the only filter in Table 4.3 to beat the unfiltered rule, yet the result depends on how volatility is measured and on the rule it is applied to. A study of 47 futures by Norges Bank Investment Management (2014) also found time-series momentum weaker when an asset's volatility is high. State dependence is documented in stock momentum too: Cooper, Gutierrez and Hameed (2004) find US momentum profits of 0.93% a month after market rises and −0.37% after falls, a pattern a later study did not find in the UK, which is a reminder that such patterns are market-specific.
 - **A large gap between regimes did not, so far, make a better filter.** Scaling exposure by the regime did not help in either direction. §4.3 shows that the reason lies partly in how the filter was attached to the signal.
 
 ### 4.3 How the filter attaches to the signal
@@ -164,11 +166,51 @@ All the filters above act on every day: the position is the trend signal times t
 | Asset volatility high | A | 38% | 0.21 | 0.11 | −0.61% (−1.5) |
 | | C | 66% | 0.39 | 0.34 | −0.64% (−1.9) |
 
+[Chart G.3](#g3-one-filter-two-attachments-43) shows the difference on one asset: on gold, the same filter attached independently jumps in and out of the market; attached to the trend's exits, it joins the trend once and stays with it.
+
 - **How the filter is attached matters as much as which regime it uses.** For three of the four regimes, attaching the filter to the trend's exits (C) raised the Sharpe ratio sharply: the efficiency-ratio gate from 0.22 to 0.51, the correlation regimes from about 0.4 to 0.5–0.6. A filter that closes positions in the middle of a trend cuts the large gains of Lecture 5, §2.4.
 - **These systems are often out of the market.** By Lecture 7, §4.3, the Sharpe ratio over the whole period is the Sharpe ratio while invested times the square root of the time in the market. The cross-asset-class correlation filter (C) earned 0.58 while in the market 65% of the time, about 0.72 while invested. Whether that is worth having depends on what the idle capital or risk can do.
 - **Still no significant addition.** The best alphas, for the correlation regimes, are positive but with t-statistics below 1. The yardstick curve of §3 does not extend to such low turnover and time in the market, so the comparison at equal speed is left to the alpha.
 
-None of the examples in §4.1 to §4.3 passes all three requirements: a stated mechanism, a gain at equal speed, and a significant addition after costs. That says little about filters in general and much about the test: with millions of possible variants, a filter that does pass has to be checked for how many variants were tried before it.
+### 4.4 Curves of filters, not single points
+
+A filter has parameters as a rule has speeds, and it should be judged the same way: by its whole curve, not by its best point (Lecture 7, §6). Sweeping each filter over its threshold and plotting the result against the unfiltered rule's speed curve ([chart G.4](#g4-curves-of-filters-44)) shows three things.
+
+- **The gated filters live where the speed curve does not reach.** Attached to the trend's exits, the efficiency-ratio, cross-asset-class and stock–bond gates trade 1 to 9 times a year, less than the slowest unfiltered rule, and they are out of the market part of the time; the speed curve cannot judge them, which is why §4.5 needs another yardstick.
+- **Their curves are flat over a range and fall off at the extremes.** The cross-asset-class correlation gate earned 0.58 to 0.60 for thresholds between the 40th and 70th percentile; a strict gate that is rarely open earns little.
+- **The VIX switch lies above the speed curve at all five thresholds.** Switching speed by the volatility regime earned more than a fixed rule of the same turnover at every threshold tried, so this result does not depend on one lucky setting.
+
+### 4.5 A fair yardstick for filters that leave the market: the random filter
+
+A filter that is often out of the market cannot be compared with the speed curve, because the curve is always invested. The fair comparison is a **random filter**: switch the same rule on and off at random, with the same share of time on and the same average length of spells, attached the same way. A real filter carries information only if it beats most random filters. Running this for every filter would overload the lecture; two examples show how it works.
+
+**Table 4.5. Two filters against 200 random filters each** (attachment C; notebook §4.5)
+
+| Filter | Share of time on | Average spell | Real filter, Sharpe ratio | Random filters: median | Random filters: 95th percentile | Random filters beaten |
+|---|---|---|---|---|---|---|
+| Cross-asset-class correlation low | 32% | 41 days | 0.58 | 0.50 | 0.60 | 88% |
+| Stock–bond correlation positive | 21% | 100 days | 0.50 | 0.38 | 0.55 | 88% |
+
+Both filters beat most random filters with the same timing profile ([chart G.5](#g5-the-random-filter-45)): the variables carry some information about when trend works. Neither clears the 95th percentile, so the evidence is suggestive, not conclusive. Part of what looked like a gain in Table 4.4 is simply the effect of being out of the market at random times: a random filter already earns a median of 0.50.
+
+### 4.6 Confirmation: the candidate out of sample
+
+The cross-asset-class correlation pattern was found on 2006–2026. The final step is to confirm it on data it was not found in: choose the threshold on 2006–2015 only, and apply it unchanged to 2016–2026.
+
+**Table 4.6. The cross-asset-class correlation filter, chosen in sample and applied out of sample** (attachment C; notebook §4.6)
+
+| | 2006–2015 (choice) | 2016–2026 (test) |
+|---|---|---|
+| Unfiltered rule, Sharpe ratio | 0.64 | 0.40 |
+| Filter at the threshold chosen in 2006–2015 (60th percentile) | 0.68 | 0.37 |
+| Unfiltered rule when correlation is low / high | 0.87 / 0.37 | 0.56 / 0.36 |
+
+- **The filter did not survive.** Chosen on the first decade, it added 0.04 there and lost 0.03 in the second.
+- **The pattern partly did.** Trend still earned more when asset classes moved independently, 0.56 against 0.36, but the gap shrank from 0.50 to 0.20.
+
+This is the confirmation step done once, and its result is typical: the variable kept some predictive information, but not enough to make a filter that adds after it is chosen. A pattern that weakens out of sample is still worth knowing; it is not yet worth trading.
+
+None of the examples in §4.1 to §4.6 passes all three requirements: a stated mechanism, a gain at equal speed, and a significant addition after costs. That says little about filters in general and much about the test: with millions of possible variants, a filter that does pass has to be checked for how many variants were tried before it.
 
 ## 5. Further ideas
 
@@ -185,20 +227,21 @@ Filters that our daily ETF data cannot test, each with its mechanism and the dat
 
 ## 6. Summary, exercises and reading
 
-### 6.1 Five takeaways
+### 6.1 Six takeaways
 
 1. **Filters can use any information, which is why they need discipline.** Sources range from the price itself to flows, macro data and the calendar; actions from gating to switching speed.
 2. **Two purposes, one test.** Explore which variables determine or predict a signal's performance, or confirm a mechanism you believe in; then compare at equal speed, use only information known at the time, judge after costs by marginal contribution, count the tries, and confirm on data the idea was not found in.
 3. **The examples teach the method, not a verdict.** With millions of possible filters, the examples could have been entirely different; in these, none added significantly; two of three regime hypotheses were wrong as stated, yet the regime patterns themselves, such as 0.88 against 0.51 by cross-asset-class correlation, are candidates to explain and confirm.
 4. **How a filter attaches to the signal matters as much as which regime it uses.** Letting the filter open and close positions on its own hurt; attaching it to the trend's entries and exits recovered most of the loss.
-5. **The most promising filters work through mechanisms with a known timing:** flows and positioning, scheduled events, and regimes that change how fast markets move.
+5. **Judge filters by curves and against random filters, and confirm out of sample.** A filter is a curve across its thresholds; a filter that leaves the market must beat random filters with the same timing; and a pattern found in the data must survive on data it was not found in. The cross-asset-class correlation candidate beat 88% of random filters but did not survive out of sample.
+6. **The most promising filters work through mechanisms with a known timing:** flows and positioning, scheduled events, and regimes that change how fast markets move.
 
 ### 6.2 Exercises
 
 - [ ] Test the zero-rate filter out of sample: choose it on 2001–2012 only, and apply it to 2013–2026. Does it still help? (notebook §4)
 - [ ] Replace the VIX median with fixed thresholds of 20 and 30. How sensitive is the result? Count your tries. (notebook §4)
 - [ ] Gate breakouts by volume: enter a Donchian breakout only when volume exceeds its 50-day average. Compare at equal speed. (notebook §4)
-- [ ] Choose the cross-asset-class correlation filter on 2006–2015 only and apply it to 2016–2026. Does a regime that separates performance in one decade still do so in the next? (notebook §4.2)
+- [ ] Run the random-filter test of §4.5 for the efficiency-ratio gate and the VIX switch. Do they beat their random counterparts? (notebook §4.5)
 - [ ] Combine the correlation scale with the VIX switch. Do two weak filters add up to a strong one? (notebook §4)
 
 ### 6.3 Reading
@@ -215,7 +258,31 @@ From the companion notebook, [08_filters_and_overlays.ipynb](08_filters_and_over
 
 The grey curve is the unfiltered rule at six lookbacks; each diamond is a filtered system. A filter helps only if it lies above the curve at its own turnover. The zero-rate filter (yellow) and the VIX switch (blue) lie above it; the efficiency-ratio gates lie below.
 
-### G.2 The four filter variables (§4)
+### G.2 Regimes and attachments (§4.2, §4.3)
+
+![Unfiltered rule's Sharpe ratio by regime, and the same regimes attached three ways](figures/08_03_regimes_attachments.png)
+
+Left: the unfiltered rule's Sharpe ratio in each regime, against its overall 0.60 (dotted). Right: each regime used as a filter, attached three ways; attaching to the trend's exits (pink) is best for all but the low-volatility gate.
+
+### G.3 One filter, two attachments (§4.3)
+
+![Positions of the unfiltered rule and of the same filter attached two ways, on GLD 2018-2020](figures/08_04_attachment_example.png)
+
+Gold, mid-2018 to 2020. The unfiltered rule is short, then long from mid-2019. Attached independently (A), the cross-asset-class correlation filter switches the position on and off repeatedly, flat for much of the 2020 rally. Attached to the trend's exits (C), it joins the short in late 2018 and the long in mid-2019, and stays.
+
+### G.4 Curves of filters (§4.4)
+
+![Each filter across its threshold, against the unfiltered rule at every speed](figures/08_05_filter_curves.png)
+
+Each coloured curve is one filter across its threshold; the grey curve is the unfiltered rule at six speeds. The gated filters trade less than any unfiltered rule; the VIX switch (pink) lies above the grey curve at every threshold.
+
+### G.5 The random filter (§4.5)
+
+![Histogram of 200 random filters' Sharpe ratios against the real filter, for two filters](figures/08_06_random_filter.png)
+
+Grey: Sharpe ratios of 200 random filters with the same share of time on and the same spell length. Orange: the real filter. Each beats 88% of its random counterparts.
+
+### G.6 The four filter variables (§4)
 
 ![Efficiency ratio of SPY, average correlation of the 16 ETFs, 3-month Treasury bill yield and VIX, 2001-2026](figures/08_02_filter_variables.png)
 
@@ -225,5 +292,7 @@ The efficiency ratio swings within weeks; average correlation rises in sell-offs
 
 - Baltas, N. and Kosowski, R. Demystifying time-series momentum strategies: volatility estimators, trading rules and pairwise correlations. Working paper, SSRN 2140091. — correlations and trend returns (§2.1, §4).
 - Baltussen, G., Da, Z., Lammers, S. and Martens, M. (2021). Hedging demand and market intraday momentum. *Journal of Financial Economics* 142(1), 377–403. — hedging flows (§5).
+- Cooper, M., Gutierrez, R. and Hameed, A. (2004). Market states and momentum. *Journal of Finance* 59(3), 1345–1365. — state-dependent momentum (§4.2).
 - Harvey, C., Liu, Y. and Zhu, H. (2016). … and the cross-section of expected returns. *Review of Financial Studies* 29(1), 5–68. — the bar for new findings (§3).
 - Lo, A. (2004). The adaptive markets hypothesis: market efficiency from an evolutionary perspective. *Journal of Portfolio Management* 30, 15–29. — why edges fade (§1).
+- Norges Bank Investment Management (2014). Momentum in futures markets. Discussion note. — time-series momentum and the volatility regime (§4.2).
