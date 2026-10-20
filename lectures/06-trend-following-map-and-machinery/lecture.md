@@ -24,7 +24,7 @@ Trend rules come from three families with distinct literatures, and they differ 
 | Family | How the signal is built | Members | Literature |
 |---|---|---|---|
 | Linear filters | A weighted average of past prices or returns | Moving averages and crossovers, MACD, time-series momentum, EWMAC, the Kalman filter once its gains have settled | Bruder, Dao, Richard and Roncalli (2011); Levine and Pedersen (2016) |
-| Price-extreme rules | Running highs and lows: the signal changes when price crosses a level set by its own recent path | Filter rules, channel breakouts (Donchian, the Turtle rules), trailing stops | Alexander (1961); Brock, Lakonishok and LeBaron (1992); Sullivan, Timmermann and White (1999) |
+| Channel breakouts | A channel of running highs and lows: the signal changes when price leaves the channel, or falls a set distance inside it | Donchian channels and the Turtle rules; trailing stops such as the chandelier; older relatives: filter rules, support and resistance | Alexander (1961); Brock, Lakonishok and LeBaron (1992); Sullivan, Timmermann and White (1999) |
 | Nonlinear and model-based filters | A statistical model of the trend that is not a fixed weighted average | Regime switching, L1 filtering, wavelets, machine learning | Bruder et al. (2011); Hamilton (1989) |
 
 The boundaries blur. Once its gains have settled, the Kalman filter is an exponential moving average (Bruder et al.; Lecture 4), so its level and slope are linear; only its uncertainty and surprises are model-based. Breakouts and stops share one building block, the running high: a breakout acts at it, a chandelier stop at a fixed distance below it.
@@ -72,8 +72,8 @@ Recent changes count most. The 12-month return sign weights the last 252 returns
 | TSMOM-12 | Linear | Sign of the 252-day return |
 | SMA-200 | Linear | Sign of price minus its 200-day average |
 | EWMAC 16/64 | Linear, continuous | Difference of 16- and 64-day exponential averages, divided by price volatility, scaled and capped |
-| Donchian 55/20 | Price extremes | Long above the 55-day high, out below the 20-day low; short symmetrically |
-| Chandelier 55 | Price extremes, with a stop | Enter on the 55-day breakout; exit when price falls 3 ATR(20) below its highest close since entry |
+| Donchian 55/20 | Channel breakout | Long above the 55-day high, out below the 20-day low; short symmetrically |
+| Chandelier 55 | Channel breakout, with a trailing stop | Enter on the 55-day breakout; exit when price falls 3 ATR(20) below its highest close since entry |
 
 **Table 2.1. Correlation of the rules' daily portfolio returns** (2000–2026; notebook §2.3)
 
@@ -84,7 +84,7 @@ Recent changes count most. The 12-month return sign weights the last 252 returns
 | Donchian 55/20 | 0.41 | 0.71 | **0.91** | |
 | Chandelier 55 | 0.40 | 0.69 | 0.89 | **0.97** |
 
-- **Horizon matters more than family.** EWMAC, a linear filter, and the Donchian breakout, a price-extreme rule, correlate 0.91: they react at similar speeds. The slow 12-month rule correlates only 0.40–0.61 with the three faster ones.
+- **Horizon matters more than family.** EWMAC, a linear filter, and the Donchian breakout, a channel breakout, correlate 0.91: they react at similar speeds. The slow 12-month rule correlates only 0.40–0.61 with the three faster ones.
 - **The exit matters least here.** The Donchian and chandelier systems share their entry and differ only in how they exit; their returns correlate 0.97.
 - **A few representatives cover the field.** What separates trend systems is mainly speed and, as §3 shows, direction; within a speed, the choice of family changes less than its name suggests.
 
@@ -261,7 +261,7 @@ One model per family, chosen to overlap as little as possible. Parameters are se
 | Fails | Fast speeds in choppy markets (§6: costs); slow speeds at turning points and in fast crises (§3.1) |
 | Variants | Price against a moving average, two-average crossovers, MACD, time-series momentum, adaptive averages (KAMA) |
 
-### Model card 2: Turtle-style breakout (price extremes)
+### Model card 2: Turtle-style breakout (channel breakouts)
 
 | | |
 |---|---|
