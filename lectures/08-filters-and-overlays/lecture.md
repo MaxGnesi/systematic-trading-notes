@@ -8,7 +8,7 @@ A filter decides whether, or how much, to trade a signal, using information the 
 
 A trend signal says which way; a filter says whether to listen. It can be built from anything: the price itself, the volume, other markets, the economy, flows, the calendar. That freedom is the attraction and the danger. The more ideas can be tried, the larger the multiple-testing problem of Lecture 5, §4.3, and a filter is also a second signal: it removes some losing trades and some winning ones, and it changes how often the system trades.
 
-**The bottom line.** Be creative about sources and disciplined about testing. Filter research has two purposes, and both are legitimate: to test whether a mechanism we believe in improves a signal, and to explore which variables determine a signal's performance, improve it, or have predictive power for it. What matters is keeping exploration and confirmation apart. A filter earns its place only if what was found is confirmed on data it was not found in, if it beats the unfiltered system at equal speed, and if it adds to the unfiltered system after costs. Of the filters tested in §4, none passed all three; how a filter is attached to the signal turned out to matter as much as the regime it uses.
+**The bottom line.** Be creative about sources and disciplined about testing. Filter research has two purposes, and both are legitimate: to test whether a mechanism we believe in improves a signal, and to explore which variables determine a signal's performance, improve it, or have predictive power for it. What matters is keeping exploration and confirmation apart. A filter earns its place only if what was found is confirmed on data it was not found in, if it beats the unfiltered system at equal speed, and if it adds to the unfiltered system after costs. The filters in §4 are examples, chosen to show how the test works; they could be something completely different. In these examples none passed all three tests, and how a filter is attached to the signal mattered as much as the regime it uses.
 
 **Filter or sizing?** As in Lecture 9, §1.2: a rule that uses only risk and cost information, such as volatility, drawdown or trading costs, is sizing; a rule that uses conditioning information, such as a regime, trend strength, macro data or the calendar, is a filter.
 
@@ -64,11 +64,11 @@ Every filter, whether it comes from a stated mechanism or from exploring which v
 
 The curve is not smooth: the 63-day rule lies below both its neighbours. Comparisons against it near that point carry the curve's own noise.
 
-## 4. Four filters, tested
+## 4. Examples: the test at work
 
 ### 4.1 Four filters, one per source and per action
 
-One filter per source and per action, each applied to the 12-month rule. Each mechanism was stated before the test.
+The filters in this section are examples, not a recommended set. With eight sources, five actions, three ways of attaching a filter, and any number of variables and thresholds within each, the possible filters run into the millions; no lecture can test them, and no list of results would generalise. What generalises is the method. The examples are chosen to exercise it: one filter per source and per action, each applied to the 12-month rule, each with its mechanism stated before the test.
 
 | Filter | Source | Action | How it works | Mechanism |
 |---|---|---|---|---|
@@ -166,7 +166,7 @@ All the filters above act on every day: the position is the trend signal times t
 - **These systems are often out of the market.** By Lecture 7, §4.3, the Sharpe ratio over the whole period is the Sharpe ratio while invested times the square root of the time in the market. The cross-asset-class correlation filter (C) earned 0.58 while in the market 65% of the time, about 0.72 while invested. Whether that is worth having depends on what the idle capital or risk can do.
 - **Still no significant addition.** The best alphas, for the correlation regimes, are positive but with t-statistics below 1. The yardstick curve of §3 does not extend to such low turnover and time in the market, so the comparison at equal speed is left to the alpha.
 
-None of the filters in §4.1 to §4.3 passes all three requirements: a stated mechanism, a gain at equal speed, and a significant addition after costs. That is the usual fate of filters, and the reason for the discipline.
+None of the examples in §4.1 to §4.3 passes all three requirements: a stated mechanism, a gain at equal speed, and a significant addition after costs. That says little about filters in general and much about the test: with millions of possible variants, a filter that does pass has to be checked for how many variants were tried before it.
 
 ## 5. Further ideas
 
@@ -187,7 +187,7 @@ Filters that our daily ETF data cannot test, each with its mechanism and the dat
 
 1. **Filters can use any information, which is why they need discipline.** Sources range from the price itself to flows, macro data and the calendar; actions from gating to switching speed.
 2. **Two purposes, one test.** Explore which variables determine or predict a signal's performance, or confirm a mechanism you believe in; then compare at equal speed, use only information known at the time, judge after costs by marginal contribution, count the tries, and confirm on data the idea was not found in.
-3. **Most filters fail, but patterns are information.** Of the filters tested, none added significantly; two of three regime hypotheses were wrong as stated, yet the regime patterns themselves, such as 0.88 against 0.51 by cross-asset-class correlation, are candidates to explain and confirm.
+3. **The examples teach the method, not a verdict.** With millions of possible filters, the examples could have been entirely different; in these, none added significantly; two of three regime hypotheses were wrong as stated, yet the regime patterns themselves, such as 0.88 against 0.51 by cross-asset-class correlation, are candidates to explain and confirm.
 4. **How a filter attaches to the signal matters as much as which regime it uses.** Letting the filter open and close positions on its own hurt; attaching it to the trend's entries and exits recovered most of the loss.
 5. **The most promising filters work through mechanisms with a known timing:** flows and positioning, scheduled events, and regimes that change how fast markets move.
 
