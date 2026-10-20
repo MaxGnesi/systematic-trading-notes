@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 20, 2026 · Max Gnesi*
 
-Part II built the pieces one at a time: what a market offers (Lecture 5), how a design decides what is captured (Lecture 6), how to compare systems (Lecture 7), filters (Lecture 8) and sizing (Lecture 9). This capstone puts them together, building three trend systems end to end on futures, from the raw data to a combined portfolio. *Draft: written step by step; §1 to §4 so far.*
+Part II built the pieces one at a time: what a market offers (Lecture 5), how a design decides what is captured (Lecture 6), how to compare systems (Lecture 7), filters (Lecture 8) and sizing (Lecture 9). This capstone puts them together, building three trend systems end to end on futures, from the raw data to a combined portfolio. Data: twelve futures markets from Kaggle and two Treasury funds, 1999–2022; results from 2001, after two years of warm-up.
 
 ## 1. The question of this lecture
 
@@ -14,7 +14,7 @@ What does it take to build a trend system properly, from data to positions, and 
 | Turtle-style breakout | Channel breakouts | On-or-off positions with flat periods; stops built into the system; time in the market and the marginal contribution of a system that is often idle |
 | Cross-sectional momentum | Linear filters, applied across markets rather than over time (Lecture 6, §2.4 and card 11) | A relative trend: long the strongest markets and short the weakest at the same time, so its net exposure, and its payoff, differ from the other two |
 
-A model-based system, the Kalman slope of Lecture 4, was the first candidate for the third place. On these markets it trades almost like EWMAC, with daily returns that correlate 0.93 to 0.95 at equal speed, and it earns less; it appears in §5 as a variant of EWMAC. Cross-sectional momentum correlates 0.65 to 0.71 with the other two and takes the third place.
+A model-based system, the Kalman slope of Lecture 4, was the first candidate for the third place. On these markets it trades almost like EWMAC, with daily returns that correlate 0.93 to 0.95 at equal speed, and it earns less; it appears in §5 as a variant of EWMAC. Cross-sectional momentum correlates 0.64 to 0.69 with the other two at medium speed, adds return to EWMAC (§8.2) and takes the third place.
 
 Each system goes through the same steps:
 
@@ -341,7 +341,325 @@ What this means for the backtests:
 
 §9 uses these episodes to evaluate the systems in crises and across policy regimes, and some of them return as filters in §10.
 
-*Next: §5, the first system: EWMAC.*
+## 5. EWMAC
+
+### 5.1 How it works on futures
+
+The rule is card 4 of Lecture 6: the difference between a fast and a slow exponential moving average, divided by volatility. On futures three things change, all following §3.4:
+
+| Step | On futures | Why |
+|---|---|---|
+| Price series | The additive back-adjusted series | The signal is a difference of prices in points |
+| Volatility | Exponentially weighted volatility of daily point changes, span 36 days, floored at half its median over the past ten years | Same units as the signal; the floor stops positions from growing without limit in calm markets |
+| Forecast | Divided by its average absolute size to date and capped at ±2 | No single reading dominates (Lecture 9) |
+| Position | Forecast × risk budget ÷ (volatility in points × multiplier), in contracts | Equal risk per market |
+| Speeds | Seven, from 16/64 to 128/512, blended with equal weights | The plateau of §8 |
+| Profit | Contracts × point change × multiplier, in dollars | Exact for a fixed number of contracts (§3.3) |
+
+### 5.2 What each design step adds
+
+Each step of Part II added one at a time, 2001–2022, after costs of 5 basis points per unit of notional traded:
+
+| Step | Sharpe ratio | 2001–2008 | 2009–2022 | Full design without this step |
+|---|---|---|---|---|
+| 1. One speed (16/64), the same money in each market, 12 futures, equal weights | 0.03 | 0.18 | −0.08 | |
+| 2. + volatility sizing, with floor (Lecture 9) | 0.17 | 0.22 | 0.14 | 0.44 |
+| 3. + seven speeds blended (Lectures 6 and 7) | 0.31 | 0.46 | 0.23 | 0.29 |
+| 4. + the two bond funds (§2.4) | 0.34 | 0.48 | 0.27 | 0.50 |
+| 5. + equal risk per asset class (§11) | 0.43 | 0.49 | 0.40 | 0.43 |
+| 6. + portfolio volatility target of 10%, leverage capped at 3 (Lecture 9, §5) | **0.54** | 0.53 | 0.55 | |
+
+- **The order of the steps changes what each seems to add.** Added first, volatility sizing raises the Sharpe ratio fivefold; removed last from the full design, it costs 0.10, because equal risk per class and the portfolio volatility target already do part of its work. The last column is the fair measure of each step.
+- **Blending speeds is the largest single contribution** in the full design: without it the Sharpe ratio falls from 0.54 to 0.29.
+- **Every step is chosen in advance**, so the ladder involves no selection.
+
+### 5.3 The volatility floor, checked
+
+| | Plain volatility | Floor: half the 10-year median | Blend: 70% short-term, 30% 10-year mean |
+|---|---|---|---|
+| Sharpe ratio, one speed, before portfolio scaling | 0.34 | 0.34 | 0.33 |
+| Worst day, in units of daily risk | −5.8 | −5.9 | −6.2 |
+| Days beyond four units | 26 | 26 | 34 |
+| Highest three-month volatility, relative to the average | 2.20 | 2.21 | 2.62 |
+| Largest position relative to its median, median across markets | 3.2× | 2.8× | 2.3× |
+
+The floor binds on 0.1% to 5% of days in most markets, 13% in natural gas and 17% in the Nasdaq. On this sample it costs nothing and changes little: insurance against a market that is calm until it jumps, which these 22 years rarely contain. The blend keeps positions smaller in calm times but reacts more slowly when volatility rises, so risk overshoots in the spikes. The floor is the rule; the blend is the comparison.
+
+In gold, position size varies by up to seven times its median under every variant. This is correct: the price rose from about 280 to 1,800 dollars an ounce, so its volatility in points rose with it, and a constant risk needs fewer contracts.
+
+### 5.4 The Kalman slope: a variant of EWMAC
+
+The level-plus-slope Kalman filter of Lecture 4, run on the log of the ratio series, is in steady state a linear filter of past prices, like EWMAC (Lecture 4, §3). On our data it behaves like one:
+
+| | Result |
+|---|---|
+| Correlation of its forecast with the best-matching EWMAC | 0.90–0.93 |
+| Correlation of daily returns at equal speed | 0.93–0.95, in every market between 0.90 and 0.96 |
+| Linking the filter's noise to current volatility | Brings it closer to EWMAC, not further: EWMAC divides by volatility too |
+| Best Sharpe ratio across speeds, full design | 0.28, against 0.56 for EWMAC at a similar holding period ([chart J.5](#j5-three-systems-across-their-speeds-8)) |
+
+What the Kalman filter adds is not a different return stream but two readings EWMAC does not have: the uncertainty around the slope, and the surprises, the gaps between forecast and price, which flag when the model no longer fits. Both are tools for monitoring a system rather than reasons to trade a second one.
+
+**Margin.** Exchange margins are a few percent of the notional value for financial futures and more for commodities. At a 10% volatility target they tie up a small part of the capital and never constrain the positions. The rest of the capital earns the Treasury bill rate, which the excess returns of this lecture leave out.
+
+## 6. Breakout
+
+### 6.1 How it works on futures
+
+The rule is card 5 of Lecture 6, the Turtle breakout: go long when the price closes above its highest close of the past N days, short below the lowest; exit a long when the price closes below the lowest close of the past N/2 days, and a short above the highest. Between an exit and the next breakout the position is flat. Signals use the additive series, since channels are levels compared with recent levels of the same series (§3.5). The position is sized by volatility as in §5.1, and four entry channels, 120, 160, 250 and 375 days, are blended with equal weights.
+
+### 6.2 What is different
+
+| | Single breakout, 120-day entry | Blend of four channels |
+|---|---|---|
+| Average holding period | 43 days | |
+| Position changes per market per year | 1.7 | |
+| Share of days with a position | | 92% |
+| Sharpe ratio, full design, after 5 bp | 0.40 | 0.59 |
+
+Each breakout is an on-or-off rule; blended over four channels, the system is rarely flat in every one at once. Its daily returns correlate 0.90 with EWMAC at medium speed, as in Lecture 6, and 0.94 as blends of their plateau speeds: the breakout reaches a similar return by different mechanics, entering at a level instead of gradually, and leaving a market alone between trends. §8 asks whether that difference adds anything.
+
+## 7. Cross-sectional momentum
+
+### 7.1 How it works on futures
+
+The rule is card 11 of Lecture 6 (§2.4): rank the markets by their return over a lookback divided by its volatility, go long the top third and short the bottom third at equal risk. On these markets:
+
+| Choice | Here | Why |
+|---|---|---|
+| Universe | All 14 markets ranked together, across asset classes | With one to four markets per class, a ranking within classes is too thin; Asness, Moskowitz and Pedersen (2013) rank within classes on much larger universes |
+| Lookback | Five, from 126 to 504 days, blended | The plateau of §8 |
+| Positions | About five markets long and five short each day; positions smoothed over an eighth of the lookback | Limits the trading caused by markets moving between thirds |
+| Net exposure | Close to zero by construction | The defining difference from the other two (Goyal and Jegadeesh, 2018) |
+
+### 7.2 What is different
+
+At medium speed, cross-sectional momentum correlates 0.69 with EWMAC and 0.64 with the breakout, far less than the 0.90 between those two. As blends of their plateau speeds the gap narrows, to 0.87 and 0.86 against 0.94: slow relative trends and slow absolute trends often point the same way. In 2022 it gained about as much as EWMAC, 16.4% against 17.5%, but in a different way: long energy and short bonds at the same time, rather than short everything that fell.
+
+## 8. Comparing the systems
+
+### 8.1 Across speeds
+
+Every system was run across a wide grid of speeds with the full design of §5.1 and costs of 5 bp ([chart J.5](#j5-three-systems-across-their-speeds-8), [chart J.6](#j6-parameter-surfaces-8)), and compared on one axis, the average holding period (Lecture 7, §2):
+
+| System | Grid | Cliff: loses money after costs | Plateau | Sharpe ratio on the plateau |
+|---|---|---|---|---|
+| EWMAC | Fast span 2 to 128 days, slow span 2, 4 or 8 times the fast | Fast span below about 8 days, holding period under 15 days | Fast span 24 to 128 days, holding 30 to 42 days | 0.41–0.56, nearly the same for all three ratios |
+| Breakout | Entry 10 to 500 days, exit a quarter, half or all of the entry | Entry below about 40 days | Entry 120 to 375 days, holding 35 to 61 days | 0.39–0.61, the exit matters little |
+| Cross-sectional | Lookback 10 to 504 days | Lookback below about 40 days | Lookback 126 to 504 days, holding 34 to 63 days | 0.51–0.70 |
+| Kalman (variant) | Eleven speeds | Holding period under 15 days | Slowest speeds | At most 0.28 |
+
+At the fast end every system fails, and not only because of costs: even before costs the fastest variants earn almost nothing.
+
+**How the speeds are chosen, without optimising.** Drop the region that does not work, then blend as many of the remaining speeds as possible with equal weights: seven for EWMAC, four for the breakout, five for cross-sectional momentum. Three speeds spread across the plateau give the same result (EWMAC 0.53 against 0.54, breakout 0.62 against 0.59, cross-sectional 0.72 against 0.73); the peak itself is never chosen. §12 tests this rule on markets it was not made on.
+
+### 8.2 Does a system add anything?
+
+Spanning regressions of monthly returns at the plateau blends (Lecture 7, §3):
+
+| Test | Alpha, % a year | t-statistic | R² |
+|---|---|---|---|
+| Breakout on EWMAC and cross-sectional | +0.4 | 0.5 | 0.89 |
+| Cross-sectional on EWMAC | **+2.7** | **3.1** | 0.79 |
+| EWMAC on cross-sectional | −1.2 | −1.3 | 0.79 |
+| EWMAC on the long portfolio of §9 | +4.4 | 2.3 | 0.07 |
+| Cross-sectional on the long portfolio | +6.3 | 3.2 | 0.09 |
+
+- **The breakout adds nothing** to the other two: they explain 89% of its monthly returns, with no alpha. It stays in the lecture for its mechanics and its comparison, not in the portfolio.
+- **Cross-sectional momentum adds to EWMAC; on this sample, EWMAC adds nothing beyond it.**
+- **Both add to a portfolio that is long the same markets.**
+
+**The portfolio combines EWMAC and cross-sectional momentum at equal risk**, decided in advance. Dropping EWMAC because it is spanned here would be choosing the best point, which Lecture 7 warns against: the gap between the two is within the noise of §9, and cross-sectional momentum's edge rests on ranking only 14 markets in one sample.
+
+## 9. Evaluating the results
+
+### 9.1 The systems and the portfolio
+
+All at 10% volatility, 2001–2022 ([chart J.10](#j10-the-final-portfolio-11)):
+
+| | Sharpe ratio | Return, % a year | Maximum drawdown | Worst year | 2022 |
+|---|---|---|---|---|---|
+| EWMAC | 0.54 | 5.6 | −16.8% | −10.8% | +17.5% |
+| Breakout | 0.59 | 6.1 | −21.3% | −11.5% | +13.0% |
+| Cross-sectional | 0.73 | 7.5 | −17.5% | −9.1% | +16.4% |
+| **EWMAC + cross-sectional, 5 bp** | **0.66** | **6.8** | **−16.6%** | **−10.5%** | **+18.5%** |
+| The same, 10 bp | 0.54 | 5.6 | −18.4% | −11.8% | +17.6% |
+| The same, no costs | 0.78 | 8.0 | −15.8% | −9.2% | +19.5% |
+| Long the 14 markets, same sizing and weights | 0.50 | 5.1 | −36.7% | −17.1% | −7.2% |
+
+The breakeven cost of the portfolio, at which its Sharpe ratio falls to zero, is 33 basis points per unit traded: more than six times the 5 bp assumed.
+
+**How much these numbers can be trusted.** Over 22.8 years, a Sharpe ratio of 0.5 to 0.7 has a standard error of about 0.22 (Lo, 2002). Differences between the systems of 0.1 or 0.2 lie within that noise; the conclusions below rest on differences in payoff and in what each system adds, which are larger and steadier than differences in Sharpe ratio.
+
+### 9.2 Long-short or long-or-flat
+
+The same plateau blends, with shorts allowed or replaced by flat positions:
+
+| | EWMAC long-short | EWMAC long-or-flat | Breakout long-short | Breakout long-or-flat |
+|---|---|---|---|---|
+| Sharpe ratio | 0.54 | 0.60 | 0.59 | 0.61 |
+| Time in the market | 97% | 52% | 92% | 50% |
+| Correlation with the S&P 500, monthly | −0.09 | 0.16 | −0.07 | 0.27 |
+| Correlation with holding the same markets long, monthly | 0.27 | 0.60 | 0.23 | 0.59 |
+| Average quarter, worst fifth of S&P 500 quarters | +4.7% | +1.8% | +4.4% | +1.2% |
+| Average quarter, best fifth | +2.3% | +3.6% | +2.6% | +4.6% |
+| Jan 2001–Oct 2002 | +18.2% | +0.6% | +19.0% | +8.7% |
+| Oct 2007–Mar 2009 | +22.7% | +17.9% | +26.7% | +15.6% |
+| Feb–Mar 2020 | +2.3% | −1.5% | −0.7% | −6.4% |
+| Jan–Oct 2022 | +23.1% | +4.8% | +18.6% | −3.8% |
+
+**Similar performance, a different product** ([chart J.7](#j7-the-smile-9)). The long-or-flat versions earn as much or slightly more, but they are out of the market half the time and, when in it, mostly long what a portfolio already holds: their correlation with the long portfolio doubles. Long-short makes money at both ends of the equity distribution, most in the worst quarters; long-or-flat keeps the right end and loses most of the left, and it gave up almost all of its gains in 2001–2002 and 2022. This is the smile of Lectures 5 and 6, on futures: the short side carries the crisis protection. As a diversifier of a portfolio that is already long, long-short is the better design.
+
+### 9.3 Against the long benchmark
+
+Holding the same markets long, with the same sizing and weights, is the natural benchmark: it earns the drift that the trend systems partly collect, without any timing.
+
+| | Long the 14 markets | EWMAC | Breakout | Cross-sectional | Portfolio |
+|---|---|---|---|---|---|
+| Sharpe ratio | 0.50 | 0.54 | 0.59 | 0.73 | 0.66 |
+| Maximum drawdown | −36.7% | −16.8% | −21.3% | −17.5% | −16.6% |
+| Longest time under water | 10.9 years | 3.2 years | 5.0 years | 3.2 years | 3.2 years |
+| Jan 2001–Oct 2002 | +25.6% | +18.2% | +19.0% | +31.6% | +28.4% |
+| Oct 2007–Mar 2009 | +15.1% | +22.7% | +26.7% | +12.6% | +18.3% |
+| Feb–Mar 2020 | −2.2% | +2.3% | −0.7% | +0.3% | +1.8% |
+| Jan–Oct 2022 | −8.1% | +23.1% | +18.6% | +22.7% | +24.6% |
+
+| Correlation with the long portfolio | EWMAC | Portfolio |
+|---|---|---|
+| When the long portfolio is less than 10% below its peak (58% of days) | +0.42 | +0.42 |
+| When it is more than 10% below its peak (42% of days) | **−0.11** | **−0.06** |
+| Correlation of the drawdown paths | 0.31 | 0.24 |
+
+- **The long benchmark is not an equity portfolio.** With one sixth of the risk in each class, it holds bonds, gold and commodities as much as equities, which is why it gained in 2001–2002, when bonds, gold and the euro rose while equities fell. Its weakness is elsewhere: from 2008 it went almost eleven years without a new peak, through the fall of commodities, and in 2022 bonds fell with everything else.
+- **Trend gained in the slow bear markets and was roughly flat in the fast one.** The COVID crash took five weeks, too fast for trends at these speeds to turn.
+- **The correlation changes sign when it matters**, and the drawdowns rarely coincide.
+- **Combined, they improve each other.** Half long portfolio and half trend portfolio, rescaled to 10% volatility, has a Sharpe ratio of 0.74 against 0.50 for the long portfolio alone, and a maximum drawdown of −17.5% against −36.7%. The trend portfolio's alpha against the long portfolio is 5.6% a year, with a t-statistic of 2.8.
+
+### 9.4 Do the systems lose at the same time?
+
+Between the systems the overlap is larger than their return correlations suggest: as blends of their plateau speeds, EWMAC and cross-sectional momentum correlate 0.87 in daily returns and 0.77 in drawdown paths; EWMAC and the breakout 0.94 and 0.83. At the speeds that work, the three systems are closer than their medium-speed versions suggest; they diversify a long portfolio far more than they diversify each other.
+
+## 10. Two filters
+
+Two filters from different sources of information, each tested with the tools of Lecture 8: a curve across thresholds, a comparison with 200 random filters that are on as often and for spells as long, and a market split.
+
+### 10.1 Term structure (each market)
+
+Allow a long EWMAC position only when the market is in backwardation by more than a threshold, a short only in contango by more than it (§3.6; Fuertes, Miffre and Rallis, 2010). The roll yield is measured from the two nearest contracts and known the day before.
+
+| Threshold | Sharpe ratio, EWMAC | Sharpe ratio, portfolio | Share of positions removed |
+|---|---|---|---|
+| No filter | 0.54 | 0.66 | 0% |
+| −5% (loose) | 0.48 | 0.62 | 7% |
+| 0% | 0.53 | 0.66 | 31% |
+| +5% (strict) | 0.20 | 0.53 | 62% |
+
+The filter does not raise EWMAC's Sharpe ratio at any threshold ([chart J.9](#j9-filter-curves-10)). At 0% it removes almost a third of the positions at hardly any cost, and it beats 87% of random filters that remove positions as often and for as long: the positions it removes are worse than average. But removing them earns nothing either. In these markets the term structure is too one-sided to filter on (gold and the yen were almost never in backwardation, wheat on 7% of days, corn on 13%), and a trend rule already sees the roll, because the adjusted series contain it.
+
+### 10.2 Correlation regime (the whole portfolio)
+
+Halve the portfolio's risk when the average correlation between the 14 markets over the past 63 days is above a percentile of its own history to date.
+
+| Threshold | Sharpe ratio | Maximum drawdown | Return, % a year | Share of days with half risk |
+|---|---|---|---|---|
+| No filter | 0.66 | −17.2% | 6.8 | 0% |
+| 50th percentile | 0.75 | −12.6% | 6.0 | 55% |
+| 70th percentile | 0.70 | −16.3% | 6.3 | 36% |
+| 90th percentile | 0.71 | −16.7% | 7.1 | 12% |
+
+- **When correlation is high the portfolio earns little**: a Sharpe ratio of 0.30 when it is above its median, 1.09 when below. Diversification is what a trend portfolio sells, and when everything moves together there is less of it.
+- **The filter beats 97% of random filters** with the same share of days and length of spells.
+- **On markets it was not chosen on, it mostly holds.** Chosen on one half of the markets, the threshold is the median both times; applied to the other half it raises the Sharpe ratio from 0.51 to 0.63 and from 0.61 to 0.67, while the drawdown improves in one half (−30.1% to −22.0%) and worsens in the other (−19.2% to −24.1%).
+- **It costs return**: 6.0% a year instead of 6.8%, since the portfolio runs at half risk more than half the time.
+
+Lecture 8 found a similar regime on ETFs that weakened out of sample in time. Here it holds across markets, but its evidence still comes from one period. The portfolio of §9 is reported without it; the filter is an option whose case rests on this table.
+
+## 11. Building the portfolio
+
+### 11.1 A map of methods
+
+| Family | Idea | Strengths | Weaknesses |
+|---|---|---|---|
+| **Equal risk** (inverse volatility; equal risk per asset class, then per market) | Every class and every market gets the same risk budget | Needs only volatilities, so it is robust | Ignores correlation: near copies get double weight |
+| Equal risk contribution, hierarchical risk parity | Each market or cluster contributes equally to the portfolio's risk | Handles clusters, such as equity indices that move together | Correlations are estimated, and change in crises (Lecture 3, §8) |
+| Mean-variance | Maximise expected return per unit of risk | The theoretical optimum | Extremely sensitive to expected returns, which can hardly be estimated |
+| Optimisation with constraints, for example simulated annealing over weights with limits on concentration and turnover | Searches for the best weights under practical limits | Flexible | Many choices, and the same sensitivity to estimated inputs; beyond this lecture |
+
+### 11.2 Within each system: across markets
+
+| Scheme | Weights | Effect |
+|---|---|---|
+| **A. Equal risk per asset class, then per market** (used) | Each of the six classes one sixth of the risk | EWMAC 0.54 |
+| B. Equal risk per market | Agriculture 29% of the risk because it has four markets, metals 7% | EWMAC 0.43 |
+| C. Traded dollar volume | Equities 69%, agriculture 4%, bond funds none | Not diversified: volume measures capacity, not risk; used only as a limit on position size |
+| Equal risk contribution | From the covariance of the markets' returns over the past two years, monthly | EWMAC 0.47, maximum drawdown −30% |
+
+**Equal risk contribution** solves: minimise $`\tfrac{1}{2}\,w^\top \Sigma\, w - \tfrac{1}{n}\sum_i \ln w_i`$, then rescale the weights to sum to one, with $`w_i`$ the weight of market $`i`$, $`\Sigma`$ the covariance matrix of the markets' returns and $`n`$ the number of markets (Maillard, Roncalli and Teïletche, 2010). The logarithm keeps every weight positive, and at the solution every market contributes the same share of risk, $`w_i (\Sigma w)_i`$. The problem is convex, so a solution exists and is unique whatever the correlations, and a simple solver that updates one weight at a time finds it (Griveau-Billion, Richard and Roncalli, 2013). *Watch out for* rules that rescale each weight by its risk contribution: a market that is negatively correlated with the rest has a negative contribution, and such rules break down.
+
+It does worse here for a visible reason: it gives the largest weights to natural gas (16%) and cocoa (11%), whose trend returns are the least correlated with the rest; cocoa is also the worst market of the sample. Weighting by correlation chases diversification into whatever is uncorrelated, including markets that are uncorrelated because they do not work, and the correlations are estimated with noise. Equal risk needs no correlations. This matches the finding that simple weights are hard to beat out of sample (DeMiguel, Garlappi and Uppal, 2009).
+
+### 11.3 Across systems
+
+EWMAC and cross-sectional momentum at equal risk (§8.2), the sum scaled to 10% volatility with leverage capped at 3. The equal-risk-contribution version of the same combination has a Sharpe ratio of 0.55 against 0.66.
+
+## 12. Out of sample
+
+Three checks, chosen to guard against three different risks (Lecture 7, §5 and §6).
+
+### 12.1 Choices fixed in advance
+
+The main results involve no selection from results: all speeds on the plateau blended with equal weights, equal risk per class and market, the volatility floor, a 10% volatility target, the two systems at equal risk, costs of 5 bp. Choices fixed in advance cannot be overfitted.
+
+### 12.2 Split by market
+
+The only data-driven choice, which speeds to drop, is made on one half of the markets and tested on the other, over the same period, so the regime is held fixed. Each half contains markets from every class that has more than one. Rule: keep every variant whose Sharpe ratio on the choosing half is at least half that of the best variant there; blend the kept variants.
+
+| System | Chosen on | Kept | Test half: blend of kept | Blend of all | Blend of dropped | Best variant of the choosing half |
+|---|---|---|---|---|---|---|
+| EWMAC | Half A | 19 of 39 | 0.42 | 0.11 | −0.20 | 0.45 |
+| EWMAC | Half B | 21 of 39 | 0.52 | 0.21 | −0.28 | 0.39 |
+| Breakout | Half A | 13 of 33 | 0.47 | 0.26 | +0.03 | 0.40 |
+| Breakout | Half B | 15 of 33 | 0.49 | 0.22 | −0.04 | 0.41 |
+| Cross-sectional | Half A | 5 of 9 | 0.51 | 0.36 | −0.02 | 0.47 |
+| Cross-sectional | Half B | 6 of 9 | 0.64 | 0.44 | −0.08 | 0.76 |
+
+The rule carries over. On markets it was not made on, the kept blend earns 0.42 to 0.64, the dropped variants −0.28 to 0.03, and blending everything about half as much. The kept blend matches or beats the single best variant of the choosing half in four of six cases, without having chosen one.
+
+### 12.3 The probability of backtest overfitting
+
+Across the whole grid of 92 variants, by combinatorially symmetric cross-validation on 16 blocks of time (Bailey et al., 2017):
+
+| Variants | Probability of overfitting | Best in sample: median Sharpe ratio out of sample | Median variant out of sample |
+|---|---|---|---|
+| All 92 | 0.10 | 0.52 | 0.25 |
+| EWMAC (39) | 0.15 | 0.44 | 0.29 |
+| Breakout (33) | 0.16 | 0.43 | 0.25 |
+| Cross-sectional (9) | 0.18 | 0.58 | 0.43 |
+
+Picking the best of 92 variants would be overfitted one time in ten, and the best variant in sample earns a median of 0.52 out of sample: choosing among the slow variants is mostly noise, choosing the slow end is not. A rough bound gives a sense of scale: with 92 variants and a standard error of 0.22, luck alone can produce a best Sharpe ratio of about 0.67, close to the best variant found, 0.70 (Bailey and López de Prado, 2014, correct for this with the deflated Sharpe ratio). This is why the design blends a plateau instead of picking a point.
+
+## 13. Summary, exercises and reading
+
+### 13.1 Six takeaways
+
+1. **Futures need a series that records what a position experienced.** Back-adjust from observed rolls; choose the adjustment by how the position is held, and compute signals and profit in matching units.
+2. **The design steps of Part II add up**, from a Sharpe ratio of 0.03 for one speed with naive sizing to 0.54; blending speeds matters most.
+3. **Choose speeds by dropping what fails and blending the rest.** The rule works on markets it was not made on; the plateau, not the peak, is what survives out of sample.
+4. **Three systems, two in the portfolio.** The breakout adds nothing to EWMAC and cross-sectional momentum; the Kalman slope is a variant of EWMAC.
+5. **Trend's value is its payoff.** It gained in the slow bear markets and in 2022, its correlation with a long portfolio turned negative in stress, and half long, half trend beat the long portfolio clearly (0.74 against 0.50). The long-or-flat version earns as much but gives up most of this.
+6. **Simple weights and few filters.** Equal risk beat equal risk contribution; the term-structure filter added nothing, the correlation filter survived its checks but rests on one period.
+
+### 13.2 Exercises
+
+- [ ] Rebuild the ladder of §5.2 with costs of 10 bp. Which step loses most? (notebook §5)
+- [ ] Rank the cross-sectional markets within three groups instead of across all 14 (financials, commodities, bonds). Does the correlation with EWMAC fall further? (notebook §7)
+- [ ] Replace the additive series by the ratio series in EWMAC, with volatility in percent. Confirm that the forecasts barely change, as §3.4 claims. (notebook §3)
+- [ ] Run the market split of §12.2 with a stricter rule, keeping variants within 80% of the best. Does the kept blend improve or only shrink? (notebook §12)
+
+### 13.3 Reading
+
+For futures data and rolling in practice, Carver's blog post on rolling (2015) and Ma, Mercer and Walker (1992). For the comparison and testing methods, Lecture 7 and its references. For portfolio construction, Maillard, Roncalli and Teïletche (2010) and DeMiguel, Garlappi and Uppal (2009).
+
 
 ## Appendix: charts
 
@@ -369,15 +687,57 @@ Grey: what the price did. Blue: what a holder earned after rolling. Where blue l
 
 Each bar is one episode under the rules of §4. Stress clusters in 2000–2003, 2008–2009, 2020 and 2022; zero rates and QE fill most of 2009–2015; the only sustained inflation comes at the end.
 
+### J.5 Three systems across their speeds (§8)
+
+![Sharpe ratio against average holding period for EWMAC, the breakout, cross-sectional momentum and the Kalman variant](figures/11_05_speed_curves.png)
+
+Every point is one variant with the full design, after 5 bp. Left of about 20 days (shaded) every system loses money; the plateau to the right is what the portfolio blends.
+
+### J.6 Parameter surfaces (§8)
+
+![Heat maps of the Sharpe ratio across EWMAC's fast span and ratio, and the breakout's entry and exit](figures/11_06_surfaces.png)
+
+Red cells: the cliff of fast settings. Blue: the plateau. Within the plateau, neighbouring settings earn about the same, which is why choosing among them adds nothing.
+
+### J.7 The smile (§9)
+
+![Average quarterly return of EWMAC long-short and long-or-flat by quintile of S&P 500 quarters](figures/11_07_smile.png)
+
+Long-short earns most in the worst quarters of the S&P 500; long-or-flat gives most of that up.
+
+### J.8 Drawdowns (§9)
+
+![Drawdowns of the long benchmark, the trend portfolio and a 50/50 mix](figures/11_08_drawdowns.png)
+
+The long benchmark's long drawdown from 2008 and its fall in 2022 coincide with gains of the trend portfolio; the mix has shallower drawdowns than either.
+
+### J.9 Filter curves (§10)
+
+![Sharpe ratio across thresholds for the term-structure filter and the correlation filter](figures/11_09_filter_curves.png)
+
+The first point of each curve is the system without the filter. The term-structure filter never rises above it; the correlation filter does at every threshold.
+
+### J.10 The final portfolio (§11)
+
+![Wealth of the final portfolio at 5 and 10 bp against the long benchmark, log scale](figures/11_10_final.png)
+
 ## References
 
+- Asness, C., Moskowitz, T. and Pedersen, L.H. (2013). Value and momentum everywhere. *Journal of Finance* 68(3), 929–985. — cross-sectional momentum across asset classes (§7).
+- Bailey, D., Borwein, J., López de Prado, M. and Zhu, Q. (2017). The probability of backtest overfitting. *Journal of Computational Finance* 20(4). — §12.3.
+- Bailey, D. and López de Prado, M. (2014). The deflated Sharpe ratio: correcting for selection bias, backtest overfitting and non-normality. *Journal of Portfolio Management* 40(5), 94–107. — the luck of the best of many (§12.3).
 - Carchano, Ó. and Pardo, Á. (2009). Rolling over stock index futures contracts. *Journal of Futures Markets* 29(7), 684–694. — the roll method matters little for stock index futures (§3.2).
 - Carver, R. (2015). Systems building: futures rolling. *This Blog is Systematic*, 18 May 2015. — the additive ("Panama") method and its limits (§3.3).
 - CME Group (2020). CME Clearing Advisory 20-152, 8 April 2020. — preparing for negative prices in crude oil (§3.1).
 - Federal Reserve Bank of St. Louis. FRED economic data: series USREC (NBER recession indicator), CPIAUCSL, DFF, VIXCLS, DGS10, DTB3. — the episodes of §4 and the bill rate (§2.4, §3.7).
+- DeMiguel, V., Garlappi, L. and Uppal, R. (2009). Optimal versus naive diversification: how inefficient is the 1/N portfolio strategy? *Review of Financial Studies* 22(5), 1915–1953. — simple weights out of sample (§11).
 - Erb, C. and Harvey, C. (2006). The strategic and tactical value of commodity futures. *Financial Analysts Journal* 62(2). — roll yield and the term structure (§3.6).
 - Fuertes, A.-M., Miffre, J. and Rallis, G. (2010). Tactical allocation in commodity futures markets: combining momentum and term structure signals. *Journal of Banking & Finance* 34(10), 2530–2548. — the term structure as a condition on momentum (§3.6).
 - Gorton, G. and Rouwenhorst, K. G. (2006). Facts and fantasies about commodity futures. *Financial Analysts Journal* 62(2). — returns of rolled commodity futures (§3.6).
+- Goyal, A. and Jegadeesh, N. (2018). Cross-sectional and time-series tests of return predictability: what is the difference? *Review of Financial Studies* 31(5), 1784–1824. — net exposure (§7).
+- Griveau-Billion, T., Richard, J.-C. and Roncalli, T. (2013). A fast algorithm for computing high-dimensional risk parity portfolios. Working paper, SSRN 2325255. — the coordinate-descent solver (§11).
+- Lo, A. (2002). The statistics of Sharpe ratios. *Financial Analysts Journal* 58(4), 36–52. — the standard error of a Sharpe ratio (§9).
 - Ma, C. K., Mercer, J. M. and Walker, M. A. (1992). Rolling over futures contracts: a note. *Journal of Futures Markets* 12(2), 203–217. — the roll date can change research results (§3.2).
+- Maillard, S., Roncalli, T. and Teïletche, J. (2010). The properties of equally weighted risk contribution portfolios. *Journal of Portfolio Management* 36(4), 60–70. — equal risk contribution (§11).
 - Moskowitz, T., Ooi, Y. H. and Pedersen, L. H. (2012). Time series momentum. *Journal of Financial Economics* 104(2), 228–250. — returns indices from the contracts held (§3.3).
 - S&P Dow Jones Indices. S&P GSCI methodology. — the roll over five business days (§3.3).
