@@ -12,7 +12,7 @@ What does it take to build a trend system properly, from data to positions, and 
 |---|---|---|
 | EWMAC, blended over a few speeds | Linear filters | A continuous forecast that is always in the market; partial trading, costs and the choice of speed matter most |
 | Turtle-style breakout | Channel breakouts | On-or-off positions with flat periods; stops built into the system; time in the market and the marginal contribution of a system that is often idle |
-| Cross-sectional momentum | Applied across markets rather than over time (Lecture 6, §2.1) | A relative trend: long the strongest markets and short the weakest at the same time, so its net exposure, and its payoff, differ from the other two |
+| Cross-sectional momentum | Linear filters, applied across markets rather than over time (Lecture 6, §2.4 and card 11) | A relative trend: long the strongest markets and short the weakest at the same time, so its net exposure, and its payoff, differ from the other two |
 
 A model-based system, the Kalman slope of Lecture 4, was the first candidate for the third place. On these markets it trades almost like EWMAC, with daily returns that correlate 0.93 to 0.95 at equal speed, and it earns less; it appears in §5 as a variant of EWMAC. Cross-sectional momentum correlates 0.65 to 0.71 with the other two and takes the third place.
 
