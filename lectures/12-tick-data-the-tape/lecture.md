@@ -158,19 +158,18 @@ Older files have no header row and newer ones do; step 3 has to handle both. Lik
 The steps of §4.2 are the first stage of a pipeline that turns the archive into the tables the rest of Part III uses. Each stage reads only the stage before it, so any stage can be rerun alone, and each takes the market and the period as parameters, so the same code serves any symbol.
 
 ```mermaid
-flowchart TD
-    A[Binance archive<br/>monthly and daily zips] --> B[Get<br/>checksum, Parquet, checks]
-    B --> C[(Raw layer<br/>never changed)]
-    C --> D[Find holes<br/>from the trade IDs]
-    D --> E[Patch<br/>daily files, logged]
-    E --> F[(Clean layer<br/>only months with holes)]
-    C --> G[Aggregate<br/>engine streaming]
+flowchart LR
+    A[Archive<br/>zips] --> B[Get<br/>and check]
+    B --> C[(Raw<br/>layer)]
+    C --> D[Find<br/>holes]
+    D --> E[Patch]
+    E --> F[(Clean<br/>layer)]
+    C --> G[Aggregate]
     F --> G
-    C --> H[Sequence<br/>day by day]
+    C --> H[Sequence]
     F --> H
-    G --> I[(Derived layer<br/>bars, histograms,<br/>daily statistics, flags)]
+    G --> I[(Derived layer:<br/>tables for<br/>analysis)]
     H --> I
-    I --> J[Analyse and explore]
 ```
 
 Four principles make it repeatable: the raw layer is never changed; every correction is a separate, logged file; every stage can be rerun alone; and memory is bounded by design, one chunk and one job at a time.
