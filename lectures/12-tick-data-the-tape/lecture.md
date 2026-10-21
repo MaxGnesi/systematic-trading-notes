@@ -37,7 +37,7 @@ Lecture 2 described a bar as compression: thousands of trades reduced to five nu
 | 6 | The market's activity | How much is traded, when, in what sizes, and by which side? |
 | 7 | How prices form | How do trades turn into prices? |
 | 8 | What a candle loses | What exactly does a bar throw away? |
-| 9 | What the tape can and cannot answer | What does this make possible in Lectures 13 to 17? |
+| 9 | What the tape can and cannot answer | What does this make possible, and how is the rest of Part III organised? |
 
 Appendix A collects the tools: the Polars library, working with data larger than memory, and the pipeline stage by stage, with the memory it needs. Three passages are marked as deep dives; they can be skipped on a first reading without losing the argument.
 
@@ -667,6 +667,21 @@ A backtest on trades is a replay: the recorded trades are run forward, the strat
 | 8. Limit orders only if traded through | A resting buy at a price is filled only if later trades happen below it | Trades at exactly that price may have filled the orders ahead in the queue |
 
 Rules 1 to 3 and 5 to 7 can be applied exactly with the tape alone; rules 4 and 8 are approximations, and they are where results on the tape stop being reliable. That is why the map in §9.1 has rows marked "approximately" and "only conservatively".
+
+### 9.3 Six uses of the tape: the plan of Part III
+
+What the tape adds to bars comes down to six things. They organise the rest of Part III: Lectures 13 to 15 each teach two of them, and Lectures 16 and 17 apply them to two strategies, a trend rule and an intraday grid.
+
+| The tape adds… | Used for | Taught in | Used in |
+|---|---|---|---|
+| 1. **A clock**: when trading happens | Bars that close on the market's activity; signals that speed up when the market does | Lecture 13 | 16 |
+| 2. **The path between bars** | Which order filled first; whether the stop or the target came first; the worst and best point in a trade | Lecture 14 | 17 |
+| 3. **Volatility, measured precisely** | Realised variance, jumps, forecasts; position sizes, grid spacing, stop distances | Lecture 14 | 16, 17 |
+| 4. **Seasonality** | When to trade: deep and thin hours, crowded round times, scheduled events | Lecture 13 | 16, 17 |
+| 5. **Order flow**: who is pressing | Imbalance, its persistence, absorption, cascades; as a signal, or as a filter that stops a strategy when one side keeps pressing | Lecture 15 | 17 |
+| 6. **Costs and capacity** | The spread on one's own side, slippage, impact growing with size, fees and funding; how large a strategy can get | Lecture 15 | 16, 17 |
+
+The two strategies use the tape differently. A trend rule, held for days, takes a different clock and realistic costs from it. A grid, held for minutes or hours, depends on the path: which of its resting orders fills first, and whether the price swings back. For such a strategy the tape is the backtest itself, within the limits of §9.1.
 
 ## 10. Summary, exercises and reading
 
