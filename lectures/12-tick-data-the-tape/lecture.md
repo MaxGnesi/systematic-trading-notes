@@ -474,17 +474,17 @@ Binance publishes its own one-minute candles (§4.1). If the tape is complete an
 
 Three causes explain every difference. The first is a convention and accounts for almost all of them; the other two are rare.
 
-**1. Which minute a trade belongs to.** Every candle needs a rule that assigns each trade to one bar: a trade at 10:00:59.990 belongs to the 10:00 candle, one at 10:01:00.000 to the 10:01 candle. Binance builds its candles from single fills, each with its own time. The aggregated tape combines the fills of up to 100 milliseconds into one row with one timestamp (§3.1), which, as the numbers indicate, is the time of its first fill. When the fills of one row straddle the start of a minute, the two candles assign them differently:
+**1. When one row straddles the start of a minute.** A trade stamped 18:00:00.001 belongs to the 18:00 candle; there is nothing to decide. The difficulty lies elsewhere: one aggregated row combines all fills at the same price on the same side within up to 100 milliseconds (§3.1), and it carries **one** timestamp, as the numbers indicate the time of its first fill. When those 100 milliseconds straddle the start of a minute, the row hides the exact time of some of its fills:
 
-| Fill | Time | Price | Binance's candle (single fills) | Candle rebuilt from the tape (one row, one time) |
+| Single fill | Its real time | In the aggregated tape | Binance's candle, built from single fills | Candle rebuilt from the tape |
 |---|---|---|---|---|
-| 1 | 10:00:59.950 | 30,000.0 | 10:00 | 10:00 |
-| 2 | 10:01:00.020 | 30,000.0 | **10:01**: it becomes that minute's open | 10:00, with the rest of its row |
-| Next row | 10:01:00.300 | 30,000.1 | 10:01 | 10:01: the open of the rebuilt candle |
+| Fill A | 17:59:59.950 | One row, stamped 17:59:59.950 | 17:59 | 17:59 |
+| Fill B | 18:00:00.020 | The same row; its own time is not recorded | **18:00**: it becomes that candle's open | 17:59, with the rest of its row |
+| The next row | 18:00:00.300 | Its own row | 18:00 | 18:00: the open of the rebuilt candle |
 
-*An illustration: fills 1 and 2 form one aggregated row, stamped 10:00:59.950.*
+*An illustration of the mechanism, not a particular trade.*
 
-Binance's 10:01 candle then opens at 30,000.0, the last price of the 10:00 minute, and holds a little more volume; the rebuilt candle opens at 30,000.1. Neither is wrong: they place a few milliseconds of trading on different sides of the boundary. This is why, in 6.3% of minutes, Binance's open equals the previous close; why volume differs in 18% of minutes, but typically by one part in a million; and why 98% of the differing highs and lows match the previous minute's close. The mechanism fits all the numbers; Binance does not document it. Any data source that aggregates trades or timestamps them coarsely has the same issue at every bar boundary.
+Both candles agree on where 18:00 is; they differ because the tape does not show fill B's time. Binance's 18:00 candle opens at the price of the last row of 17:59, and holds fill B's volume; the rebuilt candle opens at the next row. This is why, in 6.3% of minutes, Binance's open equals the previous close; why volume differs in 18% of minutes, but typically by one part in a million; and why 98% of the differing highs and lows match the previous minute's close. The mechanism fits all the numbers; Binance does not document it. Binance's file of single fills would settle each case, at 2.5 times the size of the aggregated tape. Any source that aggregates trades or stamps them coarsely has the same issue at every bar boundary.
 
 **2. The six minutes missing from the archive** (§5.2). For 6 September 2022, 17:14–17:20 UTC, Binance's candles contain about 72,000 fills that its published tape does not.
 
