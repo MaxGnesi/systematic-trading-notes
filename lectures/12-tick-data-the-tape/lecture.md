@@ -463,19 +463,64 @@ Has more or less persistent flow made the market more or less volatile? Month by
 
 This section only describes. Lecture 15 asks whether the unexpected part of the flow can be measured and used; Lecture 16 measures what it costs to trade against it: the impact of one's own orders, which grows roughly with the square root of their size, on bitcoin as on other markets (Donier and Bonart, 2015).
 
+### 6.7 What drives large moves
+
+Lecture 2 treated volume as one number per bar. The tape splits it into its two parts: how many trades, and how large each one is. Which of the two goes with volatility? The literature gives a clear answer for stocks. Prices move with the rate at which information arrives, and the number of trades is a good measure of that rate (Clark, 1973). Hour by hour, volatility follows the number of trades, and the average trade size adds almost nothing (Jones, Kaul and Lipson, 1994). At the level of single orders, a large order does not move the price much more than a small one; large price changes come from gaps in the order book, moments when few resting orders stand near the price (Farmer, Gillemot, Lillo, Mike and Sen, 2004).
+
+![Volatility of each hour against its number of trades; and the size of each one-minute move against the number of trades in that minute, with the largest 0.1% of moves highlighted](figures/12_12_large_moves.png)
+
+**Activity or size?** Each of the 43,818 hours of the five years, with its variance measured from one-minute returns, its number of trades and its average trade size:
+
+| Explaining the variance of an hour by… | Share of the variation explained (R²) | What it means |
+|---|---|---|
+| The number of trades | 85% | Almost everything |
+| The average trade size | 1% | Almost nothing |
+| Dollar volume | 74% | Less than the number of trades alone: the size part of volume adds noise |
+| The number of trades and the average size together | 85% | Size adds nothing once the number of trades is known |
+
+*The regression uses logarithms: the logarithm of each hour's variance on the logarithms of the explanatory variables.*
+
+BTCUSDT behaves like the stocks of Jones, Kaul and Lipson. The coefficient on the number of trades is 1.5: an hour with twice the trades has about 2.8 times the variance. If every trade carried the same amount of variance, the coefficient would be 1; in busy hours each trade moves the price more. The number of trades is the market's clock, the observation behind the bars of Lecture 13 (Ané and Geman, 2000).
+
+**The trading behind the largest moves.** Every one-minute move, compared with the number of trades in that minute relative to the day's median minute:
+
+| Minutes | Size of the move | Trades, relative to the day's median minute | Dollars, relative | Share of these minutes with fewer trades than the median minute |
+|---|---|---|---|---|
+| All | — | 1.0 | 1.0 | 50% |
+| Largest 1% of moves | 26 basis points or more | 5.3 | 7.4 | 2% |
+| Largest 0.1% of moves | 57 basis points or more | 13.3 | 19.4 | 0.04% |
+
+On BTCUSDT, a large one-minute move almost never happens in a quiet minute. Of the 2,630 largest moves of the five years, one happened in a minute with less trading than usual. This seems to contradict the stock-market finding that jumps come with little volume (Joulin, Lefevre, Grunberg and Bouchaud, 2008), but the two measure different things. Farmer and his co-authors looked at single orders, and on our tape, too, the largest one-minute moves are made of many trades, each moving the price little except where the book has a gap, as in the flash crash of §5.4. Heavy trading and thin books are not alternatives: when the price starts to move, stop orders and liquidations add trades, and resting orders are withdrawn. Which comes first, the trading or the move, the tape cannot tell; trading measured within the same minute includes the reaction to the move. The order book of Part IV can show the gaps directly.
+
+**How concentrated is the variance?** Of all the variance of five years of one-minute returns:
+
+| Minutes | Share of all minutes | Share of the variance |
+|---|---|---|
+| The largest 0.1% of moves | 0.1% | 17% |
+| The largest 1% of moves | 1% | 37% |
+| The busiest 1% of minutes, by number of trades | 1% | 22% |
+| The bursts flagged in §5 (more than 20 times the day's median minute) | 0.12% | 10% |
+
+A third of the risk of five years sits in 1% of its minutes. A volatility estimate that misses those minutes, or a backtest that assumes trading in them at normal cost, misses much of the risk. The flagged bursts of §5, about one minute in eight hundred, hold a tenth of it. Lecture 15 studies these minutes: how cascades start, and whether trades trigger further trades.
+
 The single moments behind these statistics were shown in §5.4: a flash crash in which aggressive selling swept through an empty book, the busiest minute, with 62 times the usual rate of trades, and the largest trade, met at one price.
 
 ## References
 
 - Binance. USDⓈ-M futures API documentation: compressed aggregate trades list; exchange information; funding rate history. — definitions and contract terms (§2–§4).
 - Andersen, T. G., Bollerslev, T., Diebold, F. X. and Labys, P. (2000). Great realizations. *Risk* 13, 105–108. — the volatility signature plot (§6.5).
+- Ané, T. and Geman, H. (2000). Order flow, transaction clock, and normality of asset returns. *Journal of Finance* 55(5), 2259–2284. — the number of trades as the market's clock (§6.7).
 - Barndorff-Nielsen, O. E., Hansen, P. R., Lunde, A. and Shephard, N. (2009). Realized kernels in practice: trades and quotes. *Econometrics Journal* 12(3), C1–C32. — cleaning rules for high-frequency data (§5).
 - Bouchaud, J.-P., Gefen, Y., Potters, M. and Wyart, M. (2004). Fluctuations and response in financial markets: the subtle nature of 'random' price changes. *Quantitative Finance* 4(2), 176–190. — persistent flow, transient impact (§6.6).
 - Brownlees, C. T. and Gallo, G. M. (2006). Financial econometric analysis at ultra-high frequency: data handling concerns. *Computational Statistics & Data Analysis* 51(4), 2232–2245. — outlier detection with a granularity term (§5).
+- Clark, P. K. (1973). A subordinated stochastic process model with finite variance for speculative prices. *Econometrica* 41(1), 135–155. — volatility and the rate of information (§6.7).
 - Dacorogna, M. M., Gençay, R., Müller, U. A., Olsen, R. B. and Pictet, O. V. (2001). *An Introduction to High-Frequency Finance*. Academic Press, chapter "Adaptive data cleaning". — filtering as a process (§5).
 - Donier, J. and Bonart, J. (2015). A million metaorder analysis of market impact on the Bitcoin. *Market Microstructure and Liquidity* 1(2); arXiv:1412.4503. — square-root impact on bitcoin (§6.6).
+- Farmer, J. D., Gillemot, L., Lillo, F., Mike, S. and Sen, A. (2004). What really causes large price changes? *Quantitative Finance* 4(4), 383–397. — gaps in the book (§6.7).
 - Hansen, P. R. and Lunde, A. (2005). A realized variance for the whole day based on intermittent high-frequency data. *Journal of Financial Econometrics* 3(4), 525–554. — including the return outside the sampled hours (§6.5).
 - Hansen, P. R. and Lunde, A. (2006). Realized variance and market microstructure noise. *Journal of Business & Economic Statistics* 24(2), 127–161. — noise correlated with the efficient price (§6.5).
+- Jones, C. M., Kaul, G. and Lipson, M. L. (1994). Transactions, volume, and volatility. *Review of Financial Studies* 7(4), 631–651. — number of trades versus trade size (§6.7).
+- Joulin, A., Lefevre, A., Grunberg, D. and Bouchaud, J.-P. (2008). Stock price jumps: news and volume play a minor role. arXiv:0803.1769. — jumps without volume (§6.7).
 - Lillo, F. and Farmer, J. D. (2004). The long memory of the efficient market. *Studies in Nonlinear Dynamics & Econometrics* 8(3). — persistence of order signs (§6.6).
 - Lillo, F., Mike, S. and Farmer, J. D. (2005). Theory for long memory in supply and demand. *Physical Review E* 71, 066122. — order splitting and persistence (§6.6).
 - Tóth, B., Palit, I., Lillo, F. and Farmer, J. D. (2015). Why is equity order flow so persistent? *Journal of Economic Dynamics and Control* 51, 218–239. — splitting versus herding (§6.6).
