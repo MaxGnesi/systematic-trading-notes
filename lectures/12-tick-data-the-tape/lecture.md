@@ -416,7 +416,8 @@ Realised volatility adds up squared returns over short intervals. In theory, the
 
 | Sampling interval | 1 second | 30 seconds | 5 minutes | 1 hour | Daily closes |
 |---|---|---|---|---|---|
-| Annualised volatility | 49.8% | 54.3% | 53.2% | 50.9% | 51.4% |
+| From trade prices | 49.8% | 54.3% | 53.2% | 50.9% | 51.4% |
+| From the mid, estimated | 48.7% | 54.2% | 53.2% | 50.9% | |
 
 The shape of the curve has a meaning. If returns were independent, every interval would give the same answer and the curve would be flat. Where it rises with the interval, returns over short intervals are positively correlated: moves continue. Where it falls, they reverse.
 
@@ -424,7 +425,43 @@ For many stocks, the textbook curve is highest at the shortest intervals: the bi
 
 Every day's realised variance covers the full 24 hours, including the return across midnight: the returns of a day must add up to the day's return, as a daily close-to-close return does. For markets that close overnight, Hansen and Lunde (2005) add the overnight return in the same way.
 
+**Trades or the mid?** Studies of stocks usually measure volatility from the mid-price, halfway between the best bid and the best ask, because it does not bounce. The tape has no quotes, but the aggressor flag gives an estimate: a buyer-initiated trade happened at the ask and a seller-initiated trade at the bid, so the last buy and the last sell of each second estimate the ask and the bid, their average the mid, and their difference the spread. The second row of the table uses this mid. It differs from trade prices only at one second, by about a point: that is all the bounce adds. Lecture 16 repeats the check with the exchange's own quotes.
+
+The spread estimated this way is one tick in 77% of the seconds in which both sides trade, 0.016 basis points at the median. It is not always small: in the widest 1% of seconds it reaches 1.2 basis points on a typical day and 5.8 on the worst day of the five years. These are upper estimates, since the price can move within the second; they show that the bounce matters exactly when the market is under stress, and hardly at all otherwise.
+
 The practical result is reassuring: from 15 minutes to an hour, every interval lies within 0.6 points of the 51.4% measured from daily closes. Lecture 3, §4.4 compared volatility estimators from daily bars; §7 compares them with this realised volatility.
+
+### 6.6 Persistence of order flow
+
+§6.2 showed that flow and price move together. A second question is whether flow follows itself: is a buy more likely to be followed by another buy? On stock markets the answer is a strong yes. The signs of trades (+1 for a buy, −1 for a sell) are positively correlated over thousands of trades, and the correlation fades slowly, like a power law, roughly as lag^−0.6 on the London Stock Exchange (Lillo and Farmer, 2004). The main cause is **order splitting**: a large investor cuts a large order into many small ones, executed one after another, all on the same side. Herding, different investors trading in the same direction, matters less on horizons of a few hours (Tóth, Palit, Lillo and Farmer, 2015). If the sizes of the large hidden orders follow a power law, splitting alone produces sign correlations that fade as a power law (Lillo, Mike and Farmer, 2005).
+
+**A limit of the aggregated tape.** Binance merges consecutive fills on the same side at the same price into one row (§4.1). Two neighbouring rows are therefore more often different than the underlying fills would be, and the correlation at lags of one or two rows is distorted: the correlation at lag 2 exceeds the one at lag 1. The measures below use lags of five trades or more, and two versions: per trade, and per order, merging trades in the same millisecond on the same side into one, so that a sweep through several prices (§6.4) counts once. A third measure does not depend on the rows at all: the net aggressive dollars of each second, correlated with those of the next second.
+
+![Correlation of trade signs with the sign k trades later, per trade and per order, on log-log axes; and month by month, the sign correlation at 100 trades, the correlation of net dollar flow from one second to the next, and realised volatility](figures/12_11_flow_persistence.png)
+
+| Measure | What we measure, in plain words | Benchmark: no persistence | Result | What it means |
+|---|---|---|---|---|
+| Sign correlation, per trade | Correlation between a trade's sign and the sign 10, 100 and 1,000 trades later | 0 | 0.39, 0.09, 0.01 | Buys follow buys over hundreds of trades |
+| Decay, per trade | Slope of the left-hand chart from 20 trades on | — | −0.86: a power law | The correlation fades slowly, without a cut-off |
+| Sign correlation, per order | The same, with sweeps counted once | 0 | 0.09, 0.02, 0.005; slope −0.55 | Weaker, but the slope is close to the −0.6 of stocks: the same slow decay |
+| Net dollar flow, one second | Correlation of one second's net aggressive dollars with the next second's | 0 | 0.11; 0.03 at 10 seconds, 0.006 at a minute | Persistent in money too, over a few seconds |
+| Returns, one second | Correlation of one second's return with the next second's | 0 | 0.06 | Much weaker than the flow |
+
+The last two rows contain the central puzzle of this literature. The flow is predictable, at least a little: a second of net buying is likely to be followed by another. If every buy pushed the price up by the same amount, the price would be predictable too. It is almost not. The explanation is that liquidity adapts: when a run of buying is under way, sellers expect more of it, place more resting orders, and each new buy moves the price less. The impact of a trade is not permanent but fades over time, and the persistence of the flow and the fading of the impact offset each other (Bouchaud, Gefen, Potters and Wyart, 2004). What moves prices is the part of the flow that was not expected.
+
+**Over time.** The two measures have moved in opposite directions:
+
+| | First 12 months (Oct 2021–Sep 2022) | Last 12 months (Oct 2025–Sep 2026) |
+|---|---|---|
+| Sign correlation at 100 trades | 0.04 | 0.14 |
+| Net dollar flow, correlation with the next second | 0.13 | 0.07 |
+| Realised volatility (5-minute returns) | 70% a year | 46% a year |
+
+Counted trade by trade, flow has become much more persistent; weighted by dollars, second by second, less. A count gives every trade the same weight, so it is dominated by the many small trades of §6.1; a dollar measure is dominated by the large ones. One reading, not tested here, is that more large orders are now executed by algorithms in long sequences of small, same-sided slices, while the money moving from one second to the next has become less one-sided.
+
+Has more or less persistent flow made the market more or less volatile? Month by month, the sign correlation at 100 trades and realised volatility have a correlation of −0.38; the one-second flow correlation and volatility, +0.16. Volatility fell over the five years while trade-by-trade persistence rose. The data do not show that more persistent flow means a more volatile market, which is what the literature leads us to expect: flow that can be anticipated is absorbed before it moves the price. Both series also trend over the five years, so their correlation describes the period, not a cause.
+
+This section only describes. Lecture 15 asks whether the unexpected part of the flow can be measured and used; Lecture 16 measures what it costs to trade against it: the impact of one's own orders, which grows roughly with the square root of their size, on bitcoin as on other markets (Donier and Bonart, 2015).
 
 The single moments behind these statistics were shown in §5.4: a flash crash in which aggressive selling swept through an empty book, the busiest minute, with 62 times the usual rate of trades, and the largest trade, met at one price.
 
@@ -433,7 +470,12 @@ The single moments behind these statistics were shown in §5.4: a flash crash in
 - Binance. USDⓈ-M futures API documentation: compressed aggregate trades list; exchange information; funding rate history. — definitions and contract terms (§2–§4).
 - Andersen, T. G., Bollerslev, T., Diebold, F. X. and Labys, P. (2000). Great realizations. *Risk* 13, 105–108. — the volatility signature plot (§6.5).
 - Barndorff-Nielsen, O. E., Hansen, P. R., Lunde, A. and Shephard, N. (2009). Realized kernels in practice: trades and quotes. *Econometrics Journal* 12(3), C1–C32. — cleaning rules for high-frequency data (§5).
+- Bouchaud, J.-P., Gefen, Y., Potters, M. and Wyart, M. (2004). Fluctuations and response in financial markets: the subtle nature of 'random' price changes. *Quantitative Finance* 4(2), 176–190. — persistent flow, transient impact (§6.6).
 - Brownlees, C. T. and Gallo, G. M. (2006). Financial econometric analysis at ultra-high frequency: data handling concerns. *Computational Statistics & Data Analysis* 51(4), 2232–2245. — outlier detection with a granularity term (§5).
 - Dacorogna, M. M., Gençay, R., Müller, U. A., Olsen, R. B. and Pictet, O. V. (2001). *An Introduction to High-Frequency Finance*. Academic Press, chapter "Adaptive data cleaning". — filtering as a process (§5).
+- Donier, J. and Bonart, J. (2015). A million metaorder analysis of market impact on the Bitcoin. *Market Microstructure and Liquidity* 1(2); arXiv:1412.4503. — square-root impact on bitcoin (§6.6).
 - Hansen, P. R. and Lunde, A. (2005). A realized variance for the whole day based on intermittent high-frequency data. *Journal of Financial Econometrics* 3(4), 525–554. — including the return outside the sampled hours (§6.5).
 - Hansen, P. R. and Lunde, A. (2006). Realized variance and market microstructure noise. *Journal of Business & Economic Statistics* 24(2), 127–161. — noise correlated with the efficient price (§6.5).
+- Lillo, F. and Farmer, J. D. (2004). The long memory of the efficient market. *Studies in Nonlinear Dynamics & Econometrics* 8(3). — persistence of order signs (§6.6).
+- Lillo, F., Mike, S. and Farmer, J. D. (2005). Theory for long memory in supply and demand. *Physical Review E* 71, 066122. — order splitting and persistence (§6.6).
+- Tóth, B., Palit, I., Lillo, F. and Farmer, J. D. (2015). Why is equity order flow so persistent? *Journal of Economic Dynamics and Control* 51, 218–239. — splitting versus herding (§6.6).
