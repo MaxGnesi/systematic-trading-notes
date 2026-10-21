@@ -20,7 +20,7 @@ The course follows one pipeline throughout (data → signal → position → eva
 | | 10 | (merged into Lecture 11) | The trend portfolio is built in the capstone | — | — |
 | | 11 | Three Trend Systems, End to End (capstone) | Futures from Kaggle, rolls and back-adjustment, EWMAC, breakout, cross-sectional momentum, comparison, evaluation, filters, portfolio, out of sample | 11 (12 futures, 2 Treasury funds) | Done |
 | III. From the tape: crypto tick data | 12 | Tick data: the tape | Trade prints against OHLCV; the aggressor flag as true order flow; inspection; activity, price formation, what a candle loses | 12 (BTCUSDT perpetual, Binance archive, 2021–2026) | Done |
-| | 13 | Bars not cut by time | Tick, volume, dollar, imbalance, run, range and Renko bars, CUSUM sampling | Binance | Planned |
+| | 13 | Bars not cut by time | Which clock should a bar follow: tick, volume, dollar, imbalance, run, range and Renko bars, CUSUM sampling; are returns closer to normal | Binance (Lecture 12's tape) | In progress |
 | | 14 | Trend on event clocks | The same trend rules on event bars against time bars, at equal speed; backtesting on irregular bars (§1.2) | Binance | Planned |
 | | 15 | Order flow and short-term reversion | Signed order flow, liquidation cascades, short-horizon mean reversion | Binance | Planned |
 | | 16 | Costs from the tape and the quotes | Spread, microprice, top-of-book imbalance, slippage, square-root impact | Binance trades and best bid/ask | Planned |
@@ -173,7 +173,7 @@ Headings must match what follows them. A heading that promises "three" of someth
 - Name methods neutrally. Describe discretionary trading without loaded words: "a person can read the same data differently over time or bring in extra information", not "state of mind".
 - Define a term the first time it is used; reuse the same term afterwards (e.g. *rolling*, *expanding*, *cumulative* memory).
 - Cross-reference with section numbers: "Lecture 2, §6.3".
-- No hype, no "key takeaways" boxes beyond the summary, no repetition of a table's numbers in prose.
+- No hype, no "key takeaways" boxes beyond the summary (except the short *What to take away* box that opens each Part III lecture, §1.1a), no repetition of a table's numbers in prose.
 - **Cite at the point of the claim.** Put the reference in the sentence that uses it, e.g. "(Durbin and Koopman, 2012, ch. 5)", with a chapter when known, so a reader interested in one point can go straight to the source. Every inline citation also appears in the reading list, with a note on what it is used for (e.g. "— starting a Kalman filter (§9.1)").
 - **Say what is ours.** Results derived or measured for these notes are labelled as such: "the calculation is ours", "our measurement for these notes". Such numbers must be reproducible in the companion notebook.
 - **Justify specific examples.** When naming one tool, library, dataset or vendor out of many, say in a clause why that one (e.g. TA-Lib: the long-standing open-source reference implementation that documents the issue).
