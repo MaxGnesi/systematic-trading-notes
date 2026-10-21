@@ -65,7 +65,7 @@ Each Part III lecture opens with a short *What to take away* box, and marks pass
 
 ### 1.1b Two uses of the tape in Part III
 
-Trend was the subject of Part II; Part III uses the tape for what daily bars cannot give. For a **trend system**, held for days, the tape matters mainly for **costs**: what a trade really pays, on its own side, after a delay, with impact (Lecture 13's closing test, Lecture 16). For **mean reversion and the grid of the capstone**, held for minutes or hours, the **path** decides: which resting order fills first, whether the stop or the target comes first, whether the price swings back (Lectures 14 to 17). There, the tape is the backtest itself, and candles give wrong answers.
+Trend was the subject of Part II; Part III uses the tape for what daily bars cannot give. For a **trend system**, held for days, the tape gives two things: **a different clock**, so the signal can run on dollar or other bars instead of time bars (Lecture 13), and **realistic costs**: what a trade really pays, on its own side, after a delay, with impact (Lecture 13's closing test, Lecture 16). For **mean reversion and the intraday grid of the capstone**, held for minutes or hours, the **path** decides, and makes such strategies possible to test at all: which resting order fills first, whether the stop or the target comes first, whether the price swings back (Lectures 14 to 17). There, the tape is the backtest itself, and candles give wrong answers.
 
 ### 1.2 Backtesting on bars that are not clock-time (for Lecture 13, §8, and the capstone)
 
