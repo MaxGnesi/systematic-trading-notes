@@ -32,7 +32,7 @@ Lecture 2 described a bar as compression: thousands of trades reduced to five nu
 | 8 | What a candle loses | What exactly does a bar throw away? |
 | 9 | What the tape can and cannot answer | What does this make possible in Lectures 13 to 17? |
 
-Appendix A collects the tools: the Polars library, working with data larger than memory, and the pipeline stage by stage, with the memory it needs.
+Appendix A collects the tools: the Polars library, working with data larger than memory, and the pipeline stage by stage, with the memory it needs. Three passages are marked as deep dives; they can be skipped on a first reading without losing the argument.
 
 **Objectives.** After this lecture, a reader can:
 
@@ -310,6 +310,8 @@ Two smaller patterns are visible. Every full hour starts with a short spike: ord
 
 When funding is highest, the last ten minutes before the payment show net aggressive selling of 2.8% of the dollars traded, about three standard errors from the average; after the payment it fades. This is consistent with longs closing positions to avoid the payment, but it is small, and it is one result among four groups: a hypothesis, not a finding. Activity rises after every full hour, funding or not: ten minutes after the hour, it is 1.29 times the day's average at the funding times and 1.01 times at the hours halfway between. 
 
+*Deep dive: can be skipped on a first reading.*
+
 **Activity, volatility and price around funding.** A wider look, an hour either side of every funding time, minute by minute, with the hours halfway between (04:00, 12:00 and 20:00 UTC) as a control:
 
 ![Minute by minute, an hour either side of the funding times, by funding rate, against the control hours: dollars traded, size of the move, and average cumulative return](figures/12_17_funding_event.png)
@@ -387,6 +389,8 @@ The correlation is contemporaneous: flow and price move together, which does not
 | Returns, one second | Correlation of one second's return with the next second's | 0 | 0.06 | Much weaker than the flow |
 
 The last two rows contain the central puzzle of this literature. The flow is predictable, at least a little: a second of net buying is likely to be followed by another. If every buy pushed the price up by the same amount, the price would be predictable too. It is almost not. The explanation is that liquidity adapts: when a run of buying is under way, sellers expect more of it, place more resting orders, and each new buy moves the price less. The impact of a trade is not permanent but fades over time, and the persistence of the flow and the fading of the impact offset each other (Bouchaud, Gefen, Potters and Wyart, 2004). What moves prices is the part of the flow that was not expected.
+
+*Deep dive: can be skipped on a first reading.*
 
 **Over time.** The two measures have moved in opposite directions:
 
@@ -488,6 +492,8 @@ Binance publishes its own one-minute candles (§4.1). If the tape is complete an
 | Volume | 82% exactly; the rest typically differ by one part in a million | At the boundary between minutes |
 | Aggressive buying | 91% exactly | At the boundary |
 | Number of trades | Never: Binance counts single fills, 2.5 per aggregated trade | A different unit, not an error |
+
+*Deep dive: can be skipped on a first reading.* The differences are tiny or rare; the next paragraphs explain where each comes from.
 
 Three causes explain every difference. The first is a convention and accounts for almost all of them; the other two are rare.
 
