@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 21, 2026 · Max Gnesi*
 
-Every bar so far closed on the clock: at the end of a day in Parts I and II, at the end of a minute in Lecture 12. This lecture builds bars that close after a fixed amount of trading, of one-sided pressure, or of price movement instead, from the same five years of BTCUSDT trades as Lecture 12, and asks whether they describe the market better. It is descriptive: Lecture 14 trades on them.
+Every bar so far closed on the clock: at the end of a day in Parts I and II, at the end of a minute in Lecture 12. This lecture builds bars that close after a fixed amount of trading, of one-sided pressure, or of price movement instead, from the same five years of BTCUSDT trades as Lecture 12, and asks whether they describe the market better. It ends with one test: the same trend rule on time bars and on dollar bars.
 
 ## 1. Which clock should a bar follow?
 
@@ -20,7 +20,8 @@ Every bar closes when a counter reaches a threshold. For a one-hour bar the coun
 | 5 | Are returns closer to normal? | Tails, volatility clustering and autocorrelation, bar type by bar type |
 | 6 | Imbalance bars, two versions | Does the published construction behave well on our data? *(deep dive)* |
 | 7 | The activity regime | How do busy and quiet periods come and go? |
-| 8 | What this means for Lecture 14 | Which bars are worth trading on? |
+| 8 | A trend rule on two clocks | Does the same trend rule do better on dollar bars than on time bars, once its trades are filled on the tape? |
+| 9 | What this means for the rest of Part III | Which clock to use for volatility, order flow and the capstone |
 
 **Data.** The derived layer of Lecture 12: BTCUSDT perpetual on Binance, October 2021 to September 2026, 2.6 billion trades, checked and patched (Lecture 12, §5). The bars are built with the same day-by-day machinery (Lecture 12, Appendix A).
 

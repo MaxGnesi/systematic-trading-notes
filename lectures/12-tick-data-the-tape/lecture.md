@@ -586,7 +586,7 @@ The close is one trade, the last of the bar. The **volume-weighted average price
 | Daily returns, close to close against VWAP to VWAP | Correlation | 0.67 | Two different series |
 | Volatility of daily returns | Close to close; VWAP to VWAP | 51%; 42% a year | Averaging smooths |
 
-A backtest of a daily strategy that trades at the close, as in Parts I and II, assumes a price that only the last trade of the day got. A strategy that trades through the day gets something closer to the VWAP, which on a typical day is 0.66% away. Lecture 14 trades on bars of its own and fills on the tape after each signal.
+A backtest of a daily strategy that trades at the close, as in Parts I and II, assumes a price that only the last trade of the day got. A strategy that trades through the day gets something closer to the VWAP, which on a typical day is 0.66% away. Lecture 13 tests a trend rule on bars of its own, filled on the tape after each signal.
 
 ### 8.6 Volume by price
 
@@ -640,16 +640,16 @@ The tape records every trade, but only trades: not the orders waiting in the boo
 | What the tape can do | How well | Why | Where in Part III |
 |---|---|---|---|
 | Build bars on other clocks: trades, dollars, imbalance, price moves | Fully | Every trade is recorded with its time, size and side | Lecture 13 |
-| Measure volatility, order flow, its persistence, and what happens around events | Fully | These are statistics of the trades themselves (§6, §7) | Lectures 13, 15 |
+| Measure volatility, order flow, its persistence, and what happens around events | Fully | These are statistics of the trades themselves (§6, §7) | Lectures 14, 15 |
 | Price the cost of a small aggressive order | Fully | A buy is filled at about the price of the next buyer-initiated trade, a sell at the next seller-initiated one (§3) | Lecture 16 |
 | Estimate the spread and the impact of trading | Fully, from the trades' own prices and signs | §7.2 estimated the spread from the aggressor flag; impact is the price move that follows aggressive volume | Lecture 16 |
 | Check one's own fills after trading live | Fully | One's own trades appear on the tape; the fill can be compared with the trades around it | Lecture 17 |
-| Backtest a strategy of small aggressive orders | **Approximately** | The fill is taken from the tape after a delay; the strategy's own orders are assumed not to change what others do | Lectures 14, 15, 17 |
+| Backtest a strategy of small aggressive orders | **Approximately** | The fill is taken from the tape after a delay; the strategy's own orders are assumed not to change what others do | Lectures 13, 15 |
 | Backtest large aggressive orders | **Only with an impact model** | A large order would have moved the price; the tape shows the market without it | Lecture 16 |
-| Backtest passive limit orders | **Only conservatively** | The tape shows trades at a price, not one's place in the queue at that price; a resting order is counted as filled only if the price trades through it | Lecture 16, Part IV |
+| Backtest passive limit orders | **Only conservatively** | The tape shows trades at a price, not one's place in the queue at that price; a resting order is counted as filled only if the price trades through it | Lectures 16, 17, Part IV |
 | Market making, queue position, strategies that move the market | **Not at all** | These need the order book and a model of how others react | Part IV |
 
-The table is the frame for the rest of Part III: every later lecture states which row it stands on. The capstone of Lecture 17 claims only what the tape can support: a strategy that takes liquidity in small size.
+The table is the frame for the rest of Part III: every later lecture states which row it stands on. The capstone of Lecture 17, an intraday grid of resting buy and sell orders, stands on the row marked "only conservatively": its orders count as filled only when the price trades through them, and Part IV measures what that assumption costs.
 
 ### 9.2 Backtesting on the tape: the rules
 
