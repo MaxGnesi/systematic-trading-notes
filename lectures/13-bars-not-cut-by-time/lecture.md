@@ -159,9 +159,30 @@ The first version of the range clock read every trade, and on the day of the Fed
 
 **Example: one second after the decision.** In the second 18:00:02 UTC on 21 September 2022, 1,846 trades took place at 1,253 different prices, the price swinging between about $19,880 and $20,120. At 18:00:02.805, a single sell order filled at 49 prices, from $20,090 down to $19,880, 1% of the price, in one millisecond; moments later buy orders swept it back. A clock that reads every fill counts each of these sweeps as a move of 1%.
 
-The Fed decision was not the most extreme moment. Among the 22 days with the largest one-minute price ranges of the five years, the busiest second was 18:39:03 UTC on 28 October 2021: 7,990 trades at 6,913 different prices. The largest single sweep came in the crash of 10 October 2025.
+The Fed decision was not the most extreme moment. Among the 20 days with the largest one-minute price ranges of the five years, the busiest second was 18:39:03 UTC on 28 October 2021: 7,990 trades at 6,913 different prices. The largest single sweep came in the crash of 10 October 2025.
 
 **Example: the bottom of 10 October 2025.** That day, after the US announced new tariffs on imports from China, crypto markets saw the largest liquidations on record, about $19 billion within a day, as reported from Bloomberg data (Business Today, 2025). On BTCUSDT the price fell from $122,497 to $101,517, 17%, reaching its low at 21:20:08 UTC; the day traded $45 billion, more than twice the days either side. Two seconds after the low, at 21:20:10.325, a single buy order took 326 bitcoin, $33.7 million, filling at 407 prices from $101,881 to $104,750: 2.8% in one millisecond, about $83,000 at each price. A second later the price was back at $101,697, just above the low; then it turned, to $106,016 ten seconds later and $109,314 ten minutes later. Whether the order was a buyer stepping in or a forced closing of short positions, the tape does not say, since it does not mark liquidations. It shows a book so thin that one order moved the price by almost 3%, within seconds of the day's low.
+
+*Deep dive: can be skipped on a first reading.*
+
+**The most extreme days.** The ten days with the largest price range within one minute, with the busiest second of each:
+
+| Day | Largest range in one minute | Busiest second (UTC) | Trades in that second | Different prices |
+|---|---|---|---|---|
+| 6 September 2022 | 48.8% | 17:05:31 | 2,065 | 1,634 |
+| 21 September 2022 | 9.9% | 18:00:40 | 5,072 | 4,003 |
+| 4 December 2021 | 9.3% | 05:27:49 | 1,872 | 1,538 |
+| 10 October 2025 | 7.2% | 21:43:49 | 3,569 | 2,831 |
+| 5 December 2024 | 6.7% | 22:28:15 | 3,971 | 3,428 |
+| 23 October 2023 | 6.3% | 18:44:39 | 3,520 | 2,897 |
+| 8 November 2022 | 6.0% | 16:32:43 | 2,330 | 1,544 |
+| 5 May 2022 | 5.6% | 15:08:20 | 2,491 | 1,990 |
+| 28 October 2021 | 5.6% | 18:39:03 | 7,990 | 6,913 |
+| 10 November 2022 | 5.5% | 13:30:01 | 2,441 | 1,999 |
+
+*Our measurement for these notes, from the 20 days with the largest one-minute ranges. The range of 6 September 2022 comes from the isolated print of Lecture 12, §5.4.*
+
+Three things stand out. Most of these moments last seconds: the busiest second of a day can hold more trades than an average minute. Several fall at fixed clock times: 12:30, 13:30 and 18:00 UTC, the times of US inflation releases (8:30 a.m. in New York) and of Fed decisions (2 p.m.), among them 18:00:40 on the Fed day and 13:30:01 on 10 November 2022; §7 returns to these scheduled events. And the largest single orders are not always on the most volatile days: after 10 October 2025, the next largest sweeps came on 3 January 2024 (one sell order through 218 prices, $3.5 million) and in the flash crash of 17 August 2023 (94 prices, 3.3%).
 
 **Why it explodes, and why one price per second does not.** A range bar closes each time the price has moved a fixed distance *R*. Over a day, the number of bars is therefore roughly proportional to the day's realised variance divided by *R*²: a range clock counts variance. Measured from every fill, realised variance contains a noise term that grows with the number of observations and with the noise in each of them (Lecture 12, §7.2). In a burst, both rise sharply, and the count follows the number of fills instead of the movement of the price. Measured at a resolution where the signature plot of Lecture 12 is flat, from about a second to an hour, the noise term is negligible: the count follows the true variance of the day, and a clock can close at most one bar per observed price. The price clocks therefore follow one price per second, the volume-weighted average price of that second's trades.
 
