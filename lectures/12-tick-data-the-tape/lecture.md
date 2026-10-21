@@ -296,7 +296,7 @@ Comparing with Binance's published candles, with other exchanges or with news wo
 | Order flow | Mixed: 46% of aggressive volume in the direction of the fall | Mostly against the move: 29% |
 | Reading | A flash crash through an empty book: forced selling gapped the price down, then it snapped back. Real trades, at prices that existed for a few seconds | The closest to an erroneous print in five years: isolated, far away, instantly reversed, and two minutes before the six minutes missing from Binance's own archive. Consistent with a malfunction just before an outage; not documented |
 
-**Neither is deleted.** The first is the market; the second is in the exchange's record and stays there, with its flag. Each analysis states what it does with flagged trades: volumes and counts keep them; measures that react to extremes, such as the highest and lowest price of a bar or realised variance, leave out prints flagged as reverting.
+**Neither is deleted.** The first is the market; the second is in the exchange's record and stays there, with its flag. Every analysis uses all trades. Prints flagged as reverting are marked as outliers, not removed: where a measure reacts strongly to a single extreme, such as the highest and lowest price of a bar or realised variance, the result is shown with the outliers marked, so the reader can see how much they move it.
 
 Two other flags are extreme without being suspicious, and they show what the tape looks like at its limits:
 
