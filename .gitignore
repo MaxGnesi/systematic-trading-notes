@@ -14,3 +14,7 @@ lectures/*/figures/plotly.min.js
 # secrets: API keys live in the environment or in .env files, never in the repository
 .env
 *.env
+
+# notebook charts are embedded in the notebooks; only the lectures' own figures are committed
+lectures/*/figures/nb_*
+lectures/*/figures/12_nb_*

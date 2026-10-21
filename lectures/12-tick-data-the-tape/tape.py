@@ -418,8 +418,9 @@ def _stage(code, log):
     return out
 
 
-def run_pipeline(symbol, start, end, verbose=True):
+def run_pipeline(symbol, start, end, rebuild=False, verbose=True):
     """All six stages for the months start..end (YYYY-MM). Months already converted are not downloaded again.
+    Months whose derived tables are newer than their tape are not rebuilt, unless rebuild=True.
     Returns (holes, patches, log): the missing and repeated trade IDs, the patches and their status, and one row per stage and month."""
     base = ROOT / "interim" / "tape" / symbol; base.mkdir(parents=True, exist_ok=True)
     log = base / "run_log.jsonl"; rows = []
@@ -435,7 +436,10 @@ def run_pipeline(symbol, start, end, verbose=True):
         print(f"holes: {holes.filter(pl.col('kind') == 'missing').height} ranges of missing IDs, "
               f"{holes.filter(pl.col('kind') == 'repeated').height} days with repeated IDs", flush=True)
     for ym in months(start, end):
+        done = {"aggregate": out_dir(symbol, ym) / "days.parquet", "sequence": out_dir(symbol, ym) / "sequence.json"}
         for st in ("aggregate", "sequence"):
+            if not rebuild and done[st].exists() and done[st].stat().st_mtime > source(symbol, ym).stat().st_mtime:
+                rows.append({"month": ym, "stage": st, "wall_seconds": 0.0}); continue          # up to date: nothing to do
             rows.append({"month": ym, **_stage(f"tape.{st}('{symbol}', '{ym}')", log)})
         if verbose: print(f"aggregate and sequence {ym}: done", flush=True)
     table = [dict(month=r["month"], stage=r["stage"], done="already there" if r.get("peak_private_gb") is None else "run",
