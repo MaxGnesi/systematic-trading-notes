@@ -158,7 +158,7 @@ Older files have no header row and newer ones do; step 3 has to handle both. Lik
 The steps of §4.2 are the first stage of a pipeline that turns the archive into the tables the rest of Part III uses. Each stage reads only the stage before it, so any stage can be rerun alone, and each takes the market and the period as parameters, so the same code serves any symbol.
 
 ```mermaid
-flowchart LR
+flowchart TD
     A[Binance archive<br/>monthly and daily zips] --> B[Get<br/>checksum, Parquet, checks]
     B --> C[(Raw layer<br/>never changed)]
     C --> D[Find holes<br/>from the trade IDs]
@@ -455,6 +455,124 @@ A third of the risk of five years sits in 1% of its minutes. A volatility estima
 
 The single moments behind these statistics were shown in §5.4: a flash crash in which aggressive selling swept through an empty book, the busiest minute, with 62 times the usual rate of trades, and the largest trade, met at one price.
 
+## 8. What a candle loses
+
+§1 asked what a bar hides. With the tape described, the question can be answered directly: build candles from the tape, compare them with the candles an exchange publishes, and measure what each part of a candle leaves out. All comparisons use one-minute, hourly or daily candles rebuilt from every trade.
+
+### 8.1 Our candles against Binance's
+
+Binance publishes its own one-minute candles (§4.1). If the tape is complete and our aggregation is right, the two should agree. Over the five years, 2,629,440 minutes:
+
+| Part of the candle | Identical in | Where they differ |
+|---|---|---|
+| Close | 99.99% of minutes | — |
+| High, low | 99.76% | Mostly at the boundary between minutes |
+| Open | 93.7% | In the other 6.3%, Binance's open is the previous minute's close (in 99.9% of these cases) |
+| Volume | 82% exactly; the rest typically differ by one part in a million | At the boundary between minutes |
+| Aggressive buying | 91% exactly | At the boundary |
+| Number of trades | Never: Binance counts single fills, 2.5 per aggregated trade | A different unit, not an error |
+
+Three causes explain every difference:
+
+1. **The boundary between minutes.** An aggregated trade combines fills within 100 milliseconds (§3.1) and carries one timestamp. When its fills straddle the start of a minute, our candle puts all of them in the earlier minute, while Binance's candle, built from single fills, puts some in the later one. Binance's open then equals the last price of the previous minute. This explains the differences in the open, in volume and in 98% of the differing highs and lows. The mechanism fits the numbers; Binance does not document it.
+2. **The six minutes missing from the archive** (§5.2). For 6 September 2022, 17:14–17:20 UTC, Binance's candles contain about 72,000 fills that its published tape does not.
+3. **Errors in Binance's candle file.** In 192 minutes, the candles show no trades and a flat price, while the tape has 202,340 trades worth $2.2 billion. They fall in four stretches: 10 November 2023, 15:07–16:45 UTC (99 minutes); 28 October 2024, 20:00–21:13 (74 minutes); 29 January 2025, 01:23–02:44 (17 minutes); and two minutes on 14 January 2025.
+
+No single source is perfect. The tape is the primary record, and the candles are a product derived from it, with their own conventions and their own gaps. Comparing the two confirms the tape almost everywhere and locates exactly where each source fails. A backtest on Binance's candles would have seen a market without trades for an hour and a half on 10 November 2023.
+
+### 8.2 The same candle, different flow
+
+![Two hours with nearly the same hourly candle: minute candles and cumulative net aggressive buying inside each](figures/12_15_same_candle.png)
+
+| | 6 July 2026, 11:00 UTC | 3 September 2026, 22:00 UTC |
+|---|---|---|
+| Hourly return | −54 basis points | −54 basis points |
+| Hourly range, high to low | 83 basis points | 87 basis points |
+| Dollars traded | $0.7 billion | $0.9 billion |
+| Net aggressive buying | −48% of the dollars: heavy selling | +16%: net buying |
+| What happened | Flat for 55 minutes, then a burst of selling in the last five | A steady decline, against aggressive buying |
+
+As hourly candles, the two are almost identical. On the tape they are opposites. In the first hour, sellers took liquidity in one burst and pushed the price down. In the second, buyers took liquidity all hour, and the price still fell: the resting sell orders were lowered faster than the buyers could lift them. A rule that reads the candle sees the same signal twice; the tape shows two different markets.
+
+### 8.3 Order flow from a candle
+
+Lecture 3, §7 estimated order flow from bars. The **tick rule**, the signed volume behind on-balance volume, gives all of a bar's volume to buyers if the close rose and to sellers if it fell. **Bulk volume classification** (Easley, López de Prado and O'Hara, 2012) splits the volume by the size of the move: the share bought is the probability of the move under a normal distribution, Φ(return ÷ volatility), with the volatility measured over past bars only. The tape gives the true answer for every bar:
+
+![Daily net aggressive buying estimated from the candle against the true value; and the share of each day's dollars bought aggressively, estimated and true](figures/12_13_flow_from_candles.png)
+
+| Measure | What we measure, in plain words | One minute | One hour | One day |
+|---|---|---|---|---|
+| Direction right | Share of bars where the estimate has the sign of the true net buying (both methods take the sign of the return) | 77% | 79% | 79% |
+| Correlation, tick rule | Correlation between estimated and true net buying | 0.74 | 0.67 | 0.67 |
+| Correlation, bulk volume classification | The same | 0.78 | 0.73 | 0.78 |
+| Error in the share bought, tick rule | Typical distance between estimated and true share of dollars bought aggressively | 38 points | 47 points | 49 points |
+| Error, bulk volume classification | The same | 13 points | 14 points | 19 points |
+| True imbalance | Typical size of net buying, as a share of the bar's dollars | 27% | 6% | 1.8% |
+| Imbalance, bulk volume classification | The same, as estimated | 37% | 33% | 39% |
+
+The candle gets the direction of the flow right four times in five, and its size badly wrong. On a typical day, aggressive buying and selling differ by 1.8% of the dollars traded (§6.5); bulk volume classification estimates 39%, more than twenty times too much, and the tick rule assumes 100%. The longer the bar, the more the true imbalance cancels out, and the larger the error. Bulk volume classification is much better than the tick rule at estimating how much was bought, and, as Lecture 3, §7.4 warned, worse on daily bars than on short ones; neither measures the imbalance itself: the candle only knows that the price moved.
+
+### 8.4 Volatility from a candle
+
+Lecture 3, §4.2 estimated volatility from the high, low, open and close of daily bars, and §4.4 there argued that every range estimate is biased down. The tape gives the benchmark: realised volatility from five-minute returns (§7.2). Each estimator is averaged over 28-day windows and compared with realised volatility over the same window:
+
+![Volatility over the past 28 days from daily candles (close to close, Parkinson, Yang-Zhang) against realised volatility from the tape](figures/12_14_range_estimators.png)
+
+| Estimator | Uses | Level relative to realised volatility | Typical error over 28 days | Correlation with realised variance, day by day |
+|---|---|---|---|---|
+| Close to close | Closes | 0.97 | 15% | 0.53 |
+| Parkinson | High, low | 1.06 | 11% | 0.91 |
+| Garman–Klass | Open, high, low, close | 1.09 | 12% | 0.92 |
+| Rogers–Satchell | Open, high, low, close | 1.12 | 14% | 0.90 |
+| Yang–Zhang | All four, with the gap between the previous close and the open | 1.10 | 13% | — |
+
+*Level: the estimator's average variance over its windows relative to realised, as a volatility. Typical error: the standard deviation of the logarithm of the ratio. Yang–Zhang is defined over a window, not for one day.*
+
+The range-based estimators do what they promise: day by day, they track realised variance far better than the close alone (correlation 0.9 against 0.5), and over 28 days their errors are smaller. But on this market they overstate volatility by 6% to 12%. The bias of Lecture 3, §4.4 is downward, because a price observed only at discrete times misses the true extremes; the tape records every trade, so that bias is gone, and the opposite appears, because the high and low of a day include brief extremes that realised variance at five minutes smooths away. With no overnight gap on a market that never closes, Yang–Zhang's extra term adds nothing.
+
+**One print can dominate.** On 6 September 2022, the isolated print at $28,368 (§5.4) set the day's high. Parkinson's estimate for that day is 548% a year; realised volatility, 61%. The print stays in the data, with its flag (§5.4), and the chart shows its effect: the range-based estimates of the next 28 days are lifted by one trade.
+
+### 8.5 The close against the average price
+
+The close is one trade, the last of the bar. The **volume-weighted average price (VWAP)** is the average price of all the bar's trades, weighted by size: the price a patient trader, spreading an order over the bar, would roughly have paid.
+
+| Measure | What we measure, in plain words | Result | What it means |
+|---|---|---|---|
+| Daily close against daily VWAP | Typical distance between them | 0.66% (66 basis points); one day in ten, more than 2.2% | The close says little about where the day's trading happened |
+| One-minute close against one-minute VWAP | The same, per minute | 1.5 basis points; 13 in the most distant 1% of minutes | Within a minute, the two are close |
+| Daily returns, close to close against VWAP to VWAP | Correlation | 0.67 | Two different series |
+| Volatility of daily returns | Close to close; VWAP to VWAP | 51%; 42% a year | Averaging smooths |
+
+A backtest of a daily strategy that trades at the close, as in Parts I and II, assumes a price that only the last trade of the day got. A strategy that trades through the day gets something closer to the VWAP, which on a typical day is 0.66% away. Lecture 14 trades on bars of its own and fills on the tape after each signal.
+
+### 8.6 Volume by price
+
+![15-minute candles of 21 September 2022, the day of a Federal Reserve rate decision, and the dollars traded at each price, bought and sold aggressively](figures/12_16_volume_profile.png)
+
+A candle reports four prices. The tape shows where the trading actually happened. On 21 September 2022, the day of a 0.75-point rate rise, 2.7 million trades:
+
+| | Price | |
+|---|---|---|
+| Open | $18,867 | |
+| High | $20,154 | Touched for a few seconds after the decision at 18:00 UTC, on little volume |
+| Most traded price | $18,990 | The center of the day's trading |
+| VWAP | $19,073 | |
+| Low | $18,084 | |
+| Close | $18,448 | Below most of the day's trading |
+
+The daily candle spans $2,070, but most of the dollars traded within a few hundred dollars around $19,000. The high was a brief spike, and the close lies in a region where little traded. A support or resistance level drawn from the candle's extremes marks prices where almost nothing happened; the volume profile marks where the market did its business. This chart, a **volume profile**, differs from the trade-size chart of §6.4: that one counts trades by size, this one counts dollars by price.
+
+### 8.7 Summary: what a candle loses
+
+| The candle reports | What it loses | Evidence |
+|---|---|---|
+| Open and close | Everything between: the close differs from the day's average traded price by 0.66% on a typical day | §8.5 |
+| High and low | Whether the extremes were traded or touched: brief spikes and flagged prints set them, and range-based volatility is 6% to 12% too high | §8.4, §8.6 |
+| Volume | Which side was aggressive, and by how much: estimates get the direction four times in five and overstate the imbalance twentyfold | §8.3 |
+| One shape per bar | The path and the flow inside it: identical candles can hold opposite flows | §8.2 |
+| Four prices | Where the trading happened | §8.6 |
+| A published series | Its own conventions and errors: Binance's candles miss 192 minutes of trading | §8.1 |
+
 ## Appendix A. Working with the tape
 
 This appendix collects the tools behind §4: how the tape is read without loading it into memory, which statistics can be computed in chunks, and the pipeline stage by stage.
@@ -542,6 +660,7 @@ Memory grows with the busiest day and with the number of threads. On a smaller m
 - Clark, P. K. (1973). A subordinated stochastic process model with finite variance for speculative prices. *Econometrica* 41(1), 135–155. — volatility and the rate of information (§7.3).
 - Dacorogna, M. M., Gençay, R., Müller, U. A., Olsen, R. B. and Pictet, O. V. (2001). *An Introduction to High-Frequency Finance*. Academic Press, chapter "Adaptive data cleaning". — filtering as a process (§5).
 - Donier, J. and Bonart, J. (2015). A million metaorder analysis of market impact on the Bitcoin. *Market Microstructure and Liquidity* 1(2); arXiv:1412.4503. — square-root impact on bitcoin (§7.1).
+- Easley, D., López de Prado, M. and O'Hara, M. (2012). Flow toxicity and liquidity in a high-frequency world. *Review of Financial Studies* 25(5), 1457–1493. — bulk volume classification (§8.3).
 - Farmer, J. D., Gillemot, L., Lillo, F., Mike, S. and Sen, A. (2004). What really causes large price changes? *Quantitative Finance* 4(4), 383–397. — gaps in the book (§7.3).
 - Hansen, P. R. and Lunde, A. (2005). A realized variance for the whole day based on intermittent high-frequency data. *Journal of Financial Econometrics* 3(4), 525–554. — including the return outside the sampled hours (§7.2).
 - Hansen, P. R. and Lunde, A. (2006). Realized variance and market microstructure noise. *Journal of Business & Economic Statistics* 24(2), 127–161. — noise correlated with the efficient price (§7.2).
