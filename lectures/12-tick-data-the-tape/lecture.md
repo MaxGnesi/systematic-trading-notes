@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 21, 2026 · Max Gnesi*
 
-Parts I and II worked with bars: a day of trading compressed into an open, high, low, close and volume. Part III goes underneath the bar, to the record of every trade, and it works primarily with crypto markets. The choice is practical: the data is complete, free and open every hour of the year, which makes it well suited to teaching. The methods are not specific to crypto; conceptually they apply to the tape of any asset class. This lecture describes that record, which practitioners call the tape, along one line: what is traded, what is recorded, how to get it, whether it can be trusted, what the market does, how prices form, what bars lose, and what this makes possible. It builds no strategy; Lectures 13 to 17 do. *Draft: written step by step; §1 to §7 and Appendix A so far.*
+Parts I and II worked with bars: a day of trading compressed into an open, high, low, close and volume. Part III goes underneath the bar, to the record of every trade, and it works primarily with crypto markets. The choice is practical: the data is complete, free and open every hour of the year, which makes it well suited to teaching. The methods are not specific to crypto; conceptually they apply to the tape of any asset class. This lecture describes that record, which practitioners call the tape: the instrument and what one trade records; how to obtain five years of it and check it; what the market's activity looks like; how trades form prices; and what a bar loses. It is descriptive and builds no strategy.
 
 ## 1. The question of this lecture
 
