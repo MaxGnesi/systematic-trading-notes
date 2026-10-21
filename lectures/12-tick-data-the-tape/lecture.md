@@ -297,7 +297,7 @@ Activity moves in regimes: quieter in 2023, at its peak in dollars in 2024. The 
 
 Two smaller patterns are visible. Every full hour starts with a short spike: orders scheduled by the clock, from rebalancing programs and from traders who use hourly bars. And the three funding times (§2) stand out a little more than other hours.
 
-**Do traders trade around funding?** A position open at 00:00, 08:00 or 16:00 UTC pays or receives funding; a position closed a minute before pays nothing. When funding is high, a long has a reason to close shortly before the payment and reopen after. The test compares the ten minutes before and after each of the 5,477 funding times:
+**Do traders trade around funding?** Funding is paid only on positions open at 00:00, 08:00 or 16:00 UTC; a position closed before that time pays and receives nothing, although Binance notes that the payment itself can be booked up to 15 seconds late (Binance, funding rate FAQ). When funding is high, a long has a reason to close shortly before the payment and reopen after. The test compares the ten minutes before and after each of the 5,477 funding times:
 
 | Funding rate at the payment | Payments | Net aggressive buying, 10 minutes before | 10 minutes after |
 |---|---|---|---|
@@ -308,7 +308,24 @@ Two smaller patterns are visible. Every full hour starts with a short spike: ord
 
 *Net aggressive buying: aggressive buys minus aggressive sells, as a share of the dollars traded; in brackets, the standard error. Over all days, the average is −0.4%.*
 
-When funding is highest, the last ten minutes before the payment show net aggressive selling of 2.8% of the dollars traded, about three standard errors from the average; after the payment it fades. This is consistent with longs closing positions to avoid the payment, but it is small, and it is one result among four groups: a hypothesis, not a finding. Activity rises after every full hour, funding or not: ten minutes after the hour, it is 1.29 times the day's average at the funding times and 1.01 times at the hours halfway between. Lecture 15 returns to flows around scheduled events.
+When funding is highest, the last ten minutes before the payment show net aggressive selling of 2.8% of the dollars traded, about three standard errors from the average; after the payment it fades. This is consistent with longs closing positions to avoid the payment, but it is small, and it is one result among four groups: a hypothesis, not a finding. Activity rises after every full hour, funding or not: ten minutes after the hour, it is 1.29 times the day's average at the funding times and 1.01 times at the hours halfway between. 
+
+**Activity, volatility and price around funding.** A wider look, an hour either side of every funding time, minute by minute, with the hours halfway between (04:00, 12:00 and 20:00 UTC) as a control:
+
+![Minute by minute, an hour either side of the funding times, by funding rate, against the control hours: dollars traded, size of the move, and average cumulative return](figures/12_17_funding_event.png)
+
+| | Funding above 0.01% | Exactly 0.01% | Zero or negative | Control hours |
+|---|---|---|---|---|
+| Payments | 395 | 1,605 | 803 | 5,478 |
+| Activity in the first minute, relative to the day | 1.63 | 1.58 | 1.59 | 1.29 |
+| Size of the move in the first minute, relative to the day | 1.31 | 1.18 | 1.20 | 1.10 |
+| Return over the 30 minutes before, basis points | −2.1 (± 2.3) | −2.5 (± 0.9) | +1.4 (± 1.5) | −0.1 (± 0.5) |
+| Return over the 5 minutes before | −1.9 (± 0.8) | −0.1 (± 0.3) | +0.2 (± 0.5) | −0.2 (± 0.2) |
+| Return over the 30 minutes after | +4.3 (± 2.5) | +1.1 (± 1.0) | +3.3 (± 1.6) | +1.1 (± 0.5) |
+
+*In brackets, the standard error across payments.*
+
+Activity and volatility jump at every full hour, and more at the funding times than at the control hours: in the first minute after a payment, about 1.6 times the day's average activity, against 1.3. Part of the difference is the time of day itself: 16:00 UTC falls in the busy US afternoon (§6.2), 04:00 in the quiet Asian night. The price moves little. When funding is high, it falls by about 2 basis points in the last five minutes before the payment, in line with the net selling above, and recovers afterwards; when funding is negative, it tends to rise. The effects are a few basis points, mostly within two or three standard errors, and the table makes more than a dozen comparisons, so one or two such values would appear by chance. They are much smaller than the cost of trading them: a round trip pays the exchange's fee for aggressive orders twice, 0.05% each way on the standard tier (Binance, fee schedule). Lecture 15 returns to flows around scheduled events.
 
 ### 6.3 Time between trades
 
@@ -666,6 +683,8 @@ Memory grows with the busiest day and with the number of threads. On a smaller m
 ## References
 
 - Binance. USDⓈ-M futures API documentation: compressed aggregate trades list; exchange information; funding rate history. — definitions and contract terms (§2–§4).
+- Binance. Introduction to Binance Futures funding rates (FAQ, updated March 2026). — funding paid only on positions open at the funding times (§2, §6.2).
+- Binance. Futures trading fee rates (FAQ). — 0.02% for resting orders, 0.05% for aggressive orders, standard tier (§6.2).
 - Andersen, T. G., Bollerslev, T., Diebold, F. X. and Labys, P. (2000). Great realizations. *Risk* 13, 105–108. — the volatility signature plot (§7.2).
 - Ané, T. and Geman, H. (2000). Order flow, transaction clock, and normality of asset returns. *Journal of Finance* 55(5), 2259–2284. — the number of trades as the market's clock (§7.3).
 - Barndorff-Nielsen, O. E., Hansen, P. R., Lunde, A. and Shephard, N. (2009). Realized kernels in practice: trades and quotes. *Econometrics Journal* 12(3), C1–C32. — cleaning rules for high-frequency data (§5).
