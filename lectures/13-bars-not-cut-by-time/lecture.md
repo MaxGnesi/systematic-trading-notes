@@ -163,6 +163,25 @@ The Fed decision was not the most extreme moment. Among the 20 days with the lar
 
 **Example: the bottom of 10 October 2025.** That day, after the US announced new tariffs on imports from China, crypto markets saw the largest liquidations on record, about $19 billion within a day, as reported from Bloomberg data (Business Today, 2025). On BTCUSDT the price fell from $122,497 to $101,517, 17%, reaching its low at 21:20:08 UTC; the day traded $45 billion, more than twice the days either side. Two seconds after the low, at 21:20:10.325, a single buy order took 326 bitcoin, $33.7 million, filling at 407 prices from $101,881 to $104,750: 2.8% in one millisecond, about $83,000 at each price. A second later the price was back at $101,697, just above the low; then it turned, to $106,016 ten seconds later and $109,314 ten minutes later. Whether the order was a buyer stepping in or a forced closing of short positions, the tape does not say, since it does not mark liquidations. It shows a book so thin that one order moved the price by almost 3%, within seconds of the day's low.
 
+The crash itself, on the tape:
+
+| 10 October 2025, UTC | |
+|---|---|
+| The day's high | $122,497 at 13:39 |
+| The steep fall | From $117,145 at 20:44 to $101,517 at 21:20: 13.3% in 36 minutes |
+| Traded during the fall | $11.4 billion, with net aggressive selling of 14.5% of the dollars |
+| The busiest minute | 21:19: 75,273 trades, 107 times the typical minute of the day before |
+| The sweep | 21:20:10, two seconds after the low |
+| One hour after the low | 11.6% higher |
+
+*Our measurement for these notes.*
+
+![The evening of 10 October 2025: one-minute candles, trades per minute and cumulative net aggressive buying](figures/13_05_crash_evening.png)
+
+![The 40 seconds around the sweep: every trade, coloured by the aggressor's side, large trades as bubbles, the sweep ringed](figures/13_06_crash_sweep.png)
+
+The evening shows the anatomy of a cascade (Lecture 12, §2): hours of slow drift, then waves of aggressive selling in which trading ran a hundred times faster than usual, then a sharp reversal. Around the bottom, buy orders swept the thin book upwards several times within seconds; the largest of them is the one described above.
+
 *Deep dive: can be skipped on a first reading.*
 
 **The most extreme days.** The ten days with the largest price range within one minute, with the busiest second of each:
