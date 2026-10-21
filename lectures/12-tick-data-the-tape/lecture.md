@@ -325,7 +325,7 @@ When funding is highest, the last ten minutes before the payment show net aggres
 
 *In brackets, the standard error across payments.*
 
-Activity and volatility jump at every full hour, and more at the funding times than at the control hours: in the first minute after a payment, about 1.6 times the day's average activity, against 1.3. Part of the difference is the time of day itself: 16:00 UTC falls in the busy US afternoon (§6.2), 04:00 in the quiet Asian night. The price moves little. When funding is high, it falls by about 2 basis points in the last five minutes before the payment, in line with the net selling above, and recovers afterwards; when funding is negative, it tends to rise. The effects are a few basis points, mostly within two or three standard errors, and the table makes more than a dozen comparisons, so one or two such values would appear by chance. They are much smaller than the cost of trading them: a round trip pays the exchange's fee for aggressive orders twice, 0.05% each way on the standard tier (Binance, fee schedule). Lecture 15 returns to flows around scheduled events.
+Activity and volatility jump at every full hour, and more at the funding times than at the control hours: in the first minute after a payment, about 1.6 times the day's average activity, against 1.3. Part of the difference is the time of day itself: 16:00 UTC falls in the busy US afternoon, 04:00 UTC in one of the quietest hours of the day (§6.2). The price moves little. When funding is high, it falls by about 2 basis points in the last five minutes before the payment, in line with the net selling above, and recovers afterwards; when funding is negative, it tends to rise. The effects are a few basis points, mostly within two or three standard errors, and the table makes more than a dozen comparisons, so one or two such values would appear by chance. They are much smaller than the cost of trading them: a round trip pays the exchange's fee for aggressive orders twice, 0.05% each way on the standard tier (Binance, fee schedule). Lecture 15 returns to flows around scheduled events.
 
 ### 6.3 Time between trades
 
@@ -604,6 +604,68 @@ The daily candle spans $2,070, but most of the dollars traded within a few hundr
 | Four prices | Where the trading happened | §8.6 |
 | A published series | Its own conventions and errors: Binance's candles miss 192 minutes of trading | §8.1 |
 
+## 9. What the tape can and cannot answer
+
+The tape records every trade, but only trades: not the orders waiting in the book, not the orders cancelled before they traded, and not what the market would have done had someone else traded too. That limit decides which questions it can answer, and how a backtest on it must be built.
+
+### 9.1 The map
+
+| What the tape can do | How well | Why | Where in Part III |
+|---|---|---|---|
+| Build bars on other clocks: trades, dollars, imbalance, price moves | Fully | Every trade is recorded with its time, size and side | Lecture 13 |
+| Measure volatility, order flow, its persistence, and what happens around events | Fully | These are statistics of the trades themselves (§6, §7) | Lectures 13, 15 |
+| Price the cost of a small aggressive order | Fully | A buy is filled at about the price of the next buyer-initiated trade, a sell at the next seller-initiated one (§3) | Lecture 16 |
+| Estimate the spread and the impact of trading | Fully, from the trades' own prices and signs | §7.2 estimated the spread from the aggressor flag; impact is the price move that follows aggressive volume | Lecture 16 |
+| Check one's own fills after trading live | Fully | One's own trades appear on the tape; the fill can be compared with the trades around it | Lecture 17 |
+| Backtest a strategy of small aggressive orders | **Approximately** | The fill is taken from the tape after a delay; the strategy's own orders are assumed not to change what others do | Lectures 14, 15, 17 |
+| Backtest large aggressive orders | **Only with an impact model** | A large order would have moved the price; the tape shows the market without it | Lecture 16 |
+| Backtest passive limit orders | **Only conservatively** | The tape shows trades at a price, not one's place in the queue at that price; a resting order is counted as filled only if the price trades through it | Lecture 16, Part IV |
+| Market making, queue position, strategies that move the market | **Not at all** | These need the order book and a model of how others react | Part IV |
+
+The table is the frame for the rest of Part III: every later lecture states which row it stands on. The capstone of Lecture 17 claims only what the tape can support: a strategy that takes liquidity in small size.
+
+### 9.2 Backtesting on the tape: the rules
+
+A backtest on trades is a replay: the recorded trades are run forward, the strategy decides at each moment, and its orders are filled against what was recorded. The replay is **non-reactive**: the market on the tape does not know the strategy exists. This is acceptable for small orders and wrong for large ones. Eight rules keep the replay honest:
+
+| Rule | What it means | Why |
+|---|---|---|
+| 1. Decide only on the past | A signal at time t uses only trades stamped before t, and only bars already closed | Anything else uses information that did not yet exist |
+| 2. Add latency | The order reaches the exchange some time after the signal, for example 100 to 300 milliseconds for a strategy run from a rented server; results are shown for several values | In fast markets the price moves within that delay |
+| 3. Fill on your side | A buy fills at the price of the first buyer-initiated trade after the order arrives; a sell, at the first seller-initiated one | The last traded price may have been a sell at the bid; a buyer pays the ask |
+| 4. Keep the size small | The order is no larger than the trades around it; a larger order is filled across the following trades on the same side, or priced with an impact model | Beyond that, the replay would assume liquidity that one's own order had already used |
+| 5. Pay the costs | The fee for aggressive orders on every fill (0.05% on the standard tier), and funding on positions held across 00:00, 08:00 and 16:00 UTC | Fees are the largest cost of a small order (§7.2) |
+| 6. Respect the gaps | No trading during silences or data holes (§5); a strategy that would have traded then is stopped until the tape resumes | No one could trade then, or we do not know what happened |
+| 7. Show the unusual prints | Results are reported with and without fills at flagged prints (§5.4) | A fill at a price that existed for a few milliseconds is possible, but not something to rely on |
+| 8. Limit orders only if traded through | A resting buy at a price is filled only if later trades happen below it | Trades at exactly that price may have filled the orders ahead in the queue |
+
+Rules 1 to 3 and 5 to 7 can be applied exactly with the tape alone; rules 4 and 8 are approximations, and they are where results on the tape stop being reliable. That is why the map in §9.1 has rows marked "approximately" and "only conservatively".
+
+## 10. Summary, exercises and reading
+
+### 10.1 Seven takeaways
+
+1. **The tape is the record behind every bar.** One aggregated trade is the fills of one side at one price within 100 milliseconds, with its time, size and the side of the aggressor: the order flow that Lecture 3 could only estimate.
+2. **Five years fit on an ordinary computer** if the work is done in chunks: 2.6 billion trades, about 20 GB of Parquet, a pipeline whose stages read only the stage before, and a raw layer that is never changed.
+3. **Inspect, fix from a second source, flag, never delete.** The archive had eight missing days, two duplicated days and six minutes missing everywhere; every unusual print stays in the data with its flag, and every analysis says how the flags affect it.
+4. **Activity is uneven in every dimension.** The busiest hour of the day, in the US afternoon, has three times the trading of the quietest, half of all trades share a millisecond with another, and 1% of the trades carry a third of the dollars.
+5. **Order flow is persistent, prices are not.** Buys follow buys over hundreds of trades, with the same slow decay as on stock markets, while returns are almost uncorrelated: liquidity absorbs the flow that can be anticipated.
+6. **Volatility follows the number of trades, and risk is concentrated.** The number of trades explains 85% of the variation in hourly variance, trade size almost none, and 1% of the minutes hold a third of the variance of five years.
+7. **A candle loses the flow, the path and where trading happened.** Candles get the direction of the flow right four times in five and its size twenty times too large; the close lies 0.66% from the day's average traded price; and published candles have their own conventions and gaps.
+
+### 10.2 Exercises
+
+- [ ] Run the pipeline for one month of your choice, including the hole check. How long does each stage take, and how much memory does it use on your machine? (notebook §1)
+- [ ] Choose a month of 2022 with a patched hole. Find the hole with the explorer, and show that the patch closes it exactly. (notebook §2)
+- [ ] Change the rule for unusual prints from 0.5% to 0.3% and to 1%. How many prints are flagged, and on which days? (notebook §3)
+- [ ] Repeat the activity, size and aggressor statistics of §6 for ETHUSDT over one year. Which results carry over? (notebook §4)
+- [ ] Rebuild the signature plot of §7.2 from the estimated mid only. At which interval do trades and mid agree? (notebook §5)
+- [ ] Compute Parkinson's estimator for September 2022 with and without the flagged print of 6 September. How much does one trade change a month's volatility? (notebook §6)
+
+### 10.3 Reading
+
+For high-frequency data and its cleaning, Dacorogna et al. (2001) and Brownlees and Gallo (2006). For realised volatility and microstructure noise, Andersen, Bollerslev, Diebold and Labys (2000) and Hansen and Lunde (2006). For order flow and its persistence, Lillo and Farmer (2004) and Bouchaud, Gefen, Potters and Wyart (2004); Bouchaud, Bonart, Donier and Gould, *Trades, Quotes and Prices* (2018), covers the whole field. For volume and volatility, Jones, Kaul and Lipson (1994).
+
 ## Appendix A. Working with the tape
 
 This appendix collects the tools behind §4: how the tape is read without loading it into memory, which statistics can be computed in chunks, and the pipeline stage by stage.
@@ -688,6 +750,7 @@ Memory grows with the busiest day and with the number of threads. On a smaller m
 - Andersen, T. G., Bollerslev, T., Diebold, F. X. and Labys, P. (2000). Great realizations. *Risk* 13, 105–108. — the volatility signature plot (§7.2).
 - Ané, T. and Geman, H. (2000). Order flow, transaction clock, and normality of asset returns. *Journal of Finance* 55(5), 2259–2284. — the number of trades as the market's clock (§7.3).
 - Barndorff-Nielsen, O. E., Hansen, P. R., Lunde, A. and Shephard, N. (2009). Realized kernels in practice: trades and quotes. *Econometrics Journal* 12(3), C1–C32. — cleaning rules for high-frequency data (§5).
+- Bouchaud, J.-P., Bonart, J., Donier, J. and Gould, M. (2018). *Trades, Quotes and Prices: Financial Markets Under the Microscope*. Cambridge University Press. — the field of market microstructure (§10.3).
 - Bouchaud, J.-P., Gefen, Y., Potters, M. and Wyart, M. (2004). Fluctuations and response in financial markets: the subtle nature of 'random' price changes. *Quantitative Finance* 4(2), 176–190. — persistent flow, transient impact (§7.1).
 - Brownlees, C. T. and Gallo, G. M. (2006). Financial econometric analysis at ultra-high frequency: data handling concerns. *Computational Statistics & Data Analysis* 51(4), 2232–2245. — outlier detection with a granularity term (§5).
 - Clark, P. K. (1973). A subordinated stochastic process model with finite variance for speculative prices. *Econometrica* 41(1), 135–155. — volatility and the rate of information (§7.3).
