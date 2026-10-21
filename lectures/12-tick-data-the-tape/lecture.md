@@ -4,6 +4,13 @@
 
 Parts I and II worked with bars: a day of trading compressed into an open, high, low, close and volume. Part III goes underneath the bar, to the record of every trade, and it works primarily with crypto markets. The choice is practical: the data is complete, free and open every hour of the year, which makes it well suited to teaching. The methods are not specific to crypto; conceptually they apply to the tape of any asset class. This lecture describes that record, which practitioners call the tape: the instrument and what one trade records; how to obtain five years of it and check it; what the market's activity looks like; how trades form prices; and what a bar loses. It is descriptive and builds no strategy.
 
+> **What to take away**
+>
+> 1. **The tape records every trade with its side:** the order flow that bars can only estimate (Lecture 3).
+> 2. **Tick data must be checked before use, and nothing is deleted:** after repairs, 99.9988% of the trades Binance recorded are in the data; unusual prints stay in with a flag.
+> 3. **Activity is uneven and risk is concentrated:** volatility follows the number of trades, and 1% of the minutes hold a third of five years' variance.
+> 4. **Order flow is persistent, prices are not; a candle loses the flow, the path and where trading happened.**
+
 ## 1. The question of this lecture
 
 What does a bar hide, and what does the record of every trade add?
