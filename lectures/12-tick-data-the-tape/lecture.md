@@ -598,6 +598,21 @@ A candle reports four prices. The tape shows where the trading actually happened
 
 The daily candle spans $2,070, but most of the dollars traded within a few hundred dollars around $19,000. The high was a brief spike, and the close lies in a region where little traded. A support or resistance level drawn from the candle's extremes marks prices where almost nothing happened; the volume profile marks where the market did its business. This chart, a **volume profile**, differs from the trade-size chart of §6.4: that one counts trades by size, this one counts dollars by price.
 
+**The same day as net buying.** Figure 12_18 draws the profile differently: at each price, aggressive buying minus aggressive selling, which traders call the **volume delta**.
+
+![15-minute candles of 21 September 2022, and the net aggressive buying at each price](figures/12_18_volume_delta.png)
+
+In short: buyers dominated between $18,900 and $19,300 but were absorbed without a breakout, while sellers drove the decline below $18,800, and that pressure was not absorbed.
+
+| Price levels | Dollars traded | Net aggressive buying | What the price did |
+|---|---|---|---|
+| $18,900 to $19,300, the afternoon's range | about $1 to $1.8 billion per $50 | mostly +1% to +8% of the dollars | Stayed in the range |
+| $18,800 | $586 million | −18% | Broke below it in the evening |
+| $18,300 to $18,500, near the close | $0.35 to $0.55 billion per $50 | −2% to −4% | Fell, then steadied |
+| The whole day | $22.3 billion | +0.5% | |
+
+Figure 12_16 shows how much traded at each price; this one shows the difference between the two sides, and at most prices it is small: aggressive buying and selling nearly cancel. The delta alone does not say who is accumulating, because every aggressive sale was bought by a resting order. The price's response does. Where buyers were the more aggressive side and the price still did not rise, as in the afternoon range, resting sell orders absorbed the buying: a sign of patient sellers, which traders call **distribution**. Where sellers dominated and the price fell with them, as below $18,800 in the evening, the pressure was not absorbed. Heavy selling at a level where the price holds would be the opposite, **accumulation** by patient buyers. One day is an illustration, not evidence; Lecture 15 asks whether such patterns predict anything.
+
 ### 8.7 Summary: what a candle loses
 
 | The candle reports | What it loses | Evidence |
@@ -606,7 +621,7 @@ The daily candle spans $2,070, but most of the dollars traded within a few hundr
 | High and low | Whether the extremes were traded or touched: brief spikes and flagged prints set them, and range-based volatility is 6% to 12% too high | §8.4, §8.6 |
 | Volume | Which side was aggressive, and by how much: estimates get the direction four times in five and overstate the imbalance twentyfold | §8.3 |
 | One shape per bar | The path and the flow inside it: identical candles can hold opposite flows | §8.2 |
-| Four prices | Where the trading happened | §8.6 |
+| Four prices | Where the trading happened, and which side pressed at each price | §8.6 |
 | A published series | Its own conventions and errors: Binance's candles miss 192 minutes of trading | §8.1 |
 
 ## 9. What the tape can and cannot answer

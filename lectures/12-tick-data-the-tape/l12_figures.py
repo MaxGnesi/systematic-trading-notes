@@ -538,7 +538,7 @@ def run_candles(SYM, MONTHS, FIG, PREFIX="nb_", PROFILE_DAY="2022-09-21"):
     R["volume_profile_2022_09_21"] = dict(trades=day.height, open=float(day["price"][0]), close=float(day["price"][-1]), high=float(day["price"].max()), low=float(day["price"].min()),
                                           vwap=vwap_day, most_traded_10usd_bin=poc)
     fig = make_subplots(rows=1, cols=2, shared_yaxes=True, column_widths=[0.68, 0.32], horizontal_spacing=0.02,
-                        subplot_titles=("15-minute candles, 21 September 2022 (Fed decision at 18:00 UTC)", "Dollars traded at each price"))
+                        subplot_titles=(f"15-minute candles, {PROFILE_DAY} (UTC)", "Dollars traded at each price"))
     fig.add_candlestick(x=hb["time"], open=hb["o"], high=hb["h"], low=hb["l"], close=hb["c"], showlegend=False, increasing_line_color=SERIES[0], decreasing_line_color=SERIES[3], row=1, col=1)
     fig.add_bar(y=prof["bin"], x=prof["buy"] / 1e6, orientation="h", marker_color=SERIES[0], name="bought aggressively", row=1, col=2)
     fig.add_bar(y=prof["bin"], x=prof["sell"] / 1e6, orientation="h", marker_color=SERIES[3], name="sold aggressively", row=1, col=2)
@@ -547,4 +547,27 @@ def run_candles(SYM, MONTHS, FIG, PREFIX="nb_", PROFILE_DAY="2022-09-21"):
     fig.update_xaxes(rangeslider_visible=False, row=1, col=1); fig.update_xaxes(title_text="$m per $10 of price", row=1, col=2); fig.update_yaxes(title_text="price, USDT", row=1, col=1)
     fig.update_layout(title="Volume by price: where the day's trading actually happened", barmode="stack", height=560, width=1100, legend=dict(orientation="h", y=-0.12, x=0.6))
     save_figure(fig, PREFIX + "12_16_volume_profile", FIG)
+
+    # the same day as net aggressive buying at each price (figure 12_18)
+    day = day.with_columns(pl.when(pl.col("is_buyer_maker")).then(-1).otherwise(1).alias("sign"))
+    hb = day.sort("time").group_by_dynamic("time", every="15m").agg(pl.col("price").first().alias("o"), pl.col("price").max().alias("h"), pl.col("price").min().alias("l"), pl.col("price").last().alias("c"))
+    delta = (day.with_columns((pl.col("price") / 10).floor().mul(10).alias("bin")).group_by("bin")
+                .agg((pl.col("usd") * pl.col("sign")).sum().alias("delta"), pl.col("usd").sum().alias("total")).sort("bin"))
+    lv = (day.with_columns((pl.col("price") / 50).floor().mul(50).alias("level")).group_by("level")
+             .agg((pl.col("usd") * pl.col("sign")).sum().alias("delta"), pl.col("usd").sum().alias("total")).sort("level")
+             .with_columns((pl.col("delta") / pl.col("total")).alias("share")).filter(pl.col("total") > 3e8))
+    R["levels_50usd"] = [{k: (round(float(v), 4) if k != "level" else float(v)) for k, v in r.items()} for r in lv.iter_rows(named=True)]
+    R["day_net_usd"] = float(day["usd"].dot(day["sign"])); R["day_usd"] = float(day["usd"].sum())
+    fig = make_subplots(rows=1, cols=2, shared_yaxes=True, column_widths=[0.68, 0.32], horizontal_spacing=0.02,
+                        subplot_titles=(f"15-minute candles, {PROFILE_DAY} (UTC)", "Net aggressive buying at each price"))
+    fig.add_candlestick(x=hb["time"], open=hb["o"], high=hb["h"], low=hb["l"], close=hb["c"], showlegend=False, increasing_line_color=SERIES[0], decreasing_line_color=SERIES[3], row=1, col=1)
+    pos = delta.filter(pl.col("delta") > 0); neg = delta.filter(pl.col("delta") <= 0)
+    fig.add_bar(y=pos["bin"], x=pos["delta"] / 1e6, orientation="h", marker=dict(color=SERIES[0], line=dict(width=0)), name="more bought aggressively", row=1, col=2)
+    fig.add_bar(y=neg["bin"], x=neg["delta"] / 1e6, orientation="h", marker=dict(color=SERIES[3], line=dict(width=0)), name="more sold aggressively", row=1, col=2)
+    fig.add_vline(x=0, line=dict(color=MUTED, width=1), row=1, col=2)
+    fig.update_xaxes(rangeslider_visible=False, row=1, col=1); fig.update_xaxes(title_text="net $m per $10 of price", row=1, col=2); fig.update_yaxes(title_text="price, USDT", row=1, col=1)
+    fig.update_layout(title="The same day as net buying at each price: where pressure met resistance<br><sup>Bars to the right: more bought than sold aggressively at that price; "
+                            "to the left: more sold. Read with the price's response: heavy selling where the price held is absorption</sup>",
+                      barmode="relative", height=580, width=1100, margin=dict(t=90), legend=dict(orientation="h", y=-0.12, x=0.6))
+    save_figure(fig, PREFIX + "12_18_volume_delta", FIG)
     return R
