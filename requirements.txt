@@ -4,5 +4,12 @@ scipy>=1.11,<2
 yfinance>=0.2.40,<1
 plotly>=5.20,<6
 
+# Part III: tick data (Lecture 12 onward)
+polars>=1.0,<3
+pyarrow>=15,<27
+psutil>=5.9,<8
+plotly-resampler>=0.10,<1
+datashader>=0.16,<1
+
 jupyterlab>=4.1,<5
 ipykernel>=6.29,<7
