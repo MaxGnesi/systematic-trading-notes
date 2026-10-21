@@ -18,8 +18,8 @@ The course follows one pipeline throughout (data → signal → position → eva
 | | 8 | Filters and Overlays | Filter curves, attachment, random-filter yardstick, out of sample, calendar events | 08 (16 ETFs, FRED) | Done |
 | | 9 | Sizing Trend Systems | Risk per asset, total risk over time, how much to trade; sizing uses only risk and cost information | 09 (16 ETFs) | Done |
 | | 10 | (merged into Lecture 11) | The trend portfolio is built in the capstone | — | — |
-| | 11 | Three Trend Systems, End to End (capstone) | Futures from Kaggle, rolls and back-adjustment, EWMAC, breakout, cross-sectional momentum, comparison, evaluation, filters, portfolio, out of sample | 11 (12 futures, 2 Treasury funds) | In progress |
-| III. From the tape: crypto tick data | 12 | Tick data: the tape | Trade prints against OHLCV; the aggressor flag as true order flow | Binance public archive | Planned |
+| | 11 | Three Trend Systems, End to End (capstone) | Futures from Kaggle, rolls and back-adjustment, EWMAC, breakout, cross-sectional momentum, comparison, evaluation, filters, portfolio, out of sample | 11 (12 futures, 2 Treasury funds) | Done |
+| III. From the tape: crypto tick data | 12 | Tick data: the tape | Trade prints against OHLCV; the aggressor flag as true order flow; inspection; activity, price formation, what a candle loses | 12 (BTCUSDT perpetual, Binance archive, 2021–2026) | Done |
 | | 13 | Bars not cut by time | Tick, volume, dollar, imbalance, run, range and Renko bars, CUSUM sampling | Binance | Planned |
 | | 14 | Trend on event clocks | The same trend rules on event bars against time bars, at equal speed; backtesting on irregular bars (§1.2) | Binance | Planned |
 | | 15 | Order flow and short-term reversion | Signed order flow, liquidation cascades, short-horizon mean reversion | Binance | Planned |
@@ -49,6 +49,19 @@ Notebook numbers above were assigned from file names; check each notebook's cont
 - **Part III: changing the rule, or dropping bars.** Bars that close after a number of trades, an amount of volume or dollars, or an order-flow imbalance (still OHLCV, on a different clock); or the raw events themselves.
 
 Strategy family and data frequency are separate choices: trend and stat arb run on daily bars, minute bars or alternative bars. The dividing line in Part III is whether a strategy needs **aggregated bars** (Lectures 13–14) or **individual events** (Lectures 15–16). Lecture 14 says this in its opening: "these are bar strategies; the ticks only decide how the bars are cut."
+
+### 1.1a Before starting Part III
+
+Part III is a step up: the data are billions of trades instead of a few thousand bars, and the statistics and the literature are those of market microstructure. What a reader needs:
+
+| Need | Why | Where |
+|---|---|---|
+| Lectures 2 and 3 | What a bar compresses; order flow, volatility estimators and their biases, which Part III measures against the tape | Lecture 3, §4 and §7 |
+| Lecture 7 | Comparing systems at equal speed, used again in Lecture 14 | Lecture 7 |
+| Polars basics | Reading data larger than memory: lazy queries, streaming, chunks | Lecture 12, Appendix A |
+| A computer with about 8 GB of free memory and 25 GB of disk | Five years of one market; every stage works in chunks and waits for free memory | Lecture 12, Appendix A.2 |
+
+Each Part III lecture opens with a short *What to take away* box, and marks passages that can be skipped on a first reading.
 
 ### 1.2 Backtesting on bars that are not clock-time (for Lecture 14)
 
