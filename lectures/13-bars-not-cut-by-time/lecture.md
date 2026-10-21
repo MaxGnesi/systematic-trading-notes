@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 21, 2026 · Max Gnesi*
 
-Every bar so far closed on the clock: at the end of a day in Parts I and II, at the end of a minute in Lecture 12. This lecture asks when the market trades. It builds bars that close after a fixed amount of trading, of one-sided pressure, or of price movement, from the same five years of BTCUSDT trades as Lecture 12, and asks whether they describe the market better; then it maps the market's rhythms: the time of day, the week, the round clock times and the scheduled events. It covers the first and fourth of Part III's six uses of the tape (the course guide, §1.1b): a clock, and seasonality.
+Every bar so far closed on the clock: at the end of a day in Parts I and II, at the end of a minute in Lecture 12. This lecture asks when the market trades. It builds bars that close after a fixed amount of trading, of one-sided pressure, or of price movement, from the same five years of BTCUSDT trades as Lecture 12, and asks whether they describe the market better; then it maps the market's rhythms: the time of day, the week, the round clock times and the scheduled events. The two halves belong together: the market's clocks take the rhythm out of the bars, while seasonality maps that rhythm in calendar time, where orders are placed. It covers the first and fourth of Part III's six uses of the tape (the course guide, §1.1b): a clock, and seasonality.
 
 ## 1. Which clock should a bar follow?
 
@@ -83,6 +83,97 @@ Three rules apply to every family, and to every later lecture that uses these ba
 | Bar types are compared at the same number of bars per day | A clock that closes more often looks smoother only because it is finer; equal frequency is the bar equivalent of equal speed in Lecture 7 |
 
 From each family the lecture builds one representative, plus time bars as the benchmark: **dollar bars** for activity, **dollar-imbalance bars** for information (in both versions of §6), **range bars** for price, and the **CUSUM filter** as a sampling rule. Tick and volume bars are built too, briefly, to show why dollar bars are preferred.
+
+## 3. Building bars from the tape
+
+Every clock is built by one rule: a counter runs through the trades, and a bar closes at the trade that takes it past a threshold. What differs from clock to clock is the counter and the threshold.
+
+### 3.1 One rule for every clock
+
+| Clock | The counter | The threshold on day *t* |
+|---|---|---|
+| Time | Seconds | 30 minutes |
+| Tick | Trades | Median number of trades per day over days *t*−28 to *t*−1, divided by 48 |
+| Volume | Bitcoin traded | The same, for bitcoin |
+| Dollar | Dollars traded | The same, for dollars |
+| Range | High minus low of the bar, in log price | A fixed multiple of the typical daily volatility over days *t*−28 to *t*−1, divided by √48 |
+| CUSUM | The cumulative move since the last event, up or down (Page, 1954) | The same form as for range bars |
+
+*48 bars a day is the target for every clock: the number of 30-minute bars in a day, so that all clocks are compared at the same frequency (§2.5).*
+
+Three choices are common to all of them:
+
+- **The threshold uses past data only.** It is set each day from the 28 days before, so no bar knows how much trading lies ahead. A fixed threshold would drift with the market's activity, as §3.4 shows.
+- **A bar does not break at midnight.** The trades of the unfinished last bar of a day are carried into the next.
+- **The two price clocks are scaled once, to the same frequency.** The multiple in their thresholds is set on one month, March 2024, so that they produce as many bars as the dollar clock that month, and never changed. It equalises frequency, as the comparison requires; nothing is chosen for performance.
+
+Over the five years, the six clocks produce:
+
+| Clock | Time | Tick | Volume | Dollar | Range | CUSUM |
+|---|---|---|---|---|---|---|
+| Bars per day, on average | 48.0 | 53.2 | 51.5 | 51.6 | 51.4 | 51.2 |
+
+The market's clocks run slightly above the target of 48. The threshold divides the *median* day's activity by 48, but bars accumulate on every day, and a few very busy days lift the average above the median. The difference is the same for all of them, so the comparison stays fair.
+
+### 3.2 Where each clock ticks
+
+![One mark for every bar that closes, on the Fed decision day and on the quietest day of the five years, for each of the six clocks](figures/13_01_where_clocks_tick.png)
+
+| Bars that day | Time | Tick | Volume | Dollar | Range | CUSUM |
+|---|---|---|---|---|---|---|
+| 21 September 2022, the Fed decision | 48 | 103 | 94 | 92 | 148 | 156 |
+| 7 January 2023, the quietest day | 48 | 21 | 15 | 15 | 5 | 5 |
+
+Time bars tick on regardless. The market's clocks run twice as fast as usual on the busiest day and at a third of the usual pace on the quietest: they follow the market. The activity clocks (tick, volume, dollar) bunch where trading is heavy, around the decision at 18:00 UTC; the price clocks (range, CUSUM) bunch where the price moves, and almost stop on a day when it barely moves at all.
+
+### 3.3 How each clock runs
+
+![Bars closed through the week of the Fed decision, 19 to 25 September 2022, one line per clock](figures/13_02_how_clocks_run.png)
+
+The slope of each line is the number of bars per hour. The time bars climb at a constant rate, 336 in the week. The market's clocks keep pace on quiet days, jump at the Fed decision on Wednesday evening, and slow at the weekend: 395 to 478 bars in the same week. A clock that follows the market is a clock that changes speed.
+
+### 3.4 Thresholds from the past
+
+![Dollar bars per day, weekly average, with a threshold fixed from the first 28 days and with an adaptive threshold from the past 28 days](figures/13_03_fixed_vs_adaptive.png)
+
+| Dollar bars per day | 2021 | 2022 | 2023 | 2024 | 2025 | 2026 |
+|---|---|---|---|---|---|---|
+| Fixed threshold | 44.7 | 38.8 | 34.9 | 53.6 | 50.6 | 35.4 |
+| Adaptive threshold | 49.3 | 50.1 | 55.0 | 53.0 | 50.1 | 50.1 |
+
+*A fixed threshold is set once, from the first 28 days. 2021 covers October to December.*
+
+A fixed threshold makes a bar mean something different each year: in the quiet year 2023 it produces a third fewer bars than in 2024. The adaptive threshold keeps the number of bars near its target in every year: about three weeks in four lie within 25% of it, against half the weeks with the fixed threshold. It is not perfect: when activity jumps faster than a 28-day median can follow, as after the quiet holidays of early 2023, the number of bars spikes for a few weeks before the threshold catches up.
+
+**Is 28 days a lucky choice?** A setting that works only at one value is a fitted parameter, not a method (Lecture 7, §5). The same measure for three windows:
+
+| Window of the adaptive threshold | 14 days | 28 days | 56 days |
+|---|---|---|---|
+| Weeks within 25% of the target | 74% | 74% | 65% |
+
+Fourteen and 28 days are equally good; 56 days follows changes in activity too slowly. Any window from two to four weeks works; 28 days, four whole weeks, contains every weekday equally often.
+
+### 3.5 A price clock needs a price
+
+The first version of the range clock read every trade, and on the day of the Fed decision it produced over a thousand bars in the ten minutes after 18:00. The trades were real; the clock was not measuring what it should.
+
+**Example: one second after the decision.** In the second 18:00:02 UTC on 21 September 2022, 1,846 trades took place at 1,253 different prices, the price swinging between about $19,880 and $20,120. At 18:00:02.805, a single sell order filled at 49 prices, from $20,090 down to $19,880, 1% of the price, in one millisecond; moments later buy orders swept it back. A clock that reads every fill counts each of these sweeps as a move of 1%.
+
+**Why it explodes, and why one price per second does not.** A range bar closes each time the price has moved a fixed distance *R*. Over a day, the number of bars is therefore roughly proportional to the day's realised variance divided by *R*²: a range clock counts variance. Measured from every fill, realised variance contains a noise term that grows with the number of observations and with the noise in each of them (Lecture 12, §7.2). In a burst, both rise sharply, and the count follows the number of fills instead of the movement of the price. Measured at a resolution where the signature plot of Lecture 12 is flat, from about a second to an hour, the noise term is negligible: the count follows the true variance of the day, and a clock can close at most one bar per observed price. The price clocks therefore follow one price per second, the volume-weighted average price of that second's trades.
+
+**Is one second a lucky choice?** The same test over five resolutions, on 62 days spread over the five years, including the Fed decision, the quietest day and the flash crash of 17 August 2023; range bars at 48 a day:
+
+| The clock's price | Busiest day ÷ typical day | Fed decision ÷ typical day | Bars of three trades or fewer | Scale of the threshold needed |
+|---|---|---|---|---|
+| Every fill | 109 | 109 | 21% | 1.37 |
+| 100 milliseconds | 11 | 6.9 | 0% | 1.34 |
+| 1 second | 9.9 | 3.9 | 0% | 1.30 |
+| 5 seconds | 8.0 | 2.9 | 0% | 1.24 |
+| 30 seconds | 5.9 | 2.2 | 0% | 1.08 |
+
+*Typical day: the median of the 62 days. The busiest day had 25 times the typical day's realised variance, the Fed decision 7.8 times. The CUSUM clock and the targets of 12 and 192 bars a day give the same picture.*
+
+Every fill fails at every setting: a hundredfold explosion and a fifth of the bars made of three trades or fewer. Every resolution from 100 milliseconds to 30 seconds works: no degenerate bars, a similar scale, and counts that grow less than the variance of the day, never more. One second lies in the middle of this range. The rule that carries over to any market: a price clock samples the price where the signature plot is flat.
 
 ## References
 
