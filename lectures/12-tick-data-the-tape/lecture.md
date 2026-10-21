@@ -472,11 +472,25 @@ Binance publishes its own one-minute candles (§4.1). If the tape is complete an
 | Aggressive buying | 91% exactly | At the boundary |
 | Number of trades | Never: Binance counts single fills, 2.5 per aggregated trade | A different unit, not an error |
 
-Three causes explain every difference:
+Three causes explain every difference. The first is a convention and accounts for almost all of them; the other two are rare.
 
-1. **The boundary between minutes.** An aggregated trade combines fills within 100 milliseconds (§3.1) and carries one timestamp. When its fills straddle the start of a minute, our candle puts all of them in the earlier minute, while Binance's candle, built from single fills, puts some in the later one. Binance's open then equals the last price of the previous minute. This explains the differences in the open, in volume and in 98% of the differing highs and lows. The mechanism fits the numbers; Binance does not document it.
-2. **The six minutes missing from the archive** (§5.2). For 6 September 2022, 17:14–17:20 UTC, Binance's candles contain about 72,000 fills that its published tape does not.
-3. **Errors in Binance's candle file.** In 192 minutes, the candles show no trades and a flat price, while the tape has 202,340 trades worth $2.2 billion. They fall in four stretches: 10 November 2023, 15:07–16:45 UTC (99 minutes); 28 October 2024, 20:00–21:13 (74 minutes); 29 January 2025, 01:23–02:44 (17 minutes); and two minutes on 14 January 2025.
+**1. Which minute a trade belongs to.** Every candle needs a rule that assigns each trade to one bar: a trade at 10:00:59.990 belongs to the 10:00 candle, one at 10:01:00.000 to the 10:01 candle. Binance builds its candles from single fills, each with its own time. The aggregated tape combines the fills of up to 100 milliseconds into one row with one timestamp (§3.1), which, as the numbers indicate, is the time of its first fill. When the fills of one row straddle the start of a minute, the two candles assign them differently:
+
+| Fill | Time | Price | Binance's candle (single fills) | Candle rebuilt from the tape (one row, one time) |
+|---|---|---|---|---|
+| 1 | 10:00:59.950 | 30,000.0 | 10:00 | 10:00 |
+| 2 | 10:01:00.020 | 30,000.0 | **10:01**: it becomes that minute's open | 10:00, with the rest of its row |
+| Next row | 10:01:00.300 | 30,000.1 | 10:01 | 10:01: the open of the rebuilt candle |
+
+*An illustration: fills 1 and 2 form one aggregated row, stamped 10:00:59.950.*
+
+Binance's 10:01 candle then opens at 30,000.0, the last price of the 10:00 minute, and holds a little more volume; the rebuilt candle opens at 30,000.1. Neither is wrong: they place a few milliseconds of trading on different sides of the boundary. This is why, in 6.3% of minutes, Binance's open equals the previous close; why volume differs in 18% of minutes, but typically by one part in a million; and why 98% of the differing highs and lows match the previous minute's close. The mechanism fits all the numbers; Binance does not document it. Any data source that aggregates trades or timestamps them coarsely has the same issue at every bar boundary.
+
+**2. The six minutes missing from the archive** (§5.2). For 6 September 2022, 17:14–17:20 UTC, Binance's candles contain about 72,000 fills that its published tape does not.
+
+**3. Errors in Binance's candle file.** In 192 minutes, the candles show no trades and a flat price, while the tape has 202,340 trades worth $2.2 billion. They fall in four stretches: 10 November 2023, 15:07–16:45 UTC (99 minutes); 28 October 2024, 20:00–21:13 (74 minutes); 29 January 2025, 01:23–02:44 (17 minutes); and two minutes on 14 January 2025.
+
+Causes 2 and 3 together affect 198 of 2.6 million minutes, less than one in ten thousand. They are rare, but they fall on specific days, and a backtest on those days would be wrong.
 
 No single source is perfect. The tape is the primary record, and the candles are a product derived from it, with their own conventions and their own gaps. Comparing the two confirms the tape almost everywhere and locates exactly where each source fails. A backtest on Binance's candles would have seen a market without trades for an hour and a half on 10 November 2023.
 
