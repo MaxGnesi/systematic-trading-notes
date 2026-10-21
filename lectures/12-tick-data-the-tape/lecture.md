@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 21, 2026 · Max Gnesi*
 
-Parts I and II worked with bars: a day of trading compressed into an open, high, low, close and volume. Part III goes underneath the bar, to the record of every trade, and it works primarily with crypto markets. The choice is practical: the data is complete, free and open every hour of the year, which makes it well suited to teaching. The methods are not specific to crypto; conceptually they apply to the tape of any asset class. This lecture describes that record, which practitioners call the tape: how to get it, what one row of it means, how to check it, and what it shows that a bar cannot. It builds no strategy; Lectures 13 to 17 do. *Draft: written step by step; §1 to §5 so far.*
+Parts I and II worked with bars: a day of trading compressed into an open, high, low, close and volume. Part III goes underneath the bar, to the record of every trade, and it works primarily with crypto markets. The choice is practical: the data is complete, free and open every hour of the year, which makes it well suited to teaching. The methods are not specific to crypto; conceptually they apply to the tape of any asset class. This lecture describes that record, which practitioners call the tape: how to get it, what one row of it means, how to check it, and what it shows that a bar cannot. It builds no strategy; Lectures 13 to 17 do. *Draft: written step by step; §1 to §6 so far.*
 
 ## 1. The question of this lecture
 
@@ -293,7 +293,7 @@ A flagged trade can be a fast market, a poor execution in a thin book, or an err
 
 Comparing with Binance's published candles, with other exchanges or with news would add evidence; this lecture uses the tape alone. The largest persisting and the largest reverting print of the five years:
 
-![Every trade two minutes either side of the largest persisting print, 17 August 2023, coloured by the aggressor's side; below, signed dollars per second](figures/12_02_event_largest_jump_that_persists.png)
+![Every trade two minutes either side of the largest persisting print, 17 August 2023, coloured by the aggressor's side, large trades as bubbles; below, cumulative net aggressive buying](figures/12_02_event_largest_jump_that_persists.png)
 
 ![Every trade twenty seconds either side of the largest reverting print, 6 September 2022](figures/12_03_event_largest_spike_and_revert.png)
 
@@ -334,9 +334,98 @@ Two other flags are extreme without being suspicious, and they show what the tap
 
 Activity moves in regimes: quieter in 2023, at its peak in dollars in 2024. The number of trades and the dollars traded do not move together: in 2026 there are as many trades as in 2021 but fewer dollars, so the average trade is smaller. A bar that closes after a fixed number of trades or dollars therefore means something different in different years, which Lecture 13 takes up.
 
+## 6. First statistics
+
+With the data checked, the tape can be described. Each statistic below uses all 2.6 billion trades of the five years, flagged prints included (§5.4), and comes from the derived layer of §2.4.
+
+### 6.1 Trade sizes
+
+![Share of trades and of dollars by trade size, and the share of trades at least a given size on log-log axes](figures/12_06_trade_sizes.png)
+
+| Measure | What we measure, in plain words | Benchmark | Result | What it means |
+|---|---|---|---|---|
+| Small trades | Share of trades worth under $1,000 | — | 55% | Most trades are small: retail orders, and slices of larger orders |
+| Concentration | Share of all dollars traded in the largest 1% and 10% of trades | Equal sizes: 1% and 10% | 34% and 78% | A small minority of trades carries most of the money |
+| Tail exponent | Slope of the right-hand chart above $100,000: how fast very large trades become rare | Thin tails, such as the normal distribution: the line bends down ever faster | About 2 | Each tenfold increase in size makes a trade about a hundred times rarer. A straight line on log-log axes is a power law, the signature of fat tails |
+
+The left-hand chart is the most important picture of this section. The blue curve counts trades, the orange curve counts dollars, and they peak two orders of magnitude apart, between $100 and $200 and near $50,000. A statistic that counts trades describes the small traders; one that weighs by dollars describes the large ones. Tick bars count trades and dollar bars count dollars: Lecture 13 returns to the difference. The jagged blue curve at small sizes comes from the lot size: quantities are multiples of 0.001 bitcoin, so small trades take only a few distinct sizes.
+
+### 6.2 Who is aggressive
+
+![Daily share of aggressive buying, and the day's return against it](figures/12_07_aggressor.png)
+
+| Measure | What we measure, in plain words | Benchmark | Result | What it means |
+|---|---|---|---|---|
+| Aggressive buying | Share of each day's dollars where the buyer was the aggressor | 50% | 49.8% on average; 47.7% to 52.1% on nine days in ten | Buying and selling pressure are close to balanced every day; the tilt is small |
+| Daily flow and return | Correlation between the day's aggressive buying and the day's return | 0, if flow and price were unrelated | 0.66; flow explains 44% of the variance of daily returns | The small tilt matters: days with more aggressive buying are days the price rises |
+| One-minute flow and return | The same, per minute: net aggressive buying as a share of the minute's dollars, against the minute's return | 0 | 0.48; 23% of the variance. The signs agree in 78% of minutes | The link holds minute by minute |
+
+This is the true version of what Lecture 3, §7 could only estimate. On-balance volume assigned all of a day's volume to buyers on up days and to sellers on down days. The tape shows how far that is from the truth: even on strong days, aggressive buying is rarely more than 53% of the dollars. The direction of the day comes from a small excess of one side, not from one side trading alone. §7 measures how far the estimates are from the truth.
+
+The correlation is contemporaneous: flow and price move together, which does not mean that flow predicts the price. Whether it does is a question for Lecture 15.
+
+### 6.3 Time of day, and the funding times
+
+![Dollars traded per minute of the day, relative to the day's average, on weekdays and at weekends](figures/12_08_time_of_day.png)
+
+| Measure | What we measure, in plain words | Benchmark | Result | What it means |
+|---|---|---|---|---|
+| Busiest hour | The hour of the day with the largest share of weekday dollars | 1/24 = 4.2% | 14:00–15:00 UTC, 8.6% | Crypto trades around the clock, but not evenly: the US afternoon dominates |
+| Quietest hour | The hour with the smallest share | 4.2% | 23:00–00:00 UTC, 2.6% | Activity at the quietest hour is a third of the busiest |
+| Busiest minutes | Weekday minutes with the most trading, relative to the day | 1 | 15:00, 14:00, 14:30, 13:31 UTC: 1.7 to 1.9 times the average | The US stock market opens at 13:30 or 14:30 UTC, depending on daylight saving time, and US economic data are released at 12:30, 13:30, 14:00 or 15:00 UTC: bitcoin trades on the US calendar |
+| Weekends | Dollars per weekend day, relative to a weekday | 1 | 0.51 | Half the activity: the professional participants trade on working days |
+
+Two smaller patterns are visible. Every full hour starts with a short spike: orders scheduled by the clock, from rebalancing programs and from traders who use hourly bars. And the three funding times (§3) stand out a little more than other hours.
+
+**Do traders trade around funding?** A position open at 00:00, 08:00 or 16:00 UTC pays or receives funding; a position closed a minute before pays nothing. When funding is high, a long has a reason to close shortly before the payment and reopen after. The test compares the ten minutes before and after each of the 5,477 funding times:
+
+| Funding rate at the payment | Payments | Net aggressive buying, 10 minutes before | 10 minutes after |
+|---|---|---|---|
+| Above the default 0.01%: longs pay most | 395 | −2.8% (± 0.8%) | −1.0% (± 0.8%) |
+| Exactly 0.01% | 1,605 | −1.0% (± 0.4%) | −0.8% (± 0.4%) |
+| Positive, below 0.01% | 2,674 | +0.2% (± 0.4%) | +0.1% (± 0.4%) |
+| Zero or negative: shorts pay | 803 | −0.8% (± 0.6%) | +1.1% (± 0.6%) |
+
+*Net aggressive buying: aggressive buys minus aggressive sells, as a share of the dollars traded; in brackets, the standard error. Over all days, the average is −0.4%.*
+
+When funding is highest, the last ten minutes before the payment show net aggressive selling of 2.8% of the dollars traded, about three standard errors from the average; after the payment it fades. This is consistent with longs closing positions to avoid the payment, but it is small, and it is one result among four groups: a hypothesis, not a finding. Activity rises after every full hour, funding or not: ten minutes after the hour, it is 1.29 times the day's average at the funding times and 1.01 times at the hours halfway between. Lecture 15 returns to flows around scheduled events.
+
+### 6.4 Time between trades
+
+![Distribution of the time to the next trade, against trades arriving at random with the same average wait](figures/12_09_durations.png)
+
+| Measure | What we measure, in plain words | Benchmark: trades arriving at random | Result | What it means |
+|---|---|---|---|---|
+| Average wait | Mean time between consecutive trades | — | 60 milliseconds | About 17 trades a second, on average |
+| Same millisecond | Share of trades with the same timestamp as the previous trade | Almost none | 51% | Half of all trades arrive together with another: one aggressive order filling against resting orders at several prices, which Binance records as one aggregated trade per price (§4.1), or several orders arriving at once |
+| Coefficient of variation | Standard deviation of the waits divided by their mean | 1 | 2.3 | Waits are far more uneven than random: bursts of trades, then pauses |
+| Clustering | Correlation between one wait and the next | 0 | 0.45 | A short wait is followed by a short wait: busy moments persist |
+
+Random arrival, a Poisson process, would put most waits near the average and almost none above a second. The tape has far more waits near zero and far more long waits, up to several seconds. The market has its own clock, and time bars ignore it: a one-minute bar may hold a hundred trades or ten thousand. Lecture 13 builds bars on the market's clock instead.
+
+### 6.5 The bid-ask bounce and the signature plot
+
+| Measure | What we measure, in plain words | Benchmark | Result | What it means |
+|---|---|---|---|---|
+| Bounce, trade to trade | Correlation between one trade-to-trade return and the next | 0 | −0.65 | Strongly negative: the price alternates between the bid and the ask (§4.3), so an up-tick is usually followed by a down-tick. Trade-to-trade returns are mostly noise |
+| Bounce, one second | The same for returns from one second to the next, using the last price of each second | 0 | +0.07 | The bounce has gone; a small positive correlation remains: moves continue for a few seconds |
+
+![Annualised realised volatility measured from returns over intervals from one second to one hour](figures/12_10_signature.png)
+
+Realised volatility adds up squared returns over short intervals. In theory, the shorter the interval, the more precise the estimate; in practice, the answer depends on the interval. The chart, a **signature plot** (Andersen, Bollerslev, Diebold and Labys, 2000), shows annualised volatility for each interval, averaged over the five years:
+
+| Sampling interval | 1 second | 30 seconds | 5 minutes | 1 hour | Daily closes |
+|---|---|---|---|---|---|
+| Annualised volatility | 49.8% | 54.3% | 53.1% | 49.8% | 51.4% |
+
+The curve rises up to about 30 seconds and falls beyond. At one second, part of each move is still to come, because moves continue for a few seconds (the +0.07 above), so one-second returns understate the variance. Beyond a few minutes, small reversals lower the measured variance again. With a tick of $0.10 on a price of $20,000 to $120,000, the bounce is too small to inflate the one-second estimate, as it does for many stocks. These explanations fit the numbers but are not tested here. The practical result is reassuring: from 15 minutes to an hour, every interval lies within two points of the 51.4% measured from daily closes, and no interval is more than three points away. Lecture 3, §4.4 compared volatility estimators from daily bars; §7 compares them with this realised volatility.
+
+The single moments behind these statistics were shown in §5.4: a flash crash in which aggressive selling swept through an empty book, the busiest minute, with 62 times the usual rate of trades, and the largest trade, met at one price.
+
 ## References
 
 - Binance. USDⓈ-M futures API documentation: compressed aggregate trades list; exchange information; funding rate history. — definitions and contract terms (§2–§4).
+- Andersen, T. G., Bollerslev, T., Diebold, F. X. and Labys, P. (2000). Great realizations. *Risk* 13, 105–108. — the volatility signature plot (§6.5).
 - Barndorff-Nielsen, O. E., Hansen, P. R., Lunde, A. and Shephard, N. (2009). Realized kernels in practice: trades and quotes. *Econometrics Journal* 12(3), C1–C32. — cleaning rules for high-frequency data (§5).
 - Brownlees, C. T. and Gallo, G. M. (2006). Financial econometric analysis at ultra-high frequency: data handling concerns. *Computational Statistics & Data Analysis* 51(4), 2232–2245. — outlier detection with a granularity term (§5).
 - Dacorogna, M. M., Gençay, R., Müller, U. A., Olsen, R. B. and Pictet, O. V. (2001). *An Introduction to High-Frequency Finance*. Academic Press, chapter "Adaptive data cleaning". — filtering as a process (§5).
