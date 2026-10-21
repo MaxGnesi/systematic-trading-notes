@@ -100,7 +100,17 @@ daily = (tape.with_columns(pl.from_epoch("transact_time", time_unit="ms").alias(
 
 DuckDB does the same with SQL queries instead of Python, for readers who prefer SQL; this course uses Polars throughout.
 
-**Plotting the tape** needs the same care: a chart of 36 million trades overwhelms any plotting library. Most charts in Part III plot aggregates (bars, histograms, profiles), which stay small. Two tools handle the raw trades: **plotly-resampler** shows a thinned line and fetches more detail as one zooms in, from a day down to milliseconds; **Datashader** turns millions of points into an image of their density. §5 and §6 use both.
+**Working with data larger than memory.** Streaming works because the tape can be cut into chunks, processed one at a time, and the partial results combined. That is exact for some statistics and not for others:
+
+| Kind of statistic | Examples | Chunks combine… | What we do |
+|---|---|---|---|
+| Additive | Counts, sums, dollar volume, buy and sell volume, highest and lowest price, histograms with fixed bins; means and variances, from sums and sums of squares | Exactly: add up the parts | Let the engine chunk: Polars' streaming mode |
+| Dependent on neighbouring trades | Returns from trade to trade, time between trades, bars that cross a chunk's edge, rolling windows, the flags of §5 | Exactly, if the last trades of each chunk are carried into the next | Chunk by hand: one day at a time, the last trades carried over |
+| Dependent on the whole sample | Median and other quantiles, ranks, "the top 1% of trades", the number of distinct prices | Not by adding: they need all the data at once, a second pass, or an approximation | Exact within a month; across months from a histogram whose bins are about 12% wide, so a quantile is known to within about 12% |
+
+The rule is to let the engine chunk where it can, and to chunk by hand where the statistic needs its neighbours. §2.4 shows where each kind sits in the pipeline.
+
+**Plotting the tape** needs the same care: a chart of 36 million trades overwhelms any plotting library. Most charts in Part III plot aggregates (bars, histograms, profiles), which stay small. Two tools handle the raw trades: **plotly-resampler** shows a thinned line and fetches more detail as one zooms in, from a day down to milliseconds; **Datashader** turns millions of points into an image of their density. §6 and the notebook's explorer use both.
 
 ### 2.4 The pipeline
 
