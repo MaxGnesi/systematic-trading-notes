@@ -16,7 +16,7 @@ Every bar closes when a counter reaches a threshold. For a one-hour bar the coun
 |---|---|---|
 | 2 | The four families | Which clocks are there, and what is each one for? |
 | 3 | Building bars from the tape | How is each bar type cut, and how is its threshold set? |
-| 4 | Do they differ? | How often do different clocks close at the same moments? |
+| 4 | Do they differ? | Do different clocks close their bars in the same hours? |
 | 5 | Are returns closer to normal? | Tails, volatility clustering and autocorrelation, bar type by bar type |
 | 6 | Imbalance bars, two versions | Does the published construction behave well on our data? *(deep dive)* |
 | 7 | Seasonality | When does the market trade: the time of day, the week, the round clock times, scheduled events, and how they have changed? |
@@ -178,6 +178,58 @@ The Fed decision was not the most extreme moment. Among the 22 days with the lar
 *Typical day: the median of the 62 days. The busiest day had 25 times the typical day's realised variance, the Fed decision 7.8 times. The CUSUM clock and the targets of 12 and 192 bars a day give the same picture.*
 
 Every fill fails at every setting: a hundredfold explosion and a fifth of the bars made of three trades or fewer. Every resolution from 100 milliseconds to 30 seconds works: no degenerate bars, a similar scale, and counts that grow less than the variance of the day, never more. One second lies in the middle of this range. The rule that carries over to any market: a price clock samples the price where the signature plot is flat.
+
+## 4. Do the clocks differ?
+
+Six clocks need not mean six different views of the market. The test: count each clock's bars hour by hour over the five years, and correlate the counts. Clocks that close their bars in the same hours are, for practical purposes, the same clock.
+
+| Correlation of bars per hour | Tick | Volume | Dollar | Range | CUSUM |
+|---|---|---|---|---|---|
+| Tick | 1 | 0.93 | 0.92 | 0.89 | 0.87 |
+| Volume | | 1 | 0.96 | 0.83 | 0.82 |
+| Dollar | | | 1 | 0.81 | 0.80 |
+| Range | | | | 1 | 1.00 |
+
+*Time bars close twice every hour, so their count does not vary and has no correlation.*
+
+| | Time | Tick | Volume | Dollar | Range | CUSUM |
+|---|---|---|---|---|---|---|
+| Minutes per bar: 10% of bars shorter than | 30 | 4.6 | 3.7 | 3.7 | 1.0 | 0.9 |
+| Median | 30 | 21 | 20 | 20 | 11 | 11 |
+| 10% of bars longer than | 30 | 57 | 63 | 63 | 72 | 73 |
+| Dollars per bar: dispersion (standard deviation ÷ mean) | 1.20 | 0.39 | 0.31 | 0.29 | 0.84 | 0.84 |
+
+The six clocks fall into three groups:
+
+- **Time bars** hold very different amounts of trading: the dollars in a bar vary by more than their own average.
+- **The activity clocks** (tick, volume, dollar) close in the same hours, with correlations of 0.92 to 0.96. Volume and dollar bars are nearly the same clock, because the price changes little within the four weeks that set a threshold. Dollar bars do what they are built for: the dollars per bar vary only a quarter as much as in time bars.
+- **The price clocks** (range, CUSUM) are the same clock twice: a correlation of 1.00. Both close when the price has moved, and their bars are the shortest in a burst and the longest in a calm.
+
+Activity and price clocks differ more (0.80 to 0.89): a busy hour is not always a volatile one. For the rest of the lecture, one clock represents each group: **dollar bars** for activity and **range bars** for price, against **time bars** as the benchmark.
+
+## 5. Are returns closer to normal?
+
+The hypothesis of §1: on a clock that follows trading, returns should look more like the normal distribution. The test uses the return from one bar's close to the next on each clock, all at about 48 bars a day over the same five years, so that no clock looks smoother only because it is finer (§2.5).
+
+![The share of bars with a move larger than a given number of standard deviations, on six clocks, against the normal distribution](figures/13_04_tails.png)
+
+| Measure | What we measure, in plain words | Normal distribution | Time | Tick | Volume | Dollar | Range | CUSUM |
+|---|---|---|---|---|---|---|---|---|
+| Excess kurtosis | How fat the tails are | 0 | 23.8 | 4.3 | 2.6 | 4.4 | −1.0 | −1.1 |
+| Moves beyond 4 standard deviations | How often, per 10,000 bars | 0.6 | 86 | 27 | 23 | 26 | 1.5 | 1.0 |
+| Skew | Whether large moves lean one way | 0 | −0.33 | −0.04 | −0.01 | −0.04 | 0.01 | 0.01 |
+| Return, one bar to the next | Whether a bar's return predicts the next | 0 | −0.01 | −0.02 | −0.02 | −0.02 | 0.00 | 0.00 |
+| Squared return, one bar to the next | Whether large moves follow large moves: volatility clustering | 0 | 0.22 | 0.28 | 0.26 | 0.25 | 0.36 | 0.34 |
+
+*Our measurement for these notes. Excess kurtosis is the fourth moment of the standardised returns minus 3.*
+
+**The activity clocks bring returns much closer to normal, but not all the way.** On 30-minute bars, moves beyond four standard deviations happen 86 times in 10,000 bars, 140 times as often as under the normal distribution, and the excess kurtosis is 24. On dollar bars they happen 26 times, a third as often, and the kurtosis falls to about 4; the lean of time-bar returns towards large falls almost disappears. This is the effect Mandelbrot and Taylor (1967), Clark (1973) and Ané and Geman (2000) predicted: much of the fat tail of time-bar returns comes from bars that hold very different amounts of trading. The tails that remain are still forty times the normal, as Murphy and Izzeldin (2005) found on stock data: a trading clock removes part of the non-normality, not all of it.
+
+**The price clocks are thin-tailed by construction, not by nature.** Their kurtosis is below zero, and moves beyond four standard deviations are almost absent. This says little about the market: a range bar closes when the price has moved a set distance, so most of its returns are close to that distance by design. The rare large returns that remain are gaps, where the price jumped past the threshold in one step, as in a sweep (§3.5). Returns on a price clock are a measurement of how far the price moved, already fixed in advance.
+
+**Volatility clustering stays on every clock.** A large move is followed by another large move on all six clocks, with correlations of 0.22 to 0.36 between successive squared returns. A clock that follows activity spreads the busy periods over more bars, but it does not make the size of moves independent from one bar to the next. Lecture 14 measures and forecasts this clustering.
+
+**Returns are almost unpredictable on every clock.** The correlation of one bar's return with the next is about −0.02 on time and activity clocks, a slight tendency to reverse, and zero on the price clocks. No clock turns the price into something a simple rule could predict.
 
 ## References
 
