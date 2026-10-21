@@ -416,9 +416,15 @@ Realised volatility adds up squared returns over short intervals. In theory, the
 
 | Sampling interval | 1 second | 30 seconds | 5 minutes | 1 hour | Daily closes |
 |---|---|---|---|---|---|
-| Annualised volatility | 49.8% | 54.3% | 53.1% | 49.8% | 51.4% |
+| Annualised volatility | 49.8% | 54.3% | 53.2% | 50.9% | 51.4% |
 
-The curve rises up to about 30 seconds and falls beyond. At one second, part of each move is still to come, because moves continue for a few seconds (the +0.07 above), so one-second returns understate the variance. Beyond a few minutes, small reversals lower the measured variance again. With a tick of $0.10 on a price of $20,000 to $120,000, the bounce is too small to inflate the one-second estimate, as it does for many stocks. These explanations fit the numbers but are not tested here. The practical result is reassuring: from 15 minutes to an hour, every interval lies within two points of the 51.4% measured from daily closes, and no interval is more than three points away. Lecture 3, §4.4 compared volatility estimators from daily bars; §7 compares them with this realised volatility.
+The shape of the curve has a meaning. If returns were independent, every interval would give the same answer and the curve would be flat. Where it rises with the interval, returns over short intervals are positively correlated: moves continue. Where it falls, they reverse.
+
+For many stocks, the textbook curve is highest at the shortest intervals: the bid-ask bounce adds noise to every sampled price, and the noise adds variance (each return contains two noise terms, so the bias grows with the number of returns). Here the bounce is too small to matter. Half a tick is $0.05 on a price of $20,000 or more, and even if the last trade of every second fell at random on the bid or the ask, it would add 0.04% to the daily variance. What the curve shows instead is continuation over the first 30 seconds, from 49.8% to 54.3%, and a slight reversal beyond, to 50.9% at one hour. Why moves continue for some seconds is not tested here. Large orders executed in slices (§6.4) and prices that adjust to news in steps are candidates; Hansen and Lunde (2006) report that microstructure noise is correlated with changes in the underlying price, which can produce a curve of this shape.
+
+Every day's realised variance covers the full 24 hours, including the return across midnight: the returns of a day must add up to the day's return, as a daily close-to-close return does. For markets that close overnight, Hansen and Lunde (2005) add the overnight return in the same way.
+
+The practical result is reassuring: from 15 minutes to an hour, every interval lies within 0.6 points of the 51.4% measured from daily closes. Lecture 3, §4.4 compared volatility estimators from daily bars; §7 compares them with this realised volatility.
 
 The single moments behind these statistics were shown in §5.4: a flash crash in which aggressive selling swept through an empty book, the busiest minute, with 62 times the usual rate of trades, and the largest trade, met at one price.
 
@@ -429,3 +435,5 @@ The single moments behind these statistics were shown in §5.4: a flash crash in
 - Barndorff-Nielsen, O. E., Hansen, P. R., Lunde, A. and Shephard, N. (2009). Realized kernels in practice: trades and quotes. *Econometrics Journal* 12(3), C1–C32. — cleaning rules for high-frequency data (§5).
 - Brownlees, C. T. and Gallo, G. M. (2006). Financial econometric analysis at ultra-high frequency: data handling concerns. *Computational Statistics & Data Analysis* 51(4), 2232–2245. — outlier detection with a granularity term (§5).
 - Dacorogna, M. M., Gençay, R., Müller, U. A., Olsen, R. B. and Pictet, O. V. (2001). *An Introduction to High-Frequency Finance*. Academic Press, chapter "Adaptive data cleaning". — filtering as a process (§5).
+- Hansen, P. R. and Lunde, A. (2005). A realized variance for the whole day based on intermittent high-frequency data. *Journal of Financial Econometrics* 3(4), 525–554. — including the return outside the sampled hours (§6.5).
+- Hansen, P. R. and Lunde, A. (2006). Realized variance and market microstructure noise. *Journal of Business & Economic Statistics* 24(2), 127–161. — noise correlated with the efficient price (§6.5).
