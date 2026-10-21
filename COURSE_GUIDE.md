@@ -20,11 +20,11 @@ The course follows one pipeline throughout (data → signal → position → eva
 | | 10 | (merged into Lecture 11) | The trend portfolio is built in the capstone | — | — |
 | | 11 | Three Trend Systems, End to End (capstone) | Futures from Kaggle, rolls and back-adjustment, EWMAC, breakout, cross-sectional momentum, comparison, evaluation, filters, portfolio, out of sample | 11 (12 futures, 2 Treasury funds) | Done |
 | III. From the tape: crypto tick data | 12 | Tick data: the tape | Trade prints against OHLCV; the aggressor flag as true order flow; inspection; activity, price formation, what a candle loses | 12 (BTCUSDT perpetual, Binance archive, 2021–2026) | Done |
-| | 13 | Bars not cut by time | Which clock should a bar follow: tick, volume, dollar, imbalance, run, range and Renko bars, CUSUM sampling; are returns closer to normal; one trend rule on time and dollar bars | Binance (Lecture 12's tape) | In progress |
-| | 14 | Volatility from the tape | Realised variance at the right interval, jumps, intraday seasonality, forecasting (HAR); the path inside a bar: stop or target first | Binance | Planned |
-| | 15 | Order flow and short-term reversion | Signed order flow, liquidation cascades, short-horizon mean reversion | Binance | Planned |
-| | 16 | Costs and fills | Aggressive against resting orders; conservative fills for resting orders; adverse selection; spread, impact, fees and funding | Binance trades and best bid/ask | Planned |
-| | 17 | Capstone: an intraday grid strategy, end to end | Spacing from volatility, a regime switch, inventory limits, conservative fills, all costs; run on paper from a server | Binance | Planned |
+| | 13 | When the market trades: clocks and seasonality | Bars on the market's clock (tick, volume, dollar, imbalance, range, CUSUM); are returns closer to normal; the time of day, the week, round clock times, scheduled events | Binance (Lecture 12's tape) | In progress |
+| | 14 | How the price moves: volatility and the path | Realised variance, jumps, the intraday volatility pattern, forecasting (HAR); the path inside a bar: stop or target first, worst and best point in a trade | Binance | Planned |
+| | 15 | Who trades and what it costs: order flow, costs and capacity | Imbalance, persistence, absorption, cascades; spread, slippage, square-root impact, fees, funding, capacity; resting against aggressive orders and conservative fills | Binance trades and best bid/ask | Planned |
+| | 16 | Example 1: trend on the tape | The Part II trend rule on dollar bars against time bars, sized with realised volatility, executed in deep hours, with real costs and capacity | Binance | Planned |
+| | 17 | Example 2: an intraday grid (capstone) | Spacing from volatility, an order-flow regime switch, conservative fills, inventory limits, all costs; run on paper from a server | Binance | Planned |
 | IV. The order book | 18–19 | Order-book dynamics; queue position, fill simulation and market making | How the book builds and depletes; what a passive order earns | Bybit order-book data, one market (check the size of one day first) | Planned, to confirm |
 | V. Probabilities | 20 | Prediction markets | A price is a probability; bounded payoff; resolution | Polymarket | Planned |
 | | 21 | Trading probabilities | Calibration, edge vs implied odds, Kelly sizing, domain models, news | Polymarket | Planned |
@@ -35,7 +35,7 @@ Threads to keep visible across parts:
 
 - **Sizing comes back three times:** volatility targeting (Part II), inventory and spread limits (Parts III and IV), Kelly on a bounded payoff (Part V). Part VI combines them.
 - **Lecture 3 sets up Part III:** discrete sampling and bid-ask bounce (Lecture 3, §4.4) are the hook for "what is inside the bar".
-- **Lecture 13, §8 mirrors Lecture 3:** same data with different transformations, versus the same strategy on different data.
+- **Lecture 16 mirrors Lecture 3:** same data with different transformations, versus the same strategy on different data.
 - **Two kinds of trend signal:** a positive-weight moving average always lags below price in a steady rise, while the Kalman level + slope extrapolates and can sit above price while the market still rises (QQQ illustration: above price on 43% of up-market days versus 23% for EMA(20); signals agree on 68% of days; naive rule returns correlate 0.37, one asset, one setting). In the three-state filter, acceleration also moves the level (forecast = level + slope + ½·acceleration), so it changes where the filter sits relative to price. Three signal sources to compare, each from a different mechanism: position (price versus the level of an EMA, the level + slope filter and the three-state filter), slope, and acceleration (early warning of regime change). Each state carries its own signal: position (price versus level), slope (direction), acceleration (strengthening or fading). Prototype on QQQ 1999–2026, models matched to EMA(20) on variance reduction: signals from the same state agree 78–91% (position) and 89% (slope), signals from different states only 45–75%, i.e. three distinct signal families (agreement, not performance). Lecture 4 explains the mechanisms; Part II tested it. On daily futures the Kalman slope trades like EWMAC at equal speed (daily returns correlate 0.93–0.95) and earns less, so Lecture 11 treats it as a variant of EWMAC (Lecture 4, §3: in steady state it is a linear filter).
 - **The research checklist** (Lecture 1, §1.2) is applied in every *How we judge it* section.
 
@@ -48,7 +48,7 @@ Notebook numbers above were assigned from file names; check each notebook's cont
 - **Part II: bars that close on the clock.** Daily, weekly or monthly OHLCV, the data available for decades. Daily is the main case; everything holds for weekly or monthly bars too.
 - **Part III: changing the rule, or dropping bars.** Bars that close after a number of trades, an amount of volume or dollars, or an order-flow imbalance (still OHLCV, on a different clock); or the raw events themselves.
 
-Strategy family and data frequency are separate choices: trend and stat arb run on daily bars, minute bars or alternative bars. The dividing line in Part III is whether a strategy needs **aggregated bars** (Lecture 13) or **individual events and the path between them** (Lectures 14–17).
+Strategy family and data frequency are separate choices: trend and stat arb run on daily bars, minute bars or alternative bars. The dividing line in Part III is whether a strategy needs **aggregated bars** (Lectures 13 and 16) or **individual events and the path between them** (Lectures 14, 15 and 17).
 
 ### 1.1a Before starting Part III
 
@@ -63,11 +63,22 @@ Part III is a step up: the data are billions of trades instead of a few thousand
 
 Each Part III lecture opens with a short *What to take away* box, and marks passages that can be skipped on a first reading.
 
-### 1.1b Two uses of the tape in Part III
+### 1.1b Six uses of the tape: the spine of Part III
 
-Trend was the subject of Part II; Part III uses the tape for what daily bars cannot give. For a **trend system**, held for days, the tape gives two things: **a different clock**, so the signal can run on dollar or other bars instead of time bars (Lecture 13), and **realistic costs**: what a trade really pays, on its own side, after a delay, with impact (Lecture 13's closing test, Lecture 16). For **mean reversion and the intraday grid of the capstone**, held for minutes or hours, the **path** decides, and makes such strategies possible to test at all: which resting order fills first, whether the stop or the target comes first, whether the price swings back (Lectures 14 to 17). There, the tape is the backtest itself, and candles give wrong answers.
+Part III is organised around what the tape adds to bars. Lectures 13 to 15 each cover two of the six uses; Lectures 16 and 17 apply them to two strategies, trend and an intraday grid. Each lecture names, in its first lines, which uses it covers, and each method lecture ends with *For the two examples*: what the trend rule and the grid take from it.
 
-### 1.2 Backtesting on bars that are not clock-time (for Lecture 13, §8, and the capstone)
+| The tape adds… | Used for | Strategy type | Lecture |
+|---|---|---|---|
+| 1. A clock: when trading happens | Bars on other clocks; signals that speed up with the market | Trend and any bar-based rule | 13 |
+| 2. The path between bars | Which order filled first; stop or target first; the worst and best point in a trade | Mean reversion, grids, any rule with stops | 14 |
+| 3. Volatility, measured precisely | Realised variance, jumps, forecasts; sizing; grid spacing; stop distances | All strategies | 14 |
+| 4. Seasonality | When to trade: deep and thin hours, crowded round times, scheduled events (funding, data releases, expiries) | Execution of every strategy; timing of entries | 13 |
+| 5. Order flow: who is pressing | Imbalance and its persistence; absorption; liquidation cascades; as a signal, or as a filter (stop a grid when one-sided selling keeps hitting it) | Short-term reversion; a regime switch for grids | 15 |
+| 6. Costs and capacity | Spread on one's own side, slippage, impact growing with size, fees and funding; how large a strategy can get before costs eat it | Every strategy; deciding the trade size | 15 |
+
+For a **trend system**, held for days, the tape gives a different clock and realistic costs (Lecture 16). For **mean reversion and the intraday grid**, held for minutes or hours, the **path** decides, and makes such strategies possible to test at all (Lecture 17). The same reference days recur in every lecture: the Fed decision of 21 September 2022, the quietest day (7 January 2023) and the flash crash of 17 August 2023.
+
+### 1.2 Backtesting on bars that are not clock-time (for Lectures 16 and 17)
 
 The strategy logic carries over to any bars, since each still has OHLCV. The backtest machinery changes in four places:
 
@@ -76,7 +87,7 @@ The strategy logic carries over to any bars, since each still has OHLCV. The bac
 3. **Asynchronous assets.** Different assets' volume bars close at different moments; baskets and pairs need a common clock (clock-time snapshots or an event-driven backtest).
 4. **P&L and risk in clock time.** Returns, volatility and drawdowns are reported per day, so positions are revalued at common times.
 
-These four points form the *How we judge it* part of Lecture 13, §8.
+These four points form the *How we judge it* part of Lecture 16.
 
 ### 1.2a Risk measures on tick data (for Lecture 14)
 

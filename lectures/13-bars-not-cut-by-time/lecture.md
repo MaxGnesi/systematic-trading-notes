@@ -1,8 +1,8 @@
-# Lecture 13: Bars Not Cut by Time
+# Lecture 13: When the Market Trades: Clocks and Seasonality
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 21, 2026 · Max Gnesi*
 
-Every bar so far closed on the clock: at the end of a day in Parts I and II, at the end of a minute in Lecture 12. This lecture builds bars that close after a fixed amount of trading, of one-sided pressure, or of price movement instead, from the same five years of BTCUSDT trades as Lecture 12, and asks whether they describe the market better. It ends with one test: the same trend rule on time bars and on dollar bars.
+Every bar so far closed on the clock: at the end of a day in Parts I and II, at the end of a minute in Lecture 12. This lecture asks when the market trades. It builds bars that close after a fixed amount of trading, of one-sided pressure, or of price movement, from the same five years of BTCUSDT trades as Lecture 12, and asks whether they describe the market better; then it maps the market's rhythms: the time of day, the week, the round clock times and the scheduled events. It covers the first and fourth of Part III's six uses of the tape (the course guide, §1.1b): a clock, and seasonality.
 
 ## 1. Which clock should a bar follow?
 
@@ -19,9 +19,8 @@ Every bar closes when a counter reaches a threshold. For a one-hour bar the coun
 | 4 | Do they differ? | How often do different clocks close at the same moments? |
 | 5 | Are returns closer to normal? | Tails, volatility clustering and autocorrelation, bar type by bar type |
 | 6 | Imbalance bars, two versions | Does the published construction behave well on our data? *(deep dive)* |
-| 7 | The activity regime | How do busy and quiet periods come and go? |
-| 8 | A trend rule on two clocks | Does the same trend rule do better on dollar bars than on time bars, once its trades are filled on the tape? |
-| 9 | What this means for the rest of Part III | Which clock to use for volatility, order flow and the capstone |
+| 7 | Seasonality | When does the market trade: the time of day, the week, the round clock times, scheduled events, and how they have changed? |
+| 8 | For the two examples | What the trend rule (Lecture 16) and the grid (Lecture 17) take from this lecture |
 
 **Data.** The derived layer of Lecture 12: BTCUSDT perpetual on Binance, October 2021 to September 2026, 2.6 billion trades, checked and patched (Lecture 12, §5). The bars are built with the same day-by-day machinery (Lecture 12, Appendix A).
 
