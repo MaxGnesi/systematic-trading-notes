@@ -189,3 +189,31 @@ What survives every yardstick: any measure that uses the inside of the bar beats
 
 **Key message.** Each measure captures a different shade of the same risk. On our sample, BTCUSDT from 2021 to 2026, return-based measures describe the net moves a position's value goes through, ranges describe how far the price reaches, and bipower how much of the risk comes in jumps; and any measure that uses the inside of the bar forecasts the next bars better than the bar's own returns. Whether choosing the measure by the risk being managed, returns for sizing, ranges for stops and grid levels, actually improves those decisions is an open question: §7 tests it for sizing, and the reader is invited to test the rest on other markets and periods.
 
+## 6. Risk on any clock
+
+On time bars, risk lives in the size of the returns, and √t turns the risk of one bar into the risk of a day. Lecture 13 built bars on other clocks, where the number of bars in a day is itself random. How is risk measured there?
+
+**One identity.** On any clock, a day's variance is the number of bars in the day times the average variance of a bar's move. Which of the two carries the day's risk depends on the clock:
+
+![Left: the share of the day-to-day variation of a day's variance due to the number of bars and to the size of each bar's move. Right: the sampling error of one day's variance by clock](figures/14_11_risk_on_any_clock.png)
+
+On time bars the number of bars never changes, so all of the risk is in the size of the moves: volatility feels like a property of time because, on a time clock, it is one. On price clocks each bar's move is about the same by construction, so most of the risk is in how many bars there are: volatility becomes the speed of the clock. Dollar bars lie between: busier days have more bars and, on top, larger moves per bar.
+
+**The square-root rule on a random clock.** If a period contains a random number of bars, each with variance σ² and no drift, the period's variance is the expected number of bars times σ² (Wald's identity, met in Lecture 13, §6): its volatility is σ times the square root of the expected number of bars. The same √ as on time bars, with the expected count in place of a fixed one. The rule assumes that the number of bars and the size of their moves are unrelated:
+
+| Clock | Average daily variance ÷ (bars per day × variance per bar) |
+|---|---|
+| Time, 30 minutes | 1.00 |
+| Range | 0.97 |
+| Dollar | 1.15 |
+
+*Our measurement for these notes, five years.*
+
+On price clocks the rule holds almost exactly. On dollar bars it underestimates a day's variance by 15%, about 7% in volatility, because the two factors move together (a correlation of +0.42 between a day's bar count and its variance per bar). The random number of bars has a second effect: a period made of a random number of moves has fatter tails than one made of a fixed number, the explanation Clark (1973) gave for the fat tails of time-bar returns (Lecture 13, §5).
+
+**Precision.** At the same number of bars, a clock that spreads the day's variance evenly over its bars measures it more precisely: one day's variance has a sampling error of 26% on 30-minute bars, 19% on dollar bars and 15% on range bars. Sampling in trading time rather than calendar time is known to reduce the error of realised variance (Oomen, 2006). But the number of samples matters more than the clock: one-minute time bars, 1,440 a day, give 6%. The clock matters for precision when a strategy can only measure risk on its own bars.
+
+**Measures made for price clocks.** On a range clock, the natural measures of risk are the count of bars and the time they take. For a random walk, the expected time for the price to leave a band of ±h is h²/σ², so volatility can be read from how long the price takes to move a set distance. Such duration-based estimators are among the most precise in theory (Andersen, Dobrev and Schaumburg, 2008, a working paper) and have forecast better than realised variance in a recent study (Hong, Nolte, Taylor and Zhao, 2023). The directional-change school counts how often the price reverses by a set amount and reads volatility from that count (Glattfelder, Dupuis and Olsen, 2011). Neither is in common use, and neither has been compared with realised variance on crypto data; they are named here as candidates for readers to test.
+
+**Key message.** On any clock, a day's risk is the number of bars times the risk per bar. On BTCUSDT, price clocks put most of the risk into the clock's speed, dollar bars split it, and the square-root rule needs the expected bar count and fails by 15% where count and size move together. Risk per bar suits per-trade decisions such as stops; risk per period needs both a forecast of activity and a forecast of risk per bar.
+
