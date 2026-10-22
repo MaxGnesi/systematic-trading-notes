@@ -359,7 +359,24 @@ The US inflation release is the largest scheduled event in bitcoin: in its minut
 
 *Our measurement for these notes; medians.*
 
-On quarterly expiry days, trading rises from 07:30, exactly when the settlement window opens, peaks at twice its usual pace around 07:40, and the price moves most at 08:00 itself; monthly expiries show a smaller version, weekly expiries hardly any. Option traders also speak of pinning: when large positions sit near one strike, hedging can hold the price near it before expiry and release it after. The size of moves in the hour before and the hour after 08:00 barely differs on our data (0.75 and 0.76 times the day's average on quarterly expiries), but a real test of pinning needs the options' open interest by strike, which the tape does not have.
+On quarterly expiry days, trading rises from 07:30, exactly when the settlement window opens, peaks at twice its usual pace around 07:40, and the price moves most at 08:00 itself; monthly expiries show a smaller version, weekly expiries hardly any.
+
+**Volatility, direction and order flow.** The same days, half hour by half hour:
+
+![Volatility, net aggressive buying and average return in each half hour from 07:00 to 09:00 UTC, on quarterly, monthly and weekly expiry Fridays and on Thursdays](figures/13_12_expiry_vol_direction.png)
+
+| | 07:00–07:30 | 07:30–08:00, the settlement window | 08:00–08:30 | 08:30–09:00 |
+|---|---|---|---|---|
+| Volatility, quarterly expiry | 0.64 | 0.76 | 0.81 | 0.59 |
+| Volatility, monthly expiry | 0.49 | 0.49 | 0.77 | 0.49 |
+| Volatility, Thursday | 0.42 | 0.43 | 0.56 | 0.44 |
+| Return, quarterly expiry (basis points) | −8 (± 10) | −20 (± 9) | +14 (± 10) | +13 (± 8) |
+| Return, monthly expiry | −9 (± 5) | −15 (± 5) | +1 (± 6) | −5 (± 5) |
+| Return, Thursday | +4 (± 2) | −2 (± 2) | 0 (± 2) | +2 (± 2) |
+
+*Our measurement for these notes. Volatility: the half hour's realised variance divided by the day's average half hour, median over days. Returns: averages, with their standard errors in brackets.*
+
+Three things show. **Volatility:** on quarterly expiries it is already high in the settlement window, at 1.8 times a Thursday; after 08:00 it rises on every day, Thursdays included, since 08:00 UTC is the start of the European morning, but most on expiry days. **Direction:** during the settlement window the price fell on average by 20 basis points on quarterly and 15 on monthly expiries, two to three standard errors from zero, with net aggressive selling of 3% to 4% of the dollars; on quarterly expiries it came back in the hour after. **Predictability:** day by day, the move during the window does not predict the move after it: their correlation is +0.11 on quarterly and monthly expiries, not negative. The average drift and recovery is real enough to describe, but it is built from 20 and 40 days, measured among many comparisons, and does not repeat reliably from one expiry to the next: a hypothesis about hedges unwound into the settlement average, not a trading rule. Option traders also speak of pinning, the price held near a large strike before expiry; testing it needs the options' open interest by strike, which the tape does not have. Lecture 15 returns to event studies of this kind.
 
 ### 7.5 How the rhythm has changed
 
