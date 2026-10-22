@@ -112,15 +112,26 @@ Three choices are common to all of them:
 
 - **The threshold uses past data only.** It is set each day from the 28 days before, so no bar knows how much trading lies ahead. A fixed threshold would drift with the market's activity, as §3.4 shows.
 - **A bar does not break at midnight.** The trades of the unfinished last bar of a day are carried into the next.
-- **The two price clocks are scaled once, to the same frequency.** The multiple in their thresholds is set on one month, March 2024, so that they produce as many bars as the dollar clock that month, and never changed. It equalises frequency, as the comparison requires; nothing is chosen for performance.
+- **The two price clocks are scaled once, on data that precede everything else.** The multiple in their thresholds is set on the first three months of data, October to December 2021, so that they produce as many bars as the dollar clock there, and never changed: 1.43 for range bars, 1.44 for CUSUM. It equalises frequency, as the comparison requires; nothing is chosen for performance, and no later data is used.
 
 Over the five years, the six clocks produce:
 
 | Clock | Time | Tick | Volume | Dollar | Range | CUSUM |
 |---|---|---|---|---|---|---|
-| Bars per day, on average | 48.0 | 53.2 | 51.5 | 51.6 | 51.4 | 51.2 |
+| Bars per day, on average | 48.0 | 53.2 | 51.5 | 51.6 | 57.3 | 57.2 |
 
-The market's clocks run slightly above the target of 48. The threshold divides the *median* day's activity by 48, but bars accumulate on every day, and a few very busy days lift the average above the median. The difference is the same for all of them, so the comparison stays fair.
+The market's clocks run slightly above the target of 48. The threshold divides the *median* day's activity by 48, but bars accumulate on every day, and a few very busy days lift the average above the median.
+
+The price clocks run about 10% faster than the dollar clock, the price of setting their multiple once, at the start. Had it been set in each year with hindsight, it would have been almost the same every year:
+
+| Range bars | 2021 | 2022 | 2023 | 2024 | 2025 | 2026 |
+|---|---|---|---|---|---|---|
+| Bars per dollar bar | 1.05 | 1.24 | 1.12 | 1.07 | 1.06 | 1.06 |
+| The multiple that would have equalised them that year | 1.47 | 1.59 | 1.51 | 1.48 | 1.48 | 1.47 |
+
+*Our measurement for these notes; CUSUM bars are within 0.02 of range bars. 2021 covers October to December; 2026, January to September.*
+
+The multiple is a property of the market, not of the month it was measured in: between 1.47 and 1.51 in every year but 2022, when volatility rose more than activity. A multiple taken from a later month would have given more even counts, but only by looking ahead.
 
 ### 3.2 Where each clock ticks
 
@@ -128,8 +139,8 @@ The market's clocks run slightly above the target of 48. The threshold divides t
 
 | Bars that day | Time | Tick | Volume | Dollar | Range | CUSUM |
 |---|---|---|---|---|---|---|
-| 21 September 2022, the Fed decision | 48 | 103 | 94 | 92 | 148 | 156 |
-| 7 January 2023, the quietest day | 48 | 21 | 15 | 15 | 5 | 5 |
+| 21 September 2022, the Fed decision | 48 | 103 | 94 | 92 | 167 | 176 |
+| 7 January 2023, the quietest day | 48 | 21 | 15 | 15 | 4 | 4 |
 
 Time bars tick on regardless. The market's clocks run twice as fast as usual on the busiest day and at a third of the usual pace on the quietest: they follow the market. The activity clocks (tick, volume, dollar) bunch where trading is heavy, around the decision at 18:00 UTC; the price clocks (range, CUSUM) bunch where the price moves, and almost stop on a day when it barely moves at all.
 
@@ -232,19 +243,19 @@ Six clocks need not mean six different views of the market. The test: count each
 
 | Correlation of bars per hour | Tick | Volume | Dollar | Range | CUSUM |
 |---|---|---|---|---|---|
-| Tick | 1 | 0.93 | 0.92 | 0.89 | 0.87 |
+| Tick | 1 | 0.93 | 0.92 | 0.89 | 0.88 |
 | Volume | | 1 | 0.96 | 0.83 | 0.82 |
-| Dollar | | | 1 | 0.81 | 0.80 |
+| Dollar | | | 1 | 0.82 | 0.80 |
 | Range | | | | 1 | 1.00 |
 
 *Time bars close twice every hour, so their count does not vary and has no correlation.*
 
 | | Time | Tick | Volume | Dollar | Range | CUSUM |
 |---|---|---|---|---|---|---|
-| Minutes per bar: 10% of bars shorter than | 30 | 4.6 | 3.7 | 3.7 | 1.0 | 0.9 |
-| Median | 30 | 21 | 20 | 20 | 11 | 11 |
-| 10% of bars longer than | 30 | 57 | 63 | 63 | 72 | 73 |
-| Dollars per bar: dispersion (standard deviation ÷ mean) | 1.20 | 0.39 | 0.31 | 0.29 | 0.84 | 0.84 |
+| Minutes per bar: 10% of bars shorter than | 30 | 4.6 | 3.7 | 3.7 | 0.9 | 0.8 |
+| Median | 30 | 21 | 20 | 20 | 10 | 10 |
+| 10% of bars longer than | 30 | 57 | 63 | 63 | 64 | 65 |
+| Dollars per bar: dispersion (standard deviation ÷ mean) | 1.20 | 0.39 | 0.31 | 0.29 | 0.83 | 0.84 |
 
 The six clocks fall into three groups:
 
@@ -265,10 +276,10 @@ The hypothesis of §1: on a clock that follows trading, returns should look more
 | Measure | What we measure, in plain words | Normal distribution | Time | Tick | Volume | Dollar | Range | CUSUM |
 |---|---|---|---|---|---|---|---|---|
 | Excess kurtosis | How fat the tails are | 0 | 23.8 | 4.3 | 2.6 | 4.4 | −1.0 | −1.1 |
-| Moves beyond 4 standard deviations | How often, per 10,000 bars | 0.6 | 86 | 27 | 23 | 26 | 1.5 | 1.0 |
+| Moves beyond 4 standard deviations | How often, per 10,000 bars | 0.6 | 86 | 27 | 23 | 26 | 2.2 | 1.3 |
 | Skew | Whether large moves lean one way | 0 | −0.33 | −0.04 | −0.01 | −0.04 | 0.01 | 0.01 |
 | Return, one bar to the next | Whether a bar's return predicts the next | 0 | −0.01 | −0.02 | −0.02 | −0.02 | 0.00 | 0.00 |
-| Squared return, one bar to the next | Whether large moves follow large moves: volatility clustering | 0 | 0.22 | 0.28 | 0.26 | 0.25 | 0.36 | 0.34 |
+| Squared return, one bar to the next | Whether large moves follow large moves: volatility clustering | 0 | 0.22 | 0.28 | 0.26 | 0.25 | 0.35 | 0.33 |
 
 *Our measurement for these notes. Excess kurtosis is the fourth moment of the standardised returns minus 3.*
 
@@ -276,7 +287,7 @@ The hypothesis of §1: on a clock that follows trading, returns should look more
 
 **The price clocks are thin-tailed by construction, not by nature.** Their kurtosis is below zero, and moves beyond four standard deviations are almost absent. This says little about the market: a range bar closes when the price has moved a set distance, so most of its returns are close to that distance by design. The rare large returns that remain are gaps, where the price jumped past the threshold in one step, as in a sweep (§3.5). Returns on a price clock are a measurement of how far the price moved, already fixed in advance.
 
-**Volatility clustering stays on every clock.** A large move is followed by another large move on all six clocks, with correlations of 0.22 to 0.36 between successive squared returns. A clock that follows activity spreads the busy periods over more bars, but it does not make the size of moves independent from one bar to the next. Lecture 14 measures and forecasts this clustering.
+**Volatility clustering stays on every clock.** A large move is followed by another large move on all six clocks, with correlations of 0.22 to 0.35 between successive squared returns. A clock that follows activity spreads the busy periods over more bars, but it does not make the size of moves independent from one bar to the next. Lecture 14 measures and forecasts this clustering.
 
 **Returns are almost unpredictable on every clock.** The correlation of one bar's return with the next is about −0.02 on time and activity clocks, a slight tendency to reverse, and zero on the price clocks. No clock turns the price into something a simple rule could predict.
 
@@ -658,9 +669,9 @@ A strategy on bars takes one decision each time a bar closes: buy, sell or hold.
 | Share of bar closes… | Time | Dollar | Range | For comparison |
 |---|---|---|---|---|
 | in the busiest quarter of the week's hours | 25% | 42% | 44% | These hours carry 42% of all dollars |
-| in the quietest quarter | 25% | 14% | 12% | These hours carry 14% of all dollars |
-| at :00, :15, :30 or :45 | 100% | 8% | 7% | 4 minutes in 60 is 6.7% |
-| in a burst minute (over 20 times the day's median pace) | 0.09% | 3.4% | 5.8% | Burst minutes are 0.12% of all minutes |
+| in the quietest quarter | 25% | 14% | 13% | These hours carry 14% of all dollars |
+| at :00, :15, :30 or :45 | 100% | 8% | 8% | 4 minutes in 60 is 6.7% |
+| in a burst minute (over 20 times the day's median pace) | 0.09% | 3.4% | 5.5% | Burst minutes are 0.12% of all minutes |
 
 *Our measurement for these notes; tick and volume bars are close to dollar bars, CUSUM to range bars.*
 
@@ -668,7 +679,7 @@ A strategy on bars takes one decision each time a bar closes: buy, sell or hold.
 
 **Activity clocks** decide where the money is. A dollar bar closes after a fixed amount of trading, so bars close quickly when much is traded and slowly when little is: the busiest quarter of the week's hours carries 42% of the dollars, and 42% of the dollar bars close in it, against 14% in the quietest quarter. They almost never close on a round minute, so they also avoid that crowd.
 
-**The price is bursts.** A burst minute, with more than twenty times the day's usual pace of trading, comes about once in 800 minutes: after a Fed decision, in a liquidation cascade. In a burst the money flows so fast that several dollar bars close within the same minute. One dollar-bar decision in 30 falls in a burst, 28 times as often as decisions spread evenly in time would; for range bars it is one in 17, 50 times as often, because bursts are also when the price moves most. Time bars meet a burst by chance only, one decision in 1,100. Bursts are the most expensive moments to trade: spreads widen, the flow is one-sided, prices jump (Lecture 12, §7.3).
+**The price is bursts.** A burst minute, with more than twenty times the day's usual pace of trading, comes about once in 800 minutes: after a Fed decision, in a liquidation cascade. In a burst the money flows so fast that several dollar bars close within the same minute. One dollar-bar decision in 30 falls in a burst, 28 times as often as decisions spread evenly in time would; for range bars it is one in 18, 46 times as often, because bursts are also when the price moves most. Time bars meet a burst by chance only, one decision in 1,100. Bursts are the most expensive moments to trade: spreads widen, the flow is one-sided, prices jump (Lecture 12, §7.3).
 
 Neither is better in general. Which execution profile is cheaper, the crowd at the round minute or the bursts, is a question of costs: Lecture 15 measures them, and Lecture 16 applies them to a trend rule on time and on dollar bars.
 
