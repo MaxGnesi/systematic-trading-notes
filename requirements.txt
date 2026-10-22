@@ -10,6 +10,7 @@ pyarrow>=15,<27
 psutil>=5.9,<8
 plotly-resampler>=0.10,<1
 datashader>=0.16,<1
+numba>=0.59,<1                # Lecture 13: bar clocks
 
 jupyterlab>=4.1,<5
 ipykernel>=6.29,<7
