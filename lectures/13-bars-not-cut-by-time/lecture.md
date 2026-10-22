@@ -9,7 +9,7 @@ Every bar so far closed on the clock: at the end of a day in Parts I and II, at 
 > 1. **We do not choose the time; we choose the clock, and the clock decides when we trade.** Time bars decide on round minutes and in thin hours, dollar bars in the deep hours and in bursts.
 > 2. **Activity clocks bring returns closer to normal, but not all the way:** dollar bars have a third of the four-standard-deviation moves of 30-minute bars, and volatility clustering stays on every clock.
 > 3. **A clock must be stable by design, not by patches:** thresholds from the past 28 days, price clocks on one price per second; López de Prado's imbalance bars collapse or run away, and our stable version gives no better returns than dollar bars.
-> 4. **The market keeps US hours:** its busiest hour moves with US daylight saving time, it trades at half the pace at weekends, it jumps at every full hour, and US inflation releases and Fed decisions are its largest scheduled events.
+> 4. **The calendar tells when, not which way:** tested as five hypotheses, activity and the size of moves bunch in New York's day, at round times and around releases, while the only reliable directions are too small to trade.
 
 ## 1. Which clock should a bar follow?
 
@@ -26,7 +26,7 @@ Every bar closes when a counter reaches a threshold. For a one-hour bar the coun
 | 4 | Do they differ? | Do different clocks close their bars in the same hours? |
 | 5 | Are returns closer to normal? | Tails, volatility clustering and autocorrelation, bar type by bar type |
 | 6 | Imbalance bars: the published construction and a stable one | Does López de Prado's construction work on our data, and what does a stable imbalance clock look like? *(deep dive)* |
-| 7 | Seasonality | When does the market trade: the time of day, the week, the round clock times, scheduled events, and how they have changed? |
+| 7 | Seasonality | Which calendar effects survive a test: on activity, the size of moves, order flow, direction and follow-through? |
 | 8 | For the two examples | What the trend rule (Lecture 16) and the grid (Lecture 17) take from this lecture |
 
 **Data.** The derived layer of Lecture 12: BTCUSDT perpetual on Binance, October 2021 to September 2026, 2.6 billion trades, checked and patched (Lecture 12, §5). The bars are built with the same day-by-day machinery (Lecture 12, Appendix A).
@@ -416,15 +416,82 @@ The reason lies in what the clock counts. When the price moves hard with heavy t
 
 ## 7. Seasonality: when the market trades
 
-The clocks of §3 to §6 take the market's rhythm out of the bars. This section maps that rhythm in calendar time, for two reasons. It explains why the market's clocks speed up and slow down. And orders are sent in calendar time: whatever clock a strategy follows, its trades happen at a particular hour of a particular day, in a deep or a thin market. All figures use the one-minute bars of Lecture 12, five years, and measure activity in dollars traded.
+The clocks of §3 to §6 take the market's rhythm out of the bars. This section maps that rhythm in calendar time, for two reasons. It explains why the market's clocks speed up and slow down. And orders are sent in calendar time: whatever clock a strategy follows, its trades happen at a particular hour of a particular day, in a deep or a thin market.
 
-### 7.1 The time of day
+Calendar effects are easy to find and hard to trust. With five years of minutes, almost any slot of the calendar will look special in some respect if one looks long enough. This section therefore works the other way round: it states first what we expect and why, fixes the slots in advance from published schedules, measures every slot in the same way against a control, and corrects for the number of tests. The method carries over to any market and any calendar effect; the results are about bitcoin.
 
-Bitcoin trades around the clock, but not evenly. The busiest hour of a weekday carries 8.8% of the day's dollars, against 4.2% if trading were spread evenly (Lecture 12, §6.2). The question is whose day this is.
+### 7.1 How to test a calendar effect
+
+**Five hypotheses.**
+
+| | Hypothesis | Why it might hold | What would reject it |
+|---|---|---|---|
+| H1 | Activity bunches in calendar slots set by people and machines | Working hours, data releases, algorithms that trade on the clock | Slots no busier than their controls |
+| H2 | The size of moves follows activity, in the calendar too | Variance follows the number of trades (Lecture 12, §7.3) | Busy slots without larger moves, or large moves without trading |
+| H3 | Some slots carry one-sided flow | Hedging around expiries, positions adjusted around funding payments | Net aggressive buying no different from the control |
+| H4 | Some slots have a predictable direction | It should *not* hold: a drift known in advance would be traded until it disappears | A drift beyond chance, after correcting for the number of tests |
+| H5 | The first move in a slot carries on, or turns back | News absorbed slowly (it carries on), or pressure that fades (it turns back) | No correlation between the move in the slot and the move after it |
+
+H1 and H2 concern when to trade and how much risk a slot carries; H3 to H5 concern whether a slot says anything about direction. Economic reasoning expects the first two to hold and the last three to be weak: the market can hardly hide when it is busy, but a direction that everyone can see in the calendar should not survive.
+
+**The test cases.** Each slot is fixed by a schedule, before looking at the data:
+
+| Rhythm | Slots | Window | Control |
+|---|---|---|---|
+| Time of day | The opening hours of Tokyo (9:00), London (8:00) and New York (9:30), the hour around the New York close (15:30 to 16:30) and a night hour in New York (2:00), each in its own local time, on weekdays | One hour | The average full hour of a weekday |
+| Week | Saturday, Sunday, Monday, Friday, US public holidays on a weekday | One day | An ordinary weekday |
+| Round times | The first minute of the hour, with and without a funding payment (00:00, 08:00 and 16:00 UTC), of the half hour, of the quarter hours, and the last minute of the hour | One minute | Minutes nobody schedules: :07, :17, :37 and :47 |
+| Releases | US inflation releases (CPI, 8:30 New York) and Fed decisions (14:00 New York) | Five minutes | The same minutes a week earlier |
+| Option expiries | Deribit's settlement window, 07:30 to 08:00 UTC, on quarterly, monthly and weekly expiry Fridays | 30 minutes | The same window on Thursdays |
+
+*Local times follow each country's daylight saving time. Release dates: the Federal Reserve's meeting calendars and the Bureau of Labor Statistics' release schedules; the October 2025 CPI report was not published as a separate release.*
+
+**The measures.** For every slot and its control, from the one-minute bars of Lecture 12, five years:
+
+| Measure | What we measure | For |
+|---|---|---|
+| Activity | Dollars per minute in the window, divided by the average minute of the past 28 days | H1 |
+| Size of moves | The average absolute one-minute return in the window, divided by the same for the past 28 days | H2 |
+| Net aggressive buying | Aggressive buying minus selling, in % of the dollars traded in the window | H3 |
+| Return | The return over the window, in basis points; also over a window of the same length before it | H4 |
+| Follow-through | The correlation between the return in the window and the return over the next window (the next hour, day, or 30 minutes) | H5 |
+
+*Every measure is an average over the slot's occurrences, with its standard error, compared with the control by a t-test; follow-through is compared by the difference between the two correlations. Dividing by the past 28 days, not by the same day, keeps the measure free of the day's own outcome and makes days comparable with minutes.*
+
+**Many tests.** Twenty slots, six comparisons each: 120 tests. At the usual 5% level, six would look significant by pure chance. Every result below is therefore corrected for the number of tests (Benjamini and Hochberg, 1995): an effect counts only if it survives the correction. And significance is not size: with 30,000 occurrences, a difference of a tenth of a basis point can be significant and still be worth nothing.
+
+### 7.2 H1 and H2: when the market is busy, and how much it moves
+
+![Activity and the size of moves in each slot, against its control, with 95% intervals](figures/13_08_h1_h2_activity_volatility.png)
+
+**How to read the chart.** Each row is a slot, each dot its ratio to the control: 2 means twice as busy, 0.5 half. The horizontal axis is logarithmic, so doubling and halving are the same distance from the line at 1. The bars are 95% intervals; a filled dot survives the correction for the 120 tests, a hollow one does not.
+
+| Slot | n | Activity, slot ÷ control (95% interval) | q | Size of moves, slot ÷ control (95% interval) | q |
+|---|---|---|---|---|---|
+| New York opening hour | 1,299 | 2.36 (2.26–2.45) | < 0.001 | 1.72 (1.66–1.77) | < 0.001 |
+| Tokyo opening hour | 1,299 | 0.88 (0.85–0.92) | < 0.001 | 1.04 (1.00–1.07) | 0.041 |
+| London opening hour | 1,299 | 0.81 (0.78–0.85) | < 0.001 | 0.84 (0.82–0.86) | < 0.001 |
+| New York night, 2:00–3:00 | 1,299 | 0.71 (0.68–0.75) | < 0.001 | 0.78 (0.76–0.80) | < 0.001 |
+| Saturday | 260 | 0.45 (0.42–0.49) | < 0.001 | 0.60 (0.56–0.63) | < 0.001 |
+| Sunday | 260 | 0.55 (0.52–0.59) | < 0.001 | 0.66 (0.62–0.69) | < 0.001 |
+| US holiday on a weekday | 55 | 0.80 (0.67–0.93) | 0.007 | 0.88 (0.76–1.00) | 0.108 |
+| Minute :00, with funding | 3,897 | 1.51 (1.44–1.58) | < 0.001 | 1.11 (1.08–1.15) | < 0.001 |
+| Minute :00, other hours | 27,279 | 1.30 (1.26–1.34) | < 0.001 | 1.12 (1.10–1.14) | < 0.001 |
+| Minute :30 | 31,175 | 1.24 (1.20–1.28) | < 0.001 | 1.17 (1.16–1.19) | < 0.001 |
+| Minute :59 | 31,175 | 0.87 (0.85–0.89) | < 0.001 | 0.80 (0.78–0.82) | < 0.001 |
+| CPI release | 59 | 6.86 (2.60–11.11) | < 0.001 | 4.38 (3.05–5.70) | < 0.001 |
+| Fed decision | 40 | 12.94 (9.31–16.58) | < 0.001 | 5.16 (3.55–6.78) | < 0.001 |
+| Quarterly expiry | 20 | 2.29 (1.83–2.76) | < 0.001 | 1.37 (1.12–1.62) | 0.024 |
+| Monthly expiry | 40 | 1.64 (1.22–2.06) | 0.010 | 1.12 (0.94–1.30) | 0.381 |
+| Weekly expiry | 200 | 1.37 (1.15–1.60) | 0.004 | 1.10 (0.97–1.22) | 0.247 |
+
+*Our measurement for these notes. n: occurrences of the slot in five years. q: the p-value adjusted for the 120 tests (Benjamini and Hochberg, 1995); below 0.05, the effect survives the correction. Full results for all twenty slots: Appendix A.*
+
+**H1 holds, and the calendar that matters is New York's.** The New York opening hour trades at 2.4 times the average hour; the opening hours of Tokyo and London trade *less* than the average hour, and the New York night least. The weekend trades at half a weekday's pace, US holidays at four fifths, round minutes above their neighbours, the minute before the hour below. Data releases and Fed decisions are the busiest moments of the calendar, at 7 to 13 times the same minutes a week earlier.
+
+**Whose day is it? The daylight-saving test.** The US moves its clocks twice a year, Europe on different dates and Asia not at all. If bitcoin's busiest hours follow the US, they must move by an hour, in UTC, when the US changes its clocks:
 
 ![Dollars traded per minute of the day, relative to the day's average, on weekdays in US summer time and in US winter time](figures/13_07_time_of_day_dst.png)
-
-**The daylight-saving test.** The US moves its clocks twice a year, Europe on different dates and Asia not at all. If bitcoin's busiest hours follow the US, they must move by an hour, in UTC, when the US changes its clocks:
 
 | | US summer time | US winter time |
 |---|---|---|
@@ -432,27 +499,9 @@ Bitcoin trades around the clock, but not evenly. The busiest hour of a weekday c
 | Bitcoin's busiest hour | 14:00 to 15:00 UTC | 15:00 to 16:00 UTC |
 | Jump in activity in the minute of the US open, against the minute before | 2.5 times | 2.4 times |
 
-They do. The busiest hour moves by exactly one hour, and the minute the US stock market opens is the minute bitcoin's trading jumps, in both seasons. Smaller spikes move with it: 12:30 or 13:30 UTC, when US economic data are published at 8:30 a.m. New York time, and 20:00 or 21:00 UTC, when the US stock market closes.
+They do. The busiest hour moves by exactly one hour, and the minute the US stock market opens is the minute bitcoin's trading jumps, in both seasons. A large part of the money that trades bitcoin keeps US hours: funds and trading firms, and since January 2024 the US exchange-traded funds that hold bitcoin and trade only while the stock market is open. Their decisions follow the stock market's day and the US data calendar, and the rest of the market trades with them. The tape shows the timing; who exactly trades is not on it.
 
-**Why.** A large part of the money that trades bitcoin keeps US hours: funds and trading firms, and since January 2024 the US exchange-traded funds that hold bitcoin and trade only while the stock market is open. Their decisions follow the stock market's day and the US data calendar, and the rest of the market trades with them. The tape shows the timing; who exactly trades is not on it.
-
-### 7.2 The week
-
-![Dollars traded per minute through the week, by hour, UTC](figures/13_08_week.png)
-
-| Dollars per day, relative to the average day | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday |
-|---|---|---|---|---|---|---|---|
-| | 1.19 | 1.17 | 1.18 | 1.13 | 1.15 | 0.53 | 0.66 |
-
-Weekdays are alike; the weekend trades at half the pace. The market does not close, but the professionals behind most of its money do. Sunday is busier than Saturday, and activity rises through Sunday afternoon and evening, UTC, as the new week approaches. US public holidays that fall on a weekday trade at 71% of an ordinary weekday (55 days in five years): the US calendar shows even in a market that never closes.
-
-### 7.3 The clock itself: round times
-
-![Dollars traded in each minute of the hour, relative to the hour's average, weekdays](figures/13_09_round_minutes.png)
-
-Trading jumps in the first minute of every hour, and less at :15, :30 and :45. Against a typical minute of the same hour, the first minute of the hour carries 56% more dollars, the minutes at :30 and :15 about 20% more, and the minute before the hour 11% less. Trades in the first minute are 10% larger than elsewhere.
-
-**How long does it last?** At one-second resolution, on weekdays of 43 sample days:
+**Round times: a crowd of ten seconds.** At one-second resolution, on weekdays of 43 sample days:
 
 ![Dollars traded per second from two minutes before to five minutes after the full and the half hour, relative to the surrounding hour and a half](figures/13_10_round_seconds.png)
 
@@ -463,62 +512,96 @@ Trading jumps in the first minute of every hour, and less at :15, :30 and :45. A
 | From second 10 to the end of the first minute | 1.24 |
 | Minutes 1 to 5 | 1.12 |
 
-The crowd lasts about ten seconds: activity stays above twice its average for 7 seconds and falls below 1.5 times after 9; at the half hour, the spike lasts 2 seconds. A little elevated activity lingers for a few minutes, and the minute before the hour is quieter than average, as orders wait for the round time.
+Activity stays above twice its average for 7 seconds after the full hour, and for 2 at the half hour. These rhythms come from how people and machines trade, not from when the world is awake: execution algorithms cut large orders into equal pieces and start their schedules on round times (Lecture 12, §7.1); every system built on hourly or 15-minute candles, as in Parts I and II, computes its signal at :00, :15, :30 and :45, all at the same moment; and alerts and decisions are set for the full hour. The minute before the hour is quieter, as orders wait for the round time.
 
-**Why.** These rhythms come from how people trade, not from when the world is awake:
+**H2 holds: moves follow activity, with a telling exception.** Across the twenty slots, the size of moves rises with activity almost in lockstep: the correlation of the two ratios, in logarithms, is 0.98, and moves grow with activity to the power 0.66. On the scale of variance that is about 1.3, close to the 1.5 that Lecture 12 found hour by hour (§7.3): a slot with twice the trading has about 2.5 times the variance. The slots that leave the line are the instructive ones:
 
-- **Machines trade on the clock.** Execution algorithms cut large orders into equal pieces, one every few minutes (Lecture 12, §7.1), and many start their schedules on round times.
-- **Strategies on time bars decide at the close of their bars.** Every system built on hourly or 15-minute candles, as in Parts I and II, computes its signal at :00, :15, :30 and :45, all at the same moment. The time bars of other traders make the spikes.
-- **People do.** Alerts, reports and decisions are set for the full hour.
-
-**What it means.** Trading at :00 means trading in a crowd: more liquidity, and larger trades, but also more competition for the same prices. The first minute of the hour is not more one-sided than others; its flow is slightly better balanced. A strategy of our own should not fire exactly on the hour: sending its orders 10 to 15 seconds after the round time, or a few seconds before it, avoids most of the crowd.
-
-### 7.4 Scheduled events
-
-Some moments are known in advance: data releases, central-bank decisions, option expiries, funding payments, and the full hour itself. Every event is measured the same way, at its time *T*, against a control: the same clock time a week earlier, or for funding and full hours, clock times without the event.
-
-| Measure | Window | The question |
+| Slot | Moves, against what its activity predicts | Reading |
 |---|---|---|
-| Activity | *T* to *T* + 5 minutes | How busy, relative to the day's average minute? |
-| Size of moves | *T* to *T* + 5 minutes | How volatile, relative to the day's average minute? |
-| Typical first reaction | *T* to *T* + 5 minutes | How far does the price move, median, in basis points? |
-| Drift into the event | *T* − 30 minutes to *T* | Does the price tend to move one way beforehand? Average, with its standard error |
-| Follow-through | The reaction against *T* + 5 to *T* + 35 minutes | Does the first reaction carry on or turn back? Correlation, and the share of events in which both point the same way |
+| CPI release | 25% larger | News: the price moves more than the trading alone would explain |
+| Option expiries, quarterly and monthly | 17% to 19% smaller | Trading without news: hedges and closing positions |
+| First minute of the hour with funding | 13% smaller | Mechanical trading around the payment |
 
-**How busy and how volatile.**
+*Our measurement for these notes; the residuals of the fitted line, in logarithms.*
 
-| Event | Times | Activity, first 5 minutes | Control | Size of moves | Control | Typical first reaction | Control |
+Trading that carries information moves the price; trading that only adjusts positions does not, even when it is heavy.
+
+### 7.3 H3 and H4: one-sided flow and direction
+
+![Net aggressive buying, return and follow-through in each slot, in standard errors from its control](figures/13_09_h3_h5_flow_direction_follow.png)
+
+**How to read the chart.** Each dot is the difference between a slot and its control, divided by its standard error: how far the slot lies from what chance would give. Inside the dotted lines at ±1.96 lies what chance produces 95 times in 100; filled dots survive the correction for the 120 tests. A dot far from zero is a reliable difference; it need not be a large one.
+
+**H3: little one-sided flow, and only where something mechanical happens.**
+
+| Slot | n | Net aggressive buying, % of dollars: slot (s.e.) | Control (s.e.) | q |
+|---|---|---|---|---|
+| Minute :00, with funding | 3,897 | +1.3 (0.5) | −1.0 (0.1) | < 0.001 |
+| New York close, 15:30–16:30 | 1,299 | +0.5 (0.2) | −0.4 (0.1) | < 0.001 |
+| Minute :00, other hours | 27,279 | −0.2 (0.2) | −1.0 (0.1) | < 0.001 |
+| Minute :30 | 31,175 | −0.4 (0.2) | −1.0 (0.1) | 0.012 |
+| Minutes :15 and :45 | 62,351 | −0.0 (0.1) | −1.0 (0.1) | < 0.001 |
+| CPI release | 59 | +3.3 (1.5) | −1.6 (2.6) | 0.214 |
+| Fed decision | 40 | −1.0 (1.8) | +0.7 (3.2) | 0.774 |
+| Quarterly expiry | 20 | −4.3 (2.3) | −1.5 (0.8) | 0.381 |
+| Monthly expiry | 40 | −3.0 (1.9) | −1.5 (0.8) | 0.632 |
+
+*Our measurement for these notes. s.e.: standard error. In ordinary minutes, aggressive selling slightly exceeds buying, so the control of the round minutes leans to selling.*
+
+Buyers lean in at the funding minute and in the hour around the New York close, and round minutes are better balanced than ordinary ones, as many independent orders arrive at once. The flow around expiries leans to selling, but not reliably.
+
+**H4: directions that are reliable are tiny, and the large ones are not reliable.**
+
+| Slot | n | Return in the window, bp: slot (s.e.) | Control (s.e.) | q | Return in the window before, bp: slot (s.e.) | Control (s.e.) | q |
 |---|---|---|---|---|---|---|---|
-| US inflation release (CPI) | 59 | 13.2 | 1.2 | 4.7 | 1.1 | 50 bp | 12 bp |
-| Fed decision | 40 | 10.3 | 0.7 | 4.5 | 1.1 | 47 bp | 10 bp |
-| Quarterly option expiry | 20 | 1.5 | 0.9 | 1.3 | 0.9 | 11 bp | 10 bp |
-| Monthly option expiry | 40 | 1.1 | 0.8 | 1.1 | 0.9 | 9 bp | 7 bp |
-| Weekly option expiry | 201 | 0.8 | 0.9 | 0.8 | 0.9 | 7 bp | 8 bp |
-| Funding payment | 5,475 | 1.0 | 0.8 | 1.0 | 0.9 | 8 bp | 7 bp |
-| Any full hour | 43,813 | 0.8 | 0.7 | 0.9 | 0.9 | 7 bp | 7 bp |
+| Minute :00, with funding | 3,897 | +0.59 (0.13) | −0.07 (0.02) | < 0.001 | −1.3 (0.7) | +0.0 (0.1) | 0.098 |
+| Minute :30 | 31,175 | +0.11 (0.06) | −0.07 (0.02) | 0.017 | +0.2 (0.2) | +0.0 (0.1) | 0.686 |
+| Minutes :15 and :45 | 62,351 | +0.09 (0.04) | −0.07 (0.02) | < 0.001 | +0.0 (0.2) | +0.0 (0.1) | 0.989 |
+| Fed decision | 40 | −16 (17) | +1 (2) | 0.467 | +25 (10) | −5 (6) | 0.027 |
+| CPI release | 59 | +13 (17) | −3 (4) | 0.527 | +11 (4) | +3 (4) | 0.342 |
+| Quarterly expiry | 20 | −20 (8) | −2 (2) | 0.122 | −8 (10) | +4 (2) | 0.362 |
+| Monthly expiry | 40 | −15 (5) | −2 (2) | 0.059 | −9 (5) | +4 (2) | 0.049 |
 
-**Direction.**
+*Our measurement for these notes. The window before has the same length as the slot's window: 30 minutes before the releases and expiries, one minute before the round minutes.*
 
-| Event | Drift into the event, basis points | Control | Follow-through: correlation (p) | Control | Same direction as the reaction | Control |
+The round minutes and the funding minute have reliable directions, measured over tens of thousands of minutes, of a tenth of a basis point to half a basis point: far below the cost of a single trade (Lecture 15). This is the case where significance and size part ways. The returns in the settlement window of option expiries look large, −15 to −20 basis points, but rest on 20 and 40 Fridays and do not survive the correction. The drift in the half hour before monthly expiries just passes it (q = 0.049): on 40 Fridays, a borderline result, not a finding. The return towards the settlement average after 08:00 does not hold either (§7.5).
+
+One drift survives at a size that matters: in the 30 minutes before a Fed decision, the price rose by 25 basis points on average, against −5 in the same half hour a week earlier.
+
+| Period | Fed decisions | Return in the 30 minutes before the decision, bp (s.e.) | Same half hour a week earlier, bp | Share of decisions with a rise | Return in the 24 hours before the decision, bp (s.e.) |
+|---|---|---|---|---|---|
+| 2021–2022 | 10 | +59 (34) | −6 | 60% | +139 (95) |
+| 2023 | 8 | +11 (8) | +2 | 50% | +59 (29) |
+| 2024–2026 | 22 | +15 (6) | −7 | 73% | −17 (47) |
+| All | 40 | +25 (10) | −5 | 65% | +37 (37) |
+
+*Our measurement for these notes. Over 24 hours, the same day a week earlier gives +41 bp: no difference.*
+
+The drift sits in the last half hour to two hours before the decision, and it appears in every period, most steadily in 2024 to 2026. Over a full day, bitcoin shows no drift. In US stocks, Lucca and Moench (2015) found the S&P 500 rising by 49 basis points on average in the 24 hours before scheduled Fed announcements from 1994 to 2011; the effect essentially disappeared after 2015 (Kurov, Wolfe and Gilbert, 2021).
+
+**Why might it exist?** One explanation is the "Fed put": since the mid-1990s the Fed has eased policy after stock-market declines, because falling prices lower its growth expectations (Cieslak, Morse and Vissing-Jorgensen, 2019; Cieslak and Vissing-Jorgensen, 2021). If markets expect support, they buy ahead of the decision. Lucca and Moench themselves doubt this explanation, since good news should not show only before the announcement. **A hypothesis of ours:** when inflation is high, as in 2021 to 2023, the Fed can support markets less, so the put, and with it the drift, should depend on the inflation regime. The literature documents the put in a period of low, stable inflation; we found no study that tests its link to inflation, and with 10 decisions in 2021 to 2022 our data cannot test it either. A hypothesis it remains, for Lecture 15.
+
+**Verdict on H4.** As economic reasoning predicts, the calendar does not tell the direction of the price at any size worth trading, with one exception to watch, the drift before Fed decisions.
+
+### 7.4 H5: does the first move carry on?
+
+| Slot | n | Correlation, return in the window with return in the next window: slot | Control | Share of occurrences in the same direction: slot | Control | q (slot ≠ control) |
 |---|---|---|---|---|---|---|
-| US inflation release (CPI) | +11 (± 4) | +6 (± 5) | +0.45 (< 0.01) | −0.06 | 42% | 53% |
-| Fed decision | +25 (± 10) | −5 (± 6) | −0.32 (0.04) | +0.06 | 42% | 57% |
-| Quarterly option expiry | −20 (± 8) | −6 (± 8) | +0.04 (0.86) | −0.09 | 45% | 35% |
-| Monthly option expiry | −15 (± 5) | −6 (± 6) | +0.13 (0.43) | +0.14 | 53% | 55% |
-| Weekly option expiry | −4 (± 2) | −7 (± 2) | +0.05 (0.46) | +0.07 | 52% | 52% |
-| Funding payment | −1.0 (± 0.5) | −0.1 (± 0.5) | −0.08 (< 0.01) | −0.07 | 48% | 48% |
-| Any full hour | −0.1 (± 0.2) | +0.1 (± 0.2) | −0.04 (< 0.01) | −0.00 | 48% | 49% |
+| CPI release | 59 | +0.45 | −0.07 | 42% | 52% | 0.011 |
+| Fed decision | 40 | −0.32 | +0.06 | 42% | 57% | 0.175 |
+| London opening hour | 1,299 | +0.08 | −0.01 | 46% | 47% | 0.005 |
+| New York opening hour | 1,299 | +0.07 | −0.01 | 50% | 47% | 0.025 |
+| New York close, 15:30–16:30 | 1,299 | −0.12 | −0.01 | 43% | 47% | < 0.001 |
+| Minute :00, other hours | 27,279 | −0.04 | +0.01 | 50% | 50% | < 0.001 |
+| Minute :00, with funding | 3,897 | −0.04 | +0.01 | 50% | 50% | 0.009 |
 
+*Our measurement for these notes. Next window: the next 30 minutes after a release or a round minute, the next hour after an hour. q tests whether the slot's correlation differs from the control's.*
 
-*Our measurement for these notes; p: the probability of a correlation at least this strong if there were no effect. Release dates: the Federal Reserve's meeting calendars and the Bureau of Labor Statistics' release schedules (CPI at 8:30 a.m., Fed statements at 2:00 p.m. New York time, following US daylight saving time); the October 2025 CPI report was not published as a separate release. Controls: the same clock time a week earlier; for funding payments, the full hours halfway between them; for full hours, 17 minutes past. On 29 of the 40 Fed days, the busiest minute of the afternoon falls within 15 minutes of 2:00 or of the press conference at 2:30 p.m., which confirms the release time from the tape itself.*
+**The largest result is the CPI release.** The first five minutes' move is followed in the next 30 minutes with a correlation of +0.45: large reactions keep going, small ones are noise, which is why fewer than half of all releases continue in the same direction while the correlation is strong. The opening hours of London and New York carry on slightly into the next hour; the hour around the New York close, where buyers lean in (H3), turns back, as pressure that fades. The reversal after Fed decisions, −0.32, does not survive the correction for 120 tests.
 
-**The US data calendar dominates.** In the five minutes after a CPI release, trading runs at 13 times the day's average pace and the typical first move is 50 basis points, four times the control; Fed decisions come close. Option expiries leave a small trace, the quarterly ones the largest; weekly expiries, funding payments and the full hour hardly differ from their controls in size.
+**Both release effects belong to the inflation shock.** One explanation fits: in 2021 to 2023, inflation kept surprising forecasters, so each CPI release carried real news, which took the market more than five minutes to absorb; the Fed, reacting to the same inflation, mostly decided what the CPI had already led markets to expect, so the first reaction to its statement was partly noise. If so, both effects should fade once inflation stopped surprising. They do:
 
-**Direction differs by event.** After a CPI release, the first reaction carries on: its correlation with the next 30 minutes is +0.45, the strongest result in the table, driven by the large reactions, which keep going, while small ones are noise (only 42% point the same way). After a Fed decision, the first reaction tends to turn back: −0.32, on 40 decisions; a plausible reason, not tested here, is the press conference 30 minutes later, which can change how the statement is read. Before both, the price drifted up on average, and into option expiries it drifted down. Every hour shows a slight reversal after its first five minutes (−0.04, and −0.08 at funding times), too small to trade.
-
-**Both belong to the inflation shock.** One explanation fits: in 2021 to 2023, inflation kept surprising forecasters, so each CPI release carried real news, which took the market more than five minutes to absorb; the Fed, reacting to the same inflation, mostly decided what the CPI had already led markets to expect, so the first reaction to its statement was partly noise. If so, both effects should fade once inflation stopped surprising. They do:
-
-| Event | Period | Releases | Typical first reaction | Follow-through: correlation (p) |
+| Event | Period | Releases | Size of the first move: median absolute 5-minute return, bp, either direction | Follow-through: correlation of the first 5 minutes with the next 30 (p) |
 |---|---|---|---|---|
 | CPI | 2021–2022 | 15 | 187 bp | +0.51 (0.05) |
 | CPI | 2023 | 12 | 29 bp | +0.62 (0.03) |
@@ -527,44 +610,35 @@ Some moments are known in advance: data releases, central-bank decisions, option
 | Fed decision | 2023 | 8 | 28 bp | +0.06 (0.89) |
 | Fed decision | 2024–2026 | 22 | 40 bp | −0.05 (0.84) |
 
-*Our measurement for these notes. 2021 covers October to December.*
+*Our measurement for these notes, checked against the raw trades at the release time and five minutes later. 2021 covers October to December. The largest first moves were in 2022: +4.7% after the CPI release of 10 November 2022, −3.6% after that of 13 September 2022, and −4.7% after the Fed decision of 21 September 2022.*
 
 The follow-through after CPI releases came from 2021 to 2023 and has gone since; the reversal after Fed decisions came almost entirely from 2021 to 2022. With 8 to 32 events per period this is consistent with the explanation, not a proof of it: testing it directly would need the economists' consensus forecast for each release, to measure the surprise, which the tape does not contain. The lesson for a strategy is general: an effect found in one regime can vanish in the next, and a rule fitted on 2022 would have stopped working in 2024.
 
-**How much to trust it.** The table makes seven comparisons of three kinds of direction; at the usual threshold of 5%, one or two would look significant by chance. Only the follow-through after CPI releases is strong enough to stand on its own; the reversal after Fed decisions and the drifts before events are hypotheses for Lecture 15, which tests them with order flow.
+### 7.5 A closer look: option expiries
 
-**Option expiries.** Bitcoin options on Deribit, the largest exchange for them, expire on Fridays at 08:00 UTC; the largest expiries are on the last Friday of each month, and the largest of all on the last Friday of March, June, September and December. The settlement price is the average of Deribit's bitcoin index over the 30 minutes from 07:30 to 08:00 UTC, measured every four seconds, so that no single trade can set it (Deribit, Settlement; Coinbase, Settlement). Positions are hedged and closed while that average is formed.
+*Deep dive: can be skipped on a first reading.*
+
+Bitcoin options on Deribit, the largest exchange for them, expire on Fridays at 08:00 UTC; the largest expiries are on the last Friday of each month, and the largest of all on the last Friday of March, June, September and December. The settlement price is the average of Deribit's bitcoin index over the 30 minutes from 07:30 to 08:00 UTC, measured every four seconds, so that no single trade can set it (Deribit, Settlement; Coinbase, Settlement). Positions are hedged and closed while that average is formed.
 
 ![Dollars traded and size of the move per minute from 07:00 to 09:30 UTC, on quarterly, monthly and weekly expiry Fridays and on Thursdays](figures/13_11_option_expiry.png)
 
-| The minute of 08:00 UTC | Days | Activity ÷ the day's average | Size of the move ÷ the day's average |
+On quarterly expiry days, trading rises from 07:30, exactly when the settlement window opens, peaks at about twice its usual pace around 07:40, and the price moves most at 08:00 itself; monthly expiries show a smaller version, weekly expiries hardly any. The hypotheses give a consistent picture: expiries are busier (H1) with moves smaller than their trading would predict (H2), and they have no reliable flow (H3), direction (H4) or follow-through (H5).
+
+**Does the price return to the settlement average?** One test is specific to expiries: after 08:00, does the price move back towards the average that set the options' value? On the 60 monthly and quarterly expiries, the correlation is +0.19 (p = 0.14) and the price moved back on 60% of days (p = 0.16); on Thursdays, +0.05 and 55%. Option traders also speak of pinning, the price held near a large strike before expiry; testing it needs the options' open interest by strike, which the tape does not have.
+
+### 7.6 The verdict
+
+| Hypothesis | Verdict | Where it holds | Size |
 |---|---|---|---|
-| Quarterly expiry | 20 | 1.77 | 1.46 |
-| Monthly expiry | 40 | 1.28 | 0.99 |
-| Weekly expiry, other Fridays | 201 | 0.96 | 0.77 |
-| Thursday: nothing expires | 260 | 0.81 | 0.83 |
+| H1 Activity bunches in calendar slots | **Holds** | New York's day, weekends, round minutes, releases, expiries | Large: from half to 13 times the control |
+| H2 Moves follow activity | **Holds** | Every slot, with a correlation of 0.98 | News moves more than its trading predicts, hedging less |
+| H3 One-sided flow | **Weak** | The funding minute, the New York close | About one percentage point of net buying |
+| H4 Predictable direction | **Rejected for trading** | Round minutes and the funding minute, reliably but tiny; the drift before Fed decisions, a hypothesis | 0.1 to 0.6 bp; 25 bp before Fed decisions on 40 occasions |
+| H5 Moves carry on or turn back | **Holds in places** | CPI releases (in 2021 to 2023), the New York open and close | Large for CPI, small elsewhere |
 
-*Our measurement for these notes; medians.*
+The calendar tells a strategy *when* the market is deep, thin, crowded or volatile, reliably and by large factors. It tells it almost nothing about *which way* the price will go. Seasonality is a tool for timing execution and sizing risk, not a source of direction: the two examples use it that way (§8).
 
-On quarterly expiry days, trading rises from 07:30, exactly when the settlement window opens, peaks at twice its usual pace around 07:40, and the price moves most at 08:00 itself; monthly expiries show a smaller version, weekly expiries hardly any.
-
-**Volatility, direction and order flow.** The same days, half hour by half hour:
-
-![Volatility, net aggressive buying and average return in each half hour from 07:00 to 09:00 UTC, on quarterly, monthly and weekly expiry Fridays and on Thursdays](figures/13_12_expiry_vol_direction.png)
-
-| | 07:00–07:30 | 07:30–08:00, the settlement window | 08:00–08:30 | 08:30–09:00 |
-|---|---|---|---|---|
-| Volatility, quarterly expiry | 0.64 | 0.76 | 0.81 | 0.59 |
-| Volatility, monthly expiry | 0.49 | 0.49 | 0.77 | 0.49 |
-| Volatility, Thursday | 0.42 | 0.43 | 0.56 | 0.44 |
-
-*Our measurement for these notes. Volatility: the half hour's realised variance divided by the day's average half hour, median over days.*
-
-**Volatility** is the clear result. On quarterly expiries it is already high in the settlement window, at 1.8 times a Thursday; after 08:00 it rises on every day, Thursdays included, around the start of the European working day, but most on expiry days.
-
-**Direction** is not: the drift into expiries and the follow-through after them are in the direction table above, and neither holds. One more test is specific to expiries: does the price move back towards the settlement average after 08:00? On the 60 monthly and quarterly expiries, the correlation is +0.19 (p = 0.14) and the price moved back on 60% of days (p = 0.16); on Thursdays, +0.05 and 55%. Around expiries the market is busier and more volatile, but its direction is not predictable from the tape. Option traders also speak of pinning, the price held near a large strike before expiry; testing it needs the options' open interest by strike, which the tape does not have.
-
-### 7.5 How the rhythm has changed
+### 7.7 How the rhythm has changed
 
 *Deep dive: can be skipped on a first reading.*
 
@@ -577,7 +651,7 @@ On quarterly expiry days, trading rises from 07:30, exactly when the settlement 
 
 The US share of the trading day rose from 35% to 42% between 2021 and 2023 and has stayed there since. The rise came before the US bitcoin funds started trading in January 2024, so they did not cause it; they arrived in a market that already kept US hours.
 
-### 7.6 When each clock makes you trade
+### 7.8 When each clock makes you trade
 
 A strategy on bars takes one decision each time a bar closes: buy, sell or hold. It does not choose the time it trades; it chooses a clock, and the clock decides when the decisions fall. The seasonality maps above show where they fall for each clock:
 
@@ -590,7 +664,7 @@ A strategy on bars takes one decision each time a bar closes: buy, sell or hold.
 
 *Our measurement for these notes; tick and volume bars are close to dollar bars, CUSUM to range bars.*
 
-**Time bars** decide at 00:00, 00:30, 01:00 and so on, whatever the market does. A quarter of their decisions therefore fall in the quietest quarter of the week's hours, nights and weekends, when the market is thin; and every decision falls on a round minute, together with every other clock-driven order (§7.3).
+**Time bars** decide at 00:00, 00:30, 01:00 and so on, whatever the market does. A quarter of their decisions therefore fall in the quietest quarter of the week's hours, nights and weekends, when the market is thin; and every decision falls on a round minute, together with every other clock-driven order (§7.2).
 
 **Activity clocks** decide where the money is. A dollar bar closes after a fixed amount of trading, so bars close quickly when much is traded and slowly when little is: the busiest quarter of the week's hours carries 42% of the dollars, and 42% of the dollar bars close in it, against 14% in the quietest quarter. They almost never close on a round minute, so they also avoid that crowd.
 
@@ -611,8 +685,8 @@ A trend rule decides at each bar's close, so its clock decides when it trades.
 | The clock (§3 to §5) | The same rule runs on time bars and on dollar bars, at the same average number of bars per day, so that neither is smoother only because it is finer (§2.5). Look-back windows are counted in bars: on dollar bars, a 20-bar average spans less time in a busy week than in a quiet one |
 | Thresholds (§3.4) | The dollar threshold is set from the past 28 days, and every constant from the first three months of data, so that no bar uses the future |
 | Returns (§5) | On dollar bars, a third as many moves beyond four standard deviations: a volatility estimate from bar returns is disturbed less by single bars. Volatility clustering remains on every clock, so the rule still needs position sizes that follow volatility (Lecture 14) |
-| When decisions fall (§7.6) | On time bars, every decision on a round minute and a quarter of them in the thinnest hours; on dollar bars, decisions in the deep hours, one in 30 in a burst. Lecture 16 prices both profiles with the costs of Lecture 15 |
-| Scheduled events (§7.4) | A bar that closes in the five minutes after a CPI release or a Fed decision trades in the most violent minutes of the month. The dates are known in advance, so a rule can skip decisions in these windows without looking ahead; Lecture 16 tests whether it should |
+| When decisions fall (§7.8) | On time bars, every decision on a round minute and a quarter of them in the thinnest hours; on dollar bars, decisions in the deep hours, one in 30 in a burst. Lecture 16 prices both profiles with the costs of Lecture 15 |
+| Scheduled events (§7.2 to §7.4) | A bar that closes in the five minutes after a CPI release or a Fed decision trades in the most violent minutes of the month. The dates are known in advance, so a rule can skip decisions in these windows without looking ahead; Lecture 16 tests whether it should |
 | Imbalance bars (§6) | Not used as a clock: their returns are no closer to normal than on dollar bars |
 
 ### 8.2 The grid (Lecture 17)
@@ -621,9 +695,9 @@ A grid does not decide at bar closes. It leaves buy orders below the price and s
 
 | From this lecture | What the grid takes |
 |---|---|
-| The time of day and the week (§7.1, §7.2) | The busiest hour of a weekday trades twice its even share, a weekend day half as much as a weekday. A spacing that suits the US afternoon fills rarely at night: the spacing should follow volatility as it changes through the day and the week (Lecture 14) |
-| Round times (§7.3) | Trading jumps in the first seconds of every hour: the fills of resting orders bunch there, and so does the competition for them |
-| Scheduled events (§7.4) | After a CPI release or a Fed decision, the typical first move is about 50 basis points in five minutes, four times the same minute a week earlier, and after CPI releases in 2021 to 2023 it kept going. A one-way move of this size is what runs through a grid. The dates are known in advance, so a grid can step aside before them without looking ahead; Lecture 17 tests the rule. Option expiries raise volatility but not direction: a reason for wider spacing in the settlement window, not for stepping aside |
+| The time of day and the week (§7.2) | The busiest hour of a weekday trades twice its even share, a weekend day half as much as a weekday. A spacing that suits the US afternoon fills rarely at night: the spacing should follow volatility as it changes through the day and the week (Lecture 14) |
+| Round times (§7.2) | Trading jumps in the first seconds of every hour: the fills of resting orders bunch there, and so does the competition for them |
+| Scheduled events (§7.2 to §7.4) | After a CPI release or a Fed decision, moves are four to five times as large as in the same minutes a week earlier, and after CPI releases in 2021 to 2023 the first move kept going. A one-way move of this size is what runs through a grid. The dates are known in advance, so a grid can step aside before them without looking ahead; Lecture 17 tests the rule. Option expiries raise activity, and on quarterly expiries the size of moves, but not direction: a reason for wider spacing in the settlement window, not for stepping aside |
 | The clock (§3) | A grid is re-centred and its spacing updated from time to time. On a dollar clock the updates come faster when the market is busy and slower when it is quiet |
 | The imbalance clock (§6) | It marks the moments when one side pushes hardest, when a grid collects inventory on the losing side. Whether it can serve as a filter is a question for Lecture 15, then for Lecture 17 |
 
@@ -638,7 +712,7 @@ The two examples use the lecture in opposite ways: the trend rule takes a clock,
 3. **The clocks fall into groups.** Tick, volume and dollar bars close in the same hours; range and CUSUM bars are the same clock twice; time bars stand apart. One representative per group is enough: time, dollar, range.
 4. **Activity clocks bring returns closer to normal, but not all the way.** Dollar bars have a third as many moves beyond four standard deviations as 30-minute bars, still forty times the normal; volatility clustering remains on every clock. Price clocks are thin-tailed by construction, which says nothing about the market.
 5. **A clock must be stable by design, not by patches.** A price clock reads one price per second, not every fill; López de Prado's imbalance bars collapse or run away on our tape; our fixed-band version is stable without limits, but its returns are no closer to normal than on dollar bars.
-6. **The market keeps US hours.** The busiest hour moves with US daylight saving time, the weekend trades at half the pace, trading jumps in the first seconds of every hour, and US inflation releases and Fed decisions are the largest scheduled events. Option expiries raise volatility, not a predictable direction, and effects found in one regime can vanish in the next.
+6. **The calendar tells when, not which way.** Five hypotheses, tested on slots fixed in advance and corrected for 120 tests: activity bunches in New York's day, at round times, around releases and expiries, and the size of moves follows it; one-sided flow is weak, and the only reliable directions are too small to trade. The market keeps US hours: its busiest hour moves with US daylight saving time.
 7. **We do not choose the time; we choose the clock, and the clock decides when we trade.** Time bars decide on round minutes and in thin hours; dollar bars in the deep hours and in bursts.
 
 ### 9.2 Exercises
@@ -648,28 +722,138 @@ The two examples use the lecture in opposite ways: the trend rule takes a clock,
 - [ ] Build range bars on the Fed day, 21 September 2022, from every fill and from one price per second. How many bars does each give in the ten minutes after 18:00 (§3.5)?
 - [ ] Build López de Prado's imbalance bars with a cap of 200 orders on the expected bar length. How long are the bars after a week (§6.4)?
 - [ ] Build the fixed-band imbalance clock at 96 bars a day, with the variance measured over 15 minutes. Is the constant from October to December 2021 close to the one for 48 bars a day (§6.5)?
-- [ ] Repeat the daylight-saving test of §7.1 for ETHUSDT. Does it keep US hours too?
-- [ ] Add the US employment report (the first Friday of the month, 8:30 a.m. New York time) to the event tables of §7.4. Where does it rank?
+- [ ] Repeat the daylight-saving test of §7.2 for ETHUSDT. Does it keep US hours too?
+- [ ] Add the US employment report (the first Friday of the month, 8:30 a.m. New York time) as a new slot to the tests of §7.1. Which of the five hypotheses hold for it, after correcting for the number of tests?
+- [ ] Choose a calendar effect of your own, for example the turn of the month or the hours around the Asian lunch break. State the hypothesis and its reason first, fix the slot and its control before looking at the data, then test it as in §7.1. Does it survive the correction?
 
 ### 9.3 Reading
 
 For prices in trading time, Mandelbrot and Taylor (1967), Clark (1973) and Ané and Geman (2000), with the comment of Murphy and Izzeldin (2005). For bars on activity and information clocks, López de Prado (2018, ch. 2) and Easley, López de Prado and O'Hara (2012). For intraday seasonality, Dacorogna et al. (2001). For the persistence of order flow behind §6, Lillo and Farmer (2004).
 
+## Appendix A. Seasonality: full results
+
+The results of §7 for all twenty slots, as computed by the notebook. n: occurrences of the slot; s.e.: standard error; q: the p-value adjusted for the 120 tests (Benjamini and Hochberg, 1995).
+
+**H1 and H2: activity and the size of moves.**
+
+| Slot | n | Activity, slot ÷ control (95% interval) | q | Size of moves, slot ÷ control (95% interval) | q |
+|---|---|---|---|---|---|
+| Tokyo opening hour | 1,299 | 0.88 (0.85–0.92) | < 0.001 | 1.04 (1.00–1.07) | 0.041 |
+| London opening hour | 1,299 | 0.81 (0.78–0.85) | < 0.001 | 0.84 (0.82–0.86) | < 0.001 |
+| New York opening hour | 1,299 | 2.36 (2.26–2.45) | < 0.001 | 1.72 (1.66–1.77) | < 0.001 |
+| New York close, 15:30–16:30 | 1,299 | 1.02 (0.96–1.07) | 0.746 | 1.11 (1.07–1.14) | < 0.001 |
+| New York night, 2:00–3:00 | 1,299 | 0.71 (0.68–0.75) | < 0.001 | 0.78 (0.76–0.80) | < 0.001 |
+| Saturday | 260 | 0.45 (0.42–0.49) | < 0.001 | 0.60 (0.56–0.63) | < 0.001 |
+| Sunday | 260 | 0.55 (0.52–0.59) | < 0.001 | 0.66 (0.62–0.69) | < 0.001 |
+| Monday | 227 | 1.03 (0.97–1.08) | 0.632 | 1.00 (0.95–1.05) | 0.915 |
+| Friday | 253 | 0.99 (0.94–1.04) | 0.847 | 0.99 (0.94–1.05) | 0.830 |
+| US holiday on a weekday | 55 | 0.80 (0.67–0.93) | 0.007 | 0.88 (0.76–1.00) | 0.108 |
+| Minute :00, with funding | 3,897 | 1.51 (1.44–1.58) | < 0.001 | 1.11 (1.08–1.15) | < 0.001 |
+| Minute :00, other hours | 27,279 | 1.30 (1.26–1.34) | < 0.001 | 1.12 (1.10–1.14) | < 0.001 |
+| Minute :30 | 31,175 | 1.24 (1.20–1.28) | < 0.001 | 1.17 (1.16–1.19) | < 0.001 |
+| Minutes :15 and :45 | 62,351 | 1.04 (1.02–1.06) | < 0.001 | 1.09 (1.07–1.10) | < 0.001 |
+| Minute :59 | 31,175 | 0.87 (0.85–0.89) | < 0.001 | 0.80 (0.78–0.82) | < 0.001 |
+| CPI release | 59 | 6.86 (2.60–11.11) | < 0.001 | 4.38 (3.05–5.70) | < 0.001 |
+| Fed decision | 40 | 12.94 (9.31–16.58) | < 0.001 | 5.16 (3.55–6.78) | < 0.001 |
+| Quarterly expiry | 20 | 2.29 (1.83–2.76) | < 0.001 | 1.37 (1.12–1.62) | 0.024 |
+| Monthly expiry | 40 | 1.64 (1.22–2.06) | 0.010 | 1.12 (0.94–1.30) | 0.381 |
+| Weekly expiry | 200 | 1.37 (1.15–1.60) | 0.004 | 1.10 (0.97–1.22) | 0.247 |
+
+**H3: net aggressive buying.**
+
+| Slot | n | Net aggressive buying, % of dollars: slot (s.e.) | Control (s.e.) | q |
+|---|---|---|---|---|
+| Tokyo opening hour | 1,299 | −0.9 (0.2) | −0.4 (0.1) | 0.146 |
+| London opening hour | 1,299 | −0.4 (0.2) | −0.4 (0.1) | 0.847 |
+| New York opening hour | 1,299 | −0.7 (0.2) | −0.4 (0.1) | 0.276 |
+| New York close, 15:30–16:30 | 1,299 | +0.5 (0.2) | −0.4 (0.1) | < 0.001 |
+| New York night, 2:00–3:00 | 1,299 | −0.6 (0.3) | −0.4 (0.1) | 0.746 |
+| Saturday | 260 | −0.7 (0.2) | −0.4 (0.1) | 0.331 |
+| Sunday | 260 | −0.2 (0.2) | −0.4 (0.1) | 0.369 |
+| Monday | 227 | −0.4 (0.2) | −0.4 (0.1) | 0.830 |
+| Friday | 253 | −0.7 (0.2) | −0.4 (0.1) | 0.346 |
+| US holiday on a weekday | 55 | +0.1 (0.3) | −0.4 (0.1) | 0.276 |
+| Minute :00, with funding | 3,897 | +1.3 (0.5) | −1.0 (0.1) | < 0.001 |
+| Minute :00, other hours | 27,279 | −0.2 (0.2) | −1.0 (0.1) | < 0.001 |
+| Minute :30 | 31,175 | −0.4 (0.2) | −1.0 (0.1) | 0.012 |
+| Minutes :15 and :45 | 62,351 | −0.0 (0.1) | −1.0 (0.1) | < 0.001 |
+| Minute :59 | 31,175 | −0.8 (0.2) | −1.0 (0.1) | 0.378 |
+| CPI release | 59 | +3.3 (1.5) | −1.6 (2.6) | 0.214 |
+| Fed decision | 40 | −1.0 (1.8) | +0.7 (3.2) | 0.774 |
+| Quarterly expiry | 20 | −4.3 (2.3) | −1.5 (0.8) | 0.381 |
+| Monthly expiry | 40 | −3.0 (1.9) | −1.5 (0.8) | 0.632 |
+| Weekly expiry | 200 | −1.5 (0.8) | −1.5 (0.8) | 0.969 |
+
+**H4: return in the window and before it.**
+
+| Slot | n | Return in the window, bp: slot (s.e.) | Control (s.e.) | q | Return in the window before, bp: slot (s.e.) | Control (s.e.) | q |
+|---|---|---|---|---|---|---|---|
+| Tokyo opening hour | 1,299 | +0.4 (1.7) | +0.1 (0.3) | 0.915 | −2.4 (1.4) | +0.0 (0.3) | 0.189 |
+| London opening hour | 1,299 | +0.9 (1.4) | +0.1 (0.3) | 0.704 | −0.7 (1.3) | +0.0 (0.3) | 0.757 |
+| New York opening hour | 1,299 | −2.6 (2.6) | +0.1 (0.3) | 0.467 | +0.1 (2.1) | +0.0 (0.3) | 0.969 |
+| New York close, 15:30–16:30 | 1,299 | +2.3 (1.7) | +0.1 (0.3) | 0.331 | +0.4 (1.9) | +0.0 (0.3) | 0.915 |
+| New York night, 2:00–3:00 | 1,299 | −0.9 (1.3) | +0.1 (0.3) | 0.632 | +1.6 (1.3) | +0.0 (0.3) | 0.355 |
+| Saturday | 260 | +0 (9) | −1 (8) | 0.956 | −6 (19) | +2 (8) | 0.828 |
+| Sunday | 260 | +11 (13) | −1 (8) | 0.610 | +0 (9) | +2 (8) | 0.947 |
+| Monday | 227 | +17 (22) | −1 (8) | 0.610 | +11 (14) | +2 (8) | 0.741 |
+| Friday | 253 | −6 (19) | −1 (8) | 0.915 | −43 (17) | +2 (8) | 0.051 |
+| US holiday on a weekday | 55 | +59 (34) | −1 (8) | 0.189 | +66 (37) | +2 (8) | 0.189 |
+| Minute :00, with funding | 3,897 | +0.59 (0.13) | −0.07 (0.02) | < 0.001 | −1.3 (0.7) | +0.0 (0.1) | 0.098 |
+| Minute :00, other hours | 27,279 | −0.01 (0.06) | −0.07 (0.02) | 0.494 | +0.0 (0.3) | +0.0 (0.1) | 0.969 |
+| Minute :30 | 31,175 | +0.11 (0.06) | −0.07 (0.02) | 0.017 | +0.2 (0.2) | +0.0 (0.1) | 0.686 |
+| Minutes :15 and :45 | 62,351 | +0.09 (0.04) | −0.07 (0.02) | < 0.001 | +0.0 (0.2) | +0.0 (0.1) | 0.989 |
+| Minute :59 | 31,175 | −0.01 (0.04) | −0.07 (0.02) | 0.277 | −0.1 (0.2) | +0.0 (0.1) | 0.746 |
+| CPI release | 59 | +13 (17) | −3 (4) | 0.527 | +11 (4) | +3 (4) | 0.342 |
+| Fed decision | 40 | −16 (17) | +1 (2) | 0.467 | +25 (10) | −5 (6) | 0.027 |
+| Quarterly expiry | 20 | −20 (8) | −2 (2) | 0.122 | −8 (10) | +4 (2) | 0.362 |
+| Monthly expiry | 40 | −15 (5) | −2 (2) | 0.059 | −9 (5) | +4 (2) | 0.049 |
+| Weekly expiry | 200 | −4 (2) | −2 (2) | 0.757 | +3 (2) | +4 (2) | 0.830 |
+
+**H5: follow-through.**
+
+| Slot | n | Correlation, return in the window with return in the next window: slot | Control | Share of occurrences in the same direction: slot | Control | q (slot ≠ control) |
+|---|---|---|---|---|---|---|
+| Tokyo opening hour | 1,299 | −0.01 | −0.01 | 46% | 47% | 0.956 |
+| London opening hour | 1,299 | +0.08 | −0.01 | 46% | 47% | 0.005 |
+| New York opening hour | 1,299 | +0.07 | −0.01 | 50% | 47% | 0.025 |
+| New York close, 15:30–16:30 | 1,299 | −0.12 | −0.01 | 43% | 47% | < 0.001 |
+| New York night, 2:00–3:00 | 1,299 | −0.04 | −0.01 | 48% | 47% | 0.381 |
+| Saturday | 260 | −0.05 | −0.04 | 51% | 47% | 0.951 |
+| Sunday | 260 | +0.08 | −0.04 | 48% | 47% | 0.149 |
+| Monday | 227 | −0.07 | −0.04 | 44% | 47% | 0.847 |
+| Friday | 253 | +0.12 | −0.04 | 51% | 47% | 0.053 |
+| US holiday on a weekday | 55 | −0.05 | −0.04 | 55% | 47% | 0.969 |
+| Minute :00, with funding | 3,897 | −0.04 | +0.01 | 50% | 50% | 0.009 |
+| Minute :00, other hours | 27,279 | −0.04 | +0.01 | 50% | 50% | < 0.001 |
+| Minute :30 | 31,175 | +0.01 | +0.01 | 50% | 50% | 0.346 |
+| Minutes :15 and :45 | 62,351 | −0.01 | +0.01 | 49% | 50% | 0.021 |
+| Minute :59 | 31,175 | −0.02 | +0.01 | 49% | 50% | < 0.001 |
+| CPI release | 59 | +0.45 | −0.07 | 42% | 52% | 0.011 |
+| Fed decision | 40 | −0.32 | +0.06 | 42% | 57% | 0.175 |
+| Quarterly expiry | 20 | +0.11 | −0.02 | 55% | 44% | 0.746 |
+| Monthly expiry | 40 | +0.11 | −0.02 | 30% | 44% | 0.632 |
+| Weekly expiry | 200 | −0.00 | −0.02 | 50% | 44% | 0.936 |
+
 ## References
 
 - Ané, T. and Geman, H. (2000). Order flow, transaction clock, and normality of asset returns. *Journal of Finance* 55(5), 2259–2284. — the transaction clock; normality in trading time (§1).
+- Benjamini, Y. and Hochberg, Y. (1995). Controlling the false discovery rate: a practical and powerful approach to multiple testing. *Journal of the Royal Statistical Society, Series B* 57(1), 289–300. — the correction for many tests (§7.1).
 - BlackArbsCEO. Adv_Fin_ML_Exercises, GitHub issues #1 and #9. — practitioners' reports of runaway and collapsing imbalance bars (§6.3).
 - Blackwell, D. and Freedman, D. (1964). A remark on the coin tossing game. *Annals of Mathematical Statistics* 35(3). — leaving a square-root boundary takes infinitely long on average (§6.5).
 - Bouchaud, J.-P., Farmer, J. D. and Lillo, F. (2009). How markets slowly digest changes in supply and demand. In Hens, T. and Schenk-Hoppé, K. R. (eds.), *Handbook of Financial Markets: Dynamics and Evolution*. North-Holland. — net order flow grows faster than with independent signs (§6.5).
 - Breiman, L. (1967). First exit times from a square root boundary. *Proceedings of the Fifth Berkeley Symposium on Mathematical Statistics and Probability*, vol. 2. — the same, for general random walks (§6.5).
 - Business Today (11 October 2025). Crypto crash: $19 bn wiped out as Trump's 100% China tariff sparks largest liquidation in history. — the liquidations of 10 October 2025, from Bloomberg data (§3.5).
+- Cieslak, A. and Vissing-Jorgensen, A. (2021). The economics of the Fed put. *Review of Financial Studies* 34(9), 4045–4089. — why the Fed eases after stock-market declines (§7.3).
+- Cieslak, A., Morse, A. and Vissing-Jorgensen, A. (2019). Stock returns over the FOMC cycle. *Journal of Finance* 74(5), 2201–2248. — the Fed put (§7.3).
 - Clark, P. K. (1973). A subordinated stochastic process model with finite variance for speculative prices. *Econometrica* 41(1), 135–155. — volume as the clock of prices (§1).
-- Coinbase. Settlement (Global Derivatives), help centre. — the 30-minute settlement window of Deribit's contracts (§7.4).
+- Coinbase. Settlement (Global Derivatives), help centre. — the 30-minute settlement window of Deribit's contracts (§7.5).
 - Dacorogna, M. M., Gençay, R., Müller, U. A., Olsen, R. B. and Pictet, O. V. (2001). *An Introduction to High-Frequency Finance*. Academic Press. — intrinsic time (§1).
-- Deribit. Settlement, support centre. — settlement on the 30-minute time-weighted average of the index, 07:30 to 08:00 UTC (§7.4).
+- Deribit. Settlement, support centre. — settlement on the 30-minute time-weighted average of the index, 07:30 to 08:00 UTC (§7.5).
 - Easley, D., López de Prado, M. and O'Hara, M. (2012). The volume clock: insights into the high-frequency paradigm. *Journal of Portfolio Management*, Fall 2012. — the volume clock (§1).
 - Hudson & Thames. mlfinlab documentation: imbalance bars, `exp_num_ticks_constraints`. — limits on the expected bar length (§6.4).
+- Kurov, A., Wolfe, M. H. and Gilbert, T. (2021). The disappearing pre-FOMC announcement drift. *Finance Research Letters* 40, 101781. — the drift in US stocks after 2015 (§7.3).
 - Lillo, F. and Farmer, J. D. (2004). The long memory of the efficient market. *Studies in Nonlinear Dynamics & Econometrics* 8(3). — persistence of order signs (§6.5).
+- Lucca, D. O. and Moench, E. (2015). The pre-FOMC announcement drift. *Journal of Finance* 70(1), 329–371. — US stocks rise before Fed announcements (§7.3).
 - López de Prado, M. (2017). The 7 reasons most machine learning funds fail. SSRN 3031282. — the imbalance threshold and its estimation from past bars (§6.2).
 - López de Prado, M. (2018). *Advances in Financial Machine Learning*. Wiley, ch. 2. — tick, volume, dollar, imbalance and run bars; the CUSUM filter (§2).
 - Mandelbrot, B. and Taylor, H. M. (1967). On the distribution of stock price differences. *Operations Research* 15(6), 1057–1062. — prices in transaction time (§1).
