@@ -311,13 +311,26 @@ Weekdays are alike; the weekend trades at half the pace. The market does not clo
 
 Trading jumps in the first minute of every hour, and less at :15, :30 and :45. Against a typical minute of the same hour, the first minute of the hour carries 56% more dollars, the minutes at :30 and :15 about 20% more, and the minute before the hour 11% less. Trades in the first minute are 10% larger than elsewhere.
 
+**How long does it last?** At one-second resolution, on weekdays of 43 sample days:
+
+![Dollars traded per second from two minutes before to five minutes after the full and the half hour, relative to the surrounding hour and a half](figures/13_10_round_seconds.png)
+
+| Around the full hour | Dollars per second ÷ the average |
+|---|---|
+| The last minute before | 0.92 |
+| The first 5 seconds | 2.5 |
+| From second 10 to the end of the first minute | 1.24 |
+| Minutes 1 to 5 | 1.12 |
+
+The crowd lasts about ten seconds: activity stays above twice its average for 7 seconds and falls below 1.5 times after 9; at the half hour, the spike lasts 2 seconds. A little elevated activity lingers for a few minutes, and the minute before the hour is quieter than average, as orders wait for the round time.
+
 **Why.** These rhythms come from how people trade, not from when the world is awake:
 
 - **Machines trade on the clock.** Execution algorithms cut large orders into equal pieces, one every few minutes (Lecture 12, §7.1), and many start their schedules on round times.
 - **Strategies on time bars decide at the close of their bars.** Every system built on hourly or 15-minute candles, as in Parts I and II, computes its signal at :00, :15, :30 and :45, all at the same moment. The time bars of other traders make the spikes.
 - **People do.** Alerts, reports and decisions are set for the full hour.
 
-**What it means.** Trading at :00 means trading in a crowd: more liquidity, and larger trades, but also more competition for the same prices. The first minute of the hour is not more one-sided than others; its flow is slightly better balanced. A strategy of our own should not fire exactly on the hour: an offset of a few seconds or minutes avoids competing with every other clock-driven order.
+**What it means.** Trading at :00 means trading in a crowd: more liquidity, and larger trades, but also more competition for the same prices. The first minute of the hour is not more one-sided than others; its flow is slightly better balanced. A strategy of our own should not fire exactly on the hour: sending its orders 10 to 15 seconds after the round time, or a few seconds before it, avoids most of the crowd.
 
 ### 7.4 Scheduled events
 
@@ -332,6 +345,21 @@ Trading jumps in the first minute of every hour, and less at :15, :30 and :45. A
 *Our measurement for these notes. Release dates: the Federal Reserve's meeting calendars and the Bureau of Labor Statistics' release schedules; the October 2025 CPI report was not published as a separate release. Times follow US daylight saving time. On 29 of the 40 Fed days, the busiest minute of the afternoon falls within 15 minutes of 2 p.m. or of the press conference at 2:30 p.m. New York time, which confirms the release time from the tape itself.*
 
 The US inflation release is the largest scheduled event in bitcoin: in its minute, trading runs at 28 times the day's average pace and the price moves 13 times as much as in an average minute. The Fed's decisions come second. Both are invisible a week earlier at the same minute: the effect belongs to the event, not to the time of day. The monthly expiry of bitcoin options leaves a small trace; weekly expiries and the funding payments leave none at the scale of a minute (Lecture 12, §6.2 found the effect of funding in the minutes around it, and small).
+
+**Option expiries.** Bitcoin options on Deribit, the largest exchange for them, expire on Fridays at 08:00 UTC; the largest expiries are on the last Friday of each month, and the largest of all on the last Friday of March, June, September and December. The settlement price is the average of Deribit's bitcoin index over the 30 minutes from 07:30 to 08:00 UTC, measured every four seconds, so that no single trade can set it (Deribit, Settlement; Coinbase, Settlement). Positions are hedged and closed while that average is formed.
+
+![Dollars traded and size of the move per minute from 07:00 to 09:30 UTC, on quarterly, monthly and weekly expiry Fridays and on Thursdays](figures/13_11_option_expiry.png)
+
+| The minute of 08:00 UTC | Days | Activity ÷ the day's average | Size of the move ÷ the day's average |
+|---|---|---|---|
+| Quarterly expiry | 20 | 1.77 | 1.46 |
+| Monthly expiry | 40 | 1.28 | 0.99 |
+| Weekly expiry, other Fridays | 201 | 0.96 | 0.77 |
+| Thursday: nothing expires | 260 | 0.81 | 0.83 |
+
+*Our measurement for these notes; medians.*
+
+On quarterly expiry days, trading rises from 07:30, exactly when the settlement window opens, peaks at twice its usual pace around 07:40, and the price moves most at 08:00 itself; monthly expiries show a smaller version, weekly expiries hardly any. Option traders also speak of pinning: when large positions sit near one strike, hedging can hold the price near it before expiry and release it after. The size of moves in the hour before and the hour after 08:00 barely differs on our data (0.75 and 0.76 times the day's average on quarterly expiries), but a real test of pinning needs the options' open interest by strike, which the tape does not have.
 
 ### 7.5 How the rhythm has changed
 
@@ -348,7 +376,7 @@ The US share of the trading day rose from 35% to 42% between 2021 and 2023 and h
 
 ### 7.6 When each clock makes you trade
 
-A strategy does not choose the time it trades: it chooses a clock, and the clock decides. Each bar's close is a decision, and the decision falls wherever the clock happens to tick. The same seasonality maps therefore describe each clock's trading:
+A strategy on bars takes one decision each time a bar closes: buy, sell or hold. It does not choose the time it trades; it chooses a clock, and the clock decides when the decisions fall. The seasonality maps above show where they fall for each clock:
 
 | Share of bar closes… | Time | Dollar | Range | For comparison |
 |---|---|---|---|---|
@@ -359,7 +387,11 @@ A strategy does not choose the time it trades: it chooses a clock, and the clock
 
 *Our measurement for these notes; tick and volume bars are close to dollar bars, CUSUM to range bars.*
 
-**Time bars** spread their decisions evenly over the clock: a quarter of them in the quietest hours of the week, and every one of them on a round minute, together with every other clock-driven order (§7.3). **Activity clocks** decide where the money is: their share of decisions in each hour matches that hour's share of the dollars traded, so they trade far less in thin markets and avoid the crowd at the round minute. The price they pay for this is bursts: a dollar bar closes in a burst minute 28 times as often as chance would give, a range bar 50 times as often, and bursts are when spreads widen and the flow is one-sided (Lecture 12, §7.3).
+**Time bars** decide at 00:00, 00:30, 01:00 and so on, whatever the market does. A quarter of their decisions therefore fall in the quietest quarter of the week's hours, nights and weekends, when the market is thin; and every decision falls on a round minute, together with every other clock-driven order (§7.3).
+
+**Activity clocks** decide where the money is. A dollar bar closes after a fixed amount of trading, so bars close quickly when much is traded and slowly when little is: the busiest quarter of the week's hours carries 42% of the dollars, and 42% of the dollar bars close in it, against 14% in the quietest quarter. They almost never close on a round minute, so they also avoid that crowd.
+
+**The price is bursts.** A burst minute, with more than twenty times the day's usual pace of trading, comes about once in 800 minutes: after a Fed decision, in a liquidation cascade. In a burst the money flows so fast that several dollar bars close within the same minute. One dollar-bar decision in 30 falls in a burst, 28 times as often as decisions spread evenly in time would; for range bars it is one in 17, 50 times as often, because bursts are also when the price moves most. Time bars meet a burst by chance only, one decision in 1,100. Bursts are the most expensive moments to trade: spreads widen, the flow is one-sided, prices jump (Lecture 12, §7.3).
 
 Neither is better in general. Which execution profile is cheaper, the crowd at the round minute or the bursts, is a question of costs: Lecture 15 measures them, and Lecture 16 applies them to a trend rule on time and on dollar bars.
 
@@ -368,6 +400,8 @@ Neither is better in general. Which execution profile is cheaper, the crowd at t
 - Ané, T. and Geman, H. (2000). Order flow, transaction clock, and normality of asset returns. *Journal of Finance* 55(5), 2259–2284. — the transaction clock; normality in trading time (§1).
 - Business Today (11 October 2025). Crypto crash: $19 bn wiped out as Trump's 100% China tariff sparks largest liquidation in history. — the liquidations of 10 October 2025, from Bloomberg data (§3.5).
 - Clark, P. K. (1973). A subordinated stochastic process model with finite variance for speculative prices. *Econometrica* 41(1), 135–155. — volume as the clock of prices (§1).
+- Coinbase. Settlement (Global Derivatives), help centre. — the 30-minute settlement window of Deribit's contracts (§7.4).
+- Deribit. Settlement, support centre. — settlement on the 30-minute time-weighted average of the index, 07:30 to 08:00 UTC (§7.4).
 - Dacorogna, M. M., Gençay, R., Müller, U. A., Olsen, R. B. and Pictet, O. V. (2001). *An Introduction to High-Frequency Finance*. Academic Press. — intrinsic time (§1).
 - Easley, D., López de Prado, M. and O'Hara, M. (2012). The volume clock: insights into the high-frequency paradigm. *Journal of Portfolio Management*, Fall 2012. — the volume clock (§1).
 - López de Prado, M. (2018). *Advances in Financial Machine Learning*. Wiley, ch. 2. — tick, volume, dollar, imbalance and run bars; the CUSUM filter (§2).
