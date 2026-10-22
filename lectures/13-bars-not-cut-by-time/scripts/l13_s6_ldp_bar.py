@@ -1,0 +1,37 @@
+"""López de Prado's bars, second reading: E[b v] as an EWMA over prior bars of each bar's imbalance per order (theta_T / T)."""
+import sys
+from datetime import date, timedelta
+from pathlib import Path
+import numpy as np
+from numba import njit
+import os, sys
+if hasattr(sys.stdout, "reconfigure"): sys.stdout.reconfigure(encoding="utf-8", errors="replace")   # tables print on any console; Jupyter handles its own
+HERE = Path(__file__).resolve().parent                                     # lectures/13-.../scripts
+sys.path[:0] = [str(HERE), str(HERE.parents[1] / "12-tick-data-the-tape"), str(HERE.parents[2])]   # this folder, tape.py, trading_models
+import tape
+L13_RESULTS = tape.ROOT / "interim" / "l13"; L13_RESULTS.mkdir(parents=True, exist_ok=True)          # results: in the data folder, never committed
+FIG = Path(os.environ.get("L13_FIG", HERE.parent / "figures")); FIG.mkdir(parents=True, exist_ok=True)
+PREFIX = os.environ.get("L13_PREFIX", "nb_")                               # "nb_": the lecture's own figures are never overwritten
+import l13_s6 as m
+
+@njit(cache=True)
+def _ldp_bar(s, S, n, ET, Ebv, span):
+    out = np.empty(len(s), np.int64); k = 0; ab = 2.0 / (span + 1.0)
+    for i in range(len(s)):
+        S += s[i]; n += 1
+        if abs(S) >= ET * abs(Ebv):
+            out[k] = i; k += 1
+            ET += ab * (n - ET); Ebv += ab * (S / n - Ebv); S = 0.0; n = 0
+    return out[:k], S, n, ET, Ebv
+
+if __name__ == "__main__":
+    days = [date(2022, 9, 5) + timedelta(days=i) for i in range(14)]
+    O = [m.load_orders(d) for d in days]
+    n0 = len(O[0]["u"]) / 48; s_abs = np.mean(np.abs(O[0]["s"]))
+    for span in (3, 10, 30):
+        for ET0 in (n0 / 10, n0, n0 * 10):
+            for frac in (0.01, 0.1, 0.5):
+                st = (0.0, 0, ET0, frac * s_abs); per = []
+                for o in O:
+                    e, *st = _ldp_bar(o["s"], *st, float(span)); per.append(len(e))
+                print(f"span {span:2} E[T] start {ET0:7.0f}  E[bv] {frac:4}: bars per day {per}  E[T] end {st[2]:12.0f}")
