@@ -591,6 +591,37 @@ A strategy on bars takes one decision each time a bar closes: buy, sell or hold.
 
 Neither is better in general. Which execution profile is cheaper, the crowd at the round minute or the bursts, is a question of costs: Lecture 15 measures them, and Lecture 16 applies them to a trend rule on time and on dollar bars.
 
+## 8. For the two examples
+
+Lectures 16 and 17 apply Part III to two strategies: a trend rule, held for days, and an intraday grid, held for minutes or hours (Lecture 12, §9.3). Each takes something different from this lecture.
+
+### 8.1 The trend rule (Lecture 16)
+
+A trend rule decides at each bar's close, so its clock decides when it trades.
+
+| From this lecture | What the trend rule takes |
+|---|---|
+| The clock (§3 to §5) | The same rule runs on time bars and on dollar bars, at the same average number of bars per day, so that neither is smoother only because it is finer (§2.5). Look-back windows are counted in bars: on dollar bars, a 20-bar average spans less time in a busy week than in a quiet one |
+| Thresholds (§3.4) | The dollar threshold is set from the past 28 days, and every constant from the first three months of data, so that no bar uses the future |
+| Returns (§5) | On dollar bars, a third as many moves beyond four standard deviations: a volatility estimate from bar returns is disturbed less by single bars. Volatility clustering remains on every clock, so the rule still needs position sizes that follow volatility (Lecture 14) |
+| When decisions fall (§7.6) | On time bars, every decision on a round minute and a quarter of them in the thinnest hours; on dollar bars, decisions in the deep hours, one in 30 in a burst. Lecture 16 prices both profiles with the costs of Lecture 15 |
+| Scheduled events (§7.4) | A bar that closes in the five minutes after a CPI release or a Fed decision trades in the most violent minutes of the month. The dates are known in advance, so a rule can skip decisions in these windows without looking ahead; Lecture 16 tests whether it should |
+| Imbalance bars (§6) | Not used as a clock: their returns are no closer to normal than on dollar bars |
+
+### 8.2 The grid (Lecture 17)
+
+A grid does not decide at bar closes. It leaves buy orders below the price and sell orders above it, and earns when the price swings back and forth through them. What it needs from the market is swings; what it fears is a one-way move that runs through all its orders. Its results depend on the path inside bars (Lecture 14), and from this lecture it takes mainly the calendar.
+
+| From this lecture | What the grid takes |
+|---|---|
+| The time of day and the week (§7.1, §7.2) | The busiest hour of a weekday trades twice its even share, a weekend day half as much as a weekday. A spacing that suits the US afternoon fills rarely at night: the spacing should follow volatility as it changes through the day and the week (Lecture 14) |
+| Round times (§7.3) | Trading jumps in the first seconds of every hour: the fills of resting orders bunch there, and so does the competition for them |
+| Scheduled events (§7.4) | After a CPI release or a Fed decision, the typical first move is about 50 basis points in five minutes, four times the same minute a week earlier, and after CPI releases in 2021 to 2023 it kept going. A one-way move of this size is what runs through a grid. The dates are known in advance, so a grid can step aside before them without looking ahead; Lecture 17 tests the rule. Option expiries raise volatility but not direction: a reason for wider spacing in the settlement window, not for stepping aside |
+| The clock (§3) | A grid is re-centred and its spacing updated from time to time. On a dollar clock the updates come faster when the market is busy and slower when it is quiet |
+| The imbalance clock (§6) | It marks the moments when one side pushes hardest, when a grid collects inventory on the losing side. Whether it can serve as a filter is a question for Lecture 15, then for Lecture 17 |
+
+The two examples use the lecture in opposite ways: the trend rule takes a clock, the grid takes a calendar.
+
 ## References
 
 - Ané, T. and Geman, H. (2000). Order flow, transaction clock, and normality of asset returns. *Journal of Finance* 55(5), 2259–2284. — the transaction clock; normality in trading time (§1).
