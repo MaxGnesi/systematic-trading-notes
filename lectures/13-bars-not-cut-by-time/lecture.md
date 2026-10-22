@@ -375,6 +375,21 @@ Some moments are known in advance: data releases, central-bank decisions, option
 
 **Direction differs by event.** After a CPI release, the first reaction carries on: its correlation with the next 30 minutes is +0.45, the strongest result in the table, driven by the large reactions, which keep going, while small ones are noise (only 42% point the same way). After a Fed decision, the first reaction tends to turn back: −0.32, on 40 decisions; a plausible reason, not tested here, is the press conference 30 minutes later, which can change how the statement is read. Before both, the price drifted up on average, and into option expiries it drifted down. Every hour shows a slight reversal after its first five minutes (−0.04, and −0.08 at funding times), too small to trade.
 
+**Both belong to the inflation shock.** One explanation fits: in 2021 to 2023, inflation kept surprising forecasters, so each CPI release carried real news, which took the market more than five minutes to absorb; the Fed, reacting to the same inflation, mostly decided what the CPI had already led markets to expect, so the first reaction to its statement was partly noise. If so, both effects should fade once inflation stopped surprising. They do:
+
+| Event | Period | Releases | Typical first reaction | Follow-through: correlation (p) |
+|---|---|---|---|---|
+| CPI | 2021–2022 | 15 | 187 bp | +0.51 (0.05) |
+| CPI | 2023 | 12 | 29 bp | +0.62 (0.03) |
+| CPI | 2024–2026 | 32 | 43 bp | +0.13 (0.49) |
+| Fed decision | 2021–2022 | 10 | 130 bp | −0.51 (0.14) |
+| Fed decision | 2023 | 8 | 28 bp | +0.06 (0.89) |
+| Fed decision | 2024–2026 | 22 | 40 bp | −0.05 (0.84) |
+
+*Our measurement for these notes. 2021 covers October to December.*
+
+The follow-through after CPI releases came from 2021 to 2023 and has gone since; the reversal after Fed decisions came almost entirely from 2021 to 2022. With 8 to 32 events per period this is consistent with the explanation, not a proof of it: testing it directly would need the economists' consensus forecast for each release, to measure the surprise, which the tape does not contain. The lesson for a strategy is general: an effect found in one regime can vanish in the next, and a rule fitted on 2022 would have stopped working in 2024.
+
 **How much to trust it.** The table makes seven comparisons of three kinds of direction; at the usual threshold of 5%, one or two would look significant by chance. Only the follow-through after CPI releases is strong enough to stand on its own; the reversal after Fed decisions and the drifts before events are hypotheses for Lecture 15, which tests them with order flow.
 
 **Option expiries.** Bitcoin options on Deribit, the largest exchange for them, expire on Fridays at 08:00 UTC; the largest expiries are on the last Friday of each month, and the largest of all on the last Friday of March, June, September and December. The settlement price is the average of Deribit's bitcoin index over the 30 minutes from 07:30 to 08:00 UTC, measured every four seconds, so that no single trade can set it (Deribit, Settlement; Coinbase, Settlement). Positions are hedged and closed while that average is formed.
