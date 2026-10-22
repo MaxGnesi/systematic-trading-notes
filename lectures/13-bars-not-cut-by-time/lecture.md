@@ -334,17 +334,48 @@ The crowd lasts about ten seconds: activity stays above twice its average for 7 
 
 ### 7.4 Scheduled events
 
-| Event | Times in five years | Activity in the minute, ÷ the day's average | Same minute a week earlier | Size of the move, ÷ the day's average | Same minute a week earlier |
-|---|---|---|---|---|---|
-| US inflation release, CPI (8:30 a.m. New York) | 59 | 27.7 | 1.1 | 12.9 | 1.2 |
-| Fed decision (2:00 p.m. New York) | 40 | 16.9 | 0.9 | 6.5 | 1.1 |
-| Monthly option expiry, quarterly ones included (last Friday, 08:00 UTC) | 60 | 1.4 | 0.9 | 1.2 | 0.8 |
-| Weekly option expiry (other Fridays, 08:00 UTC) | 201 | 1.0 | 1.1 | 0.8 | 0.9 |
-| Funding payment (00:00, 08:00 and 16:00 UTC) | 5,478 | 1.1 | 1.1 | 0.9 | 0.9 |
+Some moments are known in advance: data releases, central-bank decisions, option expiries, funding payments, and the full hour itself. Every event is measured the same way, at its time *T*, against a control: the same clock time a week earlier, or for funding and full hours, clock times without the event.
 
-*Our measurement for these notes. Release dates: the Federal Reserve's meeting calendars and the Bureau of Labor Statistics' release schedules; the October 2025 CPI report was not published as a separate release. Times follow US daylight saving time. On 29 of the 40 Fed days, the busiest minute of the afternoon falls within 15 minutes of 2 p.m. or of the press conference at 2:30 p.m. New York time, which confirms the release time from the tape itself.*
+| Measure | Window | The question |
+|---|---|---|
+| Activity | *T* to *T* + 5 minutes | How busy, relative to the day's average minute? |
+| Size of moves | *T* to *T* + 5 minutes | How volatile, relative to the day's average minute? |
+| Typical first reaction | *T* to *T* + 5 minutes | How far does the price move, median, in basis points? |
+| Drift into the event | *T* − 30 minutes to *T* | Does the price tend to move one way beforehand? Average, with its standard error |
+| Follow-through | The reaction against *T* + 5 to *T* + 35 minutes | Does the first reaction carry on or turn back? Correlation, and the share of events in which both point the same way |
 
-The US inflation release is the largest scheduled event in bitcoin: in its minute, trading runs at 28 times the day's average pace and the price moves 13 times as much as in an average minute. The Fed's decisions come second. Both are invisible a week earlier at the same minute: the effect belongs to the event, not to the time of day. The monthly expiry of bitcoin options leaves a small trace; weekly expiries and the funding payments leave none at the scale of a minute (Lecture 12, §6.2 found the effect of funding in the minutes around it, and small).
+**How busy and how volatile.**
+
+| Event | Times | Activity, first 5 minutes | Control | Size of moves | Control | Typical first reaction | Control |
+|---|---|---|---|---|---|---|---|
+| US inflation release (CPI) | 59 | 13.2 | 1.2 | 4.7 | 1.1 | 50 bp | 12 bp |
+| Fed decision | 40 | 10.3 | 0.7 | 4.5 | 1.1 | 47 bp | 10 bp |
+| Quarterly option expiry | 20 | 1.5 | 0.9 | 1.3 | 0.9 | 11 bp | 10 bp |
+| Monthly option expiry | 40 | 1.1 | 0.8 | 1.1 | 0.9 | 9 bp | 7 bp |
+| Weekly option expiry | 201 | 0.8 | 0.9 | 0.8 | 0.9 | 7 bp | 8 bp |
+| Funding payment | 5,475 | 1.0 | 0.8 | 1.0 | 0.9 | 8 bp | 7 bp |
+| Any full hour | 43,813 | 0.8 | 0.7 | 0.9 | 0.9 | 7 bp | 7 bp |
+
+**Direction.**
+
+| Event | Drift into the event, basis points | Control | Follow-through: correlation (p) | Control | Same direction as the reaction | Control |
+|---|---|---|---|---|---|---|
+| US inflation release (CPI) | +11 (± 4) | +6 (± 5) | +0.45 (< 0.01) | −0.06 | 42% | 53% |
+| Fed decision | +25 (± 10) | −5 (± 6) | −0.32 (0.04) | +0.06 | 42% | 57% |
+| Quarterly option expiry | −20 (± 8) | −6 (± 8) | +0.04 (0.86) | −0.09 | 45% | 35% |
+| Monthly option expiry | −15 (± 5) | −6 (± 6) | +0.13 (0.43) | +0.14 | 53% | 55% |
+| Weekly option expiry | −4 (± 2) | −7 (± 2) | +0.05 (0.46) | +0.07 | 52% | 52% |
+| Funding payment | −1.0 (± 0.5) | −0.1 (± 0.5) | −0.08 (< 0.01) | −0.07 | 48% | 48% |
+| Any full hour | −0.1 (± 0.2) | +0.1 (± 0.2) | −0.04 (< 0.01) | −0.00 | 48% | 49% |
+
+
+*Our measurement for these notes; p: the probability of a correlation at least this strong if there were no effect. Release dates: the Federal Reserve's meeting calendars and the Bureau of Labor Statistics' release schedules (CPI at 8:30 a.m., Fed statements at 2:00 p.m. New York time, following US daylight saving time); the October 2025 CPI report was not published as a separate release. Controls: the same clock time a week earlier; for funding payments, the full hours halfway between them; for full hours, 17 minutes past. On 29 of the 40 Fed days, the busiest minute of the afternoon falls within 15 minutes of 2:00 or of the press conference at 2:30 p.m., which confirms the release time from the tape itself.*
+
+**The US data calendar dominates.** In the five minutes after a CPI release, trading runs at 13 times the day's average pace and the typical first move is 50 basis points, four times the control; Fed decisions come close. Option expiries leave a small trace, the quarterly ones the largest; weekly expiries, funding payments and the full hour hardly differ from their controls in size.
+
+**Direction differs by event.** After a CPI release, the first reaction carries on: its correlation with the next 30 minutes is +0.45, the strongest result in the table, driven by the large reactions, which keep going, while small ones are noise (only 42% point the same way). After a Fed decision, the first reaction tends to turn back: −0.32, on 40 decisions; a plausible reason, not tested here, is the press conference 30 minutes later, which can change how the statement is read. Before both, the price drifted up on average, and into option expiries it drifted down. Every hour shows a slight reversal after its first five minutes (−0.04, and −0.08 at funding times), too small to trade.
+
+**How much to trust it.** The table makes seven comparisons of three kinds of direction; at the usual threshold of 5%, one or two would look significant by chance. Only the follow-through after CPI releases is strong enough to stand on its own; the reversal after Fed decisions and the drifts before events are hypotheses for Lecture 15, which tests them with order flow.
 
 **Option expiries.** Bitcoin options on Deribit, the largest exchange for them, expire on Fridays at 08:00 UTC; the largest expiries are on the last Friday of each month, and the largest of all on the last Friday of March, June, September and December. The settlement price is the average of Deribit's bitcoin index over the 30 minutes from 07:30 to 08:00 UTC, measured every four seconds, so that no single trade can set it (Deribit, Settlement; Coinbase, Settlement). Positions are hedged and closed while that average is formed.
 
@@ -370,25 +401,12 @@ On quarterly expiry days, trading rises from 07:30, exactly when the settlement 
 | Volatility, quarterly expiry | 0.64 | 0.76 | 0.81 | 0.59 |
 | Volatility, monthly expiry | 0.49 | 0.49 | 0.77 | 0.49 |
 | Volatility, Thursday | 0.42 | 0.43 | 0.56 | 0.44 |
-| Return, quarterly expiry (basis points) | −8 (± 10) | −20 (± 9) | +14 (± 10) | +13 (± 8) |
-| Return, monthly expiry | −9 (± 5) | −15 (± 5) | +1 (± 6) | −5 (± 5) |
-| Return, Thursday | +4 (± 2) | −2 (± 2) | 0 (± 2) | +2 (± 2) |
 
-*Our measurement for these notes. Volatility: the half hour's realised variance divided by the day's average half hour, median over days. Returns: averages, with their standard errors in brackets.*
+*Our measurement for these notes. Volatility: the half hour's realised variance divided by the day's average half hour, median over days.*
 
 **Volatility** is the clear result. On quarterly expiries it is already high in the settlement window, at 1.8 times a Thursday; after 08:00 it rises on every day, Thursdays included, around the start of the European working day, but most on expiry days.
 
-**Direction** is not. It can be measured in three ways, and none finds an effect that holds:
-
-| How direction is measured | The question | Monthly and quarterly expiries (60) | Thursdays (260) |
-|---|---|---|---|
-| Average return | Does the price tend to fall into settlement? | −15 to −20 basis points in the window | −2 basis points |
-| Continuation or reversal | Whatever the price did in the window, does it carry on or turn back in the next 30 minutes? | Correlation +0.10 (p = 0.45); same direction 38% (p = 0.09) | Correlation −0.02; same direction 44% |
-| Back to the settlement price | Does the price move back towards the window's average after 08:00? | Correlation +0.19 (p = 0.14); moved back 60% (p = 0.16) | Correlation +0.05; moved back 55% |
-
-*Our measurement for these notes; p: the probability of a result at least this strong if there were no effect.*
-
-The average return depends on the sign of each day's move, which in turn depends on how the options are positioned, and a mean of 20 or 40 days is easily set by a few large ones. The two tests that do not depend on the sign disagree with each other and are not significant, and Thursdays show the same small tendencies. The honest conclusion: around expiries the market is busier and more volatile, but its direction is not predictable from the tape. Option traders also speak of pinning, the price held near a large strike before expiry; testing it needs the options' open interest by strike, which the tape does not have. Lecture 15 returns to event studies, and to these three ways of measuring direction.
+**Direction** is not: the drift into expiries and the follow-through after them are in the direction table above, and neither holds. One more test is specific to expiries: does the price move back towards the settlement average after 08:00? On the 60 monthly and quarterly expiries, the correlation is +0.19 (p = 0.14) and the price moved back on 60% of days (p = 0.16); on Thursdays, +0.05 and 55%. Around expiries the market is busier and more volatile, but its direction is not predictable from the tape. Option traders also speak of pinning, the price held near a large strike before expiry; testing it needs the options' open interest by strike, which the tape does not have.
 
 ### 7.5 How the rhythm has changed
 
