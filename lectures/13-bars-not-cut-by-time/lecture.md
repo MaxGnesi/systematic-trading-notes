@@ -338,7 +338,7 @@ The crowd lasts about ten seconds: activity stays above twice its average for 7 
 |---|---|---|---|---|---|
 | US inflation release, CPI (8:30 a.m. New York) | 59 | 27.7 | 1.1 | 12.9 | 1.2 |
 | Fed decision (2:00 p.m. New York) | 40 | 16.9 | 0.9 | 6.5 | 1.1 |
-| Monthly option expiry (last Friday, 08:00 UTC) | 60 | 1.4 | 0.9 | 1.2 | 0.8 |
+| Monthly option expiry, quarterly ones included (last Friday, 08:00 UTC) | 60 | 1.4 | 0.9 | 1.2 | 0.8 |
 | Weekly option expiry (other Fridays, 08:00 UTC) | 201 | 1.0 | 1.1 | 0.8 | 0.9 |
 | Funding payment (00:00, 08:00 and 16:00 UTC) | 5,478 | 1.1 | 1.1 | 0.9 | 0.9 |
 
