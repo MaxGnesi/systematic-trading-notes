@@ -376,7 +376,19 @@ On quarterly expiry days, trading rises from 07:30, exactly when the settlement 
 
 *Our measurement for these notes. Volatility: the half hour's realised variance divided by the day's average half hour, median over days. Returns: averages, with their standard errors in brackets.*
 
-Three things show. **Volatility:** on quarterly expiries it is already high in the settlement window, at 1.8 times a Thursday; after 08:00 it rises on every day, Thursdays included, since 08:00 UTC is the start of the European morning, but most on expiry days. **Direction:** during the settlement window the price fell on average by 20 basis points on quarterly and 15 on monthly expiries, two to three standard errors from zero, with net aggressive selling of 3% to 4% of the dollars; on quarterly expiries it came back in the hour after. **Predictability:** day by day, the move during the window does not predict the move after it: their correlation is +0.11 on quarterly and monthly expiries, not negative. The average drift and recovery is real enough to describe, but it is built from 20 and 40 days, measured among many comparisons, and does not repeat reliably from one expiry to the next: a hypothesis about hedges unwound into the settlement average, not a trading rule. Option traders also speak of pinning, the price held near a large strike before expiry; testing it needs the options' open interest by strike, which the tape does not have. Lecture 15 returns to event studies of this kind.
+**Volatility** is the clear result. On quarterly expiries it is already high in the settlement window, at 1.8 times a Thursday; after 08:00 it rises on every day, Thursdays included, around the start of the European working day, but most on expiry days.
+
+**Direction** is not. It can be measured in three ways, and none finds an effect that holds:
+
+| How direction is measured | The question | Monthly and quarterly expiries (60) | Thursdays (260) |
+|---|---|---|---|
+| Average return | Does the price tend to fall into settlement? | −15 to −20 basis points in the window | −2 basis points |
+| Continuation or reversal | Whatever the price did in the window, does it carry on or turn back in the next 30 minutes? | Correlation +0.10 (p = 0.45); same direction 38% (p = 0.09) | Correlation −0.02; same direction 44% |
+| Back to the settlement price | Does the price move back towards the window's average after 08:00? | Correlation +0.19 (p = 0.14); moved back 60% (p = 0.16) | Correlation +0.05; moved back 55% |
+
+*Our measurement for these notes; p: the probability of a result at least this strong if there were no effect.*
+
+The average return depends on the sign of each day's move, which in turn depends on how the options are positioned, and a mean of 20 or 40 days is easily set by a few large ones. The two tests that do not depend on the sign disagree with each other and are not significant, and Thursdays show the same small tendencies. The honest conclusion: around expiries the market is busier and more volatile, but its direction is not predictable from the tape. Option traders also speak of pinning, the price held near a large strike before expiry; testing it needs the options' open interest by strike, which the tape does not have. Lecture 15 returns to event studies, and to these three ways of measuring direction.
 
 ### 7.5 How the rhythm has changed
 
