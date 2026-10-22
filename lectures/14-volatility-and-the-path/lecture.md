@@ -13,8 +13,7 @@ A bar keeps four prices of everything that happened inside it. This lecture look
 | 4 | Levels on the path | How often is a level crossed, how far does a position run against its owner, and what happens when the price jumps a level? |
 | 5 | Volatility, built up | How is the number made, where should it be measured, and which measure forecasts the next bars? |
 | 6 | Risk on any clock | How is risk measured on dollar or range bars, where √t no longer applies? |
-| 7 | Which measure sizes best | Which measure keeps the risk of a position most constant? |
-| 8 | For the two examples | What the trend rule (Lecture 16) and the grid (Lecture 17) take from this lecture |
+| 7 | For the two examples | What the trend rule (Lecture 16) and the grid (Lecture 17) take from this lecture |
 
 **A unit before we start.** Every statement about the path needs a scale: is a move of 50 basis points large or small? The scale is volatility, the typical size of the price's moves over a given time. Here it is measured in the simplest way the tape allows: square each one-minute return of a day and add them up. The sum is the day's **realised variance**, its square root the day's volatility. A random walk spreads its moves evenly, so its variance grows in proportion to time and its volatility with the square root of time, √t: four times the time, twice the move. §3 tests whether the price follows that rule; the second half of the lecture asks how volatility should be measured and used.
 
