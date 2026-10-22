@@ -60,7 +60,7 @@ Information bars close when the order flow becomes more one-sided than usual, us
 | **Imbalance** | the running sum of buys minus sells, in trades, coins or dollars, exceeds what is normally seen | The moments when one side takes over: informed trading, forced liquidations |
 | **Run** | the longest sequence of trades on one side exceeds what is normally seen | A large order executed in many small pieces, all on the same side (Lecture 12, §7.1) |
 
-Both are defined by López de Prado (2018, ch. 2), with thresholds estimated from past bars. The idea is attractive, since one-sided flow is exactly what moves prices (Lecture 12, §6.5), but the construction has two known weaknesses: the threshold depends on the bars it produces, which can make bar sizes run away, and it falls to almost nothing when buying and selling are balanced. §6 builds the published version on our data, shows both failures, and builds a version that is stable without caps.
+Both are defined by López de Prado (2018, ch. 2), with thresholds estimated from past bars. The idea is attractive, since one-sided flow is exactly what moves prices (Lecture 12, §6.5), but the construction has two known weaknesses: the threshold depends on the bars it produces, which can make bar sizes run away, and it falls to almost nothing when buying and selling are balanced. §6 builds the published version on our data, shows both failures, and builds our own version, stable without caps.
 
 ### 2.4 Price: range bars, Renko and the CUSUM filter
 
@@ -277,7 +277,7 @@ The hypothesis of §1: on a clock that follows trading, returns should look more
 
 *Deep dive: can be skipped on a first reading.*
 
-The information clocks of §2.3 are the most ambitious of the four families: they try to sample the market when someone with information is trading. This section builds López de Prado's construction on our tape, shows how it breaks, explains why the usual repairs do not repair it, and builds a version that is stable by construction. The verdict is descriptive: what the clock does, how stable it is, and how its returns compare with dollar bars. Whether its bars carry a trading signal is a question for Lecture 15.
+The information clocks of §2.3 are the most ambitious of the four families: they try to sample the market when someone with information is trading. This section builds López de Prado's construction on our tape, shows how it breaks, explains why the usual repairs do not repair it, and builds our own version, stable by construction. The verdict is descriptive: what the clock does, how stable it is, and how its returns compare with dollar bars. Whether its bars carry a trading signal is a question for Lecture 15.
 
 ### 6.1 What imbalance bars aim to catch
 
@@ -403,7 +403,7 @@ The reason lies in what the clock counts. When the price moves hard with heavy t
 
 - **The published construction does not work as published.** On our tape, López de Prado's imbalance bars collapse to a few orders or run away to none, from any starting point, in either reading of the rule.
 - **Caps hide the problem.** They turn the clock into a fixed-size bar and clip the tails this lecture measures.
-- **A stable imbalance clock exists.** A fixed band, set from the past 28 days, sized by Wald's identity on the half-hour variance of the flow, is stable in and out of sample and across its settings, with no limit imposed. We found this combination in neither the academic nor the practitioners' literature; its parts are textbook probability (Wald) and the persistence of order flow (Lillo and Farmer).
+- **A stable imbalance clock is possible.** Our version, a fixed band, set from the past 28 days, sized by Wald's identity on the half-hour variance of the flow, is stable in and out of sample and across its settings, with no limit imposed. It is our design for these notes, not an established method: its parts are textbook probability (Wald) and the persistence of order flow (Lillo and Farmer). We did not find the combination in the papers or the practitioners' code we searched, which does not mean that no one has built it.
 - **It is a different clock, not a better one for returns.** It ticks where the flow is one-sided, which no other clock does, but its returns are no closer to normal than on dollar bars, and out of sample their tails are fatter. For the comparisons of this lecture and for the two examples, dollar bars remain the activity clock.
 - **Whether its bars carry information is open.** The clock marks the moments when one side pushes hardest; what the price does after them is a question about order flow, and Lecture 15 takes it up. Run bars, the second information clock of §2.3, rest on an expected run length that assumes independent signs; the persistence of order signs suggests the same problem, untested here.
 
