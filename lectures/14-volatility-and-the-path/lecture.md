@@ -213,7 +213,36 @@ On price clocks the rule holds almost exactly. On dollar bars it underestimates 
 
 **Precision.** At the same number of bars, a clock that spreads the day's variance evenly over its bars measures it more precisely: one day's variance has a sampling error of 26% on 30-minute bars, 19% on dollar bars and 15% on range bars. Sampling in trading time rather than calendar time is known to reduce the error of realised variance (Oomen, 2006). But the number of samples matters more than the clock: one-minute time bars, 1,440 a day, give 6%. The clock matters for precision when a strategy can only measure risk on its own bars.
 
-**Measures made for price clocks.** On a range clock, the natural measures of risk are the count of bars and the time they take. For a random walk, the expected time for the price to leave a band of ±h is h²/σ², so volatility can be read from how long the price takes to move a set distance. Such duration-based estimators are among the most precise in theory (Andersen, Dobrev and Schaumburg, 2008, a working paper) and have forecast better than realised variance in a recent study (Hong, Nolte, Taylor and Zhao, 2023). The directional-change school counts how often the price reverses by a set amount and reads volatility from that count (Glattfelder, Dupuis and Olsen, 2011). Neither is in common use, and neither has been compared with realised variance on crypto data; they are named here as candidates for readers to test.
+**A measure made for price clocks: the duration.** On a range clock, risk can be read from how fast the bars come. For a random walk, a range bar (high minus low reaches R) takes on average R²/(2σ²), so a day's variance is about the number of range bars times R²/2 (Andersen, Dobrev and Schaumburg, 2008, a working paper; Nolte, Taylor and Zhao add half a bar for the bar left open at the end of the day). The range clock of Lecture 13 therefore yields a volatility measure for free: a count of events, without squaring any return.
+
+On our sample it is precise, as tight as realised variance at five minutes (0.71 to 0.99 times the one-minute value on four days in five), and in the forecasting test of §5.3 it comes first or close behind against every yardstick: the only measure without a home advantage, because it is built from something else, a count.
+
+It runs low, by 14%, and the bias can be taken apart. First, test the measure where the truth is known: on a simulated random walk with a set variance, run exactly the same clock. Then add the market's features one at a time and see which brings the simulation close to the tape:
+
+| Simulated market, one price per second, about 48 bars a day | Estimate ÷ true variance |
+|---|---|
+| A random walk | 0.92 |
+| + busy and quiet hours | 0.92 |
+| + fat-tailed moves | 0.90 |
+| + a component that turns back over minutes, and the clock's averaged price | 0.82 |
+| BTCUSDT | 0.86 |
+
+*Our simulation; the market's features added one at a time.*
+
+About a third of the bias belongs to the method: a clock that looks at the price once a second misses ranges completed and reversed between two looks. It has a textbook correction, a slightly larger threshold in the formula, R plus 1.165 times the typical one-second move (our check of the barrier correction of Broadie, Glasserman and Kou, 1997, for ranges), which lifts the estimate from 0.86 to 0.91. The rest belongs to the market: bitcoin's turning back over minutes (§3) completes fewer ranges than a random walk would. The remaining bias is stable across volatility regimes and drifts only slowly over the years, so one constant per setting corrects it. Directional-change counts (Glattfelder, Dupuis and Olsen, 2011) rest on the same idea with a different event.
+
+**Our results and the literature.**
+
+| The literature | Our result on BTCUSDT | |
+|---|---|---|
+| Intraday measures forecast volatility better than daily returns (Andersen, Bollerslev, Diebold and Labys, 2003, on currencies) | 7% to 26% less forecast error than the bar's own returns | in line |
+| Forecasts are ranked correctly only against a target without bias of its own (Patton, 2011) | Each measure wins against the yardstick built like itself | in line: yardsticks built differently carry different biases |
+| On stocks, realised variance falls as sampling gets finer, because the noise moves against the price (Hansen and Lunde, 2006) | Lower at one second than at one minute | in line |
+| Bitcoin reverses over one to four hours (De Nicola, 2021); its autocorrelation turns negative at five to ten minutes (Takaishi, 2018) | The variance ratio stays below 1 from minutes to a day (§3) | in line; on explosive days we find runs instead |
+| On currencies, stocks and bonds, jumps say little about future volatility (Andersen, Bollerslev and Diebold, 2007) | On bitcoin, the next day's risk weighs yesterday's jumps more | different, as in bitcoin studies: jumps cluster (Scaillet, Treccani and Trevisan, 2020) and help forecast its volatility (Shen, Urquhart and Wang, 2020) |
+| Duration estimators are precise, biased down by discrete sampling, and correctable (Andersen, Dobrev and Schaumburg, 2008; Nolte, Taylor and Zhao) | All three, with a bias of the predicted size | in line |
+
+Where our methods are established, the results agree with the literature; where bitcoin differs from stocks, studies of bitcoin point the same way. No published study reports bitcoin's variance ratio at these horizons; ours is a result on this sample, for readers to test on others.
 
 **Key message.** On any clock, a day's risk is the number of bars times the risk per bar. On BTCUSDT, price clocks put most of the risk into the clock's speed, dollar bars split it, and the square-root rule needs the expected bar count and fails by 15% where count and size move together. Risk per bar suits per-trade decisions such as stops; risk per period needs both a forecast of activity and a forecast of risk per bar.
 
