@@ -4,6 +4,13 @@
 
 Every bar so far closed on the clock: at the end of a day in Parts I and II, at the end of a minute in Lecture 12. This lecture asks when the market trades. It builds bars that close after a fixed amount of trading, of one-sided pressure, or of price movement, from the same five years of BTCUSDT trades as Lecture 12, and asks whether they describe the market better; then it maps the market's rhythms: the time of day, the week, the round clock times and the scheduled events. The two halves belong together: the market's clocks take the rhythm out of the bars, while seasonality maps that rhythm in calendar time, where orders are placed. It covers the first and fourth of Part III's six uses of the tape (the course guide, §1.1b): a clock, and seasonality.
 
+> **What to take away**
+>
+> 1. **We do not choose the time; we choose the clock, and the clock decides when we trade.** Time bars decide on round minutes and in thin hours, dollar bars in the deep hours and in bursts.
+> 2. **Activity clocks bring returns closer to normal, but not all the way:** dollar bars have a third of the four-standard-deviation moves of 30-minute bars, and volatility clustering stays on every clock.
+> 3. **A clock must be stable by design, not by patches:** thresholds from the past 28 days, price clocks on one price per second; López de Prado's imbalance bars collapse or run away, and our stable version gives no better returns than dollar bars.
+> 4. **The market keeps US hours:** its busiest hour moves with US daylight saving time, it trades at half the pace at weekends, it jumps at every full hour, and US inflation releases and Fed decisions are its largest scheduled events.
+
 ## 1. Which clock should a bar follow?
 
 Every bar closes when a counter reaches a threshold. For a one-hour bar the counter is seconds, and the threshold is 3,600. The counter can be anything that rises as the market trades: the number of trades, the dollars traded, the distance the price has moved. This counter is the bar's **clock**, and the literature uses the word in exactly this sense: business or intrinsic time (Mandelbrot and Taylor, 1967; Dacorogna et al., 2001), the transaction clock (Ané and Geman, 2000), the volume clock (Easley, López de Prado and O'Hara, 2012). A dollar bar follows a clock, one that counts dollars instead of seconds.
@@ -621,6 +628,32 @@ A grid does not decide at bar closes. It leaves buy orders below the price and s
 | The imbalance clock (§6) | It marks the moments when one side pushes hardest, when a grid collects inventory on the losing side. Whether it can serve as a filter is a question for Lecture 15, then for Lecture 17 |
 
 The two examples use the lecture in opposite ways: the trend rule takes a clock, the grid takes a calendar.
+
+## 9. Summary, exercises and reading
+
+### 9.1 Seven takeaways
+
+1. **A bar follows a clock, and the clock can be anything that rises as the market trades.** Seconds, trades, coins, dollars, the distance the price has moved, or how one-sided the flow has become. Each clock closes its bars at different moments.
+2. **Thresholds must come from the past.** A fixed threshold makes a bar mean something different each year; a threshold from the median of the past 28 days keeps the number of bars near its target. Every constant is set on the first months of data and never again.
+3. **The clocks fall into groups.** Tick, volume and dollar bars close in the same hours; range and CUSUM bars are the same clock twice; time bars stand apart. One representative per group is enough: time, dollar, range.
+4. **Activity clocks bring returns closer to normal, but not all the way.** Dollar bars have a third as many moves beyond four standard deviations as 30-minute bars, still forty times the normal; volatility clustering remains on every clock. Price clocks are thin-tailed by construction, which says nothing about the market.
+5. **A clock must be stable by design, not by patches.** A price clock reads one price per second, not every fill; López de Prado's imbalance bars collapse or run away on our tape; our fixed-band version is stable without limits, but its returns are no closer to normal than on dollar bars.
+6. **The market keeps US hours.** The busiest hour moves with US daylight saving time, the weekend trades at half the pace, trading jumps in the first seconds of every hour, and US inflation releases and Fed decisions are the largest scheduled events. Option expiries raise volatility, not a predictable direction, and effects found in one regime can vanish in the next.
+7. **We do not choose the time; we choose the clock, and the clock decides when we trade.** Time bars decide on round minutes and in thin hours; dollar bars in the deep hours and in bursts.
+
+### 9.2 Exercises
+
+- [ ] Build dollar bars at 24 and at 96 bars a day and repeat the tail measures of §5. Does the reduction in fat tails depend on how fine the bars are?
+- [ ] Set the dollar threshold from the past 7, 14, 28 and 56 days. How many weeks lie within 25% of the target (§3.4)? Where does the plateau end?
+- [ ] Build range bars on the Fed day, 21 September 2022, from every fill and from one price per second. How many bars does each give in the ten minutes after 18:00 (§3.5)?
+- [ ] Build López de Prado's imbalance bars with a cap of 200 orders on the expected bar length. How long are the bars after a week (§6.4)?
+- [ ] Build the fixed-band imbalance clock at 96 bars a day, with the variance measured over 15 minutes. Is the constant from October to December 2021 close to the one for 48 bars a day (§6.5)?
+- [ ] Repeat the daylight-saving test of §7.1 for ETHUSDT. Does it keep US hours too?
+- [ ] Add the US employment report (the first Friday of the month, 8:30 a.m. New York time) to the event tables of §7.4. Where does it rank?
+
+### 9.3 Reading
+
+For prices in trading time, Mandelbrot and Taylor (1967), Clark (1973) and Ané and Geman (2000), with the comment of Murphy and Izzeldin (2005). For bars on activity and information clocks, López de Prado (2018, ch. 2) and Easley, López de Prado and O'Hara (2012). For intraday seasonality, Dacorogna et al. (2001). For the persistence of order flow behind §6, Lillo and Farmer (2004).
 
 ## References
 
