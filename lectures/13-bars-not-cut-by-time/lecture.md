@@ -253,6 +253,8 @@ The hypothesis of §1: on a clock that follows trading, returns should look more
 
 ![The share of bars with a move larger than a given number of standard deviations, on six clocks, against the normal distribution](figures/13_04_tails.png)
 
+**How to read the chart.** Each line starts at 1, since every move is larger than zero, and falls to the right: at each size of move, measured in standard deviations of that clock's own returns, it gives the share of bars with a larger move. The vertical axis is logarithmic, so each gridline down is a factor of ten: 10⁻⁴ is one bar in 10,000. The dotted curve is the normal distribution; a line above it has more large moves than the normal distribution allows. Below about 1.5 standard deviations the order reverses: returns with fat tails also have more very small moves, many quiet bars and a few large ones.
+
 | Measure | What we measure, in plain words | Normal distribution | Time | Tick | Volume | Dollar | Range | CUSUM |
 |---|---|---|---|---|---|---|---|---|
 | Excess kurtosis | How fat the tails are | 0 | 23.8 | 4.3 | 2.6 | 4.4 | −1.0 | −1.1 |
