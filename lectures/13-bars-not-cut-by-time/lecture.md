@@ -273,6 +273,96 @@ The hypothesis of §1: on a clock that follows trading, returns should look more
 
 **Returns are almost unpredictable on every clock.** The correlation of one bar's return with the next is about −0.02 on time and activity clocks, a slight tendency to reverse, and zero on the price clocks. No clock turns the price into something a simple rule could predict.
 
+## 7. Seasonality: when the market trades
+
+The clocks of §3 to §6 take the market's rhythm out of the bars. This section maps that rhythm in calendar time, for two reasons. It explains why the market's clocks speed up and slow down. And orders are sent in calendar time: whatever clock a strategy follows, its trades happen at a particular hour of a particular day, in a deep or a thin market. All figures use the one-minute bars of Lecture 12, five years, and measure activity in dollars traded.
+
+### 7.1 The time of day
+
+Bitcoin trades around the clock, but not evenly. The busiest hour of a weekday carries 8.8% of the day's dollars, against 4.2% if trading were spread evenly (Lecture 12, §6.2). The question is whose day this is.
+
+![Dollars traded per minute of the day, relative to the day's average, on weekdays in US summer time and in US winter time](figures/13_07_time_of_day_dst.png)
+
+**The daylight-saving test.** The US moves its clocks twice a year, Europe on different dates and Asia not at all. If bitcoin's busiest hours follow the US, they must move by an hour, in UTC, when the US changes its clocks:
+
+| | US summer time | US winter time |
+|---|---|---|
+| The US stock market opens (9:30 a.m. in New York) | 13:30 UTC | 14:30 UTC |
+| Bitcoin's busiest hour | 14:00 to 15:00 UTC | 15:00 to 16:00 UTC |
+| Jump in activity in the minute of the US open, against the minute before | 2.5 times | 2.4 times |
+
+They do. The busiest hour moves by exactly one hour, and the minute the US stock market opens is the minute bitcoin's trading jumps, in both seasons. Smaller spikes move with it: 12:30 or 13:30 UTC, when US economic data are published at 8:30 a.m. New York time, and 20:00 or 21:00 UTC, when the US stock market closes.
+
+**Why.** A large part of the money that trades bitcoin keeps US hours: funds and trading firms, and since January 2024 the US exchange-traded funds that hold bitcoin and trade only while the stock market is open. Their decisions follow the stock market's day and the US data calendar, and the rest of the market trades with them. The tape shows the timing; who exactly trades is not on it.
+
+### 7.2 The week
+
+![Dollars traded per minute through the week, by hour, UTC](figures/13_08_week.png)
+
+| Dollars per day, relative to the average day | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday |
+|---|---|---|---|---|---|---|---|
+| | 1.19 | 1.17 | 1.18 | 1.13 | 1.15 | 0.53 | 0.66 |
+
+Weekdays are alike; the weekend trades at half the pace. The market does not close, but the professionals behind most of its money do. Sunday is busier than Saturday, and activity rises through Sunday afternoon and evening, UTC, as the new week approaches. US public holidays that fall on a weekday trade at 71% of an ordinary weekday (55 days in five years): the US calendar shows even in a market that never closes.
+
+### 7.3 The clock itself: round times
+
+![Dollars traded in each minute of the hour, relative to the hour's average, weekdays](figures/13_09_round_minutes.png)
+
+Trading jumps in the first minute of every hour, and less at :15, :30 and :45. Against a typical minute of the same hour, the first minute of the hour carries 56% more dollars, the minutes at :30 and :15 about 20% more, and the minute before the hour 11% less. Trades in the first minute are 10% larger than elsewhere.
+
+**Why.** These rhythms come from how people trade, not from when the world is awake:
+
+- **Machines trade on the clock.** Execution algorithms cut large orders into equal pieces, one every few minutes (Lecture 12, §7.1), and many start their schedules on round times.
+- **Strategies on time bars decide at the close of their bars.** Every system built on hourly or 15-minute candles, as in Parts I and II, computes its signal at :00, :15, :30 and :45, all at the same moment. The time bars of other traders make the spikes.
+- **People do.** Alerts, reports and decisions are set for the full hour.
+
+**What it means.** Trading at :00 means trading in a crowd: more liquidity, and larger trades, but also more competition for the same prices. The first minute of the hour is not more one-sided than others; its flow is slightly better balanced. A strategy of our own should not fire exactly on the hour: an offset of a few seconds or minutes avoids competing with every other clock-driven order.
+
+### 7.4 Scheduled events
+
+| Event | Times in five years | Activity in the minute, ÷ the day's average | Same minute a week earlier | Size of the move, ÷ the day's average | Same minute a week earlier |
+|---|---|---|---|---|---|
+| US inflation release, CPI (8:30 a.m. New York) | 59 | 27.7 | 1.1 | 12.9 | 1.2 |
+| Fed decision (2:00 p.m. New York) | 40 | 16.9 | 0.9 | 6.5 | 1.1 |
+| Monthly option expiry (last Friday, 08:00 UTC) | 60 | 1.4 | 0.9 | 1.2 | 0.8 |
+| Weekly option expiry (other Fridays, 08:00 UTC) | 201 | 1.0 | 1.1 | 0.8 | 0.9 |
+| Funding payment (00:00, 08:00 and 16:00 UTC) | 5,478 | 1.1 | 1.1 | 0.9 | 0.9 |
+
+*Our measurement for these notes. Release dates: the Federal Reserve's meeting calendars and the Bureau of Labor Statistics' release schedules; the October 2025 CPI report was not published as a separate release. Times follow US daylight saving time. On 29 of the 40 Fed days, the busiest minute of the afternoon falls within 15 minutes of 2 p.m. or of the press conference at 2:30 p.m. New York time, which confirms the release time from the tape itself.*
+
+The US inflation release is the largest scheduled event in bitcoin: in its minute, trading runs at 28 times the day's average pace and the price moves 13 times as much as in an average minute. The Fed's decisions come second. Both are invisible a week earlier at the same minute: the effect belongs to the event, not to the time of day. The monthly expiry of bitcoin options leaves a small trace; weekly expiries and the funding payments leave none at the scale of a minute (Lecture 12, §6.2 found the effect of funding in the minutes around it, and small).
+
+### 7.5 How the rhythm has changed
+
+*Deep dive: can be skipped on a first reading.*
+
+| Share of weekday dollars | 2021 | 2022 | 2023 | 2024 | 2025 | 2026 |
+|---|---|---|---|---|---|---|
+| During US stock-market hours | 34.6% | 39.0% | 41.7% | 42.4% | 42.5% | 41.8% |
+| From 00:00 to 08:00 UTC, the Asian day | 26.3% | 25.2% | 22.9% | 24.3% | 26.0% | 25.8% |
+
+*2021 covers October to December; 2026, January to September. US stock-market hours: 9:30 a.m. to 4 p.m. New York time.*
+
+The US share of the trading day rose from 35% to 42% between 2021 and 2023 and has stayed there since. The rise came before the US bitcoin funds started trading in January 2024, so they did not cause it; they arrived in a market that already kept US hours.
+
+### 7.6 When each clock makes you trade
+
+A strategy does not choose the time it trades: it chooses a clock, and the clock decides. Each bar's close is a decision, and the decision falls wherever the clock happens to tick. The same seasonality maps therefore describe each clock's trading:
+
+| Share of bar closes… | Time | Dollar | Range | For comparison |
+|---|---|---|---|---|
+| in the busiest quarter of the week's hours | 25% | 42% | 44% | These hours carry 42% of all dollars |
+| in the quietest quarter | 25% | 14% | 12% | These hours carry 14% of all dollars |
+| at :00, :15, :30 or :45 | 100% | 8% | 7% | 4 minutes in 60 is 6.7% |
+| in a burst minute (over 20 times the day's median pace) | 0.09% | 3.4% | 5.8% | Burst minutes are 0.12% of all minutes |
+
+*Our measurement for these notes; tick and volume bars are close to dollar bars, CUSUM to range bars.*
+
+**Time bars** spread their decisions evenly over the clock: a quarter of them in the quietest hours of the week, and every one of them on a round minute, together with every other clock-driven order (§7.3). **Activity clocks** decide where the money is: their share of decisions in each hour matches that hour's share of the dollars traded, so they trade far less in thin markets and avoid the crowd at the round minute. The price they pay for this is bursts: a dollar bar closes in a burst minute 28 times as often as chance would give, a range bar 50 times as often, and bursts are when spreads widen and the flow is one-sided (Lecture 12, §7.3).
+
+Neither is better in general. Which execution profile is cheaper, the crowd at the round minute or the bursts, is a question of costs: Lecture 15 measures them, and Lecture 16 applies them to a trend rule on time and on dollar bars.
+
 ## References
 
 - Ané, T. and Geman, H. (2000). Order flow, transaction clock, and normality of asset returns. *Journal of Finance* 55(5), 2259–2284. — the transaction clock; normality in trading time (§1).
