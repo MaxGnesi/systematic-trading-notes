@@ -11,6 +11,10 @@ A bar keeps four prices of everything that happened inside it. This lecture look
 | 2 | What a candle loses | What does a bar not record, and when does that matter? |
 | 3 | The path against a random walk | Does the price behave like a path without memory, and does that hold on every day? |
 | 4 | Levels on the path | How often is a level crossed, how far does a position run against its owner, and what happens when the price jumps a level? |
+| 5 | Volatility, built up | How is the number made, where should it be measured, and which measure forecasts the next bars? |
+| 6 | Risk on any clock | How is risk measured on dollar or range bars, where √t no longer applies? |
+| 7 | Which measure sizes best | Which measure keeps the risk of a position most constant? |
+| 8 | For the two examples | What the trend rule (Lecture 16) and the grid (Lecture 17) take from this lecture |
 
 **A unit before we start.** Every statement about the path needs a scale: is a move of 50 basis points large or small? The scale is volatility, the typical size of the price's moves over a given time. Here it is measured in the simplest way the tape allows: square each one-minute return of a day and add them up. The sum is the day's **realised variance**, its square root the day's volatility. A random walk spreads its moves evenly, so its variance grows in proportion to time and its volatility with the square root of time, √t: four times the time, twice the move. §3 tests whether the price follows that rule; the second half of the lecture asks how volatility should be measured and used.
 
@@ -135,4 +139,53 @@ Measured with the right side of the trades (a sell stop is filled by sellers, at
 A typical stop costs a few basis points; the tail is fat and depends on the regime. The worst cases are short runs: the price breaks a level and runs 50 to 100 bp in a few seconds, often ending at a round price (19,200; 30,250; 105,000), where resting orders seem to stand. That is a hypothesis; the order book would show it.
 
 **A building block for backtests.** *A stop fills at the worst price of the next second, at a chosen percentile of this distribution*: an explicit, conservative fill rule that a backtest on bars can use without the tape. It is valid up to the size that traded in that second, and in a backtest the regime must be judged from what is known at the trigger, such as the volatility of the last hour, not from the whole day. Lecture 15 measures the order book, how much size a level absorbs and how fast it recovers, and turns this rule into a fair cost of stops; Lectures 16 and 17 use it.
+
+## 5. Volatility, built up
+
+The path half of this lecture measured its moves in units of volatility. This half asks how that number is made. There are many ways to measure the same day's risk, and each captures a different shade of it.
+
+### 5.1 How the number is built
+
+Every volatility measure adds up the price's moves in some way. Realised variance squares each move between sampling points and adds them; a range estimator takes the distance between the highest and the lowest price (Parkinson's estimator, the basis of ATR); bipower adds up products of neighbouring moves, so that a single sudden jump among calm neighbours hardly counts. The chart builds each of them through two days, one ordinary and one with a central-bank decision:
+
+![Each estimator's volatility accumulated through an ordinary day and the day of a Fed decision](figures/14_07_volatility_built_up.png)
+
+On the ordinary day the measures agree within a factor of about one and a half: 1.7% to 2.4%. The single close-to-close return says 1.4%: it sees only where the day ended. On the Fed day the gap is large: the price moved 7.6% measured minute by minute, but closed only 2.3% from its open, and close-to-close sees nothing of the rest. Measured on every single trade, both days would look absurd, 9% and 80%: each sweep through the book (Lecture 13, §3.5) counts as a move. Bipower, finally, rose at 18:00 almost as much as realised variance: the reaction to the decision was a burst of large minutes in a row, not one isolated jump.
+
+**How precise is each measure?** Over five years, each day's estimate divided by the day's one-minute realised variance:
+
+![Each estimator divided by one-minute realised variance, median day and 10th to 90th percentile, five years](figures/14_09_estimators_five_years.png)
+
+A single close-to-close return is almost useless for one day: on one day in ten it is below a hundredth of the day's variance, on another in ten more than twice it. The day's range is far better, but still scatters by a factor of two either way. Realised variance at five minutes stays within 20% of the one-minute value on four days in five, bipower within 13%.
+
+| Measure | Built from | Captures | Weak spot |
+|---|---|---|---|
+| Close to close | one return per bar | where the price ended | sees nothing inside the bar |
+| Range (Parkinson, ATR) | the highest and lowest price | how far the price reached | needs enough trades per bar (§5.2); one wild print sets it |
+| Realised variance | squared moves at a fine interval | the net moves a position's value goes through | counts noise if the interval is too fine |
+| Bipower | neighbouring moves multiplied | the smooth part of the movement | misses jumps on purpose |
+
+**Bipower: smooth moves and jumps.** The difference between realised variance and bipower is the part of a day's risk that came as jumps: on a typical day 4%, on one day in ten 13% or more. Its use is not forecasting (§5.3) but knowing what kind of risk the market is producing: smooth risk is the kind a stop handles well, jump risk the kind that makes it slip (§4.3). A rising jump share flags a market that moves in bursts. On bitcoin those bursts are not moves without trades: minutes with jumps have four to fourteen times the trades of a typical minute. News in a market that never closes is traded at once; a price jumps without trades only where a market closes, as a stock does overnight.
+
+### 5.2 Where to measure
+
+§3 found that realised variance changes with the interval it is measured at. The other measures change too, but differently:
+
+![Realised variance, bipower and the realised range by the length of the bars they use, from one second to a week](figures/14_08_interval.png)
+
+Realised variance and bipower peak around one minute: below it, trades continue in the same direction for a few seconds and the measures fall short; above it, the turning back of §3 lowers them. The range does the opposite. On short bars it is far too low, because a one-second bar has only a few trades and its high and low miss much of the movement; from about five minutes on it is reliable and stays level up to an hour, because a candle's high and low capture the extremes that the turning back hides from closing prices.
+
+So each measure has its own best interval. Realised variance belongs at about a minute; ranges belong to bars of five minutes and more. On hourly bars, the hourly ranges give about the right level of risk (1.04 times the one-minute value), while squared hourly returns understate it by 11%.
+
+### 5.3 Which measure forecasts the next bars?
+
+A strategy needs the risk of its next bars, not of the past. The test: on hourly bars, forecast the realised variance of the next 1, 4 and 24 hours from each measure over the past 24 hours, adjusted for the time of day (Lecture 13, §7); fit one constant on October 2021 to June 2023; score the forecasts from July 2023 to September 2026.
+
+**The yardstick must not be built like the forecast.** Scored against a target made of one-minute returns, the one-minute measure wins at every horizon, but partly at home: forecast and target share the same construction and its quirks. Scored against targets built differently, from five-minute returns or from the ranges of five-minute bars, each measure does best against the yardstick built like itself. A forecast should be judged against a target that does not share its construction, just as §3 judged the path against its own shuffled returns.
+
+![How much each measure reduces the forecast error against squared hourly returns, by horizon, for three yardsticks](figures/14_10_forecasts.png)
+
+What survives every yardstick: any measure that uses the inside of the bar beats the bar's own squared returns, by 7% to 26% less forecast error, more for longer horizons. Which form of the inside matters little; ranges from ordinary candles do about as well as minute data. Bipower alone forecasts slightly worse: the jumps it leaves out carry information about the risk ahead. Given both parts, smooth and jumps, with separate weights, it forecasts as well as realised variance, and slightly better for the next day against the return-based yardsticks only: no gain that holds across yardsticks.
+
+**Key message.** Each measure captures a different shade of the same risk: realised variance the net moves a position goes through, the range how far the price reaches, bipower how much of the risk comes in jumps. Choose by the risk being managed: returns to size a position, ranges to place stops and grid levels, bipower to know whether the market is moving in bursts. Whichever is chosen, measure it inside the bar.
 
