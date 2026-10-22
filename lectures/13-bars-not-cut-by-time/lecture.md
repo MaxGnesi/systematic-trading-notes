@@ -18,7 +18,7 @@ Every bar closes when a counter reaches a threshold. For a one-hour bar the coun
 | 3 | Building bars from the tape | How is each bar type cut, and how is its threshold set? |
 | 4 | Do they differ? | Do different clocks close their bars in the same hours? |
 | 5 | Are returns closer to normal? | Tails, volatility clustering and autocorrelation, bar type by bar type |
-| 6 | Imbalance bars, two versions | Does the published construction behave well on our data? *(deep dive)* |
+| 6 | Imbalance bars: the published construction and a stable one | Does López de Prado's construction work on our data, and what does a stable imbalance clock look like? *(deep dive)* |
 | 7 | Seasonality | When does the market trade: the time of day, the week, the round clock times, scheduled events, and how they have changed? |
 | 8 | For the two examples | What the trend rule (Lecture 16) and the grid (Lecture 17) take from this lecture |
 
@@ -60,7 +60,7 @@ Information bars close when the order flow becomes more one-sided than usual, us
 | **Imbalance** | the running sum of buys minus sells, in trades, coins or dollars, exceeds what is normally seen | The moments when one side takes over: informed trading, forced liquidations |
 | **Run** | the longest sequence of trades on one side exceeds what is normally seen | A large order executed in many small pieces, all on the same side (Lecture 12, §7.1) |
 
-Both are defined by López de Prado (2018, ch. 2), with thresholds estimated from past bars. The idea is attractive, since one-sided flow is exactly what moves prices (Lecture 12, §6.5), but the construction has two known weaknesses: the threshold depends on the bars it produces, which can make bar sizes run away, and it falls to almost nothing when buying and selling are balanced. §6 builds the published version and a stabilised one side by side, on our data.
+Both are defined by López de Prado (2018, ch. 2), with thresholds estimated from past bars. The idea is attractive, since one-sided flow is exactly what moves prices (Lecture 12, §6.5), but the construction has two known weaknesses: the threshold depends on the bars it produces, which can make bar sizes run away, and it falls to almost nothing when buying and selling are balanced. §6 builds the published version on our data, shows both failures, and builds a version that is stable without caps.
 
 ### 2.4 Price: range bars, Renko and the CUSUM filter
 
@@ -82,7 +82,7 @@ Three rules apply to every family, and to every later lecture that uses these ba
 | Thresholds use past data only | A threshold set from the whole sample tells each bar how much trading lies ahead |
 | Bar types are compared at the same number of bars per day | A clock that closes more often looks smoother only because it is finer; equal frequency is the bar equivalent of equal speed in Lecture 7 |
 
-From each family the lecture builds one representative, plus time bars as the benchmark: **dollar bars** for activity, **dollar-imbalance bars** for information (in both versions of §6), **range bars** for price, and the **CUSUM filter** as a sampling rule. Tick and volume bars are built too, briefly, to show why dollar bars are preferred.
+From each family the lecture builds one representative, plus time bars as the benchmark: **dollar bars** for activity, **dollar-imbalance bars** for information (§6), **range bars** for price, and the **CUSUM filter** as a sampling rule. Tick and volume bars are built too, briefly, to show why dollar bars are preferred.
 
 ## 3. Building bars from the tape
 
@@ -273,6 +273,140 @@ The hypothesis of §1: on a clock that follows trading, returns should look more
 
 **Returns are almost unpredictable on every clock.** The correlation of one bar's return with the next is about −0.02 on time and activity clocks, a slight tendency to reverse, and zero on the price clocks. No clock turns the price into something a simple rule could predict.
 
+## 6. Imbalance bars: the published construction and a stable one
+
+*Deep dive: can be skipped on a first reading.*
+
+The information clocks of §2.3 are the most ambitious of the four families: they try to sample the market when someone with information is trading. This section builds López de Prado's construction on our tape, shows how it breaks, explains why the usual repairs do not repair it, and builds a version that is stable by construction. The verdict is descriptive: what the clock does, how stable it is, and how its returns compare with dollar bars. Whether its bars carry a trading signal is a question for Lecture 15.
+
+### 6.1 What imbalance bars aim to catch
+
+Every trade carries its aggressor's side (Lecture 12, §3.2). Give a buy the sign +1 and a sell the sign −1, multiply by the dollars traded, and add up from the start of a bar: the running total is the bar's **imbalance**, θ (theta), the net dollars that buyers have pushed into the market since the bar opened. When buyers and sellers take turns, θ wanders around zero. When one side takes over, a large investor working an order or a cascade of forced liquidations, θ grows quickly in one direction. An imbalance bar closes when θ has become larger than usual, so that its bars bunch where the flow is one-sided.
+
+**Orders, not fills.** A single order that sweeps the book fills at many prices and appears as many trades (§3.5). Counted as trades, one sweep would look like a long run of buyers, all on the same side. Both constructions below therefore read **orders**: consecutive trades in the same millisecond on the same side are merged into one. On the day of the Fed decision, 21 September 2022, this turns 2.74 million trades into 1.54 million orders.
+
+### 6.2 López de Prado's construction
+
+López de Prado (2018, ch. 2; 2017) sets "larger than usual" as the imbalance a bar is expected to build up:
+
+| Step | Quantity | Financial meaning | How it is estimated |
+|---|---|---|---|
+| 1 | E[T] | The expected number of orders in a bar | A moving average of the lengths of past bars |
+| 2 | E[bv] | The expected net dollars per order: buying minus selling, on average | A moving average of past signed dollars |
+| 3 | E[T] × \|E[bv]\| | The imbalance a bar is expected to accumulate | Their product |
+| 4 | Close the bar | when \|θ\| reaches E[T] × \|E[bv]\| | |
+
+*b is the order's sign, v its dollars. The moving averages are exponentially weighted, over a span of a few past bars.*
+
+The construction is self-referential: the threshold is set by past bars, and past bars were cut by the threshold. Nothing outside the clock anchors the size of a bar.
+
+### 6.3 How it breaks: collapse and runaway
+
+Step 2 leaves one choice open. "A moving average of past signed dollars" can average over the **orders** of recent bars, or over the **bars** themselves, each bar giving its net dollars per order. Both readings appear in practice, and both fail on our tape:
+
+![Orders per bar, August to October 2022: López de Prado's construction in two readings, the fixed band of §6.5 and dollar bars](figures/13_13_imbalance_failures.png)
+
+| Reading | What goes wrong | On our tape |
+|---|---|---|
+| 1. Average over orders | **Collapse.** Buying and selling are nearly balanced: aggressive buying is 49.8% of dollars (Lecture 12, §6.5). E[bv] is close to zero, so the threshold is close to zero, and a bar closes after a handful of orders. Short bars then pull E[T] down as well | A median of 6.6 orders per bar and about 140,000 bars a day, in August to October 2022 and again in January to March 2023 |
+| 2. Average over bars | **Runaway.** A bar closes only once its imbalance is large, so each finished bar reports a large imbalance per order. The threshold rises, the next bar takes longer, E[T] rises, and the threshold rises again | No bar at all on 89 of 92 days; the expected bar length climbs to 3.3 million orders, two to three days of trading |
+
+*Our measurement for these notes; moving averages over a span of 10 bars, both started from the same 48 bars a day. Spans of 3, 10 and 30 bars and starting values from a tenth to ten times the target end in the same two places.*
+
+Neither failure depends on the settings: every combination tried ends in the same collapse, or in the same runaway within one or two days. Practitioners who implemented the bars report the same. Bars "that within 10 steps (10 bars) goes from consisting of 50-100 ticks to suddenly 200000 ticks", and settings that "sharply divide parameters into 2 territories: one that produces many bars only few ticks big ... and one that runs wild" (BlackArbsCEO, GitHub issues #1 and #9); on bitcoin, the bar sizes "end up exploding ... in a positive-feedback loop that keeps increasing the candle size until infinity" (Martínez, 2019). We found no academic study that tests the stability of these bars.
+
+### 6.4 Why caps are not a repair
+
+The common remedy is to limit the bars. A widely used library offers minimum and maximum limits on the expected bar length (Hudson & Thames, mlfinlab); public code closes a bar after at most 1,000 ticks and not before 10 (Rachnog, Advanced-Deep-Trading); another implementation sets a floor under the expected imbalance "so the threshold does not collapse to zero on a perfectly symmetric tape" (Njoroge, MQL5). Such limits do not repair the construction; they replace it. Martínez (2019) capped the expected size at 200 ticks and found that every bar soon became 200 ticks long: the cap took over, and the imbalance clock turned into a tick clock.
+
+A cap also falsifies what this lecture measures. A cap on bar length cuts off the longest bars, which hold the largest moves; a floor merges the shortest. Returns from capped bars look closer to normal because the clock has been clipped, not because of the market, and §5's comparison would become circular. A rule that needs a cap to behave is the wrong rule.
+
+### 6.5 A threshold anchored outside the clock
+
+The repair is to give the threshold an anchor outside the clock's own bars, as every other clock in this lecture has: the past 28 days (§3.4).
+
+**A first idea, and why it fails.** Measure θ against what random signs would produce: its standard deviation grows with the square root of the number of orders, so close the bar when |θ| exceeds z standard deviations, with z fixed, say 3. This does not work. The boundary grows at exactly the speed at which a random walk spreads, and the time a random walk needs to leave such a boundary has an infinite expected value for every z above 1 (Blackwell and Freedman, 1964; Breiman, 1967; Shepp, 1967). Many bars would never close on their own, and a cap would again end them.
+
+**A fixed band.** Close the bar when |θ| reaches a level h that is fixed for the day and set from the past 28 days. A random walk leaves a fixed band in a finite time, and Wald's identity (Wald, 1944) gives that time:
+
+| Flow in the bar | Expected number of orders before the bar closes | What it means |
+|---|---|---|
+| Balanced: buys and sells offset on average | h² ÷ σ², with σ² the variance of the flow per order | The bar takes its normal length |
+| One-sided, with an average push of μ dollars per order | about h ÷ \|μ\| | The more one-sided the flow, the sooner the bar closes |
+
+The first row sizes the band, the second is what an imbalance clock is for. The construction is the range bar of §3 applied to the flow instead of the price: a range bar closes when the price has moved a set distance, and its count is about the realised variance divided by the squared distance; the band closes when the flow has moved a set distance, and its count is about the flow's variance divided by h².
+
+**Persistence: the flow wanders faster than random signs.** Sized from the variance of single orders, the band produced 208 bars on the Fed day instead of 48. Order signs are persistent: buys follow buys, because large investors split their orders into many small ones (Lillo and Farmer, 2004; Lecture 12, §7.1). Net flow therefore drifts further than independent signs would allow, and its variance grows faster than the number of orders (Bouchaud, Farmer and Lillo, 2009). On our tape, the variance of the net flow over five minutes is about ten times the sum of the squared sizes of its orders; over one second it is three times, over 30 minutes 9 to 18 times. A band sized for independent signs is crossed far too often. López de Prado's construction does not see this problem, because its threshold uses only an average; any construction that measures how unusual the flow is must account for it.
+
+The remedy follows from the reason: measure the variance of the flow over the time a bar lasts, where the persistence has done its work. At 48 bars a day, a bar lasts 30 minutes on average. This fixes the horizon before any test is run; it is not fitted.
+
+| Step | Quantity | Financial meaning |
+|---|---|---|
+| 1 | Orders | Trades in the same millisecond on the same side, merged |
+| 2 | Q | Over each of the past 28 days, the sum of the squared net flow of each half hour; then the median of these 28 values. The variance of a day's flow at the scale of a bar, persistence included |
+| 3 | h = K × √(Q ÷ 48) | The net flow of a typical half hour, times a constant |
+| 4 | Close the bar | when the net flow since the bar opened reaches h in either direction |
+| 5 | K = 0.82 | Set once on the first three months of data, October to December 2021, so that the band closes as many bars as the dollar clock there; never changed afterwards |
+
+In plain words: **a bar closes when the flow has become as one-sided as it normally becomes in a whole half hour.** K plays the role of the constants of the range and CUSUM clocks: it makes the clocks comparable at the same number of bars, and it is set on data that precede everything evaluated. Theory alone would give K = 1. The measured 0.82 probably reflects single large orders that jump past the band, and bars that are mostly much shorter than their 30-minute average; we have not tested this.
+
+### 6.6 Does it work?
+
+**It is stable, in and out of sample.** The two windows of the comparison were chosen for contrast; the third, September to November 2025 with the crash of 10 October 2025, was run once, after every setting had been fixed:
+
+| Window | Bars per day: average | Fewest in a day | Most in a day | López de Prado, reading 1 / reading 2 |
+|---|---|---|---|---|
+| August to October 2022 (stress) | 48 | 9 | 136 | about 137,000 a day / none on 89 of 92 days |
+| January to March 2023 (calm) | 62 | 6 | 248 | about 142,000 a day / — |
+| September to November 2025 (out of sample) | 44 | 7 | 156 | — |
+
+*Our measurement for these notes. Early 2023 runs above target for the reason dollar bars do (§3.4): activity rose faster than a 28-day median follows; dollar bars made 68 a day in the same window.*
+
+On 10 October 2025 the band closed 156 bars, the most of any day in the window, and 46 the day after: it runs fast in a crash and slows down again, with no limit imposed.
+
+**It holds across its settings.** The plateau test of Lecture 7, §5, for each choice the construction makes:
+
+| Setting | Values tried | Bars per day, stress / calm | Moves beyond 4 standard deviations per 10,000 bars, stress / calm | What it means |
+|---|---|---|---|---|
+| Horizon of the variance | 1, 5, 30 minutes, each with its own constant | 46–48 / 61–65 | 18–24 / 7–11 | Once the number of bars is equalised, the horizon hardly matters |
+| Minimum bar length | 0 and 5 seconds; 0 to 30 seconds in a second run | changes by 12% at most | no systematic change | A minimum length, which merges bars without cutting any move, is harmless |
+| Window of the threshold | 14, 28, 56 days | ±5% / ±15% | no systematic change | The same dependence on the activity regime as dollar bars |
+| Size of the band | K × 0.5 to K × 2 | ×3 to ÷3 | no systematic change | Bars per day move with the band as Wald's identity says, though less steeply than its 1 ÷ K² (×4 and ÷4): large orders overshoot the band |
+
+*With about 4,000 bars per window, one bar more or less beyond four standard deviations changes the measure by 2.5; differences of a few units are noise.*
+
+**Where it ticks.** On the Fed day the band closed 76 bars, against 92 dollar bars and 48 time bars, in a pattern of its own:
+
+![The Fed day, 21 September 2022: where the time, dollar and fixed-band imbalance clocks close their bars](figures/13_14_imbalance_fed_day.png)
+
+The band went quiet for five hours after midnight, when the dollar clock still ticked every hour or so: there was trading, but it was two-sided. It bunched in the afternoon and around the decision, when one side pushed. Only 23% to 39% of its closes fall within a minute of a dollar bar's close. The imbalance clock is a third kind of clock, next to activity and price: it follows how one-sided the flow is.
+
+**Its bars are uneven.** A tenth of the bars last less than 10 seconds in the windows of the comparison (25 seconds out of sample), the median 6 to 12 minutes, a tenth more than an hour, and the longest out of sample 16 hours; dollar bars range from 2 to 6 minutes for the shortest tenth to 3 to 4 hours at most. The dollars per bar vary as much as in time bars (dispersion 0.9 to 1.2, against 0.1 to 0.5 for dollar bars). This is the clock's purpose, not a defect: it runs when the flow is one-sided and waits when it is balanced.
+
+**Its returns are no closer to normal than on dollar bars.**
+
+![The share of bars with a move larger than a given number of standard deviations: time, dollar and fixed-band imbalance bars, against the normal distribution](figures/13_15_imbalance_tails.png)
+
+| Measure | What we measure | Time bars | Dollar bars | Fixed band | What it means |
+|---|---|---|---|---|---|
+| Beyond 4 standard deviations, two windows | How often, per 10,000 bars | 94 | 15 | 14 | Within the windows of the comparison, as thin as dollar bars |
+| Same, out of sample | | 53 | 29 | 40 | Out of sample, fatter than dollar bars |
+| Same, out of sample without 10–11 October 2025 | | 63 | 12 | 26 | Not only the crash: twice as many large moves as dollar bars |
+| Excess kurtosis, two windows / out of sample | How fat the tails are | 23 / 18 | 3 / 4 | 1 / 10 | The same picture |
+| Absolute return, one bar to the next, two windows / out of sample | Volatility clustering | 0.22–0.33 / 0.36 | 0.09–0.16 / 0.24 | 0.19–0.26 / 0.33 | Clustering stays, closer to time bars than to dollar bars |
+
+*Our measurement for these notes; each window standardised on its own. No bar is capped or cut.*
+
+The reason lies in what the clock counts. When the price moves hard with heavy trading on both sides, a two-sided panic, the flow stays balanced, the band does not fill, and one bar holds the whole move. Dollar bars close on every dollar, one-sided or not. A clock that follows one-sidedness was never designed to equalise the amount of trading per bar, and so it does not equalise the size of moves either.
+
+### 6.7 What we take from it
+
+- **The published construction does not work as published.** On our tape, López de Prado's imbalance bars collapse to a few orders or run away to none, from any starting point, in either reading of the rule.
+- **Caps hide the problem.** They turn the clock into a fixed-size bar and clip the tails this lecture measures.
+- **A stable imbalance clock exists.** A fixed band, set from the past 28 days, sized by Wald's identity on the half-hour variance of the flow, is stable in and out of sample and across its settings, with no limit imposed. We found this combination in neither the academic nor the practitioners' literature; its parts are textbook probability (Wald) and the persistence of order flow (Lillo and Farmer).
+- **It is a different clock, not a better one for returns.** It ticks where the flow is one-sided, which no other clock does, but its returns are no closer to normal than on dollar bars, and out of sample their tails are fatter. For the comparisons of this lecture and for the two examples, dollar bars remain the activity clock.
+- **Whether its bars carry information is open.** The clock marks the moments when one side pushes hardest; what the price does after them is a question about order flow, and Lecture 15 takes it up. Run bars, the second information clock of §2.3, rest on an expected run length that assumes independent signs; the persistence of order signs suggests the same problem, untested here.
+
 ## 7. Seasonality: when the market trades
 
 The clocks of §3 to §6 take the market's rhythm out of the bars. This section maps that rhythm in calendar time, for two reasons. It explains why the market's clocks speed up and slow down. And orders are sent in calendar time: whatever clock a strategy follows, its trades happen at a particular hour of a particular day, in a deep or a thin market. All figures use the one-minute bars of Lecture 12, five years, and measure activity in dollars traded.
@@ -460,13 +594,25 @@ Neither is better in general. Which execution profile is cheaper, the crowd at t
 ## References
 
 - Ané, T. and Geman, H. (2000). Order flow, transaction clock, and normality of asset returns. *Journal of Finance* 55(5), 2259–2284. — the transaction clock; normality in trading time (§1).
+- BlackArbsCEO. Adv_Fin_ML_Exercises, GitHub issues #1 and #9. — practitioners' reports of runaway and collapsing imbalance bars (§6.3).
+- Blackwell, D. and Freedman, D. (1964). A remark on the coin tossing game. *Annals of Mathematical Statistics* 35(3). — leaving a square-root boundary takes infinitely long on average (§6.5).
+- Bouchaud, J.-P., Farmer, J. D. and Lillo, F. (2009). How markets slowly digest changes in supply and demand. In Hens, T. and Schenk-Hoppé, K. R. (eds.), *Handbook of Financial Markets: Dynamics and Evolution*. North-Holland. — net order flow grows faster than with independent signs (§6.5).
+- Breiman, L. (1967). First exit times from a square root boundary. *Proceedings of the Fifth Berkeley Symposium on Mathematical Statistics and Probability*, vol. 2. — the same, for general random walks (§6.5).
 - Business Today (11 October 2025). Crypto crash: $19 bn wiped out as Trump's 100% China tariff sparks largest liquidation in history. — the liquidations of 10 October 2025, from Bloomberg data (§3.5).
 - Clark, P. K. (1973). A subordinated stochastic process model with finite variance for speculative prices. *Econometrica* 41(1), 135–155. — volume as the clock of prices (§1).
 - Coinbase. Settlement (Global Derivatives), help centre. — the 30-minute settlement window of Deribit's contracts (§7.4).
-- Deribit. Settlement, support centre. — settlement on the 30-minute time-weighted average of the index, 07:30 to 08:00 UTC (§7.4).
 - Dacorogna, M. M., Gençay, R., Müller, U. A., Olsen, R. B. and Pictet, O. V. (2001). *An Introduction to High-Frequency Finance*. Academic Press. — intrinsic time (§1).
+- Deribit. Settlement, support centre. — settlement on the 30-minute time-weighted average of the index, 07:30 to 08:00 UTC (§7.4).
 - Easley, D., López de Prado, M. and O'Hara, M. (2012). The volume clock: insights into the high-frequency paradigm. *Journal of Portfolio Management*, Fall 2012. — the volume clock (§1).
+- Hudson & Thames. mlfinlab documentation: imbalance bars, `exp_num_ticks_constraints`. — limits on the expected bar length (§6.4).
+- Lillo, F. and Farmer, J. D. (2004). The long memory of the efficient market. *Studies in Nonlinear Dynamics & Econometrics* 8(3). — persistence of order signs (§6.5).
+- López de Prado, M. (2017). The 7 reasons most machine learning funds fail. SSRN 3031282. — the imbalance threshold and its estimation from past bars (§6.2).
 - López de Prado, M. (2018). *Advances in Financial Machine Learning*. Wiley, ch. 2. — tick, volume, dollar, imbalance and run bars; the CUSUM filter (§2).
 - Mandelbrot, B. and Taylor, H. M. (1967). On the distribution of stock price differences. *Operations Research* 15(6), 1057–1062. — prices in transaction time (§1).
+- Martínez, G. (2019). Information-driven bars for financial machine learning: imbalance bars. *Towards Data Science*, 20 May 2019. — runaway bar sizes on bitcoin; a cap turns into a fixed size (§6.3, §6.4).
 - Murphy, A. and Izzeldin, M. (2005). Order flow, transaction clock and normality of asset returns: a comment on Ané and Geman (2000). Working paper. — the limits of normality in trading time (§1).
+- Njoroge, P. Imbalance bars, MQL5 article 22063. — a floor under the expected imbalance (§6.4).
 - Page, E. S. (1954). Continuous inspection schemes. *Biometrika* 41(1/2), 100–115. — the CUSUM test (§2.4).
+- Rachnog. Advanced-Deep-Trading, `bars.py`, GitHub. — minimum and maximum bar lengths in ticks (§6.4).
+- Shepp, L. A. (1967). A first passage problem for the Wiener process. *Annals of Mathematical Statistics* 38(6), 1912–1914. — the square-root boundary for Brownian motion (§6.5).
+- Wald, A. (1944). On cumulative sums of random variables. *Annals of Mathematical Statistics* 15(3), 283–296. — Wald's identity (§6.5).
