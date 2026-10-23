@@ -4,6 +4,13 @@
 
 A bar keeps four prices of everything that happened inside it. This lecture looks at what it throws away, the path between those prices, and at the number that summarises how much a price moves, its volatility. The path decides whether a stop or a target is hit first, how often a grid's orders fill, and how far a position runs against its owner before it is closed; volatility decides how large a position may be, how wide a grid should be spaced and where a stop belongs. Both are measured on the same five years of BTCUSDT trades as Lectures 12 and 13. The lecture covers the second and third of Part III's six uses of the tape (the course guide, §1.1b): the path between bars, and volatility measured precisely.
 
+> **What to take away**
+>
+> 1. **A candle loses the order and the distance travelled:** which level was hit first, and whether the price got there in one move or in many.
+> 2. **The path is close to a random walk, but not on every day:** on BTCUSDT it turns back on ordinary days and runs on explosive ones, and the average describes neither.
+> 3. **Levels on the path are not what variance promises:** fewer crossings than a random walk, rare excursions far larger, stops cheap in the median and expensive in the tail.
+> 4. **Volatility is best measured inside the bar,** in any of its forms; each measure captures a different shade of the same risk, and on any clock a day's risk is the number of bars times the risk per bar.
+
 ## 1. What a bar does not tell
 
 | § | Step | Question |
@@ -245,3 +252,79 @@ Where our methods are established, the results agree with the literature; where 
 
 **Key message.** On any clock, a day's risk is the number of bars times the risk per bar. On BTCUSDT, price clocks put most of the risk into the clock's speed, dollar bars split it, and the square-root rule needs the expected bar count and fails by 15% where count and size move together. Risk per bar suits per-trade decisions such as stops; risk per period needs both a forecast of activity and a forecast of risk per bar.
 
+## 7. For the two examples
+
+Lectures 16 and 17 apply Part III to a trend rule and to an intraday grid. Each takes something different from this lecture; only results measured here are listed, with their section.
+
+### 7.1 The trend rule (Lecture 16)
+
+| From this lecture | What the trend rule takes |
+|---|---|
+| Candles and stops (§2) | A backtest on candles is reliable for stops wider than a bar's typical range; for tight stops it guesses the order wrong on a large share of bars |
+| √t (§3) | Scaling one-minute risk with √t overstates the variance of a position held for hours by 5% to 13%; the measured variance ratio is the better scale |
+| Excursions (§4.2) | Moves beyond 3 σ√T are six times as frequent as a random walk implies, thirty times on explosive days |
+| Measuring risk (§5.3) | Any measure from inside the bar forecasts the next bars' risk 7% to 26% better than the bar's own returns |
+| Dollar bars (§6) | A day's risk is bars times risk per bar; the simple product is 15% low on dollar bars, because the two move together |
+
+### 7.2 The grid (Lecture 17)
+
+| From this lecture | What the grid takes |
+|---|---|
+| Crossings (§4.1) | The price completes 40% to 72% of the crossings the day's variance promises; spacing should be planned on counted crossings |
+| Two regimes (§3) | On ordinary days the price turns back more often than chance, on explosive days it runs; yesterday's volatility does not tell which day it is |
+| Fills at a level (§4.3) | On BTCUSDT a resting order at a level is traded through on more than 99.7% of visits: a fill is certain once the price trades beyond it |
+| Stops (§4.3) | The worst seller of the next second gives an explicit, conservative fill rule, valid up to the size that traded |
+
+### 7.3 What needs to be investigated
+
+The results above hold on BTCUSDT from 2021 to 2026. These questions are open, and readers are invited to test them, on this market and on others:
+
+- Does sizing by a measure from inside the bar keep a strategy's risk more constant, after the cost of resizing? (Lectures 16 and 17 test it for their rules.)
+- Do stops placed by ranges or by measured excursions do better than stops placed by √t?
+- Can the explosive regime of §3 be recognised within the day, from activity, order flow or the share of jumps? (Lecture 15.)
+- Which approach to value at risk and expected shortfall gets the tail right on intraday data: a normal tail, the empirical tail of returns divided by forecast volatility, or the distribution of excursions?
+- Do the variance ratio, the two regimes and the duration measure look the same on a thinner market, such as SOLUSDT, or on a market that closes?
+- Do the short runs that end at round prices (§4.3) reflect resting orders clustered there? The order book would show it.
+
+## 8. Summary, exercises and reading
+
+### 8.1 Seven takeaways
+
+1. **A candle records neither the order nor the distance travelled.** The better guess at the order is wrong on one bar in eight, as for any random walk; a typical hour travels four times its range.
+2. **Test the path against itself.** Counted naively, the path looks as if it trends; compared with its own shuffled returns, BTCUSDT turns back slightly at small steps.
+3. **Two regimes, not one average.** On ordinary days the price turns back more often than chance; on explosive days, moves of half a percent and more carry on.
+4. **√t is an assumption.** From minutes to a day it overstates BTCUSDT's variance by 5% to 13%.
+5. **Levels are reached less often and passed more violently than variance suggests:** fewer crossings, a fat tail of excursions, and stops cheap in the median but expensive in the tail.
+6. **Each volatility measure has its own best interval and captures its own shade of risk;** any measure from inside the bar forecasts the next bars better than the bar's own returns, provided the forecast is judged against a yardstick not built like itself.
+7. **On any clock, a day's risk is the number of bars times the risk per bar;** a duration measure read from the range clock is as precise as minute-by-minute variance and has no home advantage.
+
+### 8.2 Exercises
+
+- [ ] Repeat the step test of §3 on ETHUSDT and on SOLUSDT for one year. Is the turning back weaker on the thinner market, or stronger?
+- [ ] Count the steps of §3 without the shuffled benchmark, then with it. How large is the illusion of trending at 10 basis points?
+- [ ] Choose a yardstick of your own for §5.3, for instance realised variance from 15-minute returns, and repeat the forecasting test. Which measure wins at home, and which survives?
+- [ ] Simulate a random walk, build range bars on it at one price per second, and measure the bias of the duration measure. Then add a component that turns back over minutes, as in §6, and see how much of BTCUSDT's bias it explains.
+- [ ] Use the stop-fill distribution of §4.3 as a fill rule in a simple stop-loss backtest on hourly bars. How much does the result change between the median and the worst 1%?
+- [ ] Pick one question from §7.3 and investigate it on a market of your choice.
+
+### 8.3 Reading
+
+For realised variance and forecasting with it, Andersen, Bollerslev, Diebold and Labys (2003); for comparing forecasts fairly, Patton (2011); for jumps, Andersen, Bollerslev and Diebold (2007). For microstructure noise and signature plots, Hansen and Lunde (2006). For volatility from price durations, Andersen, Dobrev and Schaumburg (2008) and Hong, Nolte, Taylor and Zhao (2023). For bitcoin's intraday behaviour and jumps, De Nicola (2021) and Scaillet, Treccani and Trevisan (2020).
+
+## References
+
+- Andersen, T. G., Bollerslev, T. and Diebold, F. X. (2007). Roughing it up: including jump components in the measurement, modeling, and forecasting of return volatility. *Review of Economics and Statistics* 89(4), 701–720. — jumps and the predictability of volatility (§6).
+- Andersen, T. G., Bollerslev, T., Diebold, F. X. and Labys, P. (2003). Modeling and forecasting realized volatility. *Econometrica* 71(2), 579–625. — intraday measures forecast volatility better than daily returns (§6).
+- Andersen, T. G., Dobrev, D. and Schaumburg, E. (2008). Duration-based volatility estimation. Working paper. — passage times, their bias and their correction (§6).
+- Broadie, M., Glasserman, P. and Kou, S. G. (1997). A continuity correction for discrete barrier options. *Mathematical Finance* 7(4), 325–349. — the barrier shift for discrete monitoring (§6).
+- Clark, P. K. (1973). A subordinated stochastic process model with finite variance for speculative prices. *Econometrica* 41(1), 135–155. — random trading time and fat tails (§6).
+- De Nicola, G. (2021). On the intraday behavior of bitcoin. *Ledger* 6. — mean reversion over one to four hours (§6).
+- Glattfelder, J. B., Dupuis, A. and Olsen, R. B. (2011). Patterns in high-frequency FX data: discovery of 12 empirical scaling laws. *Quantitative Finance* 11(4), 599–614. — directional changes (§6).
+- Hansen, P. R. and Lunde, A. (2006). Realized variance and market microstructure noise. *Journal of Business & Economic Statistics* 24(2), 127–161. — signature plots on stocks (§6).
+- Hong, S. Y., Nolte, I., Taylor, S. J. and Zhao, X. (2023). Volatility estimation and forecasts based on price durations. *Journal of Financial Econometrics* 21(1), 106–144. — duration estimators in forecasting (§6).
+- Nolte, I., Taylor, S. J. and Zhao, X. (2016). Working paper, precursor of Hong et al. (2023). — the count-based estimator and its end-of-day correction (§6).
+- Oomen, R. C. A. (2006). Properties of realized variance under alternative sampling schemes. *Journal of Business & Economic Statistics* 24(2), 219–237. — sampling in trading time (§6).
+- Patton, A. J. (2011). Volatility forecast comparison using imperfect volatility proxies. *Journal of Econometrics* 160(1), 246–256. — robust loss functions (§6).
+- Scaillet, O., Treccani, A. and Trevisan, C. (2020). High-frequency jump analysis of the bitcoin market. *Journal of Financial Econometrics* 18(2), 209–232. — jumps cluster (§6).
+- Shen, D., Urquhart, A. and Wang, P. (2020). Forecasting the volatility of bitcoin: the importance of jumps and structural breaks. *European Financial Management* 26(5), 1294–1323. — jumps in bitcoin volatility forecasts (§6).
+- Takaishi, T. (2018). Statistical properties and multifractality of bitcoin. *Physica A* 506, 507–519. — negative autocorrelation at five to ten minutes (§6).
