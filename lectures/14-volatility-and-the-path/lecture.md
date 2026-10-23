@@ -228,9 +228,9 @@ It runs low, by 14%, and the bias can be taken apart. First, test the measure wh
 | Simulated market, one price per second, about 48 bars a day | Estimate ÷ true variance |
 |---|---|
 | A random walk | 0.92 |
-| + busy and quiet hours | 0.92 |
-| + fat-tailed moves | 0.90 |
-| + a component that turns back over minutes, and the clock's averaged price | 0.82 |
+| + busy and quiet hours | 0.94 |
+| + fat-tailed moves | 0.92 |
+| + a component that turns back over minutes, and the clock's averaged price | 0.83 |
 | BTCUSDT | 0.86 |
 
 *Our simulation; the market's features added one at a time.*
