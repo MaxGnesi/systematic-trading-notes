@@ -4,6 +4,13 @@
 
 Every trade on the tape has a buyer and a seller, but only one of them was in a hurry: the aggressor, who took the price offered rather than waiting for a better one. This lecture asks what that hurry tells us and what it costs. The first part is about order flow: does one-sided buying or selling predict where the price goes next, what happens when a single order sweeps through the book, and can the explosive days of Lecture 14 be seen coming? The second part is about costs: what a trade really pays, when a resting order is filled, and how large a strategy can grow before its costs eat its edge. It covers the fifth and sixth of Part III's six uses of the tape (the course guide, §1.1b): order flow, and costs and capacity.
 
+> **What to take away**
+>
+> 1. **One-sided flow moves the price while it lasts and keeps almost all of its impact;** a sweep that chases the slower trend is taken back, one against it keeps half.
+> 2. **Risk clusters:** the best warning of a cascade is the turbulence already under way; leverage, funding and calm add nothing measurable to it.
+> 3. **On BTCUSDT a trade's cost is the exchange fee;** the spread is one tick, and a resting order re-posted at the price every few seconds saves about 2 bp against a market order.
+> 4. **Funding, not impact, limits a trend rule:** a long perpetual trailed long spot by about 4% a year after interest.
+
 ## 1. Who was in a hurry
 
 | § | Step | Question |
@@ -15,6 +22,7 @@ Every trade on the tape has a buyer and a seller, but only one of them was in a 
 | 6 | Resting orders | How often is a resting order filled, what does it miss, and how long should it wait? |
 | 7 | Capacity | How large can a strategy trade before its costs eat its edge? |
 | 8 | For the two examples | What the trend rule (Lecture 16) and the grid (Lecture 17) take from this lecture |
+| 9 | Summary, exercises and reading | |
 
 **Three words.** The **aggressor** of a trade is the side that sent the order which executed at once, against an order already resting in the book (Lecture 12, §3.2). **Net aggressive buying**, or flow, is the dollars bought by aggressors minus the dollars sold by aggressors, here divided by all dollars traded, so that it runs from −1 (only sellers in a hurry) to +1 (only buyers). The **spread** is the gap between the best price at which someone is willing to buy and the best price at which someone is willing to sell; a market order pays at least half of it.
 
@@ -54,11 +62,11 @@ In November 2022 buyers sent $118 million of net buying in the first minute and 
 
 | The literature | Our result on BTCUSDT | |
 |---|---|---|
-| Order flow moves the price strongly and linearly within the same interval (Cont, Kukanov and Stoikov, 2014; for bitcoin, Silantyev, 2019) | ±28 bp during 30-minute windows, more in volatile hours | in line |
-| The impact of trades is partly transient: it decays and partly reverses (Bouchaud, Gefen, Potters and Wyart, 2004; Bouchaud, Farmer and Lillo, 2009; for bitcoin, Donier and Bonart) | A small part comes back in the next window | in line |
+| Order flow moves the price strongly and linearly within the same interval (Cont, Kukanov and Stoikov, 2014; for the BitMEX bitcoin perpetual, Silantyev, 2019) | ±28 bp during 30-minute windows, more in volatile hours | in line |
+| The impact of trades is partly transient: it decays and partly reverses (Bouchaud, Gefen, Potters and Wyart, 2004; Bouchaud, Farmer and Lillo, 2009; for bitcoin, Donier and Bonart, 2015) | A small part comes back in the next window | in line |
 | Daily price pressure in bitcoin is mostly permanent (Makarov and Schoar, 2020) | Only a few percent of the impact comes back | in line |
-| Forecasting from order flow fades within seconds to a few price changes (Kolm, Turiel and Westray, 2023, on stocks; a 2026 thesis finds nothing beyond 30 seconds on Binance's bitcoin perpetual) | Reliable but a fraction of a basis point at minutes, below the cost of trading | in line |
-| Trade imbalance explains price changes about half as well as the imbalance of the whole book (Cont, Kukanov and Stoikov, 2014) | At releases, the move predicts what follows and the flow does not | consistent: the book carries information the trades do not |
+| Forecasting from order flow fades within about two average price changes (Kolm, Turiel and Westray, 2023, on stocks) | Reliable but a fraction of a basis point at minutes, below the cost of trading | in line |
+| On stocks, trade imbalance explains price changes about half as well as the imbalance of the whole book (Cont, Kukanov and Stoikov, 2014); on the BitMEX bitcoin perpetual, trade imbalance explained them better (Silantyev, 2019) | At releases, the move predicts what follows and the flow does not | mixed: on BTCUSDT at releases the book, not the trades, carried the information |
 | — | The reversal is reliable only after flow with the slower trend, in normal and volatile hours | not found in the literature; a result on this sample |
 
 **Key message.** On BTCUSDT, one-sided flow moves the price while it lasts and leaves almost all of its impact in place; the small part that comes back appears after flow with the slower trend in stressed hours. At releases the price move, not the flow, carries the information. None of it pays a market order's cost by itself; whether it helps a strategy that rests its orders, a grid, is a question for §5 and Lecture 17.
@@ -308,6 +316,107 @@ Over the five years the perpetual's price tracked spot within a median of 5 bp, 
 | — | Longs paid in 74 to 99% of periods; a long perpetual trailed spot by 8% a year, 4% after interest | a result on this sample |
 
 **Key message.** On BTCUSDT the size of a trade is limited by impact only at tens to hundreds of millions of dollars, later in calm years than in volatile ones. The cost a trend rule cannot avoid is funding: a long perpetual trailed long spot by about 4% a year after interest, while a short received it. Lecture 16 books funding at every settlement, and asks whether the trend rule should hold its longs in spot.
+
+## 8. For the two examples
+
+Lectures 16 and 17 apply Part III to a trend rule and to an intraday grid. Each takes something different from this lecture; only results measured here are listed, with their section.
+
+### 8.1 The trend rule (Lecture 16)
+
+| From this lecture | What the trend rule takes |
+|---|---|
+| One-sided flow (§2) | The price keeps almost all of the impact of flow; the small reversal after flow with the slower trend is below the cost of trading, not a signal |
+| Sweeps (§3) | A sweep with the slower trend is taken back within the hour: an entry that chases it pays the overshoot |
+| Cascades (§4) | Risk clusters: the last hour's volatility is the warning to size by; a recent sweep adds to it |
+| Costs (§5) | A market order costs the 5 bp taker fee plus 0.04 bp (small orders) to 2.5 bp (over $1 million) |
+| Entry (§6) | Rest one tick inside, re-post every 5 seconds, send a market order after a minute: about 2 bp saved, worst cases near 5 bp |
+| Funding (§7) | Longs paid 4 to 12% a year in each full year, shorts received it; book it at every settlement, and compare holding the longs in spot |
+
+### 8.2 The grid (Lecture 17)
+
+| From this lecture | What the grid takes |
+|---|---|
+| Sweeps (§3) | After a sweep with the slower trend the price returns to where the sweep started within the hour; after one against it, only half of the move comes back |
+| Cascades (§4) | Widen or pull the orders as the last hour's volatility rises; step aside for a few minutes after a sweep |
+| Costs (§5) | A fill costs the 2 bp maker fee plus 0.13 to 0.22 bp lost to the next minute's move; the spread itself earns nothing |
+| Resting orders (§6) | Fills come when the price moves against the order; the levels the grid misses are the moves that run away, the trends |
+| Capacity (§7) | The grid's fills are passive: its limit is adverse selection and the rate of fills, not impact |
+
+### 8.3 What needs to be investigated
+
+The results above hold on BTCUSDT from 2021 to 2026, and, for the best bid and ask, from May 2023 to March 2024. These questions are open, and readers are invited to test them, on this market and on others:
+
+- Does a sweep against the trend in volatile hours mark the turn of a trend (§3, §4)?
+- Do extreme funding or long calm warn of cascades at horizons longer than a day (§4)?
+- Are the fills simulated in §6 those a real order gets? The live capstone of Part III can check it.
+- Does the square-root law hold for bitcoin trades executed over a day, with a constant near 0.9? Only data that identify traders can tell.
+- Does the re-posted entry of §6 keep its saving on a thinner market, such as SOLUSDT, and at higher fee tiers?
+- When does holding a trend rule's longs in spot, and its shorts in the perpetual, beat holding both in the perpetual (§7)?
+
+## 9. Summary, exercises and reading
+
+### 9.1 Seven takeaways
+
+1. **Flow moves the price while it lasts and keeps almost all of its impact.** The small part that comes back appears after flow with the slower trend, in stressed hours, and is below the cost of trading.
+2. **Half of a sweep comes back within seconds;** what remains depends on the trend: a sweep that chases it is taken back, one against it stays.
+3. **Risk clusters.** A cascade grows out of turbulence that is already visible; the measures said to load the market in advance add nothing to it.
+4. **The spread is one tick; the cost is the fee.** Size adds impact only above about $100,000, and volatile hours double the small part that is not fee.
+5. **A resting order is cheaper only if it chases its misses,** because they are the trades where the price ran away; re-posted every few seconds, it saves about 2 bp with a small tail.
+6. **Capacity is set by impact only at tens to hundreds of millions of dollars,** and is larger in calm years than in volatile ones.
+7. **Funding is the cost a trend rule cannot trade away:** a long perpetual trailed long spot by about 8% a year, 4% after interest.
+
+### 9.2 Exercises
+
+- [ ] Repeat the sweep test of §3 on ETHUSDT for one year. Is a sweep with the trend taken back as fully?
+- [ ] Define a cascade by a move of 2% in an hour instead of the top 1% of scaled moves, and repeat the test of the control in §4. Does risk still cluster as strongly?
+- [ ] Using the cost figures of §5, compute the cost per year of a strategy that trades its whole capital once a day with market orders, and with resting orders as in §6.
+- [ ] Simulate the re-posted entry of §6 with re-posts every 1, 5 and 20 seconds. Where does the saving stop growing, and where does the tail start to grow?
+- [ ] Over the five years, how much funding would a rule that is long when the 50-day average is above the 200-day, and flat otherwise, have paid? Compare it with the rule's return.
+- [ ] Pick one question from §8.3 and investigate it on a market of your choice.
+
+### 9.3 Reading
+
+For the impact of trades and why it is partly transient, Bouchaud, Farmer and Lillo (2009); for order flow and price changes, Cont, Kukanov and Stoikov (2014). For the components of the spread, Glosten and Milgrom (1985) and Huang and Stoll (1996). For limit orders against market orders, Harris and Hasbrouck (1996) and Handa and Schwartz (1996); for implementation shortfall, Perold (1988). For the square-root law, Tóth et al. (2011), and on bitcoin, Donier and Bonart (2015). For perpetual futures and funding, He, Manela, Ross and von Wachter (working paper).
+
+## References
+
+- Albers, J., Cucuringu, M., Howison, S. and Shestopaloff, A. Y. (2025). The market maker's dilemma: navigating the fill probability vs. post-fill returns trade-off. arXiv preprint 2502.18625. — fill probability and the return after the fill on Binance's bitcoin perpetual (§5, §6).
+- Anand, A. and Venkataraman, K. (2016). Market conditions, fragility, and the economics of market making. *Journal of Financial Economics* 121(2), 327–349. — market makers withdraw together in poor conditions (§4).
+- Avellaneda, M. and Stoikov, S. (2008). High-frequency trading in a limit order book. *Quantitative Finance* 8(3), 217–224. — the market maker's spread widens with variance (§4).
+- Bessembinder, H. and Kaufman, H. M. (1997). A comparison of trade execution costs for NYSE and NASDAQ-listed stocks. *Journal of Financial and Quantitative Analysis* 32(3), 287–310. — effective and realised spreads (§5).
+- Biais, B., Hillion, P. and Spatt, C. (1995). An empirical analysis of the limit order book and the order flow in the Paris Bourse. *Journal of Finance* 50(5), 1655–1689. — the book refills after large trades (§3).
+- Bouchaud, J.-P., Farmer, J. D. and Lillo, F. (2009). How markets slowly digest changes in supply and demand. In T. Hens and K. R. Schenk-Hoppé (eds), *Handbook of Financial Markets: Dynamics and Evolution*, Elsevier, 57–160. — review of price impact (§2).
+- Bouchaud, J.-P., Gefen, Y., Potters, M. and Wyart, M. (2004). Fluctuations and response in financial markets: the subtle nature of 'random' price changes. *Quantitative Finance* 4(2), 176–190. — the impact of a trade is transient (§2, §3).
+- Brogaard, J., Carrion, A., Moyaert, T., Riordan, R., Shkilko, A. and Sokolov, K. (2018). High frequency trading and extreme price movements. *Journal of Financial Economics* 128(2), 253–265. — liquidity provision in extreme moves (§4).
+- Cont, R. (2001). Empirical properties of asset returns: stylized facts and statistical issues. *Quantitative Finance* 1(2), 223–236. — volatility clustering (§4).
+- Cont, R., Kukanov, A. and Stoikov, S. (2014). The price impact of order book events. *Journal of Financial Econometrics* 12(1), 47–88. — order flow imbalance and price changes (§2).
+- Copeland, T. E. and Galai, D. (1983). Information effects on the bid-ask spread. *Journal of Finance* 38(5), 1457–1469. — a posted quote as an option written to the market (§6).
+- Danielsson, J., Valenzuela, M. and Zer, I. (2018). Learning from history: volatility and financial crises. *Review of Financial Studies* 31(7), 2774–2805. — long low volatility precedes crises (§4).
+- Dayri, K. and Rosenbaum, M. (2015). Large tick assets: implicit spread and optimal tick size. *Market Microstructure and Liquidity* 1(1), 1550003. — when the spread is one tick (§5).
+- Degryse, H., de Jong, F., van Ravenswaaij, M. and Wuyts, G. (2005). Aggressive orders and the resiliency of a limit order market. *Review of Finance* 9(2), 201–242. — impact partly reversed, partly permanent (§3).
+- Dimpfl, T. (2017). Bitcoin market microstructure. SSRN Working Paper 2949807. — spreads and adverse selection on earlier bitcoin exchanges (§5).
+- Donier, J. and Bonart, J. (2015). A million metaorder analysis of market impact on the Bitcoin. *Market Microstructure and Liquidity* 1(2), 1550008. — square-root impact on bitcoin, Y = 0.9 (§2, §7).
+- Engle, R. F. (1982). Autoregressive conditional heteroscedasticity with estimates of the variance of United Kingdom inflation. *Econometrica* 50(4), 987–1007. — volatility clustering (§4).
+- Farmer, J. D., Gerig, A., Lillo, F. and Mike, S. (2006). Market efficiency and the long-memory of supply and demand: is price impact variable and permanent or fixed and temporary? *Quantitative Finance* 6(2), 107–112. — asymmetric liquidity (§3).
+- Garcia Seuma, R. M. (2026). Where does the criticality live? Early-warning signals are event-heterogeneous across seven crypto-perpetual liquidation cascades. arXiv preprint 2607.27070. — no early warning holds for every cascade (§4).
+- Glosten, L. R. and Milgrom, P. R. (1985). Bid, ask and transaction prices in a specialist market with heterogeneously informed traders. *Journal of Financial Economics* 14(1), 71–100. — the spread from informed trading (§4, §5).
+- Handa, P. and Schwartz, R. A. (1996). Limit order trading. *Journal of Finance* 51(5), 1835–1861. — the risks of a limit order (§6).
+- Harris, L. and Hasbrouck, J. (1996). Market vs. limit orders: the SuperDOT evidence on order submission strategy. *Journal of Financial and Quantitative Analysis* 31(2), 213–231. — limit orders beat market orders after non-execution (§6).
+- He, S., Manela, A., Ross, O. and von Wachter, V. (2022). Fundamentals of perpetual futures. arXiv preprint 2212.06888. — perpetual prices, funding and their deviations (§7).
+- Huang, R. D. and Stoll, H. R. (1996). Dealer versus auction markets: a paired comparison of execution costs on NASDAQ and the NYSE. *Journal of Financial Economics* 41(3), 313–357. — components of execution cost (§5).
+- Kolm, P. N., Turiel, J. and Westray, N. (2023). Deep order flow imbalance: extracting alpha at multiple horizons from the limit order book. *Mathematical Finance* 33(4), 1044–1081. — the horizon of order-flow forecasts (§2).
+- Kyle, A. S. (1985). Continuous auctions and insider trading. *Econometrica* 53(6), 1315–1335. — informed trading and price impact (§5).
+- Lo, A. W., MacKinlay, A. C. and Zhang, J. (2002). Econometric models of limit-order executions. *Journal of Financial Economics* 65(1), 31–71. — execution times and simulated fills (§6).
+- Makarov, I. and Schoar, A. (2020). Trading and arbitrage in cryptocurrency markets. *Journal of Financial Economics* 135(2), 293–319. — order flow and bitcoin returns; daily price pressure mostly permanent (§2).
+- Malinova, K. and Park, A. (2015). Subsidizing liquidity: the impact of make/take fees on market quality. *Journal of Finance* 70(2), 509–536. — quotes adjust to the fee split (§5).
+- Mandelbrot, B. (1963). The variation of certain speculative prices. *Journal of Business* 36(4), 394–419. — large changes follow large changes (§4).
+- Osler, C. L. (2005). Stop-loss orders and price cascades in currency markets. *Journal of International Money and Finance* 24(2), 219–241. — stop-loss cascades (§3, §4).
+- Patzelt, F. and Bouchaud, J.-P. (2018). Universal scaling and nonlinearity of aggregate price impact in financial markets. *Physical Review E* 97(1), 012304. — aggregate impact (§7, appendix).
+- Perold, A. F. (1988). The implementation shortfall: paper versus reality. *Journal of Portfolio Management* 14(3), 4–9. — measuring cost against the decision price (§6).
+- Saar, G. (2001). Price impact asymmetry of block trades: an institutional trading explanation. *Review of Financial Studies* 14(4), 1153–1181. — impact after a price run-up (§3).
+- Schmeling, M., Schrimpf, A. and Todorov, K. (2023). Crypto carry. BIS Working Paper 1087. — carry predicts crashes (§4).
+- Silantyev, E. (2019). Order flow analysis of cryptocurrency markets. *Digital Finance* 1, 191–218. — order flow and prices on the BitMEX bitcoin perpetual (§2).
+- Tóth, B., Lempérière, Y., Deremble, C., de Lataillade, J., Kockelkoren, J. and Bouchaud, J.-P. (2011). Anomalous price impact and the critical nature of liquidity in financial markets. *Physical Review X* 1(2), 021006. — the square-root law (§7).
 
 ## Appendix: aggregate impact on our tape
 
