@@ -260,3 +260,59 @@ Re-posted every five seconds with a market order after a minute, the order saves
 | — | Re-posting every few seconds keeps the saving and removes the tail | a result on this sample |
 
 **Key message.** On BTCUSDT a resting order one tick inside is filled most of the time and saves 1 to 2 bp against a market order, provided it chases the misses: the trades it misses are the ones where the price ran away. A static order must trade a little more saving against a heavier tail; an order re-posted one tick inside the current price every five seconds, sent as a market order after a minute, saves about 2 bp and keeps the worst cases near 5 bp. For the trend rule (Lecture 16), which makes its money on the trades that run, this is the entry to use; for the grid (Lecture 17), which never chases, the misses are its risk: they are the trends. What a stop gets when it is triggered was measured in Lecture 14 (§4.3).
+
+## 7. Capacity
+
+A strategy's edge per trade is fixed by its rule; its costs are not. Some are the same for every trade (the fee and the spread of §5), one grows with the size of the trade (impact), and one grows with the time a position is held (funding). Capacity is the size at which these costs take the edge.
+
+**In short.** On BTCUSDT impact allows trades of tens to hundreds of millions of dollars before it takes a trend rule's edge; it binds later in calm years than in volatile ones. The cost that matters more is funding: a long perpetual paid 4 to 12% a year in each full year, and over five years trailed long spot by about 8% a year, 4% after interest on the cash it frees.
+
+**Size as a share of the market.** A trade of $1 million is large when the market trades $5 billion a day and small when it trades $50 billion. The measure of size used here is therefore the trade as a share of a day's volume, Q / V. BTCUSDT traded a median of $10 to 16 billion a day in each year from 2021 to 2026, with a daily volatility of 190 to 330 bp.
+
+**Impact: the square-root law.** Across markets, the price impact of a metaorder, a trade split into many small orders over hours, follows
+
+| Symbol | Financial meaning |
+|---|---|
+| impact = Y × σ × √(Q / V) | the average move of the price against the trade while it is executed |
+| Q | the size of the trade, in dollars |
+| V | the market's volume over a day, in dollars |
+| σ | the market's volatility over a day |
+| Y | a constant of order one |
+
+The impact grows with the square root of size: a trade four times as large moves the price twice as much (Tóth et al., 2011). On bitcoin, Donier and Bonart (2015) measured Y = 0.9 (standard deviation 0.35) on a million metaorders, close to the values of mature markets; their metaorders lasted minutes to an hour, so applying the law to trades executed over a day, as below, extends it beyond their data. Our tape cannot calibrate it: it is anonymous, so the small orders that belong to one trader's metaorder cannot be told apart. What it can measure, the net flow of all traders together, is a different object, aggregate impact, with a different shape (Patzelt and Bouchaud, 2018; the appendix shows it on our tape).
+
+**The capacity map.** With a cost of 3 bp per trade for fee and spread (the re-posted entry of §6) and impact from the square-root law, the largest trade at which costs take half or all of a given edge is:
+
+![The largest trade at which costs take half or all of the edge per trade, 2021 and 2023](figures/15_12_capacity.png)
+
+A trend trade with an edge of 50 bp loses half of it to costs at about $65 million in 2021 and $135 million in 2023, all of it at about $290 million and $620 million. The capacity rises with the square of the edge left after the fixed cost, and falls with the square of volatility: the calm year 2023 allowed twice the size of the volatile 2021, with less volume. A grid, whose fills earn a few basis points each, would reach its limit in the low millions per level; but its fills are passive, and for them the binding cost is the adverse selection of §5, not impact.
+
+**Funding: the cost of holding.** A perpetual has no expiry; instead, every eight hours longs pay shorts, or shorts pay longs, an amount that keeps its price close to spot. On Binance the rate has an interest component of 0.01% per eight hours, 0.03% a day, plus a premium when the perpetual trades above spot. On BTCUSDT longs paid in 74 to 99% of the eight-hour periods each year.
+
+![Funding paid by a long perpetual and interest on the cash it frees, by year](figures/15_13_funding.png)
+
+A long perpetual needs only margin, so the rest of its capital can earn interest; long spot ties up all of it. In every full year the funding was the larger, most of all in the rising year 2024, when longs paid 12% against 5% on cash: those who want to be long when the market rises pay most to stay long.
+
+![Long spot against long perpetual, October 2021 to September 2026](figures/15_14_perp_vs_spot.png)
+
+Over the five years the perpetual's price tracked spot within a median of 5 bp, but a dollar held long grew to $1.74 in spot, $1.21 in the perpetual after funding, and $1.46 with the spare cash in Treasury bills: the perpetual trailed spot by about 8% a year, and by 4% after interest. A trend trade held long for 20 days paid 16 to 110 bp in funding, depending on the year, against 4 to 10 bp to enter and leave; a short received it.
+
+**Our results and the literature.**
+
+| The literature | Our result on BTCUSDT | |
+|---|---|---|
+| A metaorder's impact grows with the square root of its size relative to daily volume, scaled by daily volatility, with a constant of order one (Tóth et al., 2011) | Taken from the literature; our anonymous tape cannot isolate metaorders | used, not tested |
+| On bitcoin the constant is 0.9, on metaorders of minutes to an hour (Donier and Bonart, 2015) | The capacity map uses 0.5 to 1, for trades over about a day | an extrapolation in time, stated |
+| Aggregate impact, the net flow of all traders, follows a nonlinear curve of the same shape across timescales, distinct from a single trader's (Patzelt and Bouchaud, 2018) | On our tape it rises close to linearly with size over the range observed (appendix) | different object; consistent with a curve that is not a square root |
+| The perpetual's price is tied to spot by funding; deviations are larger in crypto than in traditional markets and have shrunk over time (He, Manela, Ross and von Wachter, working paper, 2022–2026) | The price tracked spot within 5 bp; funding cost a long 4 to 12% in each full year | in line |
+| — | Longs paid in 74 to 99% of periods; a long perpetual trailed spot by 8% a year, 4% after interest | a result on this sample |
+
+**Key message.** On BTCUSDT the size of a trade is limited by impact only at tens to hundreds of millions of dollars, later in calm years than in volatile ones. The cost a trend rule cannot avoid is funding: a long perpetual trailed long spot by about 4% a year after interest, while a short received it. Lecture 16 books funding at every settlement, and asks whether the trend rule should hold its longs in spot.
+
+## Appendix: aggregate impact on our tape
+
+The square-root law describes one trader's metaorder. The net flow of all traders together, measured on our tape over windows of 5, 15 and 60 minutes, moves the price close to linearly with its size over the range observed, with slopes of 0.8 to 1.0 on a log-log scale, not 0.5:
+
+![Aggregate impact against net flow as a share of daily volume, log-log, with lines of slope 1/2 and 1](figures/15_15_aggregate_impact.png)
+
+The two do not contradict each other: a window's net flow mixes many traders, informed and not, and the price responds to their sum, not to the size of any one order (Patzelt and Bouchaud, 2018). The square-root law cannot be tested on an anonymous tape, which is why §7 takes it from the literature.
