@@ -12,13 +12,13 @@ Every trade on the tape has a buyer and a seller, but only one of them was in a 
 | 3 | Sweeps and absorption | When one order sweeps through the book, does the price come back? |
 | 4 | Cascades | Can the explosive regime of Lecture 14 be recognised within the day? |
 | 5 | What a trade costs | What does a market order really pay, and how much is lost to the price moving on? |
-| 6 | Resting orders and stops | When is a resting order filled, and what does a stop really get? |
+| 6 | Resting orders | How often is a resting order filled, what does it miss, and how long should it wait? |
 | 7 | Capacity | How large can a strategy trade before its costs eat its edge? |
 | 8 | For the two examples | What the trend rule (Lecture 16) and the grid (Lecture 17) take from this lecture |
 
 **Three words.** The **aggressor** of a trade is the side that sent the order which executed at once, against an order already resting in the book (Lecture 12, §3.2). **Net aggressive buying**, or flow, is the dollars bought by aggressors minus the dollars sold by aggressors, here divided by all dollars traded, so that it runs from −1 (only sellers in a hurry) to +1 (only buyers). The **spread** is the gap between the best price at which someone is willing to buy and the best price at which someone is willing to sell; a market order pays at least half of it.
 
-**Data.** The tape of Lecture 12: the BTCUSDT perpetual on Binance, October 2021 to September 2026. Where the best bid and ask are needed (§5 and §6), Binance published them only from May 2023 to March 2024; those results are labelled with that period. Depth near the price comes from Binance's snapshots every 30 seconds, from 2023 on. The full order book, every level and every change, is the subject of Part IV.
+**Data.** The tape of Lecture 12: the BTCUSDT perpetual on Binance, October 2021 to September 2026. Where the best bid and ask are needed (§5), Binance published them only from May 2023 to March 2024; those results are labelled with that period. The order book beyond the best prices, every level and every change, is the subject of Part IV.
 
 ## 2. Does one-sided flow predict the price?
 
@@ -193,3 +193,70 @@ A market order pays three things: the exchange's fee, half the spread (it buys a
 | On earlier bitcoin exchanges, spreads were wide and adverse selection a large part of them (Dimpfl, 2017, working paper) | The spread is now one tick; the adverse selection remains | a different era of the market |
 
 **Key message.** On BTCUSDT the spread is one tick and the cost of a trade is the exchange's fee: 5 bp for a market order, 2 bp for a resting one, with impact adding to it only above about $100,000. A resting order loses a fraction of a basis point to the move that follows its fill, most in volatile hours, so it saves about 3 bp against a market order but earns nothing from the spread. For the two examples this sets the cost to use in backtests: the taker fee plus the effective half-spread for the trend rule's market orders, the maker fee plus the adverse selection for the grid's resting ones.
+
+## 6. Resting orders
+
+Section 5 showed that a resting order pays 2 bp where a market order pays 5. But a resting order is filled only if the price comes to it, and the orders that are not filled are not a random selection. This section asks the question that decides whether waiting pays: how often is a resting order filled, what does it miss when it is not, and how long should it wait before giving up and sending a market order?
+
+**In short.** A resting order one tick inside the price is filled four times in five within a minute. Its misses are the trades where the price ran away, so a strategy that drops them loses its best trades; one that chases them with a market order at a cut-off still saves 1 to 2 bp against trading at once. The cut-off sets the risk: a longer wait saves a little more on average and costs much more in the worst cases. Re-posting the order at the current price every few seconds removes that tail: it saves about 2 bp with the worst cases near 5 bp.
+
+**Hypotheses.** Fixed before the measurement:
+
+| | Hypothesis | Why |
+|---|---|---|
+| H1 | The chance of a fill falls quickly with the distance from the price | The price must travel to the order (Lecture 14, §4.1) |
+| H2 | Fills are adverse and misses run away | An order is filled when the price comes against it; the trades it misses are those that moved the other way |
+| H3 | For a trend rule's entries, buying after a rise, a resting order costs more than it saves; for a grid's entries, buying after a fall, it saves | A trend entry chases a moving price; a grid entry waits for one to come back |
+
+**How it is measured.** At every seventh minute of the five years a trader decides to buy, and, mirrored, to sell, so that the drift of the price cancels. The choice is between a market order at once, paying the taker fee and the half-spread of §5, and a resting order one tick or a few basis points inside the last price, which pays the maker fee if filled. If it is not filled by a cut-off, it becomes a market order at the price then. Both choices end with the same position, so the difference in what they paid is the whole comparison. A resting order counts as filled only when a later trade goes strictly through its price, a conservative rule, since our place in the queue is unknown; a trade at the price would fill it sooner. The grid of distances and waiting times uses one-minute bars over the five years; the cut-offs shorter than a minute use the tick tape on every tenth day, 180 days. Fees are those of a regular account. The t-statistics below use days as clusters. All fills are simulated from the tape; simulated fills can differ from real ones (Lo, MacKinlay and Zhang, 2002), which the live capstone of Part III can check.
+
+![How often a resting order is filled, and what it saves against a market order when it chases at the cut-off, by distance and waiting time](figures/15_09_resting_fill_and_saving.png)
+
+**H1 holds.** One tick inside, an order is filled 79% of the time within a minute and 94% within ten; 5 bp away, 26% and 66%; 20 bp away, 2% and 22%. Moving the order away from the price does not pay: it is filled less often, and the chases eat what the better price saves. One tick inside is the best distance at every waiting time.
+
+![The price one hour after the decision, for orders that were filled and orders that were not, trend entries and grid entries](figures/15_10_resting_what_it_misses.png)
+
+**H2 holds.** The orders that are filled are those the price came against: an hour after the decision the price stands about where the order was filled, and after the fill it moves on against it by a further 1 to 1.7 bp. The orders that are not filled are those it ran away from: 5 bp away with a ten-minute wait, the price an hour later is 6 bp against the filled orders and 11 bp in favour of the missed ones. Much of this is geometry, since an order is filled only if the price reaches it, but for a strategy with an edge it is decisive: dropping the misses removes the trades that moved its way.
+
+**H3 is rejected, provided the order chases.** Trend entries and grid entries alike save about 1.7 bp with a one-minute cut-off (t −65 and −51), because a resting order one tick inside is filled so often that the rare chases cost less than the fee saved. Without the chase the trend rule would lose its runaway entries, which is where its profit comes from (Lecture 16).
+
+**The cut-off.**
+
+![Cost of the resting order against a market order by cut-off time: average, 95th and 99th percentile, and the average of the worst 5%](figures/15_11_resting_cutoff.png)
+
+| Cut-off, one tick inside | 10 s | 30 s | 1 min | 10 min | 60 min |
+|---|---|---|---|---|---|
+| Filled before the cut-off | 58% | 72% | 79% | 94% | 98% |
+| Average against a market order | −1.2 bp | −1.5 bp | −1.6 bp | −1.9 bp | −2.0 bp |
+| Average of the worst 5% | +5.7 bp | +8.2 bp | +9.9 bp | +18.6 bp | +17.7 bp |
+| 95th percentile among the chased orders | +5 bp | +9 bp | +12 bp | +45 bp | +117 bp |
+
+*Our measurement for these notes; tick tape, every tenth day from November 2021 to September 2026. The averages are 48 to 77 standard errors from zero. Percentiles are over all orders; the last row is among those that reached the cut-off.*
+
+The average saving grows slowly, and half of it is there after five seconds; the tail grows fast. A long wait rarely ends in a chase, but when it does the price has run: after an hour, by more than 100 bp at the 95th percentile. Read over all orders, such a rare chase can even hide below the 95th percentile; the average of the worst 5% and the tail among the chased orders show it. A resting order with a long cut-off is in effect a short option: it collects a little almost always and pays a lot when the price moves away.
+
+**Re-posting the order.** The tail comes from waiting at a price the market has left. An order that is cancelled and re-posted one tick inside the current price every five seconds follows the price in small steps instead, and pays a runaway move a little at a time:
+
+| One tick inside | Average against a market order | Average of the worst 5% | Sent as a market order at the end |
+|---|---|---|---|
+| Static, market order after 1 minute | −1.6 bp | +9.9 bp | 21% |
+| Static, market order after 10 minutes | −1.9 bp | +18.6 bp | 6% |
+| Re-posted every 5 s, market order after 30 seconds | −1.8 bp | +5.0 bp | 13% |
+| Re-posted every 5 s, market order after 60 seconds | −2.0 bp | +4.9 bp | 6% |
+
+*Same sample as above; t-statistics from −68 to −86.*
+
+Re-posted every five seconds with a market order after a minute, the order saves more than a static order waiting ten minutes, with a quarter of its tail, after two re-posts on average. The most any resting order could save is about 3 bp, the fee difference and the half-spread less the tick it gives away; this keeps two thirds of it. Each re-post loses its place in the queue, which the fill rule already assumes, and one message every five seconds is far below the exchange's limits.
+
+**Our results and the literature.**
+
+| The literature | Our result on BTCUSDT | |
+|---|---|---|
+| Implementation shortfall: the cost of a trade is measured against the price at the decision, including the trades that are delayed or never made (Perold, 1988) | The comparison of this section: both choices end with the same position, and the misses are chased or counted | the framework used |
+| Limit orders at or better than the quote outperform market orders even after a penalty for not being executed (Harris and Hasbrouck, 1996, on the New York Stock Exchange) | One tick inside saves 1.6 to 2 bp after the chases | in line |
+| A limit order risks being filled when it is no longer wanted and missing when it is (Handa and Schwartz, 1996); a posted quote is an option written to the market (Copeland and Galai, 1983) | Fills are adverse and misses run away; a long wait behaves like a short option | in line |
+| Execution times are very sensitive to the limit price; simulated executions are poor proxies for real ones (Lo, MacKinlay and Zhang, 2002) | Fill rates fall quickly with distance; our fills are simulated | in line; a caveat for this section |
+| On Binance's bitcoin perpetual, fill probability and the return after the fill move in opposite directions (Albers, Cucuringu, Howison and Shestopaloff, 2025, preprint) | Filled orders are followed by a further 1 to 1.7 bp against them | in line |
+| — | Re-posting every few seconds keeps the saving and removes the tail | a result on this sample |
+
+**Key message.** On BTCUSDT a resting order one tick inside is filled most of the time and saves 1 to 2 bp against a market order, provided it chases the misses: the trades it misses are the ones where the price ran away. A static order must trade a little more saving against a heavier tail; an order re-posted one tick inside the current price every five seconds, sent as a market order after a minute, saves about 2 bp and keeps the worst cases near 5 bp. For the trend rule (Lecture 16), which makes its money on the trades that run, this is the entry to use; for the grid (Lecture 17), which never chases, the misses are its risk: they are the trends. What a stop gets when it is triggered was measured in Lecture 14 (§4.3).
