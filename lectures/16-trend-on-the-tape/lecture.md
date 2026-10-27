@@ -320,3 +320,49 @@ Over the five years the short leg added little on average, and long or flat has 
 Up to about $100 million, each trade is a fraction of a minute's trading, the patient entry of §5 applies as measured, and impact costs about 1% a year. At $1 billion a trade takes a few minutes of the market's volume: the entry must be spread over several minutes, its saving shrinks, and impact takes 2 to 4% a year of a gross return of about 25%. At $5 billion the rule gives up a fifth to a third of its return to impact. These are estimates from the law, not measurements: Donier and Bonart (2015) measured it on bitcoin trades of minutes to an hour, the duration of these trades.
 
 **Key message.** On BTCUSDT the trend rule of Part II works at speeds of one to three days, decided once an hour. Of the tape's tools, the patient entry pays on its own; a sharper forecast of risk is an option for steadier risk, not for more return; the market's other clocks and the perpetual's premium add nothing to the signal; and funding must be charged, not modelled away. The rule's shorts earned little on average and much in the one bear market of the sample. It can grow to hundreds of millions of dollars before impact takes a large part of its return.
+
+## 8. For the grid
+
+Lecture 17 applies Part III to the second example, an intraday grid. "Grid" covers several strategies; the one Lecture 17 builds is the classic two-sided grid, and it is the opposite of the rule of this lecture.
+
+**What a grid is.** A grid places buy orders at levels below the price and sell orders at levels above it, each a fixed step apart, and waits. It is a **mean-reversion strategy that trades by providing liquidity**: it bets that the price swings back, and it never sends a market order of its own; it rests its orders and is filled when someone in a hurry trades against them. In that it resembles a market maker, but it works far from the price and slowly: its orders rest several typical moves away instead of one tick, and it holds what it buys for hours instead of seconds.
+
+**How the paired grid works.**
+
+![The classic two-sided grid: a round trip on a swing, a run that fills buy after buy, and three ways of sizing the levels](figures/16_12_grid.png)
+<sub><b>How to read the figure.</b> A schematic, not data. <b>Left:</b> blue lines are levels holding buy orders, pink lines levels holding sell orders, the dotted line the centre. On the swing, the buy at −1 fills (blue triangle) and its paired sell one step up fills (pink triangle): one step earned. On the run, buy after buy fills, and their paired sells (dashed) wait above the price: the inventory the run leaves behind. <b>Right:</b> three ways of spreading the grid's capital across its levels, each averaging 1 per level.</sub>
+
+| Step | What happens |
+|---|---|
+| 1. Start | A ladder of levels a step apart: buy orders at the levels below the price, sell orders at the levels above |
+| 2. A buy fills at a level | That buy is removed, and a sell for the same unit is placed one step above |
+| 3. The paired sell fills | The round trip earns one step, less two maker fees; only now is the buy at the lower level put back |
+| 4. Above the price | The mirror image: a sell fills, a buy one step below closes it, then the sell is put back |
+
+A level is re-armed **if and only if** its paired trade has filled, so a level never holds more than one position and the grid's inventory is bounded by the number of its levels. The grid engine of the open-source Hummingbot framework re-arms its levels the same way, one side per grid; a long grid below the price and a short grid above it make the classic two-sided grid.
+
+**Its shapes.** Three choices shape a grid's risk, and Lecture 17 tests them: the **step**, set from volatility (Lecture 14); the **spacing**, in fixed dollars or in a fixed percentage of the price; and the **size profile**, how its capital is spread across the levels (figure, right). A uniform profile puts the same size everywhere. A V-shaped profile puts more size further from the centre: fewer fills, but larger ones, and the largest inventory exactly when the price runs, a mild form of averaging down. A bell-shaped profile puts more size near the centre: most of the capital works on the frequent small swings, and a run fills only small orders far out.
+
+**The opposite of the trend rule.**
+
+| | The trend rule (this lecture) | The grid (Lecture 17) |
+|---|---|---|
+| Earns when | the price runs | the price swings back |
+| Loses when | the price swings without direction | the price runs one way |
+| Trades with | market orders, worked patiently | resting orders only |
+| Holds for | days | minutes to hours |
+| Payoff | convex: small, frequent losses and rare large gains | concave: small, frequent gains and rare large losses |
+
+Trend followers' returns resemble a long position in options that pay on large moves (Fung and Hsieh, 2001), and a trend rule's profit is roughly the long-term variance of the price minus its short-term variance (Dao et al., 2016): it earns when moves add up, as on the explosive days of Lecture 14 (§3). The grid's payoff is the mirror image, our inference rather than a published result: it earns when moves cancel, and its loss is the inventory a run leaves behind. Its central risk is the trend rule's profit, which makes the tools that warn of runs its brakes.
+
+**What the grid takes from this lecture.**
+
+| From this lecture | What the grid takes |
+|---|---|
+| The instrument (§1, §6) | Funding is charged on whatever inventory the grid holds at 00:00, 08:00 and 16:00 UTC; a grid that holds inventory pays or receives it |
+| The clocks (§3) | Dollar bars add nothing to a trend measure; whether they help a grid, whose levels and spacing respond to activity, is a separate question for Lecture 17 |
+| Risk (§4) | Busy hours are largely foreseeable from the clock and the release calendar; thin hours, a high risk per dollar, are when a grid should widen its steps or step aside |
+| Execution (§5) | The grid trades only with resting orders: its cost per fill is the maker fee plus a small adverse selection (Lecture 15, §5), not the taker fee |
+| The legs (§7) | In the one bear market of the sample, a trend rule's shorts earned what a grid would have lost |
+
+Left for Lecture 17: the step and the size profile, when to re-centre the ladder, when to step aside, and what to do with inventory left by a run, a question best answered with the order book.
