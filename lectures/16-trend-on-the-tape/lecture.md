@@ -269,3 +269,54 @@ Funding, set out in §1, is what the rule pays to hold its positions. This secti
 Spot saves about 1.7% a year in funding, and gives back 1.6% in fees and 0.6% in the risk-free rate forgone: for a rule that trades its capital about 40 times a year, the perpetual is cheaper. For a slow rule that trades a few times a year, the balance would tip the other way.
 
 **Key message.** Funding is the component of a perpetual strategy to watch: paid every eight hours, set by the premium, and highest when the crowd is long, so that long positions pay most in the years they earn most. It cost the rule 1.4% a year and a long-only holder up to 12%, and a backtest must charge it at every settlement. The premium behind it says what a long pays, not where the price goes. For this rule, which trades often, the perpetual's lower fee outweighs the funding; spot pays only for rules that trade rarely.
+
+## 7. The rule built up
+
+Each section changed one thing in the rule and measured it. Put together:
+
+![The rule built up step by step and its two alternatives: Sharpe ratio in both periods and maximum drawdown](figures/16_10_rule_built_up.png)
+<sub><b>How to read the figure.</b> Each bar is one version of the rule, after fees, spread and funding. <b>Grey:</b> the plain rule of §2, and the step tested and not taken (longs in spot, §6). <b>Blue:</b> the lecture's rule, the plain rule with the patient entry of §5. <b>Green:</b> two alternatives to it. <b>Left and middle:</b> Sharpe ratio, 2021–2024 and 2025–2026. <b>Right:</b> the largest fall from a peak, 2025–2026.</sub>
+
+| Version | Sharpe ratio, 2021–2024 / 2025–2026 | Largest fall, 2021–2024 / 2025–2026 | Worst day | Costs / funding a year |
+|---|---|---|---|---|
+| Plain rule, market orders (§2) | 1.14 / 0.52 | −15% / −17% | −9.5 | 2.0% / 1.4% |
+| **+ patient entry: the lecture's rule (§5)** | **1.18 / 0.57** | −15% / −16% | −9.5 | 1.2% / 1.4% |
+| Longs held in spot (§6), not taken | 1.16 / 0.49 | −16% / −17% | −9.5 | 2.8% / −0.3% |
+| Alternative: size by the smoothed risk forecast (§4) | 1.22 / 0.44 | −13% / −10% | **−6.5** | 1.1% / 1.1% |
+| Alternative: long or flat | **1.43 / 0.61** | −13% / −11% | −8.3 | 0.7% / 1.7% |
+
+*Worst day: the largest 24-hour loss, in units of the rule's typical daily move. Costs and funding: % of capital a year, 2021–2024; negative funding is received.*
+
+Of the tape's tools, one step pays on its own: the patient entry. Sizing by the sharper forecast of risk is an alternative, not a step: it makes the worst day a third milder and the largest fall smaller, at the cost of the Sharpe ratio in 2025–2026. The other alternative, long or flat, changes the rule itself, and needs a closer look.
+
+**The long and the short leg.** The rule is long about half the time and short the other half. Split by the side it holds, year by year:
+
+| Year | Bitcoin | The rule's long leg | Its short leg | The rule | Long or flat |
+|---|---|---|---|---|---|
+| 2022 | −64% | −10.5% | **+16.9%** | **+6.4%** | −10.4% |
+| 2023 | +156% | +49.3% | −4.9% | +44.3% | +49.1% |
+| 2024 | +121% | +24.3% | −5.7% | +18.6% | +24.5% |
+| 2025 | −6% | −0.4% | −10.8% | −11.2% | −0.3% |
+| 2026, to September | −5% | +12.0% | **+16.2%** | **+28.2%** | +11.7% |
+
+*Legs: % of the rule's capital, after costs and funding. Bitcoin: its change over the year.*
+
+![Cumulative return of the lecture's rule, of its long-or-flat version and of bitcoin held long at the same volatility, 2022 to 2026](figures/16_11_equity.png)
+<sub><b>How to read the figure.</b> Cumulative return, the sum of returns as % of capital, after fees, spread and funding. <b>Blue:</b> the lecture's rule, long and short. <b>Green:</b> the same rule, long or flat. <b>Grey, dotted:</b> bitcoin held long, scaled to the rule's volatility. Shaded: 2022, the one bear market in the sample. Right of the dotted line: 2025–2026, which played no part in any choice.</sub>
+
+Over the five years the short leg added little on average, and long or flat has the higher Sharpe ratio in both periods: bitcoin rose, and shorts in rising or sideways years lose. But the shorts earned in the two falling years, and in 2022 they turned a loss of 10% into a gain of 6% while bitcoin lost two thirds of its value. This is the protection trend following is known for, and the capstone of Lecture 11 found the same on futures: long or flat kept the Sharpe ratio and lost most of the protection in crises. Which version to run is a view on how many falling years the future holds, a question five mostly rising years cannot settle.
+
+**Capacity.** The rule trades about 1,900 times a year, each trade a median 2.2% of its capital, and turns its capital over about 42 times a year. With the square-root law of Lecture 15 (§7), the daily volume and volatility of 2021–2024 and a constant Y of 0.5 to 0.9:
+
+| Capital | Each trade | In minutes of the market's trading | Impact per trade | Impact a year |
+|---|---|---|---|---|
+| $10 million | $0.2 million | 0.02 | 0.5–0.9 bp | 0.2–0.4% |
+| $100 million | $2.2 million | 0.2 | 1.6–2.9 bp | 0.7–1.2% |
+| $1 billion | $22 million | 2.4 | 5–9 bp | 2–4% |
+| $5 billion | $110 million | 12 | 12–21 bp | 5–9% |
+
+*Impact = Y × daily volatility × √(trade ÷ daily volume); impact a year = impact per trade × turnover. Before costs the rule earns about 65 bp per unit traded.*
+
+Up to about $100 million, each trade is a fraction of a minute's trading, the patient entry of §5 applies as measured, and impact costs about 1% a year. At $1 billion a trade takes a few minutes of the market's volume: the entry must be spread over several minutes, its saving shrinks, and impact takes 2 to 4% a year of a gross return of about 25%. At $5 billion the rule gives up a fifth to a third of its return to impact. These are estimates from the law, not measurements: Donier and Bonart (2015) measured it on bitcoin trades of minutes to an hour, the duration of these trades.
+
+**Key message.** On BTCUSDT the trend rule of Part II works at speeds of one to three days, decided once an hour. Of the tape's tools, the patient entry pays on its own; a sharper forecast of risk is an option for steadier risk, not for more return; the market's other clocks and the perpetual's premium add nothing to the signal; and funding must be charged, not modelled away. The rule's shorts earned little on average and much in the one bear market of the sample. It can grow to hundreds of millions of dollars before impact takes a large part of its return.
