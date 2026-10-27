@@ -214,3 +214,31 @@ The patient entry cuts the rule's trading costs by about 40% and raises its Shar
 Two cautions. The saving was measured on small orders, at the size that traded within the minute, and with fills simulated from the tape, which can differ from real ones (Lo, MacKinlay and Zhang, 2002); the live capstone of Part III can measure it on real orders. And it holds only while the rule's orders are small next to the market: §7 asks when they stop being small.
 
 **Key message.** Deciding on the hour does not mean trading on the hour. Worked over the following minute, re-posted every five seconds and chased if necessary, the rule's orders cost about 40% less, and its Sharpe ratio rises in both periods, most for the fast speeds that trade the most.
+
+## 6. Holding
+
+A perpetual has no expiry. What ties its price to spot is funding: every eight hours, at 00:00, 08:00 and 16:00 UTC, longs pay shorts, or shorts pay longs, an amount set by how far the perpetual has traded from the spot index. On Binance the rate is the interval's average premium plus an interest part of 0.01% per interval, with the difference between the two clamped to ±0.05%, so that it stays at 0.01% unless the premium moves far. Funding is a cost of holding, paid whatever the position earns, and it is the component of a perpetual strategy to watch.
+
+**What it costs.** Charged at every settlement on the position open at that moment, funding cost the rule 1.4% of its capital a year in 2021–2024 and 0.3% in 2025–2026. The rule's long side paid 1.7% a year in 2021–2024; its short side received 0.3%. A long-only holder paid far more, 4 to 12% a year in each full year (Lecture 15, §7). A backtest without funding therefore overstates rules that are mostly long, and understates rules that are often short.
+
+**What sets it: the premium.** Binance publishes the premium index, the perpetual against the spot index, in candles aligned with the funding intervals: 8-hour candles open at exactly 00:00, 08:00 and 16:00, and each of the 5,470 intervals from October 2021 to September 2026 matches a settlement. Rebuilt from the hourly premium by the formula above, funding comes out with a correlation of 0.90 and a median gap of 0.15 bp to the rates actually paid; the rest comes from Binance averaging the premium every five seconds, not every hour.
+
+![The premium of the perpetual over spot and the funding it sets, 2021-2026, and bitcoin's next 24 hours by the premium at each snapshot](figures/16_09_premium.png)
+<sub><b>How to read the figure.</b> <b>Left, blue:</b> the premium of the perpetual over the spot index, averaged over each 8-hour funding interval, then over 7 days, in bp. <b>Left, pink:</b> the funding paid by a long, bp per day, 7-day average; the dotted line is the usual 0.01% every 8 hours. <b>Right:</b> bitcoin's mean return over the 24 hours after each snapshot, by the third of the premium at that snapshot (thirds cut on 2021–2024), with the t-statistic, days as clusters.</sub>
+
+The premium sits slightly below zero most of the time, about −4 bp, and funding near its usual 0.01% per interval; both jump together when the crowd wants to be long, as in the rallies of early and late 2024, when a long paid up to 15 bp a day. Funding is highest exactly when the market rises and the rule is long.
+
+**Does the premium tell the rule anything?** Split by the premium known at each snapshot, bitcoin's next 24 hours show no ordering that holds in both periods: after a low premium the price rose 27 bp in 2021–2024 (t 2.4) and fell 2 bp in 2025–2026; after a high one, +3 bp and +11 bp, neither distinguishable from zero. The rule's long and short legs over the next eight hours show no pattern either. The premium is what a long pays, not where the price goes.
+
+**Perpetual or spot?** Holding the rule's longs in spot avoids funding, at the price of spot's higher fee, 10 bp for a regular account against 5 bp, and of the cash a spot position ties up, which forgoes the Treasury-bill rate:
+
+| The rule's longs held in | Sharpe ratio, 2021–2024 / 2025–2026 | Trading costs | Funding | Interest given up |
+|---|---|---|---|---|
+| The perpetual | **1.18 / 0.57** | 1.2% | 1.4% | — |
+| Spot (shorts in the perpetual) | 1.16 / 0.49 | 2.8% | −0.3% | 0.6% |
+
+*% of capital a year, 2021–2024. A negative funding figure is funding received, on the shorts.*
+
+Spot saves about 1.7% a year in funding, and gives back 1.6% in fees and 0.6% in interest: for a rule that trades its capital about 40 times a year, the perpetual is cheaper. For a slow rule that trades a few times a year, the balance would tip the other way.
+
+**Key message.** Funding is the component of a perpetual strategy to watch: paid every eight hours, set by the premium, and highest when the crowd is long, so that long positions pay most in the years they earn most. It cost the rule 1.4% a year and a long-only holder up to 12%, and a backtest must charge it at every settlement. The premium behind it says what a long pays, not where the price goes. For this rule, which trades often, the perpetual's lower fee outweighs the funding; spot pays only for rules that trade rarely.
