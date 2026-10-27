@@ -4,6 +4,13 @@
 
 Lectures 12 to 15 measured what the tape adds to bars: when the market trades, how the price moves inside a bar, who is in a hurry and what a trade costs. This lecture applies those measurements to the first of Part III's two examples, the trend rule of Part II, on five years of BTCUSDT. The question is practical: what does the tape change for a trend rule, and what does it leave as it was? The answer is organised around one idea, that a strategy runs on three clocks, not one, and that each of them can be chosen separately.
 
+> **What to take away**
+>
+> 1. **A strategy runs on three clocks:** when it decides, what it measures on, and how it trades. Keeping the decision on the calendar makes every test fair.
+> 2. **On BTCUSDT the trend rule works at speeds of one to three days, decided once an hour;** information from activity clocks adds nothing to its signal, and averages counted in bars hurt it.
+> 3. **Of the tape's tools, the patient entry pays;** a sharper forecast of risk steadies the rule without raising its return.
+> 4. **Funding is the cost of holding a perpetual and must be charged at every settlement;** the rule's shorts earned little on average and much in the one bear market of the sample.
+
 ## 1. Three clocks
 
 | § | Step | Question |
@@ -366,3 +373,48 @@ Trend followers' returns resemble a long position in options that pay on large m
 | The legs (§7) | In the one bear market of the sample, a trend rule's shorts earned what a grid would have lost |
 
 Left for Lecture 17: the step and the size profile, when to re-centre the ladder, when to step aside, and what to do with inventory left by a run, a question best answered with the order book.
+
+## 9. Summary, exercises and reading
+
+### 9.1 Seven takeaways
+
+1. **Three clocks, not one.** A strategy decides on one clock, measures on another and trades on a third. Fixing the decision clock on the calendar lets each of the others be tested alone.
+2. **The clocks communicate through timestamps.** A value from another clock is read as of the last finished bar; a bar still forming would use the future.
+3. **Bitcoin's tradable trends last days.** The rule works at fast spans of one to three days, looks once an hour, and fails faster than half a day, where costs eat it.
+4. **Nicer statistics are not a better signal.** A trend measure from dollar bars adds nothing when it is averaged by time, and hurts the fast rules when it is averaged by bars, because bursts reverse.
+5. **Risk has two parts, activity and risk per dollar.** A sharper forecast of risk makes the worst days milder and the risk steadier, but does not raise the return per unit of risk; the raw forecast is a trap that churns.
+6. **Deciding on the hour does not mean trading on the hour.** A patient entry, re-posted every few seconds and chased after a minute, cuts the rule's trading costs by about 40%.
+7. **Funding is the component to watch.** It is paid on positions open at each snapshot, highest when the crowd is long, and cost a long-only holder up to 12% a year; the premium behind it says what a long pays, not where the price goes.
+
+### 9.2 Exercises
+
+- [ ] Run the rule of §2 on SOLUSDT or ETHUSDT for one year. Where is the plateau of speeds, and does it lie as fast as on bitcoin?
+- [ ] Let the rule decide not every hour but only when a CUSUM filter on the price fires (Lecture 13, §3; the box of §3). Does sampling by events, which helped the machine-learning pipeline of Grądzki, Wójcik and Lessmann (2025), help a trend rule?
+- [ ] Size the capstone portfolio of Lecture 11 by a range-based volatility from daily highs and lows instead of close-to-close returns. Does it steady the risk, and does it change the Sharpe ratio, as §4 found on bitcoin?
+- [ ] A rule may close its position just before a funding snapshot and reopen it just after. From the funding history and the costs of Lecture 15, at what funding rate does this start to pay, and how often was the rate that high? Keep in mind Lecture 12, §6.2: others sell into the snapshot when funding is high.
+- [ ] Compare the rule and its long-or-flat version on the 2022 bear market alone, and on 2023–2024 alone. How many bear years in ten would make the full rule the better choice?
+- [ ] Pick one result of this lecture and test it on a market of your choice.
+
+### 9.3 Reading
+
+For the clock of a market and the returns measured on it, Clark (1973) and Ané and Geman (2000); for averages on unevenly spaced data, Zumbach and Müller (2001). For forecasting realised volatility, Corsi (2009); for what volatility targeting does and does not do, Harvey et al. (2018). For trend following as an option-like strategy, Fung and Hsieh (2001), and for its convexity, Dao et al. (2016). For perpetual futures and funding, the reading of Lecture 15 and Binance's funding documentation.
+
+## References
+
+- Ané, T. and Geman, H. (2000). Order flow, transaction clock, and normality of asset returns. *Journal of Finance* 55(5), 2259–2284. — returns in trading time (§1, §3).
+- Barroso, P. and Santa-Clara, P. (2015). Momentum has its moments. *Journal of Financial Economics* 116(1), 111–120. — risk-managed momentum (§4).
+- Binance. Introduction to Binance Futures funding rates (FAQ). — the funding formula, its interest part and clamp (§1).
+- Clark, P. K. (1973). A subordinated stochastic process model with finite variance for speculative prices. *Econometrica* 41(1), 135–155. — returns on a clock driven by trading (§1, §3).
+- Corsi, F. (2009). A simple approximate long-memory model of realized volatility. *Journal of Financial Econometrics* 7(2), 174–196. — the HAR model (§4).
+- Dao, T.-L., Nguyen, T.-T., Deremble, C., Lempérière, Y., Bouchaud, J.-P. and Potters, M. (2016). Tail protection for long investors: trend convexity at work. *Journal of Investment Strategies*; arXiv 1607.02410. — trend profit and the variance of long and short horizons (§8).
+- Donier, J. and Bonart, J. (2015). A million metaorder analysis of market impact on the Bitcoin. *Market Microstructure and Liquidity* 1(2), 1550008. — square-root impact on bitcoin (§7).
+- Fayyaz, M. T., Jabbar, A., Qureshi, F. A. and Jalil, S. Q. (2026). A frequency-controlled comparison of tick- and minute-based information bars for cryptocurrency markets. arXiv preprint 2608.26158. — bar statistics and predictability on the Binance bitcoin perpetual (§1, §3).
+- Fung, W. and Hsieh, D. A. (2001). The risk in hedge fund strategies: theory and evidence from trend followers. *Review of Financial Studies* 14(2), 313–341. — trend following as lookback straddles (§8).
+- Grądzki, P., Wójcik, P. and Lessmann, S. (2025). Algorithmic crypto trading using information-driven bars, triple barrier labeling and deep learning. *Financial Innovation* 11. — sampling and labelling on bitcoin and ether (§3).
+- Harvey, C. R., Hoyle, E., Korgaonkar, R., Rattray, S., Sargaison, M. and Van Hemert, O. (2018). The impact of volatility targeting. *Journal of Portfolio Management* 45(1), 14–33. — volatility targeting by asset class (§4).
+- Kim, A. Y., Tse, Y. and Wald, J. K. (2016). Time series momentum and volatility scaling. *Journal of Financial Markets* 30, 103–124. — the role of volatility scaling in trend returns (§4).
+- Lo, A. W., MacKinlay, A. C. and Zhang, J. (2002). Econometric models of limit-order executions. *Journal of Financial Economics* 65(1), 31–71. — simulated against real fills (§5).
+- López de Prado, M. (2018). *Advances in Financial Machine Learning*. Wiley. — bars sampled by activity, the CUSUM filter (§1, §3).
+- Moreira, A. and Muir, T. (2017). Volatility-managed portfolios. *Journal of Finance* 72(4), 1611–1644. — scaling factors by their variance (§4).
+- Patton, A. J. (2011). Volatility forecast comparison using imperfect volatility proxies. *Journal of Econometrics* 160(1), 246–256. — the QLIKE loss (§4).
+- Zumbach, G. and Müller, U. A. (2001). Operators on inhomogeneous time series. *International Journal of Theoretical and Applied Finance* 4(1), 147–177. — averages on unevenly spaced data (§3).
