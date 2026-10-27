@@ -117,3 +117,78 @@ The distinction between B and C has a name in the literature on unevenly spaced 
 | — | A trend measure counted in dollar bars hurts fast trend rules, because it follows bursts that reverse | a result on this sample |
 
 **Key message.** Information from another clock is easy to plug into an hourly rule: measure on the other clock, read the last finished bar at each decision. For a trend rule on BTCUSDT it adds nothing: sampled on dollar bars but averaged by time, it is the same as hourly closes, only a little cheaper to trade; averaged by bars, it follows bursts that reverse and hurts the rule where it earns. If a trend measure is taken from another clock, its average should fade with time, not with bars. The rule keeps reading hourly closes.
+
+## 4. Risk
+
+The rule sizes each position by the market's volatility over the past 36 days of hourly returns: the plainest estimate there is. Lecture 14 showed that measures built from inside the bar forecast the next bars' risk better, and Lecture 15 that risk clusters hour by hour. This section asks what that sharper knowledge of risk is worth to the trend rule, in two steps: what an hour's risk is made of, and what sizing by a forecast of it does.
+
+**Two parts of risk.** An hour's risk, its realised variance from one-minute returns, is the product of two quantities: how much is traded in the hour, its **activity** (dollars traded, over a typical hour), and how far each dollar traded moves the price, its **risk per dollar**. The first is the number of dollar bars the hour will contain; the second is the risk each of them carries.
+
+![The two parts of an hour's risk: activity and risk per dollar over one week, and how the hour-to-hour variation of risk splits between them](figures/16_06_two_parts_of_risk.png)
+<sub><b>How to read the figure.</b> <b>Left:</b> one week, 11 to 17 March 2024, hour by hour, on a log scale where 1 is the usual level. <b>Blue:</b> activity, the dollars traded in the hour over a typical hour. <b>Pink:</b> risk per dollar, the hour's realised variance over its activity, relative to its usual level (the 28-day median). <b>Right:</b> over five years, the share of the hour-to-hour variation of log realised variance that comes from each part, and from the two moving together.</sub>
+
+The two parts move separately, and each carries a large share of the variation: activity 42%, risk per dollar 38%, and the two together another 20%. Both can be forecast from what is known at the start of the hour, with the same kind of model, a regression on the last hour, the last day and the last week (Corsi, 2009), plus the same hour of the week and the scheduled releases:
+
+| Forecast of the next hour, out of sample (2025–2026) | R² |
+|---|---|
+| Activity, from the last hour alone | 0.45 |
+| Activity, full model with the hour of the week and the release hours | 0.58 |
+| Risk per dollar, full model | 0.72 |
+| Risk itself, directly | 0.70 |
+| Risk as forecast activity × forecast risk per dollar | 0.70 |
+
+*R² of the logarithm. A release hour carries about four times a typical hour's activity.*
+
+Forecasting the two parts separately gives the same accuracy as forecasting risk directly. The split does not make the forecast sharper; it tells what kind of risky hour is coming. A busy hour, high activity at a normal risk per dollar, is largely foreseeable from the clock and the release calendar: a rule can plan around it. A thin hour, a high risk per dollar, is the state of liquidity that Lecture 15 found before cascades: a rule should hold less in it.
+
+**Sizing by forecast risk.** The test replaces the 36-day volatility in the position size with a forecast of the coming risk, built from one-minute data, and compares four ways of measuring the risk the rule sizes by:
+
+| Sizing by | What it uses |
+|---|---|
+| **Plain** | The past 36 days' volatility of hourly returns |
+| **Next-day forecast, raw** | A forecast of the next 24 hours' realised variance, from the last hour, day and week, updated every hour |
+| **Next-day forecast, smoothed** | The same forecast, averaged over a day, so that the position is not resized every hour |
+| **Forecast over the holding period** | The same model, forecasting as far ahead as the rule typically holds: one day for the one-day speed, eight days for the eight-day speed |
+
+![Sharpe ratio in both periods and the worst day, by speed, for four ways of measuring the risk the rule sizes by](figures/16_07_sizing.png)
+<sub><b>How to read the figure.</b> Each line is one way of sizing, by speed; the large markers on the right of each panel are the rule's blend of the three plateau speeds. <b>Left and middle:</b> the Sharpe ratio after all costs, 2021–2024 and 2025–2026. <b>Right:</b> the worst day of 2021–2024, the largest loss over 24 hours, in units of the rule's typical daily move: closer to zero is milder. The shaded band is the plateau of §2.</sub>
+
+For the rule's blend:
+
+| Sizing by | Sharpe ratio, 2021–2024 / 2025–2026 | Worst day | Month-to-month spread of risk | Costs a year |
+|---|---|---|---|---|
+| Plain | **1.14 / 0.52** | −9.5 | 0.58 | 2.0% |
+| Next-day forecast, raw | 0.92 / 0.21 | −6.8 | 0.45 | 5.8% |
+| Next-day forecast, smoothed | **1.18** / 0.37 | **−6.5** | **0.46** | 1.8% |
+| Forecast over the holding period | 1.11 / 0.38 | −7.4 | 0.48 | 1.7% |
+
+*Worst day: the largest 24-hour loss in units of the rule's typical daily move. Spread of risk: the standard deviation of monthly realised volatility over its average.*
+
+First, how good is each measure as a forecast of risk? Against the next 24 hours' realised variance, with each measure scaled to the same average level on 2021–2024:
+
+| Forecast of the next 24 hours' risk | QLIKE, 2021–2024 / 2025–2026 (lower is better) |
+|---|---|
+| Plain: past 36 days | 0.38 / 0.32 |
+| Next-day forecast, raw | **0.26 / 0.23** |
+| Next-day forecast, smoothed over a day | 0.29 / 0.25 |
+| The larger of raw and smoothed | 0.27 / 0.24 |
+
+*QLIKE: the loss function for variance forecasts that is robust to noise in the measured variance (Patton, 2011; Lecture 14, §5.3).*
+
+The forecast from one-minute data is a much better measure of the coming risk than the 36-day volatility, and smoothing it over a day gives up only part of the gain: out of sample it keeps about three quarters of the raw forecast's advantage. Then, what does each do in the rule? Three results stand out.
+
+- **The raw forecast is a trap.** It moves from hour to hour, the position follows it, and the rule pays 5.8% of its capital a year in fees instead of 2.0%. Smoothed over a day, the forecast keeps most of its information and loses the churn. A middle way, sizing by the larger of the raw and the smoothed forecast, so that the position is cut at once when risk jumps and grows back slowly when it falls, brings much of the churn back (3.4% a year in fees) and makes the worst day no milder (−6.8): smoothing is the cheaper way to use the forecast.
+- **A sharper forecast of risk steadies the rule.** Sized by the smoothed forecast, the rule's worst day is −6.5 typical daily moves instead of −9.5, and its risk varies less from month to month. That is what a forecast of risk is for, and it delivers it.
+- **It does not raise the return per unit of risk.** The Sharpe ratio is about the same in 2021–2024 (1.18 against 1.14) and lower in 2025–2026 (0.37 against 0.52); at every speed in 2025–2026 the plain sizing does best. Forecasting over the holding period instead of the next day helps the slow rules, for which tomorrow's risk is the wrong number, but does not close the gap. One explanation, to be tested rather than assumed: bitcoin's large trends tend to come with rising volatility, and a rule that cuts its position as soon as risk rises holds less during the moves it lives on; the slow 36-day estimate reacts later and keeps more of them.
+
+**Our results and the literature.**
+
+| The literature | Our result on BTCUSDT | |
+|---|---|---|
+| Realised volatility is well forecast by its own last day, week and month, a simple model that mimics long memory (Corsi, 2009) | The same model forecasts an hour's risk with an R² of 0.70 out of sample, and each of its two parts as well | in line |
+| Volatility targeting raises the Sharpe ratio only for risk assets such as equities and credit, negligibly for bonds, currencies and commodities, but makes extreme returns and left-tail events smaller in every asset class (Harvey, Hoyle, Korgaonkar, Rattray, Sargaison and Van Hemert, 2018) | Sizing by a sharper forecast makes the worst day milder (−6.5 against −9.5) without raising the Sharpe ratio | in line: bitcoin behaves like the second group |
+| Scaling factor portfolios by their recent variance raised their Sharpe ratios (Moreira and Muir, 2017; for momentum, Barroso and Santa-Clara, 2015); later work finds the gains weaker out of sample and after costs | The sharper forecast does not raise the Sharpe ratio after costs | consistent with the later work |
+| Much of the reported performance of time-series momentum comes from scaling its positions by volatility (Kim, Tse and Wald, 2016) | All versions here are scaled by volatility; scaling by a sharper measure adds nothing to the return | a different question: how well, not whether, to scale |
+| — | An hour's risk splits about equally between activity and risk per dollar, each forecastable | a result on this sample |
+
+**Key message.** An hour's risk on BTCUSDT has two parts of about equal weight: how much is traded, largely foreseeable from the clock and the release calendar, and how far each dollar moves the price, the state of liquidity. Forecasting them separately is no more accurate than forecasting risk directly, but tells what kind of hour is coming. Sizing a trend rule by a sharper forecast of risk, smoothed so that it does not churn, makes its worst days milder and its risk steadier, but does not raise its return per unit of risk; on this sample the plain, slow estimate did as well or better. The choice is between steadier risk and the last part of the return, and it is the investor's, not the data's. The capstone of Lecture 11 met the same trap from the other side: its floor on measured volatility kept positions from jumping when volatility briefly collapsed. The rule of the following sections keeps the plain sizing; §7 shows the alternative beside it.
