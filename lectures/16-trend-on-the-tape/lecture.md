@@ -52,3 +52,31 @@ At 17:00 the rule reads the value of the bar that ended at 16:48:42, eleven minu
 There is a second way to bring dollar bars into an hourly rule: to summarise the bars that finished during the hour instead of reading the last one. Their number measures the hour's activity, the sum of their squared returns its risk; §4 uses both.
 
 **Data.** The tape of Lecture 12, the BTCUSDT perpetual on Binance from October 2021 to September 2026, as hourly closes and as the dollar bars of Lecture 13 (about 48 a day, thresholds from the past 28 days). Costs come from Lecture 15: 5 bp for a market order and 2 bp for a resting one, a regular account's fees, plus the measured spread; funding is charged at every eight-hour settlement. Every choice of speed or setting is made on 2021–2024; 2025–2026 is shown as well, and played no part in any choice.
+
+## 2. The rule on BTCUSDT
+
+The rule is the one Part II built and the capstone of Lecture 11 carried into its final portfolio: EWMAC, the gap between a fast and a slow exponentially weighted moving average of the price, divided by the volatility of price changes, so that a trend is measured in units of its own noise. Its parts, and what changes on bitcoin:
+
+| Part | As in Part II | On BTCUSDT |
+|---|---|---|
+| Signal | Fast average minus slow average, the slow span four times the fast, divided by the volatility of price changes | The same, on hourly closes |
+| Scale | The signal divided by its own average absolute size so far, so that 1 is a typical signal | The same; no cap on large signals, so that the rule's output is not trimmed by hand |
+| Position | Signal × target volatility ÷ the market's volatility, here a 10% annual target and the past 36 days' volatility of hourly returns | The same |
+| Trading | Change the position when the target has moved | Only when the target is more than 10% of its average size away from the position held: a buffer that keeps the rule from paying fees for small adjustments |
+| Costs | A cost per unit traded | The 5 bp fee of a market order and the measured half-spread (Lecture 15, §5), and funding at every eight-hour settlement on the position held |
+
+Without a cap, large signals give large positions, and the rule's realised volatility comes out near 19% a year rather than the 10% it targets. The comparisons below are in Sharpe ratios, which the scale of the positions does not change.
+
+**Which speeds?** Part II found a plateau of fast spans from about 16 to 128 days on futures, and found that faster rules failed. Bitcoin is a different market, so the speed is chosen again, on 2021–2024 only: the same rule, fast spans from 3 hours to 3 weeks, each about 1.6 times the last, so that the curve is spaced evenly in what matters: 1 to 2 hours doubles the speed, 13 to 14 days hardly changes it.
+
+![The Sharpe ratio after all costs by speed, 2021-2024 and 2025-2026, and what trading costs a year](figures/16_03_speed_curve.png)
+
+The curve has a plateau, and it lies far faster than on futures: fast spans of **one to three days**, with a Sharpe ratio after all costs of 1.0 to 1.2 in 2021–2024 and about 0.5 in 2025–2026, which played no part in the choice. Faster than half a day, costs eat the rule: at a fast span of three hours it trades its capital about 580 times a year and pays 29% of it in fees. Slower than a week, it fades, and at three weeks it loses money in 2025–2026. The gap between the curve before and after costs shows where costs matter: at the fast end. On this market and sample, bitcoin's tradable trends last days, not months; whether that holds on other cryptocurrencies, or in other years, is an open question.
+
+**How often to look?** The speed is how much history the rule weighs; the candle is how often it looks. A fast span of one day is about 24 hourly candles, or 288 five-minute candles, or a single daily one. The same speeds, measured in hours of history, on candles from five minutes to a day:
+
+![The Sharpe ratio after all costs on candles of five minutes to one day, for speeds of one, two and four days](figures/16_04_candle_size.png)
+
+From five minutes to four hours, the candle hardly matters: in 2021–2024 the Sharpe ratios lie within about 0.15 of each other at every speed. In 2025–2026 finer candles do a little better, by amounts that two years of data cannot tell from chance. Once a day is too seldom: a rule that sees only the daily close reacts a day late to trends that last a few days, and loses a third of its Sharpe ratio or more. Looking once an hour is therefore enough, and simpler to run than looking every five minutes.
+
+**The rule for the rest of the lecture.** Hourly candles; the three speeds of the plateau, fast spans of 1, 2 and 3 days, blended with equal weights, following the rule of Part II: drop the speeds that do not work and keep all those that do, rather than the single best. The blend has a Sharpe ratio after all costs of 1.14 in 2021–2024 and 0.52 in 2025–2026; it pays 2.0% of its capital a year in fees and 1.4% in funding, and turns its capital over about 40 times a year. Every section that follows changes one thing in this rule, and measures what it adds.
