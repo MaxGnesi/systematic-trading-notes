@@ -66,7 +66,7 @@ A perpetual future is a futures contract that never expires. There is no roll, s
 | **Liquidation** | When losses consume a position's margin, the exchange closes it with a market order |
 | Tick and lot | Prices move in steps of $0.10 (since February 2022; $0.01 before), quantities in steps of 0.001 bitcoin; orders must be worth at least $50 |
 
-**Funding is the perpetual's carry.** In Lecture 11 a futures holder earned or paid the roll yield at each roll (§3.6); on a perpetual the same carry is paid continuously, three times a day. Over the five years from October 2021:
+**Funding is the perpetual's carry.** In Lecture 11 a futures holder earned or paid the roll yield at each roll (§3.6); on a perpetual the same carry is paid in instalments, three times a day, on the positions open at those moments: a position closed before a funding time pays and receives nothing for that period (§6.2). Over the five years from October 2021:
 
 | Funding, BTCUSDT perpetual, Oct 2021–Sep 2026 | |
 |---|---|
