@@ -303,7 +303,7 @@ A long perpetual needs only margin, so the rest of its capital can earn interest
 
 ![Long spot against long perpetual, October 2021 to September 2026](figures/15_14_perp_vs_spot.png)
 
-Over the five years the perpetual's price tracked spot within a median of 5 bp, but a dollar held long grew to $1.74 in spot, $1.21 in the perpetual after funding, and $1.46 with the spare cash in Treasury bills: the perpetual trailed spot by about 8% a year, and by 4% after interest. A trend trade held long for 20 days paid 16 to 110 bp in funding, depending on the year, against 4 to 10 bp to enter and leave; a short received it.
+Over the five years the perpetual's price tracked spot within a median of 5 bp, but a dollar held long grew to $1.74 in spot, $1.21 in the perpetual after funding, and $1.46 with the spare cash in Treasury bills: the perpetual trailed spot by about 8% a year, and by 4% after interest. The gap between the two is, period by period, the funding paid plus the change in the basis, the perpetual's price over spot; over these five years the basis ended where it began, within a few basis points, so the gap is the funding (Lecture 16, §6, measures the long-spot, short-perpetual structure that earns it). A trend trade held long for 20 days paid 16 to 110 bp in funding, depending on the year, against 4 to 10 bp to enter and leave; a short received it.
 
 **Our results and the literature.**
 
