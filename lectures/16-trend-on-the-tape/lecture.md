@@ -79,12 +79,13 @@ and, since the capital sits in spot rather than in a riskless asset, the return 
 | Funding received | +36.4% | +7.3% |
 | Change in the basis | about 0 | about 0 |
 | Costs, one round trip in each leg | −0.3% | |
-| Risk-free rate given up (3-month Treasury bill) | −18.9% | −3.8% |
-| **Excess over the risk-free rate** | **+17.2%** | **+3.5%** |
+| **Total return of the structure**, compounded | **+43.5%** | **+7.5%** |
+| Risk-free rate over the same period (3-month Treasury bill) | +20.8% | +3.9% |
+| **Excess over the risk-free rate** | | **+3.6%** |
 
 *By year, the excess over the risk-free rate was 2.1% in 2022, 2.6% in 2023, 7.1% in 2024, 1.1% in 2025 and −0.5% in 2026 to September.*
 
-Over five years the basis returned to where it started, within a few basis points, so the structure earned the funding and nothing else; day to day the basis does move, and the worst day lost 19 bp. Above the risk-free rate, the pure premium was about 3.5% a year, most in the bull year 2024, and below it in 2026. Three caveats belong with the number: the short perpetual needs margin on top of the spot purchase, so the return on all the capital used is lower; in a sharp rally the short leg must be topped up or it is liquidated, unless the exchange lets the spot serve as collateral; and both legs sit at one exchange. The same formula underlies every comparison of perpetual and spot in these notes, including that of Lecture 15, §7, and §6 below.
+The structure earned about 7.5% a year, and about 3.6% a year more than the risk-free rate. Over five years the basis returned to where it started, within a few basis points, so the structure earned the funding and nothing else; day to day the basis does move, and the worst day lost 19 bp. The excess over the risk-free rate was largest in the bull year 2024, and slightly negative in 2026. Three caveats belong with the number: the short perpetual needs margin on top of the spot purchase, so the return on all the capital used is lower; in a sharp rally the short leg must be topped up or it is liquidated, unless the exchange lets the spot serve as collateral; and both legs sit at one exchange. The same formula underlies every comparison of perpetual and spot in these notes, including that of Lecture 15, §7, and §6 below.
 
 **Data.** The tape of Lecture 12, the BTCUSDT perpetual on Binance from October 2021 to September 2026, as hourly closes and as the dollar bars of Lecture 13 (about 48 a day, thresholds from the past 28 days). Costs come from Lecture 15: 5 bp for a market order and 2 bp for a resting one, a regular account's fees, plus the measured spread; funding is charged at every eight-hour settlement. Every choice of speed or setting is made on 2021–2024; 2025–2026 is shown as well, and played no part in any choice.
 
