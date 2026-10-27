@@ -194,3 +194,23 @@ The forecast from one-minute data is a much better measure of the coming risk th
 | — | An hour's risk splits about equally between activity and risk per dollar, each forecastable | a result on this sample |
 
 **Key message.** An hour's risk on BTCUSDT has two parts of about equal weight: how much is traded, largely foreseeable from the clock and the release calendar, and how far each dollar moves the price, the state of liquidity. Forecasting them separately is no more accurate than forecasting risk directly, but tells what kind of hour is coming. Sizing a trend rule by a sharper forecast of risk, smoothed so that it does not churn, makes its worst days milder and its risk steadier, but does not raise its return per unit of risk; on this sample the plain, slow estimate did as well or better. The choice is between steadier risk and the last part of the return, and it is the investor's, not the data's. The capstone of Lecture 11 met the same trap from the other side: its floor on measured volatility kept positions from jumping when volatility briefly collapsed. The rule of the following sections keeps the plain sizing; §7 shows the alternative beside it.
+
+## 5. The execution clock
+
+The rule decides at the hourly close; nothing says it must trade at that instant, with a market order. Lecture 15 (§6) measured the alternative on the tick tape: a resting order one tick inside the price, cancelled and re-posted at the current price every five seconds, and sent as a market order if it is still unfilled after a minute. It is filled as a resting order most of the time, follows the price instead of waiting at a level the market has left, and chases the rest. Measured against a market order sent at the decision, it saved 1.96 bp per unit traded, with the worst 5% of cases costing about 5 bp more.
+
+The patient entry changes only the execution clock: the decision times, the signal, the sizing and the funding stay as they were.
+
+![Sharpe ratio in both periods and trading costs by speed, with market orders and with the patient entry](figures/16_08_patient_entry.png)
+<sub><b>How to read the figure.</b> <b>Blue:</b> the rule of §2 with market orders at the hourly close. <b>Orange:</b> the same rule with the patient entry. <b>Left and middle:</b> the Sharpe ratio after all costs, 2021–2024 and 2025–2026. <b>Right:</b> trading costs, % of capital a year, on a log scale. Large markers on the right of each panel: the rule's blend of the plateau speeds. Shaded: the plateau.</sub>
+
+| The rule's blend | Sharpe ratio, 2021–2024 / 2025–2026 | Trading costs a year |
+|---|---|---|
+| Market orders at the hourly close | 1.14 / 0.52 | 2.0% |
+| Patient entry | **1.18 / 0.57** | **1.2%** |
+
+The patient entry cuts the rule's trading costs by about 40% and raises its Sharpe ratio in both periods. The gain grows with how much the rule trades: at a speed of six hours, which turns its capital over about 270 times a year, the Sharpe ratio rises from 0.53 to 0.76 in 2021–2024 and from −0.48 to −0.16 in 2025–2026; at three weeks, which trades a few times a year, it barely moves. A cheaper entry does not make a fast rule good, but it moves the point at which costs start to eat it.
+
+Two cautions. The saving was measured on small orders, at the size that traded within the minute, and with fills simulated from the tape, which can differ from real ones (Lo, MacKinlay and Zhang, 2002); the live capstone of Part III can measure it on real orders. And it holds only while the rule's orders are small next to the market: §7 asks when they stop being small.
+
+**Key message.** Deciding on the hour does not mean trading on the hour. Worked over the following minute, re-posted every five seconds and chased if necessary, the rule's orders cost about 40% less, and its Sharpe ratio rises in both periods, most for the fast speeds that trade the most.
