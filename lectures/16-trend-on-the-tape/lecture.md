@@ -82,3 +82,38 @@ The curve has a plateau, and it lies far faster than on futures: fast spans of *
 From five minutes to four hours, the candle hardly matters: in 2021–2024 the Sharpe ratios lie within about 0.15 of each other at every speed. In 2025–2026 finer candles do a little better, by amounts that two years of data cannot tell from chance. Once a day is too seldom: a rule that sees only the daily close reacts a day late to trends that last a few days, and loses a third of its Sharpe ratio or more. Looking once an hour is therefore enough, and simpler to run than looking every five minutes.
 
 **The rule for the rest of the lecture.** Hourly candles; the three speeds of the plateau, fast spans of 1, 2 and 3 days, blended with equal weights, following the rule of Part II: drop the speeds that do not work and keep all those that do, rather than the single best. The blend has a Sharpe ratio after all costs of 1.14 in 2021–2024 and 0.52 in 2025–2026; it pays 2.0% of its capital a year in fees and 1.4% in funding, and turns its capital over about 40 times a year. Every section that follows changes one thing in this rule, and measures what it adds.
+
+## 3. The information clock
+
+Section 1 showed how an hourly rule can read a value computed on dollar bars. This section asks whether it should, for the trend measure itself. The test keeps everything else fixed: the rule decides at every hourly close, with the same sizing, the same market orders, the same buffer and the same funding; only the information it reads changes.
+
+| Version | What the rule reads at each hourly close | What it isolates |
+|---|---|---|
+| **A: hourly closes** | The trend measure of §2, on hourly closes | The baseline |
+| **B: dollar bars, average per bar** | The same measure computed on dollar bars, with spans counted in bars (48 a day on average), read from the last finished bar | The market's clock in full: averages that move fast when trading is busy and stand still when it is quiet |
+| **C: dollar bars, average fading by time** | Dollar-bar prices, averaged with weights that fade with the time elapsed, not with the number of bars | Only the sampling: when the prices are taken, not how fast they are forgotten |
+
+The distinction between B and C has a name in the literature on unevenly spaced data: an average whose weights depend on the number of samples changes when the sampling changes, one whose weights depend on elapsed time does not (Zumbach and Müller, 2001). C is the second kind.
+
+![Sharpe ratio after all costs by speed, for the hourly rule reading its trend from hourly closes, from dollar bars with an average per bar, and from dollar bars with an average fading by time](figures/16_05_information_clock.png)
+<sub><b>How to read the figure.</b> Each line is one version of the rule, by speed; the large markers on the right are the rule of §2, the three plateau speeds blended. <b>Blue (A):</b> the trend read from hourly closes. <b>Pink (B):</b> read from dollar bars, the average counted in bars. <b>Green (C):</b> read from dollar bars, the average fading with time. The shaded band is the plateau of §2. Left, 2021–2024; right, 2025–2026.</sub>
+
+**C is A.** Dollar-bar prices averaged by elapsed time give almost the same signal as hourly closes (correlation 0.99) and the same Sharpe ratio: 1.13 against 1.14 in 2021–2024, 0.51 against 0.52 in 2025–2026, for the blend. Sampling the price when dollar bars finish adds no information that hourly closes lack. It does change one thing: the signal is updated less often in quiet hours, so the rule trades a little less, and its costs fall from 2.0% to 1.4% of capital a year.
+
+**B is worse where the rule earns.** An average counted in dollar bars gives a different signal (correlation 0.84 to 0.98 with A), and on the plateau a worse one: for the blend, a Sharpe ratio of 0.99 against 1.14 in 2021–2024 and 0.41 against 0.52 in 2025–2026; at a speed of half a day, 0.37 against 0.96. For slow rules, off the plateau, B does slightly better in both periods (at three weeks, 0.78 against 0.65 and −0.01 against −0.14), but there the rule earns little anyway.
+
+**Why.** An average counted in bars runs with the market's activity. In a burst, such as the afternoon of figure 16_01 with fifteen bars in an hour, it moves fifteen steps in an hour and follows the burst; at night it moves one step an hour, or none. Bursts of activity on BTCUSDT often reverse: flow in the direction of the trend partly comes back, and a sweep with the trend is taken back within the hour (Lecture 15, §2 and §3). A fast rule that follows bursts therefore buys late and sells late. A slow rule weighs so many bars that a burst moves it little, and freezing at night costs it nothing; that is why B stops hurting as the rule slows down.
+
+> **Box: López de Prado's bars, and what the tests found.** López de Prado (2018) recommends sampling the market by volume or dollars rather than by time, for the statistical properties of the resulting returns, and builds on such bars a pipeline that goes beyond a trend rule: a filter that picks out moments when the price has drifted far enough (the CUSUM filter), labels set by profit-taking, stop-loss and time limits, and a machine-learning model that decides which moments to act on. Two tests on bitcoin bear on it. On bitcoin and ether from 2018 to 2023, the pipeline earned after costs, but the part that helped was the CUSUM filter, not the volume or dollar bars (Grądzki, Wójcik and Lessmann, 2025). On the Binance bitcoin perpetual, dollar bars had the best statistics and no better predictions (Fayyaz et al., 2026, preprint). This section's result points the same way for a trend rule: what dollar bars measure well is not what makes a trend rule earn. Exercise 3 (§9.2) lets the rule decide only at CUSUM events.
+
+**Our results and the literature.**
+
+| The literature | Our result on BTCUSDT | |
+|---|---|---|
+| Returns are closer to normal when measured in trading time rather than clock time (Clark, 1973; Ané and Geman, 2000) | Lecture 13 found the same on dollar bars | in line |
+| An average weighted by the number of samples depends on the sampling; one weighted by elapsed time does not (Zumbach and Müller, 2001) | The time-weighted version on dollar bars matches hourly closes; the per-bar version does not | in line |
+| On the Binance bitcoin perpetual, the statistical quality of bars and their predictive power are largely unrelated (Fayyaz et al., 2026, preprint) | The trend measure gains nothing from dollar bars | in line |
+| In a bitcoin trading pipeline, the CUSUM event filter helped, not the bar type (Grądzki, Wójcik and Lessmann, 2025) | — | not tested here; exercise 3 |
+| — | A trend measure counted in dollar bars hurts fast trend rules, because it follows bursts that reverse | a result on this sample |
+
+**Key message.** Information from another clock is easy to plug into an hourly rule: measure on the other clock, read the last finished bar at each decision. For a trend rule on BTCUSDT it adds nothing: sampled on dollar bars but averaged by time, it is the same as hourly closes, only a little cheaper to trade; averaged by bars, it follows bursts that reverse and hurts the rule where it earns. If a trend measure is taken from another clock, its average should fade with time, not with bars. The rule keeps reading hourly closes.
