@@ -35,7 +35,7 @@ The decision clock stays on the calendar throughout. Funding is paid every eight
 
 ![Three clocks on one day: hourly closes and dollar-bar ends on 12 March 2024, and the age of the latest finished dollar bar at each hourly close](figures/16_01_three_clocks.png)
 
-Dollar bars are sparse at night, one an hour or fewer, and bunch when the market is busy: on this day 86 of them, against 48 on an average day, most in the afternoon sell-off. The hourly closes do not move.
+Each dot marks the moment a dollar bar finished, and the columns count them hour by hour. Dollar bars are sparse at night, one an hour or fewer, and bunch when the market is busy: on this day 86 of them, against 48 on an average day, 15 in the single hour of the afternoon sell-off. The hourly closes do not move. In the lower panels, the shaded band runs from the last finished dollar bar to each hourly close: it is how old the information is that the rule can read, an hour at night, a few minutes in the sell-off.
 
 A value computed on dollar bars, such as a moving average or a volatility, is therefore a staircase in clock time: it steps when a bar finishes and stays flat until the next one. An hourly rule reads that staircase at each of its closes:
 
