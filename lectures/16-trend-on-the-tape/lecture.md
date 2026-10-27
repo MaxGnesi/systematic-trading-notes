@@ -221,7 +221,9 @@ A perpetual has no expiry. What ties its price to spot is funding: every eight h
 
 **What it costs.** Charged at every settlement on the position open at that moment, funding cost the rule 1.4% of its capital a year in 2021–2024 and 0.3% in 2025–2026. The rule's long side paid 1.7% a year in 2021–2024; its short side received 0.3%. A long-only holder paid far more, 4 to 12% a year in each full year (Lecture 15, §7). A backtest without funding therefore overstates rules that are mostly long, and understates rules that are often short.
 
-**What sets it: the premium.** Binance publishes the premium index, the perpetual against the spot index, in candles aligned with the funding intervals: 8-hour candles open at exactly 00:00, 08:00 and 16:00, and each of the 5,470 intervals from October 2021 to September 2026 matches a settlement. Rebuilt from the hourly premium by the formula above, funding comes out with a correlation of 0.90 and a median gap of 0.15 bp to the rates actually paid; the rest comes from Binance averaging the premium every five seconds, not every hour.
+**Two measures that are easy to confuse.** The **basis** is the gap between the perpetual's price and spot at the same moment, log(perpetual ÷ spot): what a trader sees on the screen. The **premium index** is Binance's construction from the order book, comparing the prices at which a sizeable order could buy or sell the perpetual with the spot index; it is the input to funding. They move together but are not the same number.
+
+**What sets funding: the premium index.** Binance publishes the premium index, the perpetual against the spot index, in candles aligned with the funding intervals: 8-hour candles open at exactly 00:00, 08:00 and 16:00, and each of the 5,470 intervals from October 2021 to September 2026 matches a settlement. Rebuilt from the hourly premium by the formula above, funding comes out with a correlation of 0.90 and a median gap of 0.15 bp to the rates actually paid; the rest comes from Binance averaging the premium every five seconds, not every hour.
 
 ![The premium of the perpetual over spot and the funding it sets, 2021-2026, and bitcoin's next 24 hours by the premium at each snapshot](figures/16_09_premium.png)
 <sub><b>How to read the figure.</b> <b>Left, blue:</b> the premium of the perpetual over the spot index, averaged over each 8-hour funding interval, then over 7 days, in bp. <b>Left, pink:</b> the funding paid by a long, bp per day, 7-day average; the dotted line is the usual 0.01% every 8 hours. <b>Right:</b> bitcoin's mean return over the 24 hours after each snapshot, by the third of the premium at that snapshot (thirds cut on 2021–2024), with the t-statistic, days as clusters.</sub>
@@ -229,6 +231,28 @@ A perpetual has no expiry. What ties its price to spot is funding: every eight h
 The premium sits slightly below zero most of the time, about −4 bp, and funding near its usual 0.01% per interval; both jump together when the crowd wants to be long, as in the rallies of early and late 2024, when a long paid up to about 16 bp a day. Funding is highest exactly when the market rises and the rule is long.
 
 **Does the premium tell the rule anything?** Split by the premium known at each snapshot, bitcoin's next 24 hours show no ordering that holds in both periods: after a low premium the price rose 27 bp in 2021–2024 (t 2.4) and fell 2 bp in 2025–2026; after a high one, +3 bp and +11 bp, neither distinguishable from zero. The rule's long and short legs over the next eight hours show no pattern either. The premium is what a long pays, not where the price goes.
+
+**The pure premium.** The premium can be earned without any view on the price: buy spot and sell the perpetual in the same amount. The price moves of the two legs cancel, and what remains is exactly
+
+| Return of long spot, short perpetual, per period | Financial meaning |
+|---|---|
+| + funding received | the sum of the funding rates settled in the period, received by the short when longs pay |
+| − change in the basis | if the perpetual's premium over spot widens, the short leg loses it; if it narrows, it gains |
+| − costs | fees to open and close both legs |
+
+and against cash, since the capital sits in spot rather than in Treasury bills, the bill rate is subtracted. Measured daily at 00:00 UTC, with spot and perpetual prices at the same moment:
+
+| Long spot, short perpetual, Oct 2021 – Sep 2026 | Total | A year |
+|---|---|---|
+| Funding received | +36.4% | +7.3% |
+| Change in the basis | about 0 | about 0 |
+| Costs, one round trip in each leg | −0.3% | |
+| T-bill rate given up | −18.9% | −3.8% |
+| **Excess over cash** | **+17.2%** | **+3.5%** |
+
+*By year, the excess over cash was 2.1% in 2022, 2.6% in 2023, 7.1% in 2024, 1.1% in 2025 and −0.5% in 2026 to September.*
+
+Over five years the basis returned to where it started, within a few basis points, so the structure earned the funding and nothing else; day to day the basis does move, and the worst day lost 19 bp. Above cash, the pure premium was about 3.5% a year, most in the bull year 2024, and below cash in 2026. Three caveats belong with the number: the short perpetual needs margin on top of the spot purchase, so the return on all the capital used is lower; in a sharp rally the short leg must be topped up or it is liquidated, unless the exchange lets the spot serve as collateral; and both legs sit at one exchange. The same formula underlies every comparison of perpetual and spot in these notes, including that of Lecture 15, §7.
 
 **Perpetual or spot?** Holding the rule's longs in spot avoids funding, at the price of spot's higher fee, 10 bp for a regular account against 5 bp, and of the cash a spot position ties up, which forgoes the Treasury-bill rate:
 
