@@ -403,3 +403,73 @@ Five results:
 5. **Cheaper fees do not rescue it.** With a maker fee of zero, the switched grid still loses after costs (a Sharpe ratio of −1.5 at 50 bp), because the taker fee at stops, switches and closes remains and the gross result is about zero. Section 7 asks what rebate would close the gap.
 
 **What the tests say.** The grid's losses come from runs, and runs can partly be seen coming: after a violent hour, and in the direction of the trend. Seeing them coming lets the grid lose less, not earn. A positive result would need swings the grid can recognise in advance, and none of the rules finds them.
+
+## 6. Next to the trend rule
+
+The grid does not improve the trend rule of Lecture 16. Every share of the portfolio given to it lowers the Sharpe ratio, in both periods and at every step, and it does not earn when the trend rule has little to do.
+
+**The hope.** The two strategies bet on opposite things: the trend rule on runs, the grid on swings (Lecture 16, §8). If the grid earned in the quiet periods in which the trend rule waits, it could improve a portfolio of the two even while losing money on its own. Two tests answer this, both with nothing but results known at the time.
+
+**The rule for adding a strategy.** Adding a strategy B, in a small amount, to a strategy A raises the Sharpe ratio of the portfolio only if
+
+```math
+\mathrm{SR}_B > \rho_{AB} \times \mathrm{SR}_A
+```
+
+| Symbol | Meaning | Financial interpretation |
+|---|---|---|
+| $`\mathrm{SR}_A`$, $`\mathrm{SR}_B`$ | The Sharpe ratios of the strategy held and of the one added | What each earns per unit of its own risk |
+| $`\rho_{AB}`$ | The correlation of their daily results | How much of B's risk is A's risk again |
+
+A strategy that loses money can improve a portfolio only if it is negatively correlated with it, and strongly enough: it must act as a hedge.
+
+**The experiment.** The trend rule of Lecture 16 (§7, step 2: the rule in the perpetual with the re-posted entry), its hourly results summed per UTC day; the grid of §5 with the volatility switch and the lean with the trend, ladder 200 bp each way; both after costs. The grid is scaled to the trend rule's volatility and given 10% or 25% of the weight.
+
+![The grid next to the trend rule: the portfolio's Sharpe ratio by the grid's share, and the grid's result by the size of the trend forecast](figures/17_09_with_trend.png)
+<sub><b>How to read the figure.</b> <b>(a)</b> The Sharpe ratio after costs of the trend rule alone (left) and with 10% or 25% of the weight in the grid, one line per step; solid 2021–2024, dotted 2025–2026. <b>(b)</b> The grid's daily net result, in % of capital, by the size of the trend forecast at the start of the day (the last finished hour before 00:00 UTC), in thirds cut on 2021–2024; full colour 2021–2024, pale 2025–2026, whiskers 95% intervals.</sub>
+
+| Grid step | Correlation with the trend rule, 2021–24 / 2025–26 | The grid's Sharpe ratio, 2021–24 / 2025–26 | It would need to exceed, 2021–24 / 2025–26 |
+|---|---|---|---|
+| 50 bp | +0.20 / +0.18 | −2.4 / −2.3 | +0.23 / +0.07 |
+| 100 bp | +0.16 / +0.15 | −1.4 / −1.4 | +0.18 / +0.06 |
+| 200 bp | +0.10 / +0.09 | −0.6 / −0.9 | +0.11 / +0.04 |
+
+<sub><b>How to read the table.</b> The last column is the correlation times the trend rule's Sharpe ratio (1.16 in 2021–2024, 0.41 in 2025–2026): the Sharpe ratio the grid would need for a small share of it to raise the portfolio's.</sub>
+
+Three results:
+
+1. **The grid is no hedge for the trend rule.** Without the lean its daily results are uncorrelated with the trend rule's (between −0.04 and +0.01); with the lean, which makes it hold inventory in the trend's direction, slightly positively (+0.09 to +0.20). Neither comes close to the strongly negative correlation a losing strategy would need.
+2. **Every share of the grid lowers the Sharpe ratio**, by more the larger the share and the narrower the step: at 50 bp, a quarter of the weight in the grid takes the trend rule's Sharpe ratio from 1.16 to 0.31 in 2021–2024 and from 0.41 to −0.33 in 2025–2026.
+3. **The grid does not earn when the trend rule has little to do.** At every step and in both periods, it loses more on days that start with a small or medium trend forecast than on days that start with a strong one, when it loses least. The grid without the lean shows the same order. The differences are within one to two and a half standard errors, a lead rather than a finding. One possible reason, for readers to test: the forecast is divided by volatility, so a small forecast often marks a volatile market without a direction, the kind of market in which a grid is run over.
+
+**What it means.** A grid and a trend rule are opposite bets on the path, but not offsetting ones: the trend rule earns from runs, the grid loses on them, and the grid's earnings on swings are too small to pay for that. As a second strategy beside the trend rule, the grid adds risk and subtracts return.
+
+## 7. Where grids pay
+
+A grid on its own is a bet on swings, and on this market, with fills counted conservatively, the bet has not paid. What a grid also is, however, is a machine for providing liquidity: it rests orders and lets those in a hurry trade against them, as a market maker does, far from the price and slowly (Lecture 16, §8). That machinery has uses in which the edge comes from somewhere else, and the cost of trading decides whether the edge survives. This section sets out the view these notes take, with what our results say about each use; others may have found ways of earning from providing liquidity that are not tested here.
+
+| Use | Where the edge comes from | What the grid's machinery adds | What our results say |
+|---|---|---|---|
+| **Cutting a strategy's costs** | The strategy's own signal, such as the trend rule of Lecture 16 | Resting orders instead of market orders: the maker fee instead of the taker fee, and part of the spread earned instead of paid | The re-posted entry of Lecture 15, §6 saves about 2 bp per unit traded, and it is the step of the trend rule's build-up that paid (Lecture 16, §5) |
+| **Being paid for liquidity** | The exchange, through a rebate on resting fills | Volume filled passively, several times the capital a day | Below: the rebate at which the grid of §5 breaks even |
+| **Inside other strategies** | Price differences between venues (cross-exchange market making and arbitrage) or between related assets (statistical arbitrage) | The cheap side of the trade: resting orders on one venue, hedged when filled; a ladder that works a position at low cost | Not tested here: it needs a second venue's data, and the order book to judge fills. Very cheap execution decides whether such strategies pay, and that is what a ladder of resting orders provides |
+
+**The rebate that would close the gap.** With a gross result near zero, the grid's loss is almost entirely its costs, and most of what remains at a zero maker fee is the taker fee at stops, switches and closes. A venue that paid a rebate on every resting fill would close the gap at:
+
+| The grid of §5 (switch + lean), step | Dollars filled passively a day, × capital | Rebate needed, bp per dollar filled, 2021–24 | Rebate needed, 2025–26 |
+|---|---|---|---|
+| 25 bp | 3.8 / 2.2 | 1.4 | 1.4 |
+| 50 bp | 1.9 / 1.1 | 2.3 | 2.3 |
+| 100 bp | 0.9 / 0.5 | 3.4 | 3.9 |
+
+<sub><b>How to read the table.</b> The rebate is what the exchange would pay on each dollar of resting fills, the maker fee being minus that rebate instead of +2 bp; the taker fee stays at 5 bp. Dollars filled: 2021–2024 / 2025–2026. Our calculation, from the results of §5.</sub>
+
+The bar is stable across the two periods. The narrow grid needs a small rebate on a large volume, the wide grid a larger rebate on a small one. Whether any venue's programme for liquidity providers pays this much, and to whom, is to be checked against its current terms; we make no claim about them. A grid that cleared the bar would earn the rebate, not the market: its result would rest on the venue's pricing, which can change.
+
+**Open questions.** These results hold on one market, BTCUSDT, from 2021 to 2026, with fills counted only when the price trades through. They leave questions that readers are invited to test, on this market and on others:
+
+- How much better are real fills than the conservative bound? Part IV, with the order book, measures queue positions and what a resting order really gets.
+- Does the grid's lead in the US morning, 12:00 to 16:00 UTC, survive on more data or other markets (§5)?
+- Is there a regime of swings of three to four steps, the one the bimodal profile bets on, and can it be recognised in advance (§4)?
+- Does the grid behave differently on a thinner market, such as SOLUSDT, where swings may be larger relative to costs?
+- Does a ladder of resting orders, hedged on a second venue when filled, earn what this grid does not?
