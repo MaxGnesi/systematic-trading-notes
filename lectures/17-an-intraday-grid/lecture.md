@@ -473,3 +473,36 @@ The bar is stable across the two periods. The narrow grid needs a small rebate o
 - Is there a regime of swings of three to four steps, the one the bimodal profile bets on, and can it be recognised in advance (§4)?
 - Does the grid behave differently on a thinner market, such as SOLUSDT, where swings may be larger relative to costs?
 - Does a ladder of resting orders, hedged on a second venue when filled, earn what this grid does not?
+
+## 8. Summary, exercises and reading
+
+### 8.1 Seven takeaways
+
+1. **A grid's accounts have two parts.** Round trips each earn one step and can only add up; the inventory a run leaves behind is where the risk sits. Gross = round trips × step × unit + inventory result.
+2. **No pattern, no profit.** On a price with no pattern, a grid earns minus its gap before costs, with or without jumps: every dollar it makes comes from the price reverting at the scale of its step.
+3. **Runs are jumps spread over minutes.** They fill the ladder level by level and cost the grid more than jumps do. With the same average reversion, what the grid earns depends on how the reversion is spread between swings and runs.
+4. **On five years of BTCUSDT the grid loses after costs at every step,** with fills counted only when the price trades through. Before costs it is near zero or below, and worse than on the same minutes in random order.
+5. **The levers change costs and tails, not the edge.** The size profile decides how much the grid bets near the price and on which depth of swing; a wide ladder and stepping aside after a stop make losses and the worst days smaller.
+6. **Runs can partly be seen coming; swings cannot.** Switching off after a violent hour and leaning with the trend cut losses, robustly and out of sample; none of 56 tests finds an edge.
+7. **The grid's machinery is worth more than the grid.** It is no hedge for a trend rule, but resting orders cut the costs of strategies with an edge of their own, and a rebate of about 1.4 to 3.9 bp per dollar filled would close the grid's gap.
+
+### 8.2 Exercises
+
+- [ ] Simulate a random walk at one-second steps and run the grid of §2 on it, with fills at the level. Check that profit plus gap is about zero. Then count fills only when the price trades through the level: what changes, and why?
+- [ ] Build a regime of swings of three to four steps, a reverting part with a larger size and a longer half-life than in §2. Does the bimodal profile win there, and where should its peaks sit?
+- [ ] Replace "off for the rest of the day" after a stop (§4.2) by off for 1, 4 or 12 hours, fixed in advance. Is there a plateau, and does it keep the cut in the worst days?
+- [ ] Run the grid of §5 on SOLUSDT for one year. Does a thinner market offer more swings relative to its costs?
+- [ ] Find one venue's published fee schedule for liquidity providers. At what volume would the grid of §5 reach the rebate of §7, and what would that volume require in capital?
+- [ ] Pick one result of this lecture and test it on a market of your choice.
+
+### 8.3 Reading
+
+For why no rule of trading at the market can beat a price with no pattern, the martingale transform and optional stopping in Williams (1991, ch. 10). For the correction for many tests, Benjamini and Hochberg (1995). For the grid's opposite, the convex payoff of trend following, Fung and Hsieh (2001) and Dao et al. (2016), as in Lecture 16, §8. For market making as a problem of quoting against inventory risk, the starting point of Part IV, Avellaneda and Stoikov (2008).
+
+## References
+
+- Avellaneda, M. and Stoikov, S. (2008). High-frequency trading in a limit order book. *Quantitative Finance* 8(3), 217–224. — market making with inventory risk, for Part IV (§8.3).
+- Benjamini, Y. and Hochberg, Y. (1995). Controlling the false discovery rate: a practical and powerful approach to multiple testing. *Journal of the Royal Statistical Society, Series B* 57(1), 289–300. — the correction for many tests (§5).
+- Dao, T.-L., Nguyen, T.-T., Deremble, C., Lempérière, Y., Bouchaud, J.-P. and Potters, M. (2016). Tail protection for long investors: trend convexity at work. *Journal of Investment Strategies*; arXiv 1607.02410. — the convexity of trend following (§8.3).
+- Fung, W. and Hsieh, D. A. (2001). The risk in hedge fund strategies: theory and evidence from trend followers. *Review of Financial Studies* 14(2), 313–341. — trend following as lookback straddles (§8.3).
+- Williams, D. (1991). *Probability with Martingales*. Cambridge University Press. — no trading rule beats a martingale (§2.1).
