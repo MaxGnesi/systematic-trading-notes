@@ -19,7 +19,7 @@ A grid earns one step on every round trip and loses on the inventory a run leave
 |---|---|---|
 | 2 | Where the profit comes from | What does a grid earn on a price with no pattern, with jumps, with runs? |
 | 3 | The tape | What does it earn on five years of BTCUSDT, after costs, and against the same minutes in random order? |
-| 4 | The levers | Step, levels, stop, restart and refresh: which settings hold across a wide range? |
+| 4 | The levers | Size profile, width, exits and refresh: what does each change, and does any setting hold across a wide range? |
 | 5 | Known in advance | Do a switch on volatility, a lean with the trend, a channel or the hour of the day help? |
 | 6 | Next to the trend rule | Does the grid improve the trend rule of Lecture 16? |
 | 7 | Where grids pay | Costs, rebates and strategies with an edge of their own |
@@ -33,7 +33,7 @@ The grid is the classic two-sided paired grid of Lecture 16, §8: buy orders at 
 |---|---|---|
 | Step | 10 to 200 bp of the price at which the ladder is laid | From a few one-minute moves to about two-thirds of a day's move (daily volatility about 3%) |
 | Levels | 200 bp ÷ step on each side, so the ladder reaches about 200 bp each way at every step | Every step is tested with the same reach, so a change in results comes from the step, not from the width |
-| Size | The same at every level, one unit = capital ÷ number of levels on a side | A full ladder on one side is exactly the capital; Lecture 16, §8 shows the alternatives |
+| Size | The same at every level, one unit = capital ÷ number of levels on a side | A full ladder on one side is exactly the capital; §4 tests the alternatives |
 | Stop | One step beyond the last level | §1.3 |
 | Daily close | The last second of the UTC day | §1.3 |
 
@@ -246,3 +246,90 @@ Four results:
 4. **Every year, at every step up to 100 bp, the net result is negative.** Only the widest grid earned, in 2021 and 2022, and it lost in each year since. At the narrow steps the losses have shrunk over the years, but not to zero.
 
 These are results on one market with conservative fills: every fill on a turning point that did not trade through is missed, so they are a lower bound on what a real order would get. Part IV, with the order book, measures how much better the fills could be. Sections 4 and 5 ask whether the grid's settings, or something known in advance about the hours ahead, change the picture.
+
+## 4. The levers
+
+No setting of the grid gives it an edge. The size profile, the width, the exits and the refresh change how much the grid bets near the price, what leaving costs and how large its worst days are; before costs, every setting stays within a few hundredths of a percent a day of zero. One lever has a clear mechanism and a large effect on the tail: staying out for the rest of the day after a stop.
+
+### 4.1 The size profile
+
+**Four ways to spread the same capital.** Lecture 16, §8 drew three size profiles; a fourth places the size a few levels away from the price:
+
+| Profile | Where the size sits, on each side of the price |
+|---|---|
+| Uniform | The same at every level |
+| V-shaped | Little next to the price, rising towards the ends of the ladder |
+| Bell-shaped | Most next to the price, falling towards the ends: one bell centred on the price |
+| Bimodal | Two bells, one below and one above the price, each peaking a few levels away from it (here at 40% of the ladder's reach) |
+
+With the same capital in a full ladder, the profiles differ only in where that capital sits, and so in what each kind of path pays:
+
+![The size profile, stylised: the size at each level, the units held after a fall, what a run costs, and how many swings pay for one stop](figures/17_05_shapes.png)
+<sub><b>How to read the figure.</b> A schematic, not data: eight levels on each side and the same capital in a full ladder for every profile. Money is in steps × units, so one round trip of an average-sized unit earns 1. <b>(a)</b> The size at each level, below (−) and above (+) the price. Panels (b) to (d) show the side below; the side above is its mirror image. <b>(b)</b> The units held after the price has fallen k steps, which is also what the swing earns when the price comes back: every unit bought on the way down is sold one step higher. <b>(c)</b> What a run costs when the price falls k steps and the units are closed there; the last point is the stop. <b>(d)</b> How many swings of k steps pay for one stop.</sub>
+
+| Profile | Units held after a fall of 2 steps | What the stop costs | Swings of one step that pay for one stop | Swings of four steps that pay for one stop |
+|---|---|---|---|---|
+| Uniform | 2.0 | 36 | 36 | 9.0 |
+| V-shaped | 1.2 | 30 | 59 | 10.5 |
+| Bell-shaped | 3.9 | 48 | 23 | 7.6 |
+| Bimodal | 2.2 | 45 | 71 | 7.0 |
+
+<sub><b>How to read the table.</b> From the schematic: eight levels a side, money in steps × units.</sub>
+
+Panel (b) carries the mechanism. What the grid holds at each depth is exactly what a swing to that depth earns when it returns, and at the stop every unit bought j levels from the price loses the remaining distance to the stop. Size near the price therefore earns on small swings and costs most on a run; size far out costs little on a run and earns only on deep swings. Each profile is a bet on how far the price swings back: the bell on small swings, the bimodal on medium ones, the V on deep ones.
+
+The figure also corrects a common description of the V, which Lecture 16, §8 repeated: with the same capital, the V does not hold the most inventory when the price runs. It holds less than the others on the way down and the same at the cap, and it loses the least at the stop.
+
+**Where to put the peaks.** For the bimodal profile, the distance of the two peaks from the price is a dial between the bell and the V:
+
+| The two peaks at level… (of 8) | What the stop costs | Swings of one step that pay for one stop | Swings of four steps that pay for one stop |
+|---|---|---|---|
+| 1: next to the price, close to the bell | 54 | 16 | 7.5 |
+| 3 | 46 | 59 | 6.9 |
+| 5 | 33 | 215 | 11 |
+| 8: at the ends of the ladder, close to the V | 18 | 94 | 23 |
+
+<sub><b>How to read the table.</b> From the schematic: the same capital, the two bells moved outwards together. A swing pays only on the size it reaches.</sub>
+
+Moving the peaks outwards makes the stop cheaper, from 54 to 18, and moves the swings that pay out to where the peaks are. Placing the peaks is a choice of which depth of swing to bet on; the cost of the stop follows from it.
+
+**Each profile in its regime.** On simulated prices, where the regime is known, the reasoning can be checked: the same tape simulator, run on one-second paths of five kinds (§2), 300 days each, with eight levels a side, a step of 25 bp and no costs.
+
+![The size profile on simulated prices by regime, and on the tape](figures/17_06_shapes_regimes.png)
+<sub><b>How to read the figure.</b> <b>(a)</b> The gross result per day, in % of capital, on simulated prices of five kinds, for each profile; whiskers are 95% intervals. <b>(b)</b> The gross result on the tape, ladder 200 bp each way, by step and profile: solid 2021–2024, dotted 2025–2026. Grey uniform, orange V-shaped, green bell-shaped, blue bimodal.</sub>
+
+Each profile wins where the path matches its bet: the bell where the price swings back by about a step, +1.66% a day against +1.19% for uniform sizes, and the V where it runs, jumps or trends. The bimodal profile lies between the bell and uniform sizes in every regime, because none of the five offers the swings of three to four steps it bets on. The order of the others never reverses: in every regime the bell's result, gain or loss, is about 1.4 times that of uniform sizes, and the V's smaller. The profile decides how much the grid bets near the price and at which depth; it does not decide whether the bet pays. A grid that knew which regime was coming could choose its profile; §5 asks whether anything known in advance tells.
+
+**On the tape** the four profiles are all near zero before costs, within about 0.05 percentage points a day of each other at every step and width tested. The mechanism shows in the accounts: the bell and the bimodal profile have the largest round-trip income, the largest inventory losses and the worst days, the V the smallest of each. After costs the V comes out slightly best, because it trades least near the price and pays the fewest fees. Split by yesterday's volatility, which is known in the morning, no profile does better than another by more than one to two standard errors.
+
+### 4.2 Width, exits and refresh
+
+Each lever was varied on its own, around the grid of §3, at steps of 25 to 200 bp:
+
+| Lever | Variants | What it changes |
+|---|---|---|
+| Width | The ladder reaching 100, 200 or 400 bp each way, with the same capital | How far a run must go before the stop, and how large each unit is |
+| Exit | Stop and restart (the base); stop, then off for the rest of the day; no stop, holding at the cap until the daily close | What happens when the price runs through the whole ladder |
+| Refresh | The ladder re-centred once a day (the base), every 4 hours or every hour; a refresh closes the inventory at the market and lays a new ladder around the price | How often the grid accepts the market's new level |
+
+![Width, exits and refresh on the tape: the Sharpe ratio after costs and the worst 1% of days](figures/17_07_levers.png)
+<sub><b>How to read the figure.</b> All after costs, BTCUSDT, October 2021 to September 2026. <b>(a)</b> The Sharpe ratio by width, uniform sizes, one line per step, light for 25 bp and dark for 200 bp; solid 2021–2024, dotted 2025–2026. At 200 bp the widths of 100 and 200 bp give the same single level. <b>(b)</b> The Sharpe ratio by exit and refresh rule, ladder 200 bp each way; full colour 2021–2024, pale 2025–2026. <b>(c)</b> The worst 1% of days for the same rules, in % of capital.</sub>
+
+| Rule, step 50 bp | Sharpe ratio, 2021–24 | Sharpe ratio, 2025–26 | Worst 1% of days, 2021–24 | Worst 1% of days, 2025–26 | Stops a day, 2021–24 / 2025–26 |
+|---|---|---|---|---|---|
+| Stop and restart (base) | −3.9 | −2.5 | −6.4% | −3.9% | 1.3 / 0.7 |
+| **Stop, then off for the day** | −3.2 | −3.0 | **−1.4%** | **−1.4%** | 0.6 / 0.4 |
+| No stop, hold at the cap | −1.2 | −1.4 | −8.3% | −5.8% | 0 / 0 |
+| Refresh every hour | −5.4 | −5.5 | −6.8% | −3.6% | 0.6 / 0.2 |
+
+<sub><b>How to read the table.</b> Sharpe ratio: annualised, of the daily net result. Worst 1% of days: the net result that only 1% of days were worse than, in % of capital.</sub>
+
+**Off for the rest of the day after a stop.** A stop means the price has run through the whole ladder, and on a running day it rarely runs once: on 12 March the first stop was followed by two more within ninety minutes (§1.4). A grid that steps aside after the first stop avoids the second and the third. At every step, in both periods, this cuts the worst 1% of days from between −4% and −8% of capital to between −1.2% and −2.3%. Its Sharpe ratio is about that of the base: it reshapes the tail more than the average, which is what a stop rule should do.
+
+The other levers, compactly:
+
+- **Width.** A wider ladder raises the Sharpe ratio at every step up to 100 bp, in both periods, because the price reaches the stop less often and the taker fee at the stop is paid less often. With the same capital, a wider ladder also means smaller units: at its widest the grid barely holds anything, and its result tends to zero. It loses less because it trades less, not because it earns more.
+- **No stop.** Holding at the cap avoids every stop and its fee, and raises the Sharpe ratio for the same reason; it has the worst days of all the rules, −8.3% of capital on the worst 1% of days in 2021–2024.
+- **Refresh.** Re-centring more often lowers the Sharpe ratio at 25 and 50 bp, in both periods: every refresh closes the inventory at the market, pays the taker fee and gives up the units that would have come back.
+
+**What the levers say.** Every setting that loses less does so by paying less to leave, or by trading less; none adds a swing the market does not offer. The choices that hold across the whole range tested, and have a reason, are a wide ladder and stepping aside after a stop. Section 5 asks whether something known in advance can tell the grid when to trade at all.
