@@ -198,3 +198,51 @@ Two results, one from each lower panel:
 2. **With the tape's average held fixed, the split decides.** When every model has the tape's variance ratio, a market that runs more often must swing back harder in between. The grid always on earns 53 bp a day per unit when the market never runs and 130 to 270 when it does, a fraction of what the swings offer: the runs take most of it back. Switched off during the runs, the grid keeps up to three times as much: 1.3 times at 2% of the time in runs, 2.8 times at 20%. Seen 5 or 15 minutes late, the switch loses nothing and even gains a little: the drift outlives the run's label, so a grid that restarts a little late also avoids the drift's tail. Seen 30 minutes late, the switch loses part of its value.
 
 **What the simulations say about the tape.** The grid earns nothing from a price without a pattern, and the tape's average reversion is no guarantee of profit: what matters is how the reversion and the runs are spread over the day, and whether the runs can be recognised early enough to step aside. Two things in these simulations are kinder than the tape. Fills are counted at the level, whereas the tape fills only what is traded through; and the reversion of the simulated price happens over minutes, whereas part of the tape's reversion is the bounce between buyers and sellers within the same second, which no resting order a step away can earn. Section 3 measures what is left on the tape.
+
+## 3. The tape
+
+On five years of BTCUSDT the grid loses after costs at every step, and before costs it does worse than the same minutes would in random order: over minutes and hours, the tape's order works against it.
+
+**The experiment.**
+
+| Setting | Value |
+|---|---|
+| Data | The BTCUSDT perpetual on Binance, October 2021 to September 2026, 1,826 days, second by second (§1.3) |
+| Grid | §1.1: steps of 10, 25, 50, 100 and 200 bp, the ladder reaching about 200 bp each way, stop and restart, daily close |
+| Fills | Only when traded through (§1.3) |
+| Costs | Maker 2 bp, taker 5 bp, funding at every settlement |
+| Result | Per day, in % of capital |
+| Benchmark | The same days with their minutes shuffled |
+
+**The shuffled benchmark.** To tell what the tape's order does to the grid, each day is replayed with its minutes in random order:
+
+| Step | What is done | What it keeps, and what it removes |
+|---|---|---|
+| 1. Cut | Each UTC day is cut into its minutes | |
+| 2. Shuffle | The minutes are put in a random order (one fixed seed) | |
+| 3. Chain | Each minute keeps its own moves relative to the last price before it, and is attached to the end of the minute placed before it | Keeps every trade within a minute, the bounce between buyers and sellers, the day's volatility and its total move |
+| 4. Run | The same grid, the same fills and costs | Removes only the order of the minutes: every swing and every run longer than a minute |
+
+If the tape's order did nothing for the grid, the tape and the shuffled days would give the same result. The shuffle keeps one thing that may still flatter both: the reversion within a minute, which no resting order a step away can earn but which the shuffled days carry as well.
+
+![The grid on five years of BTCUSDT: the accounts by step, the tape against the same minutes shuffled, and the net result by year](figures/17_04_tape.png)
+<sub><b>How to read the figure.</b> <b>Left:</b> the daily average of each part of the accounts (§1.3), by step, in % of capital: round-trip income (orange), inventory result (blue), their sum, the gross result (black), fees and funding as a cost (grey), and the net result (pink). <b>Middle:</b> the gross result on the tape minus that on the same days with their minutes shuffled, with 95% intervals; below zero, the tape's order costs the grid. <b>Right:</b> the net result by year, one line per step, light for the narrowest step and dark for the widest; 2021 covers October to December, 2026 January to September.</sub>
+
+| Step | Round trips a day | Stops a day | Net result, % a day | Sharpe ratio, net | Worst 1% of days, % |
+|---|---|---|---|---|---|
+| 10 bp | 322 | 1.6 | −1.10 | −9.4 | −10.5 |
+| 25 bp | 53 | 1.4 | −0.52 | −5.8 | −7.1 |
+| 50 bp | 12 | 1.1 | −0.28 | −3.5 | −5.4 |
+| 100 bp | 2.3 | 0.7 | −0.17 | −2.0 | −6.0 |
+| 200 bp | 0.4 | 0.4 | −0.04 | −0.4 | −4.8 |
+
+<sub><b>How to read the table.</b> Daily averages over 1,826 days. Sharpe ratio: the mean of the daily net result over its standard deviation, annualised with 365 days. Worst 1% of days: the net result that only 1% of days were worse than.</sub>
+
+Four results:
+
+1. **The round trips pay, and the inventory takes it back.** Round trips earn 0.7% to 1.7% of the capital a day. The inventory result takes back more than that at every step up to 100 bp, so the gross result is negative there: −0.32% a day at 10 bp, −0.06% at 50 bp, and slightly positive only at 200 bp, +0.03%. The gap that decided the simulations is small on the tape, and at steps of 50 bp and more it is slightly favourable: on average a filled buy was below, and a filled sell above, the last price of the second in which it filled, so the trades that went through the level were followed by trades back within the same second. The losses come from the inventory, not from the fills.
+2. **Costs decide.** With a gross result near zero, the fees become the result. At 10 bp, where round trips are many, the maker fees alone are 0.68% a day, and the net loss is 1.10% a day: such a grid would lose its capital in about three months. At 200 bp the fees are small, and the grid loses 0.04% a day.
+3. **The tape's order works against the grid.** At every step the gross result on the tape is 0.08 to 0.12 percentage points a day below that of the same minutes shuffled, with t-statistics between −1.9 and −2.9. With the same minutes, in random order, the grid would have done better. This need not contradict Lecture 14's variance ratio below one, an average over all hours: §2.2 showed that what reversion pays a grid depends on how it is spread between swings and runs, and §1.4 how many round trips a single run can take back.
+4. **Every year, at every step up to 100 bp, the net result is negative.** Only the widest grid earned, in 2021 and 2022, and it lost in each year since. At the narrow steps the losses have shrunk over the years, but not to zero.
+
+These are results on one market with conservative fills: every fill on a turning point that did not trade through is missed, so they are a lower bound on what a real order would get. Part IV, with the order book, measures how much better the fills could be. Sections 4 and 5 ask whether the grid's settings, or something known in advance about the hours ahead, change the picture.
