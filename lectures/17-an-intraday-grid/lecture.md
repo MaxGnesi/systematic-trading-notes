@@ -333,3 +333,73 @@ The other levers, compactly:
 - **Refresh.** Re-centring more often lowers the Sharpe ratio at 25 and 50 bp, in both periods: every refresh closes the inventory at the market, pays the taker fee and gives up the units that would have come back.
 
 **What the levers say.** Every setting that loses less does so by paying less to leave, or by trading less; none adds a swing the market does not offer. The choices that hold across the whole range tested, and have a reason, are a wide ladder and stepping aside after a stop. Section 5 asks whether something known in advance can tell the grid when to trade at all.
+
+## 5. Known in advance
+
+Two rules known in advance cut the grid's losses, and the cut survives the correction for many tests and holds out of sample: switching the grid off after a violent hour, and leaning its inventory with the trend. Neither creates an edge. Of 56 tests for a positive result before costs, none survives the correction.
+
+### 5.1 The rules and the tests
+
+Every rule uses only what is known at the moment it acts: values of the last **finished** hour, never of the hour, or the day, still running. Splits by the day's own volatility, known only afterwards, describe where losses sit but cannot be traded, and are not used.
+
+| Rule | What it uses | What the grid does | Why it might help |
+|---|---|---|---|
+| **Volatility switch**, K = 1.5, 2 or 3 | The volatility ratio (below) | Off while the ratio is at least K: the inventory is closed at the market and the grid pauses; when the ratio falls back, a new ladder is laid around the price | Runs come in violent hours, and violent hours cluster (Lecture 15, §4) |
+| **Lean with the trend** | The trend forecast of Lecture 16 (below) | Holds long units only while the forecast is positive, short units only while it is negative; when the sign turns against the inventory, the inventory is closed at the market | A run in the trend's direction no longer fills the grid against it |
+| Lean in strong trends only | The same | Leans only when the forecast is larger than 1 in size, in either direction; otherwise trades both sides | The lean costs round trips; spend it only when the trend is clear |
+| Off in strong trends | The same | Off while the forecast is larger than 1 in size | Step aside instead of leaning |
+| The channel | The highest and lowest hourly close of the last 10 days | On only while the price is inside the channel, or outside it by less than 10% of its width | A price that breaks out of a long range is starting to run |
+| The hour of the day | The clock, UTC | On in one four-hour block only; six blocks | Lecture 13: activity, and with it the kind of trading, changes through the day |
+
+The first five rules are tested at steps of 25 to 200 bp, with the ladder reaching about 200 bp each way, as in §3; the lean, the channel and the strong-trend rules are added to the volatility switch with K = 2. The two inputs:
+
+| Input | Calculation, at the close of every hour | Financial interpretation |
+|---|---|---|
+| Volatility ratio | The hour's realised variance (the sum of squared one-minute log returns) divided by the median of the previous 672 hours (28 days) | How violent the last hour was compared with a normal hour of the last four weeks; 2 means twice the normal variance |
+| Trend forecast | The trend rule of Lecture 16, §2: EWMAC with fast spans of 1, 2 and 3 days, blended, divided by its average size | The direction and strength of the trend of the last days; a typical forecast has size 1 |
+
+**Two questions.** A rule can help in two ways, and they are tested separately:
+
+| Question | Measured by | Tests |
+|---|---|---|
+| **Q1: does the rule cut losses?** | The daily net result with the rule minus that of its baseline on the same day (always on for the switch, the switch for the rules added to it) | 7 rules × 4 steps = 28 |
+| **Q2: does it create an edge?** | The gross result above zero, before costs | Every rule and baseline, the six blocks of the day included: 56 |
+
+The hour of the day is tested only for Q2, since a grid that trades a sixth of the day loses less for that reason alone. The tests are run on 2021–2024; 2025–2026 is the check.
+
+**Many tests, one correction.** With 56 tests at the usual 5% level, about three would look significant by chance even if no rule had an edge. Every result is therefore corrected for the number of tests (Benjamini and Hochberg, 1995), as in Lectures 13 and 15. The correction controls the **false discovery rate**: the share of false findings among the results declared as findings. It works in four steps:
+
+| Step | What is done | Why |
+|---|---|---|
+| 1 | Sort the m p-values from the smallest to the largest | The strongest results are judged first |
+| 2 | Give the i-th smallest a bar of 0.05 × i ÷ m: the smallest must beat 0.05 ÷ m, the last 0.05 | A single strong result among many must be very strong to count |
+| 3 | Find the largest i whose p-value is below its bar | When many results are strong together, they cannot all be luck, and later ones are judged more leniently |
+| 4 | That test and every test with a smaller p-value count as findings | |
+
+The same verdict in one number is the adjusted p-value, q = p × m ÷ i (made non-decreasing in i): a result counts if q is below 0.05. The stricter alternative, demanding p below 0.05 ÷ m of every test (Bonferroni), protects against even one false finding, and in doing so throws away many true ones.
+
+### 5.2 Results
+
+![Rules known in advance: how much each cuts the grid's losses, and the Benjamini–Hochberg correction drawn](figures/17_08_known_in_advance.png)
+<sub><b>How to read the figure.</b> <b>(a)</b> For each rule and step, the daily net result with the rule minus that of its baseline, in % of capital, with 95% intervals; above zero, the rule cuts losses. Full colour 2021–2024, pale 2025–2026; a dark ring marks a result that survives the correction. <b>(b)</b> The correction drawn: the p-values of each question, sorted, against the bar 0.05 × i ÷ m (dashed); the tests up to the last one below the bar count. Black: Q1, 28 tests; purple: Q2, 56 tests; p-values above 0.5 lie outside the panel.</sub>
+
+| Grid, after costs | Sharpe ratio, 2021–24 | Sharpe ratio, 2025–26 | Worst 1% of days, 2021–24 | Worst 1% of days, 2025–26 |
+|---|---|---|---|---|
+| Step 50 bp, always on | −3.9 | −2.5 | −6.4% | −3.9% |
+| + volatility switch, K = 2 | −3.1 | −3.1 | −3.0% | −1.9% |
+| + lean with the trend | −2.4 | −2.3 | −2.4% | −1.4% |
+| Step 100 bp, always on | −2.3 | −1.5 | −6.7% | −4.5% |
+| + volatility switch, K = 2 | −1.7 | −1.6 | −3.1% | −1.8% |
+| + lean with the trend | −1.4 | −1.4 | −2.3% | −1.6% |
+
+<sub><b>How to read the table.</b> Sharpe ratio: annualised, of the daily net result. Worst 1% of days: the net result that only 1% of days were worse than, in % of capital.</sub>
+
+Five results:
+
+1. **The volatility switch cuts losses, and the cut is robust.** At steps of 25 to 100 bp it survives the correction at every K from 1.5 to 3, and points the same way in 2025–2026: a plateau, not a single good setting. It works on the tail, halving the worst 1% of days, while the gross result stays near zero: the switch avoids runs, it does not find swings. Its Sharpe ratio improves in 2021–2024 but not in 2025–2026 at 50 and 100 bp, where the smaller loss comes with a smaller spread. At 200 bp, where the grid rarely trades, it changes nothing.
+2. **Leaning with the trend cuts losses further,** by 0.15 percentage points a day at 25 bp and 0.07 at 50 bp, both surviving the correction, with t-statistics of 5.2 and 2.8 in 2025–2026. The mechanism is the one of §2: a grid that holds no units against the trend is not filled by runs in the trend's direction, and that the lean helps this much suggests, as our inference, that such runs are a large part of what hurts. Leaning only in strong trends, or stepping aside in them, helps less: the sign of the trend matters, not only its strength.
+3. **The channel adds nothing measurable** beyond the volatility switch, at any step, in either period.
+4. **No rule creates an edge.** Of the 56 tests of Q2 none survives the correction. The best is the grid on only from 12:00 to 16:00 UTC, the US morning, with a gross t-statistic of 1.8 at 100 bp and 1.6 in 2025–2026; as the best of 56, its adjusted p-value is 0.72. It is a lead, not a finding.
+5. **Cheaper fees do not rescue it.** With a maker fee of zero, the switched grid still loses after costs (a Sharpe ratio of −1.5 at 50 bp), because the taker fee at stops, switches and closes remains and the gross result is about zero. Section 7 asks what rebate would close the gap.
+
+**What the tests say.** The grid's losses come from runs, and runs can partly be seen coming: after a violent hour, and in the direction of the trend. Seeing them coming lets the grid lose less, not earn. A positive result would need swings the grid can recognise in advance, and none of the rules finds them.
