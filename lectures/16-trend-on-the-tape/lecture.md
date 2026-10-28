@@ -252,7 +252,7 @@ The patient entry changes only the execution clock: the decision times, the sign
 
 The patient entry cuts the rule's trading costs by about 40% and raises its Sharpe ratio in both periods. The gain grows with how much the rule trades: at a speed of six hours, which turns its capital over about 270 times a year, the Sharpe ratio rises from 0.53 to 0.76 in 2021–2024 and from −0.48 to −0.16 in 2025–2026; at three weeks, which trades a few times a year, it barely moves. A cheaper entry does not make a fast rule good, but it moves the point at which costs start to eat it.
 
-Two cautions. The saving was measured on small orders, at the size that traded within the minute, and with fills simulated from the tape, which can differ from real ones (Lo, MacKinlay and Zhang, 2002); the live capstone of Part III can measure it on real orders. And it holds only while the rule's orders are small next to the market: §7 asks when they stop being small.
+Two cautions. The saving was measured on small orders, at the size that traded within the minute, and with fills simulated from the tape, which can differ from real ones (Lo, MacKinlay and Zhang, 2002); Part IV, with the order book, takes up how much. And it holds only while the rule's orders are small next to the market: §7 asks when they stop being small.
 
 **Key message.** Deciding on the hour does not mean trading on the hour. Worked over the following minute, re-posted every five seconds and chased if necessary, the rule's orders cost about 40% less, and its Sharpe ratio rises in both periods, most for the fast speeds that trade the most.
 
