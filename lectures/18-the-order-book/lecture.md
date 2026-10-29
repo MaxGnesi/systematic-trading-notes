@@ -324,3 +324,53 @@ The evening ran in three stages:
 | 21:12 – 21:40 | Nearly gone: the spread averaged 60 to 128 ticks, $6 to $13, from 21:16 to 21:22; depth within 5 bp was, at its lowest, 2 to 4 BTC; in up to two thirds of the seconds, the whole visible book of one side held less than 5 BTC |
 
 The book did not empty because of one large order. It emptied over minutes, while trading went on (the reconstruction has no gap that evening), as the resting orders that normally refill the best levels stopped coming. In the middle of it, at 21:41 and again at 21:59, depth spiked to five times its normal level: walls at the round price of $111,000, among them a level of exactly 100.000 BTC, a size that suggests one large order. **To check in the viewer:** 10 October from 21:10, a 30-minute window, then the cursor at 21:41:30 for the walls in the ladder.
+
+### 5.5 The book in motion
+
+Sections 5.1 to 5.4 read the book as a still picture, second by second. It moves faster than that. Large market orders paid, on average, nearly twice what the last recorded book promised; the gap sits in a minority of orders and grows when the price is moving. In the same moments the quotes near the price are withdrawn most, and they are withdrawn, too, at the turn of every minute, whatever the price does.
+
+**Quote fading, measured.** Section 1.2 walked the book as if it stood still while the order travelled. Here that assumption is tested on every market order of 1 BTC or more, all fills of one side in the same millisecond, as in §4.4: 609,011 orders on the 44 days without 10 October. For each, the book as of its last message before the order gives the price that walking it predicted; the trades give the average price actually paid.
+
+| A market order of 1 BTC or more | What walking the last recorded book promised | What the order paid |
+|---|---|---|
+| The median order | 0.005 bp: half a tick, the best price | 0.006 bp |
+| The average order | 0.21 bp | 0.38 bp |
+
+<sub><b>How to read the table.</b> bp beyond the mid; our measurement. 22% of the orders did worse than promised, by more than 0.05 bp; 11% did better; the rest paid what the book promised.</sub>
+
+The median order got what it saw. The average order paid nearly twice as much, because about one order in five paid more, some of them much more. Which orders those were, the figure shows:
+
+![Large market orders against the last recorded book: the share that did worse and better than walking it promised, by the move of the price in the second before and by the order's size](figures/18_07_quote_fading.png)
+<sub><b>How to read the figure.</b> Market orders of 1 BTC or more, on the 44 days without 10 October. <b>Orange:</b> the share of orders that paid more than walking the last recorded book promised, by more than 0.05 bp; <b>blue:</b> the share that paid less. Above each pair, the mean fade: what the orders paid beyond the promise, in bp of the mid, on average. <b>Left:</b> by how far the mid moved in the second before the order; <b>right:</b> by the order's size.</sub>
+
+Two results stand out. First, the book is a poor guide when the price is moving: after a second in which the mid moved more than 5 bp, 41% of the orders did worse and 35% did better than promised, against 18% and 6% after a quiet second, and the mean fade more than doubled. Second, larger orders, which reach more levels, each of which may have changed, did worse more often: 30% of the orders above 10 BTC, against 21% of those of 1 to 2 BTC. In the direction, the result held on every one of the 45 days: on each, more orders did worse than better, and the mean fade was positive. On 10 October itself, 30% did worse and 27% better: the evening's book was wrong in both directions almost equally often.
+
+The measure has a limit that belongs with it. An order did worse either because quotes were cancelled while it travelled or because other orders took them first, in the same 100 milliseconds; L2 data recorded every 100 milliseconds cannot tell the two apart. The numbers are therefore what a trader working from this feed would have faced, not the fading of the market makers alone; a trader on a faster feed sees a younger book. Lecture 21 turns latency into a setting of the replay and measures the cost at each value.
+
+**Refill.** A large market order takes depth near the price; how fast does it come back? For every market order of 2 BTC or more, we measured the depth within 5 bp of the mid on the side it took, just before, and the time until that side held 90% of it again.
+
+| Market orders of 2 BTC or more | Back by the next update, within 0.2 s | Within 1 s | Not within a minute |
+|---|---|---|---|
+| All, 280,582 orders | 63% | 79% | 1.8% |
+| Those that took a quarter of that depth or more, 28,362 orders | 72% | 85% | 0.9% |
+
+<sub><b>How to read the table.</b> Our measurement on the 44 days without 10 October. Depth: BTC within 5 bp of the mid, on the side the order took.</sub>
+
+Depth near the price was back, in most cases, by the next update of the record. The measure is a first one and is generous: it is taken around the new mid, so part of the refill is the band moving onto levels that were resting already, and for small orders 90% of the depth was never lost. That the larger orders refilled faster than the smaller ones points the same way. Who refills, and at which prices, is a question for the replay of Lecture 21.
+
+**Pulls.** The flip side of a refill is a withdrawal. L2 data do not show cancellations, but a burst of them leaves a trace: an update in which several levels near the price shrink by more than was traded at them. We call an update a **pull** when five or more of the best 20 levels of one side shrink in it by more than the trades at those prices explain. On the median day, 13.7% of all updates were pulls.
+
+![Pulls on Bybit BTCUSDT: by the move of the price in the second before, through the minute, and day by day](figures/18_08_pulls.png)
+<sub><b>How to read the figure.</b> A pull: an update in which five or more of the best 20 levels of one side shrink by more than was traded at them. <b>Top left:</b> the share of updates that are pulls, by how far the mid moved in the second before: the median day (bar) and the range over the 45 days (whisker). <b>Top right:</b> through the minute, by its second, relative to the day's average (1 = average); solid, all updates; dotted, only updates after a second in which the mid moved less than 0.5 bp; orange, the mid's move in the second before; the median over the 45 days. <b>Bottom:</b> the share of updates that are pulls, day by day; weekends light.</sub>
+
+| What drives the pulls | Our result | Reading |
+|---|---|---|
+| **The price moving** | 7% of updates after a quiet second, 41% after a move of 0.5 – 2 bp, 79% after a move of more than 5 bp; on every one of the 45 days | When the price moves, market makers cancel and repost at the new prices. The book is pulled when it is needed most: the mechanism behind the fade above |
+| **The clock** | 1.4 times the day's average in the first seconds of every minute, decaying to 0.9 times by its end; a smaller bump at second 30; on every one of the 45 days, and as strong after a quiet second | Pulls that answer to the clock, not to the price |
+| **The day** | Weekdays: 12.5% before 10 October, 21% after; weekends: 4% and 8.5% | After the cascade the book was pulled about 1.7 times as often on weekdays and twice as often at weekends, while it held half the depth (§5.3) |
+
+<sub><b>How to read the table.</b> Our measurement over the 45 days; daily medians.</sub>
+
+The clock result needs a word on what it is and what it is not. If the pulls at the start of a minute were a reaction to the price, they would follow a move; they are as frequent after a quiet second as after any other. At 100 milliseconds, the finest the record allows, the pulls and the price's own moves jump in the same interval, within 200 milliseconds after the full minute, to 1.5 and 1.9 times their averages, and neither comes first. Activity that starts at the same instant, on every day, points to a common trigger: the clock. Strategies that act on one-minute bars, execution algorithms that send a slice every minute, and market makers who refresh their quotes on a schedule would all produce it; the record cannot say which. This is the identification by timing that Lecture 20 takes further: withdrawals one after another point to traders reacting to each other; withdrawals at the same instant point to a shared trigger, a clock or a piece of news. Whether the minute effect is the same on other venues and other pairs is an open question that the same scripts can answer.
+
+The book of §5.1 is therefore deep in a calm second and least reliable in the seconds in which a trader most wants it: when the price moves and, less obviously, at the turn of each minute.
