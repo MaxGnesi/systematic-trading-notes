@@ -144,18 +144,50 @@ Both sides hold 20 BTC in their best 10 levels, so a measure of depth within 10 
 
 **What it misses.** The shape is that of one moment: orders arrive while a large order walks the book, and depth taken is often replaced within a tenth of a second (Lecture 18, §5.5). The deep levels that make a book look steep are also where walls stand that are not meant to trade (Section 2.1). And the shape changes with the market: Næs and Skjeltorp (2006) find that flatter books go with more trading and higher volatility, so a shape measured on a calm day is not one to rely on in a fast one.
 
-*Sections 2.4 and 2.5 (queues, markouts) and 3 to 5 follow.*
+### 2.4 Queues
+
+**Key message.** The size at a price is not one order but a line of orders, served first come, first served.\* How long the line at the best price lasts says how long the price holds; where an order stands in it says when that order will be filled. L2 shows only the length of the line, so both have to be inferred from how the length changes.
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | Queue size at the best: $`q^b`$, $`q^a`$, read from L2 | What must trade or be withdrawn before the price moves |
+| 2 | Split each change of a queue: $`\Delta q = \text{added} - \text{traded} - \text{cancelled}`$, with the traded part taken from the trades at that price and the rest of a decrease counted as cancelled | Whether the line shortens because others trade against it or because its own members leave |
+| 3 | Time to empty: $`q`$ divided by the rate at which the line shortens, traded plus cancelled minus added, per second | How long the price is likely to hold |
+| 4 | Replay the changes through a first-in, first-out line: additions join the back, trades take from the front, cancellations by assumption | How much stands in front of an order of ours, and how long the depth has rested |
+
+<sub><b>How to read the table.</b> \* The standard rule of continuous books, price then time, not stated in Bybit's or Binance's documents (Lecture 18, §1.3). Steps 2 to 4 combine the book with the trade feed, matched by time. Within one 100-millisecond update only the net change is seen: an order that arrives and is cancelled inside it leaves no trace, and an addition and a cancellation of the same size look like nothing.</sub>
+
+![A queue at the best bid: the exchange holds separate orders in line, L2 shows only their total](figures/19_08_queue_card.png)
+<sub><b>How to read the figure.</b> One invented queue at the best bid over five updates of the book, 100 ms apart, sizes in BTC. <b>Left:</b> the orders as the exchange holds them, the front (filled first) on the left, shaded by how long each had rested at update 0; ours is the small outlined order; dotted outlines mark orders that have just gone. <b>Middle:</b> what L2 shows, the total and its change, and what the trade feed shows at this price. <b>Right:</b> what we infer from the two, and how much stands in front of our order: the truth, and two models where the truth cannot be seen.</sub>
+
+Updates 1 and 2 can be read without doubt: a decrease matched by trades at that price was taken from the front of the line, and an increase is a new order at the back. Update 3 cannot. 0.7 BTC left the queue without a trade, and L2 does not say whose order it was. In truth it was B, ahead of ours, and only 0.4 BTC now stand in front of us. A model that assumes cancellations come from the back of the line still counts 1.1 BTC in front; one that spreads them over the line in proportion to the size in front of and behind our order counts 0.8 (Rigtorp, 2013). At update 4, sells of 0.6 BTC arrive: in truth they fill our order, under both models they do not.
+
+This is the choice every backtest of resting orders has to make (Lecture 21), and open-source backtesters offer both models (hftbacktest documentation). Assuming that cancellations come from the back is the cautious choice for fills: what stands in front of us then shrinks only through trades, so the model never fills our order earlier than the truth would. It is not cautious about what the fills are worth: the fills it keeps are those that come with large trades, which are often the ones the price moves against (Section 2.5). The same replay gives each part of a line the time it joined, which is the age of the depth that the age-weighted imbalance of Section 2.1 needs; every level of the book is its own line, so the age can be estimated at every level, not only at the best.
+
+Queues matter beyond a single order. In the model of Cont and de Larrard (2013), in which orders arrive and leave at random, the price moves when one of the two best queues empties: the next move is a race between two lines, and its odds depend on their lengths. This is the mechanics behind book imbalance, which Section 3 separates from information (hypothesis H5). A place near the front of a line is also worth money in itself: in large-tick stocks, whose spread is nearly always one tick as that of BTCUSDT on Bybit is, the value of a position in the queue can be of the order of the spread (Moallemi and Yuan, 2016).
+
+**Hidden size: icebergs and pinging.** An iceberg shows only part of a large order. On venues where the exchange holds the hidden part, the visible part is refilled as it trades, and traders send small orders, **pinging**, to find out whether more lies behind a level. On Bybit, an iceberg is a tool that places the next slice of a large order once the previous slice has traded (Bybit, n.d.); each slice is a new order and joins the back of the line, and any trader can run the same loop with their own orders. In the data it leaves a signature: a level that is taken and refilled at the same price by a similar size, again and again, so that the trades at that price add up to more than the level ever showed. Section 3 counts such levels.
+
+**What it misses.** Where a cancellation comes from is an assumption, not an observation, and the estimated position and age are only as good as that assumption. Within one update, orders that come and go are not seen, and a trade that falls close to the edge of an update can be matched to the wrong one. Rates of arrival and departure are not constant: Huang, Lehalle and Rosenbaum (2015) find that they depend on the size of the queue itself, so a time to empty computed from average rates is a first approximation. And when the best price changes, the line at the new best price is a different one, with its own history.
+
+*Section 2.5 (markouts) and Sections 3 to 5 follow.*
 
 ## References
 
 - Budish, E., Cramton, P. and Shim, J. (2015). The high-frequency trading arms race: frequent batch auctions as a market design response. *Quarterly Journal of Economics* 130(4), 1547–1621. — frequent batch auctions (§2.1).
+- Bybit (n.d.). How to use iceberg orders. *Bybit Learn*, bybit.com/en/learn/bybit-guide/how-to-use-iceberg-orders. — icebergs on Bybit as slices placed one after another (§2.4).
 - Cartea, Á., Jaimungal, S. and Wang, Y. (2020). Spoofing and price manipulation in order-driven markets. *Applied Mathematical Finance* 27(1–2), 67–98. — a model of a spoofing seller (§2.1).
 - Cong, L. W., Li, X., Tang, K. and Yang, Y. (2023). Crypto wash trading. *Management Science* 69(11), 6427–6454. — wash trading on crypto exchanges (§2.1).
+- Cont, R. and de Larrard, A. (2013). Price dynamics in a Markovian limit order market. *SIAM Journal on Financial Mathematics* 4(1), 1–25. — the next price move as a race between the two best queues (§2.4).
 - Fabre, T. and Challet, D. (2025). Learning the spoofability of limit order books with interpretable probabilistic neural networks. arXiv 2504.15908. — distance and spoofing on crypto exchanges (§2.1).
 - Gai, J., Yao, C. and Ye, M. (2013). The externalities of high frequency trading. Working paper, SSRN. — quote stuffing across Nasdaq's channels (§2.1).
 - Gould, M. D. and Bonart, J. (2015). Queue imbalance as a one-tick-ahead price predictor in a limit order book. arXiv 1512.03492. — the imbalance at the best and the next mid move (§1, §2.1).
+- hftbacktest documentation (n.d.). Queue models. hftbacktest.readthedocs.io. — cautious and probabilistic models of queue position in an open-source backtester (§2.4).
+- Huang, W., Lehalle, C.-A. and Rosenbaum, M. (2015). Simulating and analyzing order book data: the queue-reactive model. *Journal of the American Statistical Association* 110(509), 107–122. — arrival and cancellation rates that depend on the queue size (§2.4).
 - Lee, E. J., Eom, K. S. and Park, K. S. (2013). Microstructure-based manipulation: strategic behavior and performance of spoofing traders. *Journal of Financial Markets* 16(2), 227–252. — spoofing on the Korea Exchange (§2.1).
+- Moallemi, C. C. and Yuan, K. (2016). A model for queue position valuation in a limit order book. Working paper, Columbia Business School. — the value of a place in the queue (§2.4).
 - Næs, R. and Skjeltorp, J. A. (2006). Order book characteristics and the volume–volatility relation: empirical evidence from a limit order market. *Journal of Financial Markets* 9(4), 408–432. — the slope of the book (§2.3).
+- Rigtorp, E. (2013). Estimating order queue position. Blog post, rigtorp.se, 8 June 2013. — estimating queue position from market-by-level data (§2.4).
 - SEC (2010). Concept release on equity market structure. Release No. 34-61358, *Federal Register* 75, 3594. — momentum ignition (§2.1).
 - Stoikov, S. (2018). The micro-price: a high-frequency estimator of future prices. *Quantitative Finance* 18(12), 1959–1966. — the microprice (§2.2).
 - Tao, X., Day, A., Ling, L. and Drapeau, S. (2020). On detecting spoofing strategies in high frequency trading. arXiv 2009.14818. — statistical alarms (§2.1).
