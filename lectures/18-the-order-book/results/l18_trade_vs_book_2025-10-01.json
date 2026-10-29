@@ -1,0 +1,15 @@
+{
+ "all trades": {
+  "better than the best (book had moved)": 0.0316,
+  "at the best": 0.3393,
+  "deeper than the best (walked the book)": 0.6291,
+  "trades": 1729116
+ },
+ "first trade of each millisecond": {
+  "better than the best (book had moved)": 0.0378,
+  "at the best": 0.7191,
+  "deeper than the best (walked the book)": 0.2432,
+  "trades": 400460
+ },
+ "better than best: at the best of the next message": 0.3191
+}
