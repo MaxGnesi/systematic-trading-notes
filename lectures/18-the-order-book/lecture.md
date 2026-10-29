@@ -15,7 +15,7 @@ This lecture is the first stage: what the book is, what public data show of it, 
 
 | § | Step | Question |
 |---|---|---|
-| 1 | The order book | What is in it, and what does a market order do to it? |
+| 1 | The order book | What is in it, what does a market order do to it, and how does an exchange handle an order? |
 | 2 | Three levels of detail | What do L1, L2 and L3 data show, and what does L2, the level we have, leave out? |
 | 3 | Getting the data | How do readers download the book and the trades themselves, and why both? |
 | 4 | Reconstructing the book | How is the book rebuilt from the data, and how do we know it is right? |
@@ -62,6 +62,31 @@ A market order takes the best price first and then the next, level by level, unt
 The cost grows faster than the size, because each additional bitcoin is bought further from the mid. Walking the book this way assumes the book stands still while the order travels to the exchange, and it does not.
 
 **The book moves while the order travels.** An order needs time to reach the exchange, its **latency**. In that time market makers, who see the market and react faster, can revise or cancel their quotes, above all when the price starts to move, which is when a trader most wants to trade. This is **quote fading**: the order arrives at worse prices than it was sent against. Part of the displayed depth was never meant to trade at all: over a third of limit orders on Nasdaq's book are cancelled within two seconds, **fleeting orders** in the term of Hasbrouck and Saar (2009), and a trade on one venue is followed within 100 milliseconds by cancellations on others (van Kervel, 2015). Practitioners call the result the **liquidity mirage**: depth that is displayed but gone when it is reached. Our recorded book adds its own delay, since it is updated every 100 milliseconds. The costs above are therefore a lower bound; §5 measures by how much real market orders did worse, and Lecture 21 makes latency a setting of every replay.
+
+
+### 1.3 How an exchange handles an order
+
+Between a trader's decision and a trade lies a chain of steps, each with its own rules. Together they are the venue's **market model**, and every later question of Part IV, from manipulation (Lecture 19) to replaying the exchange (Lecture 21) and quoting on two venues (Lecture 24), is a question about one of these steps:
+
+![The path of an order through an exchange: gateway, sequencer, matching engine, market data, and clearing underneath](figures/18_02b_order_path.png)
+<sub><b>How to read the figure.</b> An order travels from left to right; what the market data step publishes goes back to every trader (dotted). Under each step, what it decides (black), and what Bybit (blue) and Binance (green) do there. Orange: where the defences against manipulation of Lecture 19, §2.1 act. * The standard rule of continuous books; neither venue states it in the documents we checked.</sub>
+
+| Step | What it decides | Bybit | Binance |
+|---|---|---|---|
+| **Latency** | How long the order takes to reach the exchange | Set by the trader's distance and connection; servers in the same cloud region (AWS Singapore) are fastest | The same, from the trader's side |
+| **1. Gateway** (order entry) | Whether and when an order is let in: checks on the account and its margin, caps on messages, any deliberate delay | About 10 new orders a second per account and request type; higher limits for institutions | By default 300 orders per 10 seconds and 1,200 a minute, per account |
+| **2. Sequencer** | The order in which messages reach the matching engine | By arrival | By arrival |
+| **3. Matching engine** | Which resting orders a new order trades against: the **priority rule** | Best price first, then the oldest order at that price (price-time priority)* | The same* |
+| **4. Market data** | What the world sees, and how often | 200 levels every 100 ms, 50 every 20 ms, the best level every 10 ms (§5.5) | Changes to the book every 100, 250 or 500 ms; partial books of the best 5, 10 or 20 levels |
+| **5. Clearing and risk** | Margin, liquidations, and who bears a loss the margin does not cover | A liquidated position is closed in the market; a shortfall falls on the insurance fund, and beyond it on **auto-deleveraging**: profitable positions on the other side are closed at the bankruptcy price | The same chain |
+
+<sub><b>How to read the table.</b> From the venues' own documentation (Bybit, Binance), late 2025; caps can change by account tier. * Price-time priority is the standard of continuous order books; neither venue states it explicitly in the documents we checked, and L2 data cannot show the order inside a queue.</sub>
+
+The two venues are built the same way, and differ mainly in their caps and in what they publish. Other designs change the steps themselves. Some exchanges delay aggressive orders at the gateway by a few milliseconds while letting cancellations through (TSX Alpha, Eurex); some match by size rather than time at step 3 (pro-rata, in some interest-rate futures at CME); and Hyperliquid, a decentralised exchange that runs its order book on its own blockchain, gathers orders into blocks and sorts each block by type at step 2, cancellations before orders that take liquidity, with a median of about 0.2 seconds from sending an order to its confirmation. Lecture 19, §2.1 explains why such rules matter.
+
+**What venues disclose.** Regulated exchanges publish these rules because they must: a US stock exchange files every change of its rules with the SEC, which publishes the filing for public comment, and CME publishes the matching algorithm of each of its futures, with FIFO (price-time), pro-rata and mixtures of the two. Crypto venues describe their rules in their documentation, more completely for some steps than for others: Bybit's and Binance's caps and data feeds are documented in detail, their priority rule, as far as we found, is not stated.
+
+**Why it matters before any backtest.** A backtest that uses only the book silently assumes the most favourable value at every step: no latency, no gateway delay, a place at the front of every queue, a perfect view of the book, and no liquidation chain that could close the position at a bad price. Each assumption flatters the result, and Lecture 21 replaces each of them with a setting that can be varied. A reader who cannot say at which step a result depends on the venue's rules cannot judge whether it would survive on the venue.
 
 A figure of the book shows how much rests at each price. It does not show who stands behind those amounts, which depends on how much detail the data contain.
 
@@ -403,11 +428,16 @@ For the order book as an object of study, the survey of Gould et al. (2013), and
 
 ## References
 
+- Binance (2024). Rate limits on Binance Futures. https://www.binance.com/en/support/faq/281596e222414cdd9051664ea621cdc3 — order caps per account (§1.3).
+- Binance (2025). USDⓈ-M futures: diff book depth streams. https://developers.binance.com/docs/derivatives/usds-margined-futures/websocket-market-streams/Diff-Book-Depth-Streams — what Binance publishes of its book (§1.3).
 - Bouchaud, J.-P., Bonart, J., Donier, J. and Gould, M. (2018). *Trades, Quotes and Prices: Financial Markets Under the Microscope*. Cambridge University Press. — the book and the trades that move it (§6.3).
 - Bybit (2025). V5 API: WebSocket stream, orderbook. https://bybit-exchange.github.io/docs/v5/websocket/public/orderbook — depths and frequencies of the public feed (§6.3).
+- Bybit (2025). V5 API: rate limit. https://bybit-exchange.github.io/docs/v5/rate-limit — request caps per account (§1.3).
+- CME Group (2025). CME Globex matching algorithms. https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/457316046 — FIFO, pro-rata and mixed priority rules (§1.3).
 - Gould, M. D., Porter, M. A., Williams, S., McDonald, M., Fenn, D. J. and Howison, S. D. (2013). Limit order books. *Quantitative Finance* 13(11), 1709–1742. — survey (§6.3).
 - Harris, L. (2003). *Trading and Exchanges: Market Microstructure for Practitioners*. Oxford University Press. — exchanges and order types (§6.3).
 - Hasbrouck, J. and Saar, G. (2009). Technology and liquidity provision: the blurring of traditional definitions. *Journal of Financial Markets* 12(2), 143–172. — fleeting orders (§1.2).
 - Huang, R. and Polak, T. (2011). LOBSTER: Limit Order Book Reconstruction System. Working paper, SSRN. — rebuilding a book from its messages (§6.3).
+- Hyperliquid (2025). Hyperliquid docs: HyperCore order book and overview. https://hyperliquid.gitbook.io/hyperliquid-docs/hypercore/order-book — ordering by type within a block; latency (§1.3).
 - nkaz001 (2025). hftbacktest: high-frequency trading and market-making backtesting. https://github.com/nkaz001/hftbacktest — replay with latency and queue position (§6.3).
 - van Kervel, V. (2015). Competition for order flow with fast and slow traders. *Review of Financial Studies* 28(7), 2094–2127. — cancellations across venues (§1.2).
