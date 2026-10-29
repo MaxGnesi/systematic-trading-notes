@@ -1,0 +1,22 @@
+{
+ "ts": {
+  "trades": 1729124,
+  "on_a_resting_level": 0.9041,
+  "at_the_best": 0.3355
+ },
+ "cts": {
+  "trades": 1729116,
+  "on_a_resting_level": 0.9059,
+  "at_the_best": 0.3393
+ },
+ "cts-100 ms": {
+  "trades": 1729115,
+  "on_a_resting_level": 0.3042,
+  "at_the_best": 0.245
+ },
+ "cts+100 ms": {
+  "trades": 1729124,
+  "on_a_resting_level": 0.8636,
+  "at_the_best": 0.2959
+ }
+}
