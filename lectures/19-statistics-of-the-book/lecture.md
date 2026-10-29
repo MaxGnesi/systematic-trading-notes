@@ -166,16 +166,53 @@ This is the choice every backtest of resting orders has to make (Lecture 21), an
 
 Queues matter beyond a single order. In the model of Cont and de Larrard (2013), in which orders arrive and leave at random, the price moves when one of the two best queues empties: the next move is a race between two lines, and its odds depend on their lengths. This is the mechanics behind book imbalance, which Section 3 separates from information (hypothesis H5). A place near the front of a line is also worth money in itself: in large-tick stocks, whose spread is nearly always one tick as that of BTCUSDT on Bybit is, the value of a position in the queue can be of the order of the spread (Moallemi and Yuan, 2016).
 
-**Hidden size: icebergs and pinging.** An iceberg shows only part of a large order. On venues where the exchange holds the hidden part, the visible part is refilled as it trades, and traders send small orders, **pinging**, to find out whether more lies behind a level. On Bybit, an iceberg is a tool that places the next slice of a large order once the previous slice has traded (Bybit, n.d.); each slice is a new order and joins the back of the line, and any trader can run the same loop with their own orders. In the data it leaves a signature: a level that is taken and refilled at the same price by a similar size, again and again, so that the trades at that price add up to more than the level ever showed. Section 3 counts such levels.
+**Hidden size: icebergs and pinging.** An iceberg shows only part of a large order. On venues where the exchange holds the hidden part, the visible part is refilled as it trades, and traders send small orders, **pinging**, to find out whether more lies behind a level. On Bybit, an iceberg is a tool that places the next slice of a large order once the previous slice has traded (Bybit, n.d.-a); each slice is a new order and joins the back of the line, so the large order gives up its place every time a slice is used up, the price of hiding its size. Built-in icebergs on other venues, CME's among them, generally lose priority in the same way when the visible part is refilled. Any trader can run the same loop with their own orders. In the data it leaves a signature: a level that is taken and refilled at the same price by a similar size, again and again, so that the trades at that price add up to more than the level ever showed. Section 3 counts such levels.
 
 **What it misses.** Where a cancellation comes from is an assumption, not an observation, and the estimated position and age are only as good as that assumption. Within one update, orders that come and go are not seen, and a trade that falls close to the edge of an update can be matched to the wrong one. Rates of arrival and departure are not constant: Huang, Lehalle and Rosenbaum (2015) find that they depend on the size of the queue itself, so a time to empty computed from average rates is a first approximation. And when the best price changes, the line at the new best price is a different one, with its own history.
 
-*Section 2.5 (markouts) and Sections 3 to 5 follow.*
+### 2.5 Markouts
+
+**Key message.** The statistics so far describe the book before a trade; a markout looks after it. It measures how the mid moved after a fill, from the side of whoever was filled. For a resting order, it shows whether the spread it earned was kept or lost to a price that moved against it: the cost of trading with someone who knew more, **adverse selection**.
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | Markout of a fill at price $`p`$, on side $`s`$ ($`+1`$ bought, $`-1`$ sold), at horizon $`h`$: $`M(h) = s\,(m_{t+h} - p)`$ | What the fill was worth $`h`$ seconds later, valuing the position at the mid |
+| 2 | At the fill: $`M(0) = s\,(m_t - p)`$ | The half spread: earned by the resting order, paid by the market order |
+| 3 | Split: $`M(h) = s\,(m_t - p) + s\,(m_{t+h} - m_t)`$ | The spread earned, plus the move of the price after the fill; for a resting order the move is usually against it, the **price impact** of the trade |
+| 4 | Average over many fills, horizon by horizon: the markout curve | Whether fills are good on average, and at what horizon the damage is done |
+
+<sub><b>How to read the table.</b> $`m_t`$: the mid at the fill; $`m_{t+h}`$: the mid $`h`$ seconds later. Signs are such that positive means earned by whoever was filled; the taker's markout is minus the maker's. The split is the classic decomposition of the effective spread into a realized spread and a price impact (Huang and Stoll, 1996); US brokers report realized spreads at horizons from under a millisecond to five minutes (SEC, 2024).</sub>
+
+![Markouts: two invented paths of the mid after a market maker's bid is filled, and the markout by horizon](figures/19_09_markout_card.png)
+<sub><b>How to read the figure.</b> <b>Left:</b> a market maker's bid at 100,000.0 is filled, the maker bought, with the mid at 100,000.05; two invented paths of the mid over the next 10 seconds. <b>Right:</b> the markout of the same two fills, mid after $`h`$ seconds minus the fill price, in ticks of $0.10, by horizon on a log scale. Above zero, the fill earned; below, it lost.</sub>
+
+Both fills earn half a tick at the moment they happen. The good one keeps it, and gains more when the price rises; the toxic one loses it within a third of a second and ends 1.5 ticks down, half a tick of spread against two ticks of price impact. The seller who hit the bid was ahead of the price, and the market maker paid for it.
+
+The scale matters. One tick of BTCUSDT is about 0.01 bp, while the base maker fee on Bybit is 0.02% of the value traded, 2 bp, about 200 ticks (Bybit, n.d.-b). At the base fee, a market maker on BTCUSDT cannot live off the spread at all: whatever makes market making pay here lies in fees far below the base tier, and in markouts that, on average, do not turn against it. Lecture 23 takes this up.
+
+Markouts are where the statistics of this section meet. A resting order on the thin side of an imbalanced book (Section 2.1) is likely to be filled just before the price moves through it: imbalance says when to step out of the queue. An order at the back of a long queue (Section 2.4) is filled only when a large trade sweeps the whole line, and large trades are the ones most often followed by a move. And the quote fading of Lecture 18 (§5.5) is the same exchange seen from the taker's side.
+
+**What it misses.** A markout values the position at the mid, not at what it would cost to close: closing pays a spread and a fee. The verdict depends on the horizon: a fill that looks good after one second can look bad after a minute, so a markout is reported as a curve, not as one number. Horizons shorter than one update of the book cannot be measured on our data. And we have no fills of our own: Section 3 measures the markouts of the trades in the feed, from the side of the resting order each trade hit, which is the average fill of a resting order at the time, not that of a particular strategy. The fills of a strategy come with the replay of Lecture 21.
+
+### 2.6 The statistics side by side
+
+| Statistic | What it captures | Main blind spot | Section 3 measures |
+|---|---|---|---|
+| Book imbalance | Which side of the book outweighs the other | Size, not intentions; the mechanics of small queues | Its forecast of the next mid move (H1–H5); distance-, age-weighted and smoothed versions |
+| Microprice | Where the mid is likely to be once the price has moved | Estimated in one regime, used in another | Its probabilities on the calm days, checked on the days after |
+| Shape of the book | The cost of orders larger than the best queue | One moment; walls that are not meant to trade | Slope and cost of given sizes, day by day |
+| Queues | How long the price holds; where an order stands, and how old the depth is | Where a cancellation came from | The split of changes into traded and cancelled; time to empty; refilling levels |
+| Markouts | What a fill was worth once the price had moved | The horizon; no fills of our own | Markout curves of the feed's trades, from the resting side |
+
+<sub><b>How to read the table.</b> One row per statistic of Sections 2.1 to 2.5. The last column says what Section 3 does with each on the 45 days of Bybit BTCUSDT; the hypotheses for the imbalance were fixed before the results, those for the others will be fixed in the same way before they are measured.</sub>
+
+*Sections 3 to 5 follow.*
 
 ## References
 
 - Budish, E., Cramton, P. and Shim, J. (2015). The high-frequency trading arms race: frequent batch auctions as a market design response. *Quarterly Journal of Economics* 130(4), 1547–1621. — frequent batch auctions (§2.1).
-- Bybit (n.d.). How to use iceberg orders. *Bybit Learn*, bybit.com/en/learn/bybit-guide/how-to-use-iceberg-orders. — icebergs on Bybit as slices placed one after another (§2.4).
+- Bybit (n.d.-a). How to use iceberg orders. *Bybit Learn*, bybit.com/en/learn/bybit-guide/how-to-use-iceberg-orders. — icebergs on Bybit as slices placed one after another (§2.4).
+- Bybit (n.d.-b). Perpetual futures contract fees explained. *Bybit Help Center*. — maker 0.02%, taker 0.055% at the base tier, VIP 0 (§2.5).
 - Cartea, Á., Jaimungal, S. and Wang, Y. (2020). Spoofing and price manipulation in order-driven markets. *Applied Mathematical Finance* 27(1–2), 67–98. — a model of a spoofing seller (§2.1).
 - Cong, L. W., Li, X., Tang, K. and Yang, Y. (2023). Crypto wash trading. *Management Science* 69(11), 6427–6454. — wash trading on crypto exchanges (§2.1).
 - Cont, R. and de Larrard, A. (2013). Price dynamics in a Markovian limit order market. *SIAM Journal on Financial Mathematics* 4(1), 1–25. — the next price move as a race between the two best queues (§2.4).
@@ -183,12 +220,14 @@ Queues matter beyond a single order. In the model of Cont and de Larrard (2013),
 - Gai, J., Yao, C. and Ye, M. (2013). The externalities of high frequency trading. Working paper, SSRN. — quote stuffing across Nasdaq's channels (§2.1).
 - Gould, M. D. and Bonart, J. (2015). Queue imbalance as a one-tick-ahead price predictor in a limit order book. arXiv 1512.03492. — the imbalance at the best and the next mid move (§1, §2.1).
 - hftbacktest documentation (n.d.). Queue models. hftbacktest.readthedocs.io. — cautious and probabilistic models of queue position in an open-source backtester (§2.4).
+- Huang, R. D. and Stoll, H. R. (1996). Dealer versus auction markets: a paired comparison of execution costs on NASDAQ and the NYSE. *Journal of Financial Economics* 41(3), 313–357. — effective spread, realized spread and price impact (§2.5).
 - Huang, W., Lehalle, C.-A. and Rosenbaum, M. (2015). Simulating and analyzing order book data: the queue-reactive model. *Journal of the American Statistical Association* 110(509), 107–122. — arrival and cancellation rates that depend on the queue size (§2.4).
 - Lee, E. J., Eom, K. S. and Park, K. S. (2013). Microstructure-based manipulation: strategic behavior and performance of spoofing traders. *Journal of Financial Markets* 16(2), 227–252. — spoofing on the Korea Exchange (§2.1).
 - Moallemi, C. C. and Yuan, K. (2016). A model for queue position valuation in a limit order book. Working paper, Columbia Business School. — the value of a place in the queue (§2.4).
 - Næs, R. and Skjeltorp, J. A. (2006). Order book characteristics and the volume–volatility relation: empirical evidence from a limit order market. *Journal of Financial Markets* 9(4), 408–432. — the slope of the book (§2.3).
 - Rigtorp, E. (2013). Estimating order queue position. Blog post, rigtorp.se, 8 June 2013. — estimating queue position from market-by-level data (§2.4).
 - SEC (2010). Concept release on equity market structure. Release No. 34-61358, *Federal Register* 75, 3594. — momentum ignition (§2.1).
+- SEC (2024). Disclosure of order execution information. Release No. 34-99679, *Federal Register* 89, 26428. — realized spreads at horizons up to five minutes (§2.5).
 - Stoikov, S. (2018). The micro-price: a high-frequency estimator of future prices. *Quantitative Finance* 18(12), 1959–1966. — the microprice (§2.2).
 - Tao, X., Day, A., Ling, L. and Drapeau, S. (2020). On detecting spoofing strategies in high frequency trading. arXiv 2009.14818. — statistical alarms (§2.1).
 - Tuccella, J.-N., Nadler, P. and Serban, O. (2021). Protecting retail investors from order book spoofing using a GRU-based detection model. arXiv 2110.03687. — rules and a model for detection (§2.1).
