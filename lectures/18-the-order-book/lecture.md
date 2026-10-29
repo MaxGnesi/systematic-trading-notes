@@ -266,3 +266,61 @@ The book and the trades come from different files with different clocks: each bo
 The two columns tell one story. One market order often fills against several levels in the same millisecond: the first fill at the best, the next ones deeper, as in §1.2. Counted fill by fill, most trades are therefore deeper than the best. Counted by the first trade of each millisecond, close to one market order, almost three in four take the best price; most of the rest, presumably, found the best already taken by another order within the last 100 milliseconds, and a few found the book moved. The trades and the rebuilt book agree; what the low figure measured was sweeps and the 100-millisecond interval of the record.
 
 With the book rebuilt, checked and aligned with the trades, Section 5 turns to what it shows.
+
+## 5. What the book shows
+
+On an ordinary day the BTCUSDT book on Bybit is deep and tight: one tick of spread, about 48 BTC within 5 bp of the mid on each side, and a quarter of a basis point for a 5 BTC market order. After the cascade of 10 October it stayed about half as deep for the rest of our sample. This section measures the book's liquidity second by second over the 45 days; every number can be checked in the viewer of §4.1, whose day strip draws each of these measures through the day.
+
+### 5.1 Spread and depth
+
+| Measure | How it is computed, every second | Calm days, 20 September – 3 November without 10 October |
+|---|---|---|
+| **Spread** | Best ask minus best bid | One tick ($0.10) in 99.8% of seconds |
+| **Depth** | BTC resting within 5 bp of the mid, on each side; at a price of $110,000, 5 bp is $55 | Median 48 BTC of bids and 49 BTC of asks, about $5 million each |
+| **Book imbalance** | Bids minus asks among the best 5 levels, divided by their sum: from −1 (only asks) to +1 (only bids) | Swings widely: a standard deviation of 0.63 |
+
+<sub><b>How to read the table.</b> Our measurement for these notes, over 3,801,555 seconds of the reconstructed book; the three feed gaps of §4.3 are left out.</sub>
+
+The spread hardly ever opens beyond its minimum of one tick: so many orders compete at the best prices that a level emptied by a trade is refilled at once. Depth within 5 bp is larger than a typical aggressive order by a wide margin; it is not evenly spread, though, since the imbalance shows the best levels often heavily on one side. Whether that tilt says where the price goes next is the question of Lecture 19.
+
+### 5.2 What a market order costs
+
+Walking the book of every second (§1.2) gives the cost of a market order of a given size: how far above the mid a buy's average price lies, and below it a sell's.
+
+| Market buy | Median second | The worst 1% of seconds |
+|---|---|---|
+| 1 BTC | 0.005 bp: half a tick, the best ask | |
+| 5 BTC | 0.23 bp | 1.5 bp |
+
+<sub><b>How to read the table.</b> bp beyond the mid; sells cost about the same (0.23 bp for 5 BTC). Our measurement on the calm days, as in §5.1.</sub>
+
+A market order of 1 BTC almost always fills at the best ask alone. One of 5 BTC walks a few levels and pays about a quarter of a basis point, rising to a basis point and a half in the most expensive seconds. Through the day, the cost is lowest in the European morning, about 0.2 bp from 05:00 to 12:00 UTC, and highest in US trading hours, 0.25 to 0.29 bp from 13:00 to 22:00, while depth hardly changes: what changes is how fast the book is being taken. These costs assume that the book stands still while the order travels; Section 5.5 measures how much worse real orders did.
+
+### 5.3 Forty-five days
+
+![Liquidity on Bybit BTCUSDT, 20 September – 3 November 2025: depth within 5 bp and the cost of a 5 BTC market buy, day by day](figures/18_05_liquidity_45_days.png)
+<sub><b>How to read the figure.</b> <b>Top:</b> for each day, the median over its seconds of the depth within 5 bp of the mid, bids (blue) and asks (pink). <b>Bottom:</b> what a 5 BTC market buy pays beyond the mid by walking the book: the median second (black) and the worst 1% of seconds (grey, dotted), on a log scale. The dashed line marks 10 October.</sub>
+
+| Period | Depth within 5 bp, per side, daily median | A 5 BTC market buy, daily median |
+|---|---|---|
+| 20 September – 9 October | 41 – 82 BTC | 0.004 – 0.18 bp |
+| 11 October – 3 November | 31 – 52 BTC | 0.22 – 0.60 bp |
+
+<sub><b>How to read the table.</b> The range of the daily values in each period; our measurement.</sub>
+
+The cascade divided the sample in two. In the three weeks before it, depth within 5 bp was 41 to 82 BTC a side and a 5 BTC market order cost close to nothing. On every day after it, depth was lower, 31 to 52 BTC, and the same order cost two to four times as much, without a sign of returning to the earlier level by 3 November. Why the market makers quoted less after the cascade the book cannot tell; losses on the day, and the higher volatility that followed it, would both be reasons to, and the question is open for readers with a longer sample.
+
+### 5.4 The cascade
+
+![The evening of 10 October 2025, minute by minute: spread, depth, and seconds in which the book could not fill 5 BTC](figures/18_06_cascade_book.png)
+<sub><b>How to read the figure.</b> 20:30 to 22:30 UTC on 10 October, one bar per minute. <b>Top:</b> the spread in ticks, averaged over the minute's seconds, on a log scale. <b>Middle:</b> the depth within 5 bp of the mid on both sides together, the median of the minute's seconds; the dotted line is a calm day's median. <b>Bottom:</b> the share of the minute's seconds in which all 200 levels of one side together held less than 5 BTC. The dashed line marks the tariff post at 20:50:01.7 (Lecture 20).</sub>
+
+The evening ran in three stages:
+
+| UTC | What the book did |
+|---|---|
+| Before 20:50 | Normal: one tick of spread, about 90 BTC within 5 bp on both sides |
+| 20:50 – 21:10 | Strained: the spread opened to 15 ticks within three minutes of the post, depth fell, at times to 30 BTC, and the book almost always still held 5 BTC on each side |
+| 21:12 – 21:40 | Nearly gone: the spread averaged 60 to 128 ticks, $6 to $13, from 21:16 to 21:22; depth within 5 bp was, at its lowest, 2 to 4 BTC; in up to two thirds of the seconds, the whole visible book of one side held less than 5 BTC |
+
+The book did not empty because of one large order. It emptied over minutes, while trading went on (the reconstruction has no gap that evening), as the resting orders that normally refill the best levels stopped coming. In the middle of it, at 21:41 and again at 21:59, depth spiked to five times its normal level: walls at the round price of $111,000, among them a level of exactly 100.000 BTC, a size that suggests one large order. **To check in the viewer:** 10 October from 21:10, a 30-minute window, then the cursor at 21:41:30 for the walls in the ladder.
