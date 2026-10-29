@@ -76,7 +76,7 @@ Public order-book data come at three levels of detail, and the level decides whi
 | **L3** | Every single order: when it arrived, at which price and size, and when it was filled or cancelled | Some venues publish it live; historical L3 data are rare and usually paid for |
 
 ![The same moment at three levels of detail](figures/18_03_l1_l2_l3.png)
-<sub><b>How to read the figure.</b> The book of figure 18_02 at three levels of detail, best 8 levels a side. <b>L1:</b> only the best bid and ask. <b>L2:</b> every level and its total size. <b>L3:</b> each level split into its individual orders, the first to arrive on the left. The split is invented at random for the illustration: our data do not contain it. The axis is cut at 1.6 BTC, so most of the best bid's 6.35 BTC lies off the panel.</sub>
+<sub><b>How to read the figure.</b> The book of figure 18_02 drawn as three ladders, the way trading screens show a book: one row per level, asks (pink) above, bids (blue) below, the price on the left and the size in BTC written in each row; bars are full at 1 BTC, and ▶ marks a larger size. <b>L1:</b> only the best bid and ask; the other rows are not in L1 data. <b>L2:</b> every level and its total size. <b>L3:</b> each level split into its individual orders, the first to arrive on the left. The split is invented for the illustration: our data do not contain it.</sub>
 
 L2 is the level of most public crypto data, and it answers most questions about liquidity: where the depth is, how wide the spread, what a market order costs. What it cannot show is the queue inside a level, and that matters to anyone whose order waits in it.
 
