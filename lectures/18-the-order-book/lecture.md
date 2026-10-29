@@ -189,3 +189,80 @@ A day becomes 40 to 80 million rows of book changes, 140 to 230 MB of Parquet, a
 Downloading takes about a minute a day, converting and checking three to six minutes. The two scripts are in the lecture's `scripts/` folder; the notebook runs them.
 
 **Why both files.** The window of §2 showed it: the book says how much rests at each price, the trades say how much of a change was trading. A study of liquidity needs the book; anything about fills, queues or cancellations needs both, aligned in time. Section 4 rebuilds the book from its file, aligns it with the trades and checks that the two agree.
+
+## 4. Reconstructing the book
+
+The book of every moment can be rebuilt from Bybit's files, and on our 45 days the rebuilt book matches Bybit's own snapshots exactly, apart from three gaps of about ten seconds in which the feed stopped. This section shows how the book is rebuilt, how we know it is right, what the gaps are, and how the book lines up with the trades.
+
+### 4.1 The method
+
+| Step | What is done | Why |
+|---|---|---|
+| 1. Start | Read the day's first message, a snapshot: 200 levels a side, each with its size | The book at midnight |
+| 2. Apply each change | For every later message, set each listed price to its new size; remove the price if the size is 0 | A delta lists only the levels that changed, and the size it gives is the new total, not a change |
+| 3. Restart at a snapshot | When another snapshot arrives, replace the book with it | Bybit sends one at midnight and after an interruption (§4.3) |
+| 4. Time it | Stamp each state with the matching engine's time, `cts` | The clock that lines the book up with the trades (§4.4) |
+
+The book of any moment is the result of these steps up to that moment. The viewer of this lecture (`tools/orderbook_viewer`) rebuilds it the same way, once per day, and keeps a copy of the book at every full minute so that any moment can be reached quickly.
+
+### 4.2 How we know it is right
+
+Each day file ends with the next midnight's snapshot: the last message of the file for 1 October is Bybit's full book at 2 October, 00:00:00.043. That gives a strict test. Rebuild the whole day from its first snapshot, about 860,000 messages and 40 to 80 million changes, and compare the result with that final snapshot, level by level:
+
+| Test | Result on 45 days |
+|---|---|
+| Update numbers rise by 1 from message to message, apart from the restarts of §4.3 | Every day |
+| The book rebuilt over the whole day equals Bybit's end-of-day snapshot at every one of its 400 levels, sizes to the last digit | **Every day**, and on the three days of §4.3 for the part after the restart |
+| No trade lost in the conversion: rows and total size equal those of the raw file | Every day |
+
+<sub><b>How to read the table.</b> Our checks for these notes, run by the conversion script of §3.4 on every day.</sub>
+
+A single error in reading the files, or in the rules of §4.1, would carry forward and show at the end of the day. None does.
+
+### 4.3 Three gaps in the feed
+
+On three days the book's messages stop for about ten seconds, and the next message is a fresh snapshot:
+
+| Day | Gap, UTC | Length | What follows | Trades during the gap |
+|---|---|---|---|---|
+| 25 September | 06:20:10.9 – 06:20:22.0 | 11.1 s | Snapshot; update numbers jump by 110 | 132 |
+| 14 October | 06:14:22.6 – 06:14:32.9 | 10.3 s | Snapshot; update numbers restart at 1 | 247 |
+| 23 October | 02:52:44.8 – 02:52:54.6 | 9.8 s | Snapshot; update numbers restart at 1 | 41 |
+
+![A gap in the book feed: Bybit BTCUSDT, 25 September 2025](figures/18_04_feed_gap.png)
+<sub><b>How to read the figure.</b> The best bid (blue) and best ask (pink) of the rebuilt book in the minute around the gap of 25 September, and every trade as a dot: green when a buyer was aggressive, orange when a seller was. The shaded band is the gap: no book messages for 11.1 seconds. Trades continue through it; the book restarts at the snapshot that ends it.</sub>
+
+Trading went on during every gap: Bybit's matching engine kept working, and only the book's data feed stopped. Twice the update numbers start again from 1, the mark of a restarted data service. During a gap the book is unknown, but the trades still show where the price went: on 25 September it fell $27. After each gap the rebuilt book matches Bybit's end-of-day snapshot exactly again.
+
+What follows for any study of this book: the book is unknown for 31 seconds of the 45 days, and those seconds are recorded in a register (`BTCUSDT_book_gaps.csv`), which every later lecture leaves out. The viewer marks them as grey bands.
+
+**Testing the test.** The first version of our check compared the rebuilt book with the day's second snapshot, wherever it came. On the three gap days that snapshot came after the gap, when the price had already moved, and the check reported hundreds of differing levels: a failure of the check, not of the data. It was found because the raw files of failing days are kept until the cause is understood (§3.4), and corrected so that the book is compared at every snapshot that follows continuous data and a gap is recorded, not failed. A check needs checking too, on the cases where it fails.
+
+### 4.4 Lining up the book with the trades
+
+The book and the trades come from different files with different clocks: each book message has two times, `ts` (sent) and `cts` (produced by the matching engine), and each trade one. The right clock is the one under which the trades fit the book. On 1 October, for every trade, we took the book as of its last message before the trade and asked whether the trade's price was a level resting on the side it traded against:
+
+| Clock for the book | Trades at a price resting just before |
+|---|---|
+| `ts`, the time sent | 90.4% |
+| **`cts`, the matching engine's time** | **90.6%** |
+| `cts` shifted 100 ms earlier | 30.4% |
+| `cts` shifted 100 ms later | 86.4% |
+
+<sub><b>How to read the table.</b> Our calculation for 1 October 2025, 1.73 million trades. A shift of one update interval in either direction makes the fit clearly worse.</sub>
+
+`cts` fits best, and is used throughout. The remaining tenth of trades happen at prices that the book of up to 100 milliseconds earlier did not show: orders that arrived and were filled between two messages.
+
+**Where in the book trades happen.** Measured against the best price just before them, most trades seem not to happen at the best at all:
+
+| Trade's price, against the best price of the book just before it | All trades | The first trade of each millisecond |
+|---|---|---|
+| At the best | 34% | **72%** |
+| Deeper in the book | 63% | 24% |
+| Better than the best | 3% | 4% |
+
+<sub><b>How to read the table.</b> Our calculation for 1 October 2025. A buy is compared with the best ask, a sell with the best bid. Deeper: a buy above the best ask, a sell below the best bid. Better: the book had moved since its last message.</sub>
+
+The two columns tell one story. One market order often fills against several levels in the same millisecond: the first fill at the best, the next ones deeper, as in §1.2. Counted fill by fill, most trades are therefore deeper than the best. Counted by the first trade of each millisecond, close to one market order, almost three in four take the best price; most of the rest, presumably, found the best already taken by another order within the last 100 milliseconds, and a few found the book moved. The trades and the rebuilt book agree; what the low figure measured was sweeps and the 100-millisecond interval of the record.
+
+With the book rebuilt, checked and aligned with the trades, Section 5 turns to what it shows.
