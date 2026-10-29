@@ -94,3 +94,98 @@ The book alone shows that the size fell by 3.136 BTC. Only the trades say that 0
 **Why it matters for a waiting order.** Suppose our own order had been waiting at the back of that queue. The trades took 0.132 BTC from its front, so our order moved up by that much. Of the remaining orders ahead of us, some were cancelled. Since only 0.747 BTC rest at the level afterwards, at most 0.747 BTC can still be ahead of us, and as little as nothing if the orders that remain all joined behind us. Our position after 100 milliseconds is somewhere between the front of the queue and 0.747 BTC behind it. With L3, the exact position would be known. With L2, it must be estimated by a model of where in the queue cancellations happen, and the estimate becomes a range. Lecture 21 builds such models; the fills it simulates come as ranges for this reason.
 
 The window has already used the two kinds of data that Part IV needs: the book, for what rests, and the trades, for what traded. Section 3 shows how to obtain both.
+
+## 3. Getting the data
+
+Bybit publishes the history of its book and its trades as daily files, free and without an account. This section shows what the files contain, what they look like as tables, and how to download and convert them, so that every number in Part IV can be rebuilt by the reader.
+
+### 3.1 Two files a day
+
+The two kinds of data of §2 come as two files per day and market:
+
+| File | Address (for BTCUSDT on 14 October 2025) | Size of one day | Content |
+|---|---|---|---|
+| **The book** | `https://quote-saver.bycsi.com/orderbook/linear/BTCUSDT/2025-10-14_BTCUSDT_ob200.data.zip` | 70–300 MB zipped, about 1.7 GB unpacked | One message every 100 milliseconds: a full snapshot of the book at the start, then the changes |
+| **The trades** | `https://public.bybit.com/trading/BTCUSDT/BTCUSDT2025-10-14.csv.gz` | 10–120 MB zipped | Every trade, with its time, side, size and price |
+
+The depth of the book changed over time: 500 levels a side (`ob500`) from at least March 2024 to mid-2025, 200 levels (`ob200`) from September 2025. A study should use months of one format; ours, 20 September to 3 November 2025, are all `ob200`. Busy days give larger files: 10 October, the day of the cascade, holds 8.7 million trades against about 2 million on a quiet day.
+
+### 3.2 What a raw line looks like
+
+**The book.** Each line of the unpacked file is one message, written in JSON, a text format of named fields. The first two lines of 14 October 2025, shortened to three levels a side:
+
+```json
+{"topic":"orderbook.200.BTCUSDT","type":"snapshot","ts":1760400000045,"cts":1760400000042,
+ "data":{"s":"BTCUSDT","b":[["115116.60","1.815"],["115116.50","0.014"],["115116.40","0.001"], ...],
+                       "a":[["115116.70","4.549"],["115116.80","0.005"],["115116.90","0.005"], ...],
+         "u":22309861,"seq":464864378412}}
+{"topic":"orderbook.200.BTCUSDT","type":"delta","ts":1760400000144,"cts":1760400000142,
+ "data":{"s":"BTCUSDT","b":[["115116.60","2.679"],["115112.60","0.663"], ...],
+                       "a":[["115116.70","4.550"],["115128.30","0"], ...],"u":22309862,"seq":464864378513}}
+```
+
+| Field | Meaning | Reading of the lines above |
+|---|---|---|
+| `type` | `snapshot`: the whole book (200 levels a side); `delta`: only the levels that changed | The day starts with a snapshot; every later line is a change |
+| `ts` | When Bybit sent the message, in milliseconds since 1 January 1970, UTC | 00:00:00.045, then 00:00:00.144: one message every 100 ms |
+| `cts` | When the matching engine produced the state, in the same unit | A few milliseconds before `ts`; the time to align with the trades (§4) |
+| `b`, `a` | Bids and asks as pairs of price and size; in a delta, the **new** size at that price, and `"0"` when the level is gone | The best bid of 115,116.60 grew from 1.815 to 2.679 BTC; the ask at 115,128.30 disappeared |
+| `u` | Update number, rising by exactly 1 per message | 22309861, then 22309862: a gap would mean a lost message (§4) |
+| `seq` | The matching engine's own sequence number | Rises by more than 1 per message, with the engine's events in between; not used here |
+
+A delta does not say what happened at a price, only what the size is now. Whether 0.864 BTC were added to the best bid by one order or several, and whether the ask at 115,128.30 was filled or cancelled, the message cannot tell; that is the L2 limit of §2.
+
+**The trades.** A plain table, one line per trade, the first three of the same day:
+
+| `timestamp` | `side` | `size` | `price` | Reading |
+|---|---|---|---|---|
+| 1760400000.1565 | Buy | 0.018 | 115116.70 | 00:00:00.157 UTC: a buyer takes 0.018 BTC at the best ask of the snapshot above |
+| 1760400000.5906 | Buy | 0.295 | 115116.70 | Another buy at the same price, $33,959 |
+| 1760400000.9542 | Buy | 0.006 | 115116.70 | And a small one |
+
+<sub><b>How to read the table.</b> `side` is the aggressor: `Buy` means the buyer took a resting ask, `Sell` that a seller hit a resting bid, the information that Binance's tape coded as `is_buyer_maker` (Lecture 12, §3.2). The file has more columns: a trade ID, a tick direction, the value in dollars, and since 2025 a column `RPI`, which marks trades against Bybit's retail-price-improvement orders; on our BTCUSDT perpetual data it is 0 on every trade, so it is not used.</sub>
+
+### 3.3 The same data as tables
+
+Text that must be parsed line by line is slow to work with. Each day is therefore converted once into two tables in Parquet, the column format used since Lecture 12, with prices stored as whole ticks of $0.10 so that they compare exactly:
+
+| Book table: one row per level that changed | | Trades table: one row per trade | |
+|---|---|---|---|
+| `ts`, `cts` | Sent and engine time, ms | `ts` | Time, ms |
+| `u`, `seq` | Update and sequence numbers | `side` | +1 buyer aggressive, −1 seller aggressive |
+| `snap` | 1 for the rows of a snapshot | `tick` | Price in ticks of $0.10 |
+| `side` | +1 bid, −1 ask | `size` | BTC |
+| `tick` | Price in ticks of $0.10 | `id` | Bybit's trade ID |
+| `size` | The new size at that price, BTC; 0: level gone | | |
+
+Reading the first changes of 1 October 2025 takes two lines of code:
+
+```python
+import polars as pl
+book = pl.read_parquet("data/bybit/parquet/orderbook/BTCUSDT/2025-10-01.parquet")
+book.filter(pl.col("snap") == 0).head(6)          # in pandas: pd.read_parquet(path).query("snap == 0").head(6)
+```
+
+| `ts` | `u` | `side` | `tick` | `size` | Reading |
+|---|---|---|---|---|---|
+| 1759276800045 | 11085543 | 1 | 1140137 | 6.454 | 00:00:00.045: the bid at $114,013.70 now holds 6.454 BTC |
+| 1759276800045 | 11085543 | 1 | 1140054 | 0.005 | In the same message, the bid at $114,005.40: 0.005 BTC |
+| 1759276800045 | 11085543 | 1 | 1140046 | 0 | The bid at $114,004.60 is gone |
+| 1759276800045 | 11085543 | 1 | 1140045 | 0.077 | The bid at $114,004.50: 0.077 BTC |
+
+<sub><b>How to read the table.</b> All four rows belong to one message, update 11085543: each row is one price whose size changed. The columns `cts`, `seq` and `snap` are left out here for width.</sub>
+
+A day becomes 40 to 80 million rows of book changes, 140 to 230 MB of Parquet, and the trades 40 to 200 MB.
+
+### 3.4 Downloading it yourself
+
+| Step | What to do | What it checks |
+|---|---|---|
+| 1. Space | About 0.3 GB a day for the raw files and about the same for the tables; our 45 days take 13 GB raw | Free disk space before starting |
+| 2. Download | `python bybit_download.py ROOT BTCUSDT 2025-09-20 2025-11-03`: both files for every day, with whichever book depth exists | Every file against the size Bybit's server reports; failed downloads are retried, and days already complete are skipped, so it can be restarted |
+| 3. Convert | `python bybit_to_parquet.py ROOT BTCUSDT`: each day into the two tables of §3.3 | That the book rebuilt from the table matches Bybit's own snapshot (§4), and that no trade is lost |
+| 4. Clean up | The script deletes a day's raw files only if its checks pass | Days that fail keep their raw files for inspection (§4) |
+
+Downloading takes about a minute a day, converting and checking three to six minutes. The two scripts are in the lecture's `scripts/` folder; the notebook runs them.
+
+**Why both files.** The window of §2 showed it: the book says how much rests at each price, the trades say how much of a change was trading. A study of liquidity needs the book; anything about fills, queues or cancellations needs both, aligned in time. Section 4 rebuilds the book from its file, aligns it with the trades and checks that the two agree.
