@@ -374,3 +374,40 @@ Depth near the price was back, in most cases, by the next update of the record. 
 The clock result needs a word on what it is and what it is not. If the pulls at the start of a minute were a reaction to the price, they would follow a move; they are as frequent after a quiet second as after any other. At 100 milliseconds, the finest the record allows, the pulls and the price's own moves jump in the same interval, within 200 milliseconds after the full minute, to 1.5 and 1.9 times their averages, and neither comes first. Activity that starts at the same instant, on every day, points to a common trigger: the clock. Strategies that act on one-minute bars, execution algorithms that send a slice every minute, and market makers who refresh their quotes on a schedule would all produce it; the record cannot say which. This is the identification by timing that Lecture 20 takes further: withdrawals one after another point to traders reacting to each other; withdrawals at the same instant point to a shared trigger, a clock or a piece of news. Whether the minute effect is the same on other venues and other pairs is an open question that the same scripts can answer.
 
 The book of §5.1 is therefore deep in a calm second and least reliable in the seconds in which a trader most wants it: when the price moves and, less obviously, at the turn of each minute.
+
+## 6. Summary, exercises and reading
+
+### 6.1 Six takeaways
+
+1. **The book is the queue of orders waiting to be met.** A market order walks it from the best price outwards, so its cost grows faster than its size. Walking the book assumes that it stands still while the order travels; it does not.
+2. **Public data are L2: the size at each price, not the orders behind it.** With the trades alongside, a level's change splits into what was filled and what was withdrawn, but only as a net figure; who stands where in a queue needs L3.
+3. **Two files a day, and both are needed.** The book, a snapshot followed by a change every 100 milliseconds, shows the liquidity; the trades say which part of each change was trading. Fills, queues, cancellations and the replay of the exchange all need the two together.
+4. **A rebuilt book is checked, not trusted.** Rebuilt from the changes, it matched the snapshot that ends each stretch of continuous data, on every day; three feed gaps of about ten seconds were found and left out, and the matching engine's clock lines the book up best with the trades.
+5. **On a calm day the BTCUSDT book on Bybit is deep and tight;** one tick of spread, about 48 BTC within 5 bp of the mid on each side, a quarter of a basis point for a 5 BTC market order. After the cascade of 10 October it held about half the depth and charged two to four times as much; on the evening itself it emptied over minutes, not in one order.
+6. **The book is least reliable when it is needed most.** Large market orders paid, on average, nearly twice what the last recorded book promised, most of it in seconds when the price was moving; the quotes near the price are withdrawn when the price moves and, on a clock, at the turn of every minute. This is the liquidity mirage, measured.
+
+### 6.2 Exercises
+
+- [ ] Download one day of the book and the trades for ETHUSDT (§3.4), rebuild the book and check it against the day's last snapshot (§4.2). Does it match, and are there feed gaps?
+- [ ] Repeat the test of clocks of §4.4 on a day of your choice. Is `cts` still the best fit, and does shifting it by 100 milliseconds make the fit worse in both directions?
+- [ ] For one day, walk the book every second for market orders of 1, 5 and 25 BTC. Through the day, does the cost follow the depth or the trading activity (§5.2)?
+- [ ] Repeat the measurement of quote fading of §5.5 with a deliberately older book: the book of 200, 500 and 1,000 milliseconds before each order. How fast does the share of orders that did worse grow with the age of the book? This is the latency setting of Lecture 21.
+- [ ] Measure the refill of §5.5 at fixed prices, the levels the order took, instead of around the new mid. How much of the fast refill remains?
+- [ ] Look for the turn of the minute in another pair or on another venue, and at the turn of the hour. Is it there, and is it stronger on some days than on others?
+- [ ] Open the viewer of §4.1 on a day of your choice and find a moment in which the book thinned before the price moved. Then test whether such moments are more frequent than chance.
+- [ ] Pick one result of this lecture and test it on a market of your choice.
+
+### 6.3 Reading
+
+For the order book as an object of study, the survey of Gould et al. (2013), and Bouchaud et al. (2018) for the book together with the trades that move it, the reference for Lectures 19 and 20; Harris (2003) for how exchanges and their order types work. For rebuilding a book from its messages, Huang and Polak (2011), the method behind the LOBSTER data for Nasdaq. For displayed depth that does not stay, Hasbrouck and Saar (2009) on fleeting orders, and van Kervel (2015) on cancellations across venues. For the data, Bybit's documentation of its public order-book feed: the 200 levels recorded here are sent every 100 milliseconds, the best 50 every 20 and the best level every 10, so a faster trader sees a younger but shallower book. For replaying a book with latency and queue position, the documentation of hftbacktest, which Lecture 21 builds on.
+
+## References
+
+- Bouchaud, J.-P., Bonart, J., Donier, J. and Gould, M. (2018). *Trades, Quotes and Prices: Financial Markets Under the Microscope*. Cambridge University Press. — the book and the trades that move it (§6.3).
+- Bybit (2025). V5 API: WebSocket stream, orderbook. https://bybit-exchange.github.io/docs/v5/websocket/public/orderbook — depths and frequencies of the public feed (§6.3).
+- Gould, M. D., Porter, M. A., Williams, S., McDonald, M., Fenn, D. J. and Howison, S. D. (2013). Limit order books. *Quantitative Finance* 13(11), 1709–1742. — survey (§6.3).
+- Harris, L. (2003). *Trading and Exchanges: Market Microstructure for Practitioners*. Oxford University Press. — exchanges and order types (§6.3).
+- Hasbrouck, J. and Saar, G. (2009). Technology and liquidity provision: the blurring of traditional definitions. *Journal of Financial Markets* 12(2), 143–172. — fleeting orders (§1.2).
+- Huang, R. and Polak, T. (2011). LOBSTER: Limit Order Book Reconstruction System. Working paper, SSRN. — rebuilding a book from its messages (§6.3).
+- nkaz001 (2025). hftbacktest: high-frequency trading and market-making backtesting. https://github.com/nkaz001/hftbacktest — replay with latency and queue position (§6.3).
+- van Kervel, V. (2015). Competition for order flow with fast and slow traders. *Review of Financial Studies* 28(7), 2094–2127. — cancellations across venues (§1.2).
