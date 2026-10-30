@@ -365,10 +365,35 @@ Questions that remain open:
 - Do the refilling chains of the cascade come from icebergs of large sellers, from market makers requoting one price, or from the liquidation engine?
 - During the half hour in which the venues parted by hundreds of dollars, which led? This is the lead-lag question of Lecture 20 and the central risk of Lecture 24.
 
-*Section 5 follows.*
+## 5. Summary, exercises and reading
+
+### 5.1 Six takeaways
+
+1. **A level is the state of the book at one moment; it says where orders rest, not how they got there.** Imbalance, the microprice, the shape of the book and the queues are all read from one such state. What changed in between, the flow, is the subject of Lecture 20.
+2. **The imbalance at the best ranks the next move of the mid nine times in ten.** On 45 days of Bybit BTCUSDT its AUC was 0.90 out of sample, on every day, and still 0.84 on 10 October. Most of this is mechanics: when the smaller of the two best queues holds less than 0.1 BTC, one ordinary market order empties it, and the forecast is 0.96; two seconds or more before the move, it is 0.62. Deeper levels add nothing.
+3. **We found no way to make imbalance hard to game without losing its forecast.** Weighting levels by distance changed nothing; smoothing over time weakened the forecast; keeping only depth that had rested a while turned it upside down, because the side that just moved holds only young orders. No published measure has been shown to resist spoofing on real data either.
+4. **The microprice is a better guess of the price than the mid, and on BTCUSDT it must be estimated, not computed.** Read off the data, it cut the error of the next mid by 19% out of sample. The weighted mid assumes moves of one tick; here the mid jumps a median of 44 ticks.
+5. **Resting orders are mostly cancelled, and filled ones lose.** 92% of the size that left the best was withdrawn rather than traded. One second after a fill, the average resting order was 59 ticks per BTC under water; over 10 seconds the price moved against it by 64 ticks after the smallest takers and 204 after the largest. This is adverse selection, and it comes on top of a base maker fee of about 200 ticks.
+6. **No statistic of the book warned of 10 October before the price began to fall.** Refilling surged and the forecast weakened once the fall had begun; after it, depth fell to a third and Bybit and Binance parted by hundreds of dollars, while Bybit's own feed stayed fast. News set off the cascade, and a book does not anticipate news.
+
+### 5.2 Exercises
+
+- [ ] Redraw the key chart of Section 1 (figure 19_02) for ETHUSDT on one day. Is imbalance as strong, and does the share of tiny best queues explain the difference?
+- [ ] Simulate the race of two queues in the style of Cont and de Larrard (2013), with arrival, cancellation and market-order rates measured on one of our days. What AUC does mechanics alone give, against the 0.90 we measured (§3.1)?
+- [ ] Repeat the age filter of §3.2 with cancellations taken in proportion to the queue rather than from the back (§2.4). Does the inversion survive?
+- [ ] Take the spoof candidates of §3.2 and test the "flip": in the second after a candidate is removed, is aggressive volume on the opposite side larger than at random moments? Check that the answer holds across the thresholds of size, distance and time.
+- [ ] Count the refilling chains of §3.4 by hour of the day and by day of the week. Is there a clock in hidden size, as Lecture 18 found in cancellations?
+- [ ] Deep levels change less often than the best ones. Carry levels beyond the 50th forward for 1 second and fill only the top 50 from the data. How large is the error in depth within 5 bp, on calm seconds and on fast ones?
+- [ ] On the calm days, Bybit's book leans away from Binance's last price (H18b). Split the samples by which venue's price moved last. Does that explain the sign?
+- [ ] Pick one result of this lecture and test it on a market of your choice.
+
+### 5.3 Reading
+
+For the imbalance at the best as a forecast, Gould and Bonart (2015), whose measure Section 3 repeats; for the microprice, Stoikov (2018). For the price as a race between queues, Cont and de Larrard (2013), and Huang, Lehalle and Rosenbaum (2015) for queues whose rates depend on their size; Moallemi and Yuan (2016) for what a place in the queue is worth. For the book and the trades together, Bouchaud et al. (2018), the reference for this lecture and the next. For manipulation of the book, Lee, Eom and Park (2013) on spoofing in real data and Cartea, Jaimungal and Wang (2020) for a model; for markouts and the realized spread, Huang and Stoll (1996).
 
 ## References
 
+- Bouchaud, J.-P., Bonart, J., Donier, J. and Gould, M. (2018). *Trades, Quotes and Prices: Financial Markets Under the Microscope*. Cambridge University Press. — the book and the trades that move it (§5.3).
 - Budish, E., Cramton, P. and Shim, J. (2015). The high-frequency trading arms race: frequent batch auctions as a market design response. *Quarterly Journal of Economics* 130(4), 1547–1621. — frequent batch auctions (§2.1).
 - Binance (n.d.). Binance public data: USDⓈ-M futures, daily aggregate trades, BTCUSDT. data.binance.vision. — Binance's last trade price (§4).
 - Bybit (n.d.-a). How to use iceberg orders. *Bybit Learn*, bybit.com/en/learn/bybit-guide/how-to-use-iceberg-orders. — icebergs on Bybit as slices placed one after another (§2.4).
