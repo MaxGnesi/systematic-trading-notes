@@ -326,11 +326,51 @@ Several questions remain open, and we invite independent tests:
 - Do the age filter's inversion and the continuation of mid changes hold on other venues and with a model that cancels in proportion rather than from the back?
 - Do the refilling chains of 10 October come from icebergs or from market makers requoting one price, and did they rise before the cascade?
 
-*Sections 4 and 5 follow.*
+## 4. 10 October
+
+On the evening of 10 October 2025, after a post announcing 100% US tariffs on China at 20:50:01.7 UTC, Bybit's BTCUSDT fell from about $117,000 to about $103,100 within 35 minutes, and more than $19 billion of leveraged positions were liquidated across crypto venues (Lecture 5; Lecture 18, §5.4). This section asks whether any statistic of Section 3 changed before the fall: whether the book gave a warning that a trader watching it could have used.
+
+**How the test is set up.** The start of the cascade, **T0**, is fixed by a rule rather than chosen by eye: the first minute of 10 October whose move of the mid was larger than any one-minute move on the 20 calm days. The rule gives 21:14 UTC, a minute in which the mid fell by $977. The **pre-window** is the two hours before T0, 19:14 to 21:14. Its value of each measure is compared with every two-hour window of the other 44 days that starts at the same time of day, 526 windows in all. The p-value is the share of those windows that are at least as extreme. Five hypotheses, fixed before any result was computed ([results/hypotheses.md](results/hypotheses.md)), cover the refilling chains of Section 3.4 (H14), depth (H15), Bybit's own delay between matching an order and publishing the update (H16), the imbalance forecast (H17), and Binance's price against Bybit's (H18). Binance's prices are the last trades of its BTCUSDT perpetual, from its public archive (Binance, n.d.).
+
+One fact matters for reading the results. The fall did not begin at T0 but with the post, 24 minutes earlier: between 20:49 and 20:54 the mid dropped by about $1,700 (Lecture 18, §5.4, describes the book in those minutes). The last 24 minutes of the pre-window therefore already belong to the cascade; what came before them is the part that could have been a warning.
+
+![The evening of 10 October in 15-minute steps: price, refilling chains, depth, imbalance AUC, publish delay, Binance gap, against the other 44 days](figures/19_15_cascade_evening.png)
+<sub><b>How to read the figure.</b> 10 October 15:14 to 11 October 00:14 UTC, in 15-minute steps; the dashed line is T0, 21:14, and the shaded area the two-hour pre-window. In every panel but the top left, the orange line is 10 October and the grey band the 5th to 95th percentile of the same 15-minute steps on the other 44 days, with their median dotted. <b>Top left:</b> Bybit's mid every minute. <b>Top right:</b> levels refilled at least three times in a row (Section 3.4), log scale; steps with none are left empty. <b>Middle left:</b> depth in the best 10 levels of both sides. <b>Middle right:</b> the AUC of the imbalance at the best for the next mid move (Section 3.1); the dotted line is the out-of-sample value. <b>Bottom left:</b> the 99th percentile of Bybit's publish delay, the time between the matching engine's stamp and the publication of each update. <b>Bottom right:</b> the average absolute gap between the last trade on Binance and Bybit's mid.</sub>
+
+**Result.** No statistic of the book changed before the price began to fall. Two changed with it: refilling surged and the imbalance forecast weakened. After T0, depth collapsed and the two venues parted by hundreds of dollars. Bybit's feed stayed fast throughout.
+
+- **H14 (refilling chains) holds as fixed, but not as a warning.** The pre-window had 530 chains, against a median of none and a maximum of 204 in the reference windows (p = 0.002). But 493 of the 530 came in the last 30 minutes, once the fall had begun. In the 90 minutes before, there were 37, within the range of ordinary days: the busiest 5% of the reference windows had 47 or more. Refilling rose with the fall, not ahead of it.
+- **H15 (depth) fails.** Average depth in the pre-window was 8.6 BTC, against a median of 9.3 (p = 0.43). After T0 it fell to about 3 BTC and stayed there for the rest of the evening, below the 5th percentile of the other 44 days at that time of day.
+- **H16 (publish delay) fails.** The 99th percentile of Bybit's publish delay was 6 milliseconds in the pre-window, below the reference median of 18. It never exceeded 7 ms in any 15-minute step of the evening; the longest single delay during the fall was 38 ms. On other days the 99th percentile ranges from 8 to 27 ms. Bybit's chain from matching to publishing did not congest. What happened between Bybit and a trader's machine is not in the data.
+- **H17 (imbalance through the cascade) holds.** The AUC stayed above 0.5 in every 15-minute step from T0 − 2 h to T0 + 2 h (p < 0.001). Before the fall it was 0.88 to 0.93, as on any day. In the step in which the fall began it dropped to 0.76; at T0, to 0.63. Over the next two hours it recovered only partly, to between 0.73 and 0.85. Imbalance kept working through the cascade, less well; as the moves grew, the book a few hundred milliseconds old said less about the next one.
+- **H18a (Binance gap) fails.** The average absolute gap between Binance's last trade and Bybit's mid was $12.7 in the pre-window, against a median of $8.5 (p = 0.25). After T0 it widened to an average of $420 over the 15 minutes from 21:29: for half an hour two of the largest venues disagreed on the price of bitcoin by hundreds of dollars.
+- **H18b (lean towards Binance) holds, but the effect is tiny.** On 10 October, from T0 − 2 h to T0 + 2 h, the rank correlation between Bybit's imbalance and the gap (Binance minus Bybit) is +0.02 (0.003–0.040, p = 0.011). On the 20 calm days the same correlation is negative on 19 days, typically about −0.09. On a normal day, Bybit's book leans away from Binance's last price, not towards it. One possible reading, which we have not checked: the gap mostly reflects Bybit's own last move, which Binance's last trade has not yet followed, and after a move Bybit's imbalance points the way the move continues (Section 3.2). Which venue leads which is a question for Lecture 20.
+
+| Hypothesis | 10 October | Reference (median) | p | Verdict after correction |
+|---|---|---|---|---|
+| H14 refilling chains, pre-window | 530 (37 before the fall began) | 0 | 0.002 | Holds; rose with the fall, not before it |
+| H15 depth, pre-window | 8.6 BTC | 9.3 BTC | 0.43 | Fails |
+| H16 publish delay, 99th percentile | 6 ms | 18 ms | 1.00 | Fails |
+| H17 imbalance AUC, every 15 minutes | 0.63 to 0.93 | 0.90 (out of sample) | < 0.001 | Holds |
+| H18a Binance gap, pre-window | $12.7 | $8.5 | 0.25 | Fails |
+| H18b imbalance and the gap | +0.02 | −0.09 (calm days) | 0.011 | Holds, tiny |
+
+<sub><b>How to read the table.</b> One row per hypothesis of Section 4 in [results/hypotheses.md](results/hypotheses.md). The reference is the median of the 526 two-hour windows of the other 44 days at the same time of day; for H17, the out-of-sample AUC of Section 3.1; for H18b, the median of the 20 calm days. The Benjamini-Hochberg procedure at 5% over these six p-values accepts the three smallest.</sub>
+
+The cascade was set off by news, and a book does not anticipate news; that none of its statistics moved before the price did is the result one would expect, and it is now measured rather than assumed. What the book did show is how the market behaved once the news was out: as soon as the price began to fall, many levels began to be refilled again and again, the queues at the best stopped being a good guide to the next move, and, after T0, depth thinned to a third and the venues drifted apart. These are the conditions that the replay of Lecture 21 has to reproduce, and in which the market maker of Lectures 23 and 24 would have had to decide whether to keep quoting.
+
+Questions that remain open:
+
+- Between the first drop and T0, refilling rose and the forecast weakened. Did these changes come before the acceleration of the fall, and do they do so on other days with a sharp first move? Answering this needs more such events than one evening provides.
+- Do the refilling chains of the cascade come from icebergs of large sellers, from market makers requoting one price, or from the liquidation engine?
+- During the half hour in which the venues parted by hundreds of dollars, which led? This is the lead-lag question of Lecture 20 and the central risk of Lecture 24.
+
+*Section 5 follows.*
 
 ## References
 
 - Budish, E., Cramton, P. and Shim, J. (2015). The high-frequency trading arms race: frequent batch auctions as a market design response. *Quarterly Journal of Economics* 130(4), 1547–1621. — frequent batch auctions (§2.1).
+- Binance (n.d.). Binance public data: USDⓈ-M futures, daily aggregate trades, BTCUSDT. data.binance.vision. — Binance's last trade price (§4).
 - Bybit (n.d.-a). How to use iceberg orders. *Bybit Learn*, bybit.com/en/learn/bybit-guide/how-to-use-iceberg-orders. — icebergs on Bybit as slices placed one after another (§2.4).
 - Bybit (n.d.-b). Perpetual futures contract fees explained. *Bybit Help Center*. — maker 0.02%, taker 0.055% at the base tier, VIP 0 (§2.5).
 - Cartea, Á., Jaimungal, S. and Wang, Y. (2020). Spoofing and price manipulation in order-driven markets. *Applied Mathematical Finance* 27(1–2), 67–98. — a model of a spoofing seller (§2.1).
