@@ -126,6 +126,28 @@ The price bounces between 78,549.5 and 78,549.6 as buyers take the ask and selle
 - **Buying and selling aggression balance over a month**, but not over minutes: Lecture 15 asks whether the imbalance predicts the next move.
 - **The aggressor flag is the order flow that Lecture 3, §7, could only estimate.** On-balance volume assigned a whole day's volume to buyers or sellers by the sign of the close-to-close change; bulk volume classification split it by the size of the move. Here every trade is labelled, and §8 compares the estimates with the truth.
 
+### 3.4 The orders behind the trades
+
+Every row of the tape is the meeting of two orders, and the kind of order a trader sends decides three things: whether it trades at all, at what price, and whether it pays the maker or the taker fee. The fee follows what the order does, not its name: a limit order that can trade at once on arrival takes liquidity and pays the taker fee; only the part that waits in the book pays the maker fee. The types the course uses:
+
+| Order | What the exchange does with it | Fee | Bybit | Binance USDⓈ-M | Used in |
+|---|---|---|---|---|---|
+| **Market** | Trades the size at once against the best resting orders, walking deeper if needed | Taker | `Market`; matched as an immediate-or-cancel limit order within a band around the mark price, so what lies beyond the band is cancelled, not filled | `MARKET` | L14 §4.3, L15, L18 §1.2 |
+| **Limit** | Buys up to the size at the given price or lower (sells at it or higher); what can trade at once does, the rest waits in the book | Taker for the part that trades at once, maker for the part that rests | `Limit` | `LIMIT` | L12 §9, L17, L19, L23 |
+| **Time in force** of a limit order | GTC: rests until filled or cancelled. IOC: trades what it can at once, cancels the rest. FOK: the whole size at once or nothing | As above | `GTC` (default), `IOC`, `FOK` | The same, and `GTD`, until a set time | L21 |
+| **Post-only** | A limit order that must rest: if it would trade on arrival, it is cancelled | Always maker | `PostOnly` | `GTX` | L17, L23, L24 |
+| **Stop-market** | Waits, unseen in the book, until a trigger price is reached, then becomes a market order | Taker | `Market` with a `triggerPrice` | `STOP_MARKET` | L9, L11, L14 §4.3, L15 |
+| **Stop-limit** | On the trigger, becomes a limit order: the price is capped, the fill is not guaranteed | Taker or maker | `Limit` with a `triggerPrice` | `STOP` | L14 §4.3 |
+| **Take-profit** | A stop triggered by a move in the position's favour | As the stop | `takeProfit` on an order or a position | `TAKE_PROFIT`, `TAKE_PROFIT_MARKET` | |
+| **Trailing stop** | A stop whose trigger follows the best price reached, at a set distance; on the trigger, a market order | Taker | On a position only, as a closing order: `trailingStop` | `TRAILING_STOP_MARKET`, distance in percent | L9 |
+| **Reduce-only** | Can only shrink a position, never open or reverse one | As the order | `reduceOnly`; `closeOnTrigger` for stops | `reduceOnly`, `closePosition` | L23, L24 |
+| **Iceberg, TWAP** | Not order types but strategies run by the exchange's servers: slices placed one after another, or at fixed intervals | Per slice | Strategy tools, also through the API | Not used here | L19 §2.4 |
+| **Liquidation** | When the mark price reaches a position's liquidation price, the exchange reduces or takes over the position and closes it at the market | Forced | Settled at the bankruptcy price; insurance fund, then auto-deleveraging | The same chain | L15, L18 §1.3, L19 §4 |
+
+<sub><b>How to read the table.</b> One row per type; the names in code font are the venues' own, from their API documentation (Bybit, n.d.; Binance, n.d.), checked in October 2026. GTC: good till cancelled; IOC: immediate or cancel; FOK: fill or kill; GTD: good till date; TWAP: time-weighted average price. Since December 2025 Binance accepts the stop, take-profit and trailing types only through a separate endpoint for conditional orders. "Used in": where the course relies on the type.</sub>
+
+**Which price fires a stop.** A stop is a market order that waits for a price, and which price matters. The last traded price can be pushed through a stop by a single large trade in a thin book; the mark price (§2) moves only with the index of spot venues and a smoothed basis, so one trade cannot set it off. Bybit lets the trader choose the last, mark or index price for each conditional order; Binance the last ("contract") price, its default, or the mark price. Liquidations always use the mark price. In a cascade the choice decides whether a stop is set off by the spike or only by the move it belongs to. Two further rules matter when the market is fast: on Bybit a conditional order reserves no margin, and if the margin is short when it triggers, it is cancelled; and a market order fills only within the price band, so in an empty book part of it may not fill at all. Lecture 14, §4.3 measures what a stop pays once it fires; Lecture 18, §1.3 shows where in the exchange each of these rules is applied.
+
 *Next: §5, a data quality scan over five years.*
 
 ## 4. Getting the data
@@ -789,6 +811,8 @@ Memory grows with the busiest day and with the number of threads. On a smaller m
 - Binance. USDⓈ-M futures API documentation: compressed aggregate trades list; exchange information; funding rate history. — definitions and contract terms (§2–§4).
 - Binance. Introduction to Binance Futures funding rates (FAQ, updated March 2026). — funding paid only on positions open at the funding times (§2, §6.2).
 - Binance. Futures trading fee rates (FAQ). — 0.02% for resting orders, 0.05% for aggressive orders, standard tier (§6.2).
+- Binance (n.d.). USDⓈ-M futures API documentation: new order; new algo order; change log (conditional orders moved to the algo service, 9 December 2025). developers.binance.com. — order types and trigger prices (§3.4).
+- Bybit (n.d.). V5 API documentation: place order; set trading stop; create strategy. bybit-exchange.github.io/docs/v5; Help Center: post-only order, insurance fund, auto-deleveraging. — order types, trigger prices and liquidation (§3.4).
 - Andersen, T. G., Bollerslev, T., Diebold, F. X. and Labys, P. (2000). Great realizations. *Risk* 13, 105–108. — the volatility signature plot (§7.2).
 - Ané, T. and Geman, H. (2000). Order flow, transaction clock, and normality of asset returns. *Journal of Finance* 55(5), 2259–2284. — the number of trades as the market's clock (§7.3).
 - Barndorff-Nielsen, O. E., Hansen, P. R., Lunde, A. and Shephard, N. (2009). Realized kernels in practice: trades and quotes. *Econometrics Journal* 12(3), C1–C32. — cleaning rules for high-frequency data (§5).

@@ -77,7 +77,7 @@ A level never holds more than one unit, so the position is bounded by the number
 
 **Two exits.** The **stop** fires when the position is at the cap and the price trades through one level more: every unit is closed at the worst aggressive price of that second, as a market order, and a new ladder is laid around the price (Lecture 14, §4.3 measured how far such a stop can slip). The **daily close** closes whatever is left in the last second of the UTC day, also at the market. The grid is therefore flat at the 00:00 funding settlement; it pays or receives funding at 08:00 and 16:00 on whatever it holds then (Lecture 16, §1).
 
-**Costs.** A regular account's fees: 2 bp on every resting fill, 5 bp on every stop and close (Lecture 15, §5).
+**Costs.** A regular account's fees: 2 bp on every resting fill, 5 bp on every stop and close (Lecture 15, §5). The simulation charges every resting fill the maker fee; live, that needs post-only orders (Lecture 12, §3.4), so that one placed where it would trade at once is cancelled rather than filled at the taker fee.
 
 **The accounts.** Every result in this lecture is split into the same parts:
 

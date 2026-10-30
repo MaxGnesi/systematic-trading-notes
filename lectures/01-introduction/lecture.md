@@ -74,7 +74,7 @@ A systematic strategy is a chain of five stages, each with its own inputs, outpu
 - **Signal generation.** Convert data into a forecast of return or relative value, usually normalised to a bounded score such as $`s_{i,t} \in [-1, +1]`$ for asset $`i`$.
 - **Portfolio construction and allocation.** Map signals to target positions, balancing expected return, risk, factor exposures, leverage and transaction costs.
 - **Risk management.** Enforce constraints: volatility targets, position and sector limits, drawdown rules, liquidity buffers.
-- **Execution.** Route orders with execution algorithms (e.g. TWAP, VWAP, smart order routing) to minimise slippage and market impact.
+- **Execution.** Route orders with execution algorithms (e.g. TWAP, VWAP, smart order routing) to minimise slippage and market impact. Parts I and II trade at daily prices with a cost per trade; the order types themselves, and what each costs, start in Lecture 12, §3.4.
 
 ### 2.2 Allocation and risk are one problem
 

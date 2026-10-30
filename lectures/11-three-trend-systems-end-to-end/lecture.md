@@ -406,7 +406,7 @@ What the Kalman filter adds is not a different return stream but two readings EW
 
 ### 6.1 How it works on futures
 
-The rule is card 5 of Lecture 6, the Turtle breakout: go long when the price closes above its highest close of the past N days, short below the lowest; exit a long when the price closes below the lowest close of the past N/2 days, and a short above the highest. Between an exit and the next breakout the position is flat. Signals use the additive series, since channels are levels compared with recent levels of the same series (§3.5). The position is sized by volatility as in §5.1, and four entry channels, 120, 160, 250 and 375 days, are blended with equal weights.
+The rule is card 5 of Lecture 6, the Turtle breakout: go long when the price closes above its highest close of the past N days, short below the lowest; exit a long when the price closes below the lowest close of the past N/2 days, and a short above the highest. Between an exit and the next breakout the position is flat. The exit is a rule on daily closes, not a stop order resting at the exchange, which would fire within the day at the price then available (Lecture 12, §3.4; Lecture 14, §4.3). Signals use the additive series, since channels are levels compared with recent levels of the same series (§3.5). The position is sized by volatility as in §5.1, and four entry channels, 120, 160, 250 and 375 days, are blended with equal weights.
 
 ### 6.2 What is different
 
