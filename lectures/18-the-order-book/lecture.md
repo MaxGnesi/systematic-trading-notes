@@ -22,6 +22,13 @@ This lecture is the first stage: what the book is, what public data show of it, 
 | 5 | What the book shows | Spread, depth, the cost of a market order, refill and cancellations, on calm days and on 10 October |
 | 6 | Summary, exercises and reading | |
 
+**One moment of the book.** Before any definitions, the book of 12 March 2024 at 12:20:30 UTC, rebuilt from Bybit's data (§4 shows how); §1.1 then names its parts:
+
+![An order book at one moment: Bybit BTCUSDT, 12 March 2024, 12:20:30 UTC](figures/18_02_book_moment.png)
+<sub><b>How to read the figure.</b> <b>Left:</b> the best 25 levels on each side, bids (resting buy orders) in blue below the price, asks (resting sell orders) in pink above it; each bar is the size waiting at that price. The horizontal axis is cut at 1.6 BTC so that the small levels show; the best bid's bar runs on to 6.35 BTC. <b>Right:</b> the asks added up from the best ask outwards (pink): the price a market buy reaches after buying a given amount. Black dots: the average price of market buys of 0.5, 1, 2 and 5 BTC, and how far it lies above the mid.</sub>
+
+At that moment the best bid was $71,950.0, with 6.35 BTC queued, and the best ask one tick higher, $71,950.1, with 0.23 BTC: a spread of one tick. The book was lopsided. Within $10 of the mid, 14.7 BTC waited to buy against 2.0 BTC to sell. About three seconds later, buyers took the thin asks and the price rose $35. Whether such an imbalance predicts the next move is the question of Lecture 19.
+
 ### 1.1 What is in it
 
 An order book is the list of orders waiting to trade at each price. Every term the rest of Part IV uses is defined here once:
@@ -38,13 +45,6 @@ An order book is the list of orders waiting to trade at each price. Every term t
 | **Mid** | The average of the best bid and the best ask | The usual reference price between trades |
 | **Depth** | The size resting within a distance of the mid, on one side | How much can be traded before the price moves that far |
 | **Queue** | The orders resting at one level, in the order they arrived | Who trades first when a market order comes: first come, first served (price-time priority) |
-
-**One moment of the book.** The book of 12 March 2024 at 12:20:30 UTC, rebuilt from Bybit's data (§4 shows how):
-
-![An order book at one moment: Bybit BTCUSDT, 12 March 2024, 12:20:30 UTC](figures/18_02_book_moment.png)
-<sub><b>How to read the figure.</b> <b>Left:</b> the best 25 levels on each side, bids (resting buy orders) in blue below the price, asks (resting sell orders) in pink above it; each bar is the size waiting at that price. The horizontal axis is cut at 1.6 BTC so that the small levels show; the best bid's bar runs on to 6.35 BTC. <b>Right:</b> the asks added up from the best ask outwards (pink): the price a market buy reaches after buying a given amount. Black dots: the average price of market buys of 0.5, 1, 2 and 5 BTC, and how far it lies above the mid.</sub>
-
-At that moment the best bid was $71,950.0, with 6.35 BTC queued, and the best ask one tick higher, $71,950.1, with 0.23 BTC: a spread of one tick. The book was lopsided. Within $10 of the mid, 14.7 BTC waited to buy against 2.0 BTC to sell. About three seconds later, buyers took the thin asks and the price rose $35. Whether such an imbalance predicts the next move is the question of Lecture 19.
 
 ### 1.2 What a market order does to it
 
