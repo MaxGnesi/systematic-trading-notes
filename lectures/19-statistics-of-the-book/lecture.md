@@ -105,7 +105,7 @@ Exchanges can take the reward away. In the bottom row, an **asymmetric speed bum
 | Watch for walls that vanish | Count large orders removed without trades as the price approaches; many of them make the book less trustworthy |
 | Know the venue's delay | When the exchange's own delay between matching and publishing jumps, the book on screen is older than usual (Section 4) |
 
-<sub><b>How to read the table.</b> Detection in the literature follows the same lines: rules on the size, distance and fate of cancelled orders (Tuccella, Nadler and Serban, 2021), and statistical alarms when the book behaves unlike its normal self (Tao et al., 2020). None of them proves intent; they flag candidates.</sub>
+<sub><b>How to read the table.</b> Detection in the literature follows the same lines: rules on the size, distance and fate of cancelled orders (Tuccella, Nadler and Serban, 2021), and statistical alarms when the book behaves unlike its normal self (Tao et al., 2020). None of them proves intent; they flag candidates. Section 3.2 tests the first two defences on our data.</sub>
 
 ### 2.2 The microprice
 
@@ -199,15 +199,134 @@ Markouts are where the statistics of this section meet. A resting order on the t
 
 | Statistic | What it captures | Main blind spot | Section 3 measures |
 |---|---|---|---|
-| Book imbalance | Which side of the book outweighs the other | Size, not intentions; the mechanics of small queues | Its forecast of the next mid move (H1–H5); distance-, age-weighted and smoothed versions |
-| Microprice | Where the mid is likely to be once the price has moved | Estimated in one regime, used in another | Its probabilities on the calm days, checked on the days after |
-| Shape of the book | The cost of orders larger than the best queue | One moment; walls that are not meant to trade | Slope and cost of given sizes, day by day |
-| Queues | How long the price holds; where an order stands, and how old the depth is | Where a cancellation came from | The split of changes into traded and cancelled; time to empty; refilling levels |
-| Markouts | What a fill was worth once the price had moved | The horizon; no fills of our own | Markout curves of the feed's trades, from the resting side |
+| Book imbalance | Which side of the book outweighs the other | Size, not intentions; the mechanics of small queues | Its forecast of the next mid move (H1–H5); distance-, age-weighted and smoothed versions (H6, H7) |
+| Microprice | Where the mid is likely to be once the price has moved | Estimated in one regime, used in another | Its table estimated on the calm days, checked on the days after (H8) |
+| Shape of the book | The cost of orders larger than the best queue | One moment; walls that are not meant to trade | Depth near the price against the size of the next 5-minute move (H9) |
+| Queues | How long the price holds; where an order stands, and how old the depth is | Where a cancellation came from | The split of changes into traded and cancelled (H10); time to empty (H11); refilling levels |
+| Markouts | What a fill was worth once the price had moved | The horizon; no fills of our own | Markout curves of the feed's trades, from the resting side (H12, H13) |
 
-<sub><b>How to read the table.</b> One row per statistic of Sections 2.1 to 2.5. The last column says what Section 3 does with each on the 45 days of Bybit BTCUSDT; the hypotheses for the imbalance were fixed before the results, those for the others will be fixed in the same way before they are measured.</sub>
+<sub><b>How to read the table.</b> One row per statistic of Sections 2.1 to 2.5. The last column says what Section 3 does with each on the 45 days of Bybit BTCUSDT; all hypotheses were fixed before the results ([results/hypotheses.md](results/hypotheses.md)).</sub>
 
-*Sections 3 to 5 follow.*
+## 3. On our 45 days
+
+Section 2 showed each statistic on invented books. This section measures them on the 45 days of Bybit BTCUSDT, 20 September to 3 November 2025. The hypotheses were fixed before any result was computed, together with their tests and the settings of every weighted version ([results/hypotheses.md](results/hypotheses.md)).
+
+**How the tests are set up.** The days are split in three. The 20 calm days before the cascade, 20 September to 9 October, are **in sample**: every quantity that has to be estimated, such as the slope of a fit or the microprice's table, is estimated on them only. The 24 days after the cascade, 11 October to 3 November, are **out of sample**: the tests are run on them. 10 October stands alone. A forecast of the direction of the next move is scored by its **AUC**: the probability that a randomly chosen moment before an up move gets a higher score than a randomly chosen moment before a down move. An AUC of 0.5 is a coin flip and 1 is a perfect ranking. Uncertainty comes from resampling whole days (2,000 times), so that days, not millions of correlated updates, count as the observations. With 13 hypotheses, some would pass by luck alone. The Benjamini-Hochberg procedure controls the share of false discoveries among those that pass at 5%; Section 3.6 applies it to all of them together.
+
+| § | Statistic | Hypotheses | Figure |
+|---|---|---|---|
+| 3.1 | Book imbalance | H1–H5: direction, stability, regime, depth, mechanics | 19_10 |
+| 3.2 | Imbalance that resists gaming | H6–H7: power of the weighted versions; response to spoof candidates | 19_11 |
+| 3.3 | Microprice | H8: a better forecast of the mid than the mid | 19_12 |
+| 3.4 | Shape of the book and queues | H9–H11 and icebergs | 19_13 |
+| 3.5 | Markouts | H12–H13: adverse selection, and by size | 19_14 |
+| 3.6 | Verdicts | All 13, corrected for multiple tests | |
+
+<sub><b>How to read the table.</b> One row per subsection, in the order of Section 2. Each subsection opens with its result, then the figure, then each hypothesis in turn.</sub>
+
+### 3.1 Book imbalance
+
+**Result.** Imbalance at the best ranks the next move of the mid correctly about nine times in ten, on every one of the 45 days, after the cascade as before it. Most of that accuracy comes from small queues and from moves that are about to happen.
+
+![Book imbalance on 45 days: share of up moves by imbalance, AUC day by day, by the smaller queue, by how far ahead the move came](figures/19_10_imbalance_results.png)
+<sub><b>How to read the figure.</b> One sample per interval between two changes of the mid, the book at a random update inside it, kept when the spread is one tick: 2.4 million samples (Gould and Bonart, 2015). <b>Top left:</b> the share of samples whose next mid move was up, in 20 bands of the imbalance at the best; the dotted curve is the logistic fit on the in-sample days. <b>Top right:</b> the AUC of each day (blue in sample, green out of sample, orange 10 October); the grey band is the range Gould and Bonart report for large-tick Nasdaq stocks. <b>Bottom left:</b> the AUC out of sample, by the size of the smaller of the two best queues, with the share of samples in each group. <b>Bottom right:</b> the same, by the number of book updates (100 ms each) until the mid moved.</sub>
+
+The curve in the top left is steeper than in figure 19_02, which counted every update, 82% at the extremes rather than about 95%. The difference is the sampling. Figure 19_02 gives a long quiet interval as many points as it has updates, and long intervals are those with large queues, in which imbalance says less; here each interval counts once. The logistic curve misses the shape at the edges, but the AUC does not depend on it.
+
+- **H1 (direction) holds.** The slope of the in-sample fit is $`x_1 = 2.47`$, at the top of the range of 2 to 2.7 that Gould and Bonart report for large-tick stocks. The AUC is 0.904 in sample and 0.897 out of sample (95% interval 0.894–0.901), above their 0.75 to 0.81.
+- **H2 (stability) holds.** The slope is positive and the AUC above 0.5 on all 45 days; the daily AUC lies between 0.84 and 0.94, the slope between 1.8 and 3.0.
+- **H3 (regime) holds.** The AUC is 0.897 out of sample and 0.842 on 10 October (0.840–0.844), the lowest day of the 45 but far above a coin flip.
+- **H4 (depth) fails.** Adding the imbalance over the best five levels to that at the best leaves the AUC where it was, 0.8970 against 0.8972. On its own, the five-level imbalance scores 0.894: what stands behind the best adds nothing that the best does not already say.
+- **H5 (mechanics) holds.** When the smaller of the two best queues holds less than 0.1 BTC, which is 42% of the samples, the AUC is 0.96; between 0.1 and 1 BTC it is 0.84; above 1 BTC, 0.63. The difference, 0.33 (0.33–0.34), is the largest effect in this section.
+
+H5 and the last panel describe the same mechanics from two sides. A queue of less than 0.1 BTC, about $11,000, is emptied by one ordinary market order, and when it empties the mid moves to its side. On the bottom right, half the moves came at the very next update of the book, and there the AUC is 0.98. When the move came 20 or more updates later, 2 seconds or more, it was 0.62. Imbalance forecasts the next move best when that move is about to happen anyway; how much of it is information about the price, and how much is the arithmetic of a queue about to run out, our data cannot separate further. The move is large when it comes: a median of 44 ticks, about $4.40, and in only 5% of the samples one tick. Half the time it comes within 200 ms.
+
+### 3.2 Can imbalance be made hard to game?
+
+**Result.** None of the three defences of Section 2.1 works as hoped on our data. Weighting by distance costs no forecasting power, but it does not damp walls; it makes them louder. Smoothing over time damps everything, the forecast included. Counting only depth that has rested turns the forecast upside down.
+
+![Gaming-resistant imbalance on 45 days: AUC across the settings of each version; the change caused by spoof candidates, by distance](figures/19_11_gaming_results.png)
+<sub><b>How to read the figure.</b> <b>Left:</b> the out-of-sample AUC of each version of the five-level imbalance at each of its five settings, fixed beforehand (blue: distance weight, $`\lambda`$ = 0.5, 1, 1.5, 3, 5 ticks; orange: age filter, depth that has rested at least $`\tau`$ = 0.25, 0.5, 1, 2, 5 s, with $`\lambda`$ = 1.5; green: an exponentially weighted average over time with half-life 0.2, 0.5, 1, 2, 5 s). The dotted line is the plain five-level imbalance, the grey line a coin flip. <b>Right:</b> spoof candidates, additions of at least 5 BTC 1 to 9 ticks behind the best that were removed within 2 s without a trade at their price. Bars show the average absolute change of the imbalance at the moment each arrived: plain (grey) and weighted by distance (blue).</sub>
+
+- **H6 (no loss of power) holds for distance weighting only.** Across all five settings of $`\lambda`$, the distance-weighted imbalance scores 0.897, slightly above the plain five-level version, 0.894: a plateau, not a lucky setting. Smoothing fails at every setting: a half-life of 0.2 s already costs 0.05 of AUC, one of 5 s costs 0.26. The age filter fails worst, with an AUC between 0.28 and 0.33, below a coin flip.
+- **H7 (resistance) holds as fixed, but only by construction.** The hypothesis compared the plain imbalance with the version weighted by both distance and age. A depth that has rested less than a second does not count in the latter, so a new order cannot move it at all; H7 holds on all 45 days and all nine combinations of size and lifetime. The informative half of the test is distance alone, and there the plain imbalance moved less than the weighted one on every day and in every combination.
+
+Both failures have a mechanism, and both come back to the thin best queues of H5. **Distance weighting** makes walls louder because the weighted measure is dominated by the best queue, and that queue is often tiny. A wall of 5 BTC nine ticks back gets a weight of $`e^{-9/1.5} \approx 0.0025`$, about 0.012 BTC, yet when the best queue holds 0.01 BTC that is enough to swing the measure. The plain version divides the same wall by all the depth in five levels, which is larger. The invented book of figure 19_05 had full queues at the best; the real one usually does not.
+
+**The age filter** inverts because of how the mid moves. Successive changes of the mid run in the same direction about three times in four (75% and 78% on two days we checked). After a move, the side that moved has a new best level, all of it young, and the age filter leaves it out. The filtered measure therefore leans towards the side that did not move, and so against the move that usually follows: on the same two days it pointed against the last move 75% and 64% of the time. A spoof is young, but so is every honest level that has just formed.
+
+**Smoothing** costs power for a simpler reason: half the moves come within 200 ms (Section 3.1), and an average over the last second still remembers a book that is gone. A spoof has to last to move a smoothed measure, but so does genuine information.
+
+Spoof candidates are common. Of 979,000 additions of at least 2 BTC 1 to 9 ticks behind the best, 78% were removed within 5 seconds without a trade at their price. Most are probably market makers moving their quotes, not spoofs (Section 2.1); L2 data cannot tell the two apart. We found no published imbalance measure shown to resist spoofing on real data. The literature flags candidates with rules or alarms (Tuccella, Nadler and Serban, 2021; Tao et al., 2020) and notes that spoofs stand back from the best to stay unfilled (Fabre and Challet, 2025). Whether confirming a lean with the trades that follow, the third defence of Section 2.1, resists walls without losing the forecast is a question for Lecture 20, where the flow is measured.
+
+### 3.3 The microprice
+
+**Result.** An imbalanced book predicts a move of tens of ticks, not the fraction of a tick the weighted mid allows. A microprice built from the in-sample days cuts the squared error of the mid's forecast by 19% at the next change and 13% over one second, out of sample. Over ten seconds, almost nothing is left.
+
+![The microprice on 45 days: expected change of the mid by imbalance; reduction of the squared error out of sample](figures/19_12_microprice_results.png)
+<sub><b>How to read the figure.</b> <b>Left:</b> on the in-sample days, the average change of the mid in ticks of $0.10 until its next change (blue), over 1 s (green) and over 10 s (orange), in 20 bands of the imbalance at the best, spread one tick. The microprice is the mid plus this curve. The dotted line is the weighted mid's correction, which is never more than half a tick. <b>Right:</b> out of sample, the reduction of the mean squared error of the microprice against the mid, at three horizons; error bars are 95% intervals from resampling days.</sub>
+
+- **H8 holds.** At the next change, the microprice's error is 19% below the mid's (17.7–19.8%). Over 1 s the reduction is 13% (11.7–14.9%), over 10 s 2.3% (2.0–2.7%). The weighted mid barely improves on the mid, by less than 0.5% at every horizon: its correction stays within half a tick, while the move it should anticipate is tens of ticks.
+
+The curve on the left is the empirical version of Stoikov's (2018) idea: the microprice is where the mid is expected to be once it has moved, and the expectation is read off the data rather than imposed by a formula. On BTCUSDT that move is large compared with the spread, so the weighted mid, built on the assumption that the price moves by one tick, is the wrong tool. On 10 October the same table, estimated on calm days, still cut the error, by 6% at the next change and 1% over 1 s; that is less, since the moves of that day were far larger than any in sample.
+
+### 3.4 The shape of the book and its queues
+
+**Result.** A thin book comes before larger moves, though weakly. The best queues shrink mostly by cancellation, on every day: of each 100 BTC that left a best queue, about 92 were cancelled and 8 traded. Levels that are refilled again and again, the signature of icebergs, were found on 39 of the 45 days, most of all on 10 October.
+
+![Shape and queues on 45 days: depth and the next 5 minutes; how the best queues shrink; refilling levels a day](figures/19_13_shape_queue_results.png)
+<sub><b>How to read the figure.</b> <b>Left:</b> every minute of the 45 days, sorted into ten groups by the depth in the best 10 levels of both sides at its start (log scale); each point is a group's average absolute move of the mid over the next 5 minutes (black) and the previous 5 minutes (grey dotted), in dollars. <b>Middle:</b> each day's decreases of the best bid and ask queues, split into traded (the part matched by trades at that price in the interval) and cancelled (the rest). <b>Right:</b> levels traded away and refilled at the same price by a similar size within 1 s, at least 3 times in a row, per day (log scale; days with none are empty).</sub>
+
+- **H9 (depth and moves) holds, weakly.** Controlling for the previous 5 minutes, the rank correlation between depth and the size of the next 5-minute move is −0.10 over all minutes (−0.14 to −0.05) and negative on 29 of the 45 days. In the thinnest tenth of minutes the mid moved $125 on average over the next 5 minutes, in the deepest about $79. But the previous 5 minutes show almost the same pattern, so depth mostly reflects how active the market already is. Within a day the relation is faint (median −0.02). It is strongest on 10 October (−0.17), which Section 4 takes up. H9 also passes the multiple-test correction only just.
+- **H10 (cancellations dominate) holds.** On every day, 90% to 95% of the decreases of the best queues were cancellations. For every BTC traded at the best, about five BTC were added. A best queue is mostly orders that come and go, which is what makes the plain imbalance easy to move and what Section 3.2 tried, and failed, to correct.
+- **H11 (queue race) fails.** Adding the race between the two queues' times to empty does not raise the AUC: 0.896 against 0.897. Two caveats. The time to empty is infinite on both sides in 59% of the samples, because neither queue was shrinking over the previous second. And the hypothesis named the logarithm of the ratio of the two times, which is undefined when both are infinite. We used the bid's share of the two times instead, set to one half when both are infinite. This is a change to the fixed test, and we state it.
+
+The iceberg count is descriptive, with no test. Over the 45 days, 10,092 levels were refilled at least three times in a row, a median of 38 a day. On 10 October there were 5,993, more than on all other days together. Such chains are what an iceberg or any repeated quoting at one price leaves behind, and our data cannot tell which of the two produced them. A large order cut into slices gives up its place in the queue with every slice (Section 2.4), so the count measures size that was willing to lose priority to stay hidden.
+
+### 3.5 Markouts
+
+**Result.** The resting side of an average trade earns the spread at the fill and loses it, and more, within a second. Measured against the mid, the price moved against it by about 170 ticks per BTC within 1 s, out of sample. The larger the trade, the larger the move.
+
+![Markouts on 45 days: markout curves by size of the taker order; price impact over 10 s by size](figures/19_14_markout_results.png)
+<sub><b>How to read the figure.</b> One fill per taker order: the trades with the same millisecond and side, sizes summed, the price weighted by size. <b>Left:</b> out of sample, the markout of the resting side, the mid after $`h`$ seconds minus the fill price, signed for the resting side, size-weighted, in ticks of $0.10 per BTC, by size of the taker order. At 0 s it is the spread the resting order earned against the mid. <b>Right:</b> the price impact over 10 s, the markout at 0 s minus that at 10 s, by size, out of sample (green) and on 10 October (orange).</sub>
+
+- **H12 (adverse selection) holds.** Over all sizes, the price impact out of sample is 171 ticks per BTC at 1 s (161–182) and 169 at 10 s (154–185). The markout itself turns negative within 100 ms and stays negative: −59 ticks, about −$5.90 per BTC, at 1 s.
+- **H13 (size) holds.** The impact over 10 s grows with the size of the taker order: 64 ticks for orders below 0.01 BTC, 78, 110, and 204 for orders of 1 BTC and more. The difference between the largest and the smallest is 140 ticks (118–163). On 10 October each size moved the price further, 370 ticks for the largest.
+
+At 0 s, large orders earn the resting side much more, 158 ticks per BTC, because they walk through several levels and the deeper levels fill further from the mid. Part of it is our measurement: the mid is that of the last book update before the trade, and in a fast market that update can be up to 100 ms old. The impact at 0.1 s carries the same caveat; from 1 s on, it no longer matters. For scale, Bybit's base maker fee, 0.02%, is about 200 ticks per BTC at these prices, larger than the spread at the fill for every size. A resting order at the base fee tier that is filled by the average taker loses on two counts, the move and the fee. Who can rest profitably, at which fee and with which choice of fills, is the subject of Lectures 21 to 23.
+
+### 3.6 Verdicts
+
+| Hypothesis | Measured on | Main number | p | Verdict after correction |
+|---|---|---|---|---|
+| H1 direction | Out of sample | AUC 0.897 | < 0.001 | Holds |
+| H2 stability | Each day | 45 of 45 days | < 0.001 | Holds |
+| H3 regime | Out of sample; 10 Oct | AUC 0.897; 0.842 | < 0.001 | Holds |
+| H4 depth adds | Out of sample | AUC −0.0002 | 1.00 | Fails |
+| H5 small queues | Out of sample | AUC 0.96 vs 0.63 | < 0.001 | Holds |
+| H6 distance weight | Out of sample | AUC 0.897 at every λ | < 0.001 | Holds |
+| H6 age filter | Out of sample | AUC 0.28–0.33 | 1.00 | Fails (inverted) |
+| H6 smoothing | Out of sample | AUC 0.84 to 0.64 | 1.00 | Fails |
+| H7 resistance | Each day, 9 settings | 45 of 45 days | < 0.001 | Holds by construction; distance alone fails |
+| H8 microprice | Out of sample | Error −19% | < 0.001 | Holds |
+| H9 depth and moves | All minutes; each day | −0.10; 29 of 45 days | 0.036 | Holds, weak |
+| H10 cancellations | Each day | 92% cancelled | < 0.001 | Holds |
+| H11 queue race | Out of sample | AUC −0.0015 | 1.00 | Fails |
+| H12 adverse selection | Out of sample | Impact 171 ticks at 1 s | < 0.001 | Holds |
+| H13 size | Out of sample | 204 vs 64 ticks | < 0.001 | Holds |
+
+<sub><b>How to read the table.</b> One row per hypothesis of [results/hypotheses.md](results/hypotheses.md); H6 is split into its three families, so 15 tests in all. "p" is one-sided, from 2,000 resamples of days or from a sign test over days; "< 0.001" means no resample went against the hypothesis. The Benjamini-Hochberg procedure at 5% ranks the 15 p-values and accepts the k smallest if the k-th is at most k × 0.05 / 15. Ten p-values are below 0.001; the eleventh, H9's 0.036, is just under its limit of 0.037, so eleven hold and four fail.</sub>
+
+Three caveats apply to all of Section 3. The book is published every 100 ms, so "the next update" covers everything that happened in that interval, and moves within it cannot be seen. Every quantity is measured on BTCUSDT on one venue over 45 days; the second venue and the feed's own delay come in Section 4. And none of the results is a trading result: a forecast that ranks moves nine times in ten is worth something only to those who can act on it in time and at a cost below the move. The move is a median of 44 ticks and the fees are hundreds; that question belongs to Lecture 23.
+
+Several questions remain open, and we invite independent tests:
+
+- How much of imbalance's forecast is information, and how much the arithmetic of a queue about to empty? A model in the style of Cont and de Larrard (2013), with the measured rates, would give the share of mechanics alone.
+- Does an imbalance confirmed by the trades that follow resist walls without losing its forecast (Lecture 20)?
+- Do the age filter's inversion and the continuation of mid changes hold on other venues and with a model that cancels in proportion rather than from the back?
+- Do the refilling chains of 10 October come from icebergs or from market makers requoting one price, and did they rise before the cascade?
+
+*Sections 4 and 5 follow.*
 
 ## References
 
