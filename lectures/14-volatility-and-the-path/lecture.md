@@ -144,6 +144,8 @@ Measured with the right side of the trades (a sell stop is filled by sellers, at
 
 A typical stop costs a few basis points; the tail is fat and depends on the regime. The worst cases are short runs: the price breaks a level and runs 50 to 100 bp in a few seconds, often ending at a round price (19,200; 30,250; 105,000), where resting orders seem to stand. That is a hypothesis; the order book would show it.
 
+A stop-market order waits until its trigger price trades and then becomes a market order (Lecture 12, §3.4); a stop-limit order caps the price instead and may not fill at all. The rule below is for the first kind.
+
 **A building block for backtests.** *A stop fills at the worst price of the next second, at a chosen percentile of this distribution*: an explicit, conservative fill rule that a backtest on bars can use without the tape. It is valid up to the size that traded in that second, and in a backtest the regime must be judged from what is known at the trigger, such as the volatility of the last hour, not from the whole day. Lecture 15 measures the order book, how much size a level absorbs and how fast it recovers, and turns this rule into a fair cost of stops; Lectures 16 and 17 use it.
 
 ## 5. Volatility, built up
