@@ -56,3 +56,20 @@ taker. Markout per BTC for the maker: M(h) = s_maker (m(t+h) - p), m = mid of th
 Price impact at h = M(0) - M(h). Averages are size-weighted, in ticks.
 - H12 (adverse selection): price impact > 0 at 1 s and 10 s, out of sample.
 - H13 (size): price impact at 10 s is larger for larger taker orders: impact(> 1 BTC) - impact(< 0.01 BTC) > 0, out of sample.
+
+## Section 4: 10 October (fixed 2026-10-30, before any of these results were computed)
+Start of the cascade, T0: the first minute of 10 Oct whose absolute change of the mid over one minute (minute starts, best 10 levels file)
+is larger than the largest one-minute change on any of the 20 in-sample days. Pre-window: [T0 - 2 h, T0).
+Reference: every non-overlapping 2-hour window of the other 44 days, aligned to the same clock phase as the pre-window (about 528 windows).
+p = (1 + number of reference windows at least as extreme) / (1 + number of reference windows), one-sided. Benjamini-Hochberg at 5% over H14-H18
+(H18 counted as two). Descriptive: each measure in 15-minute steps from T0 - 6 h to T0 + 3 h.
+
+- H14 (refilling chains): the number of levels refilled 3+ times in a row (as in Section 3) in the pre-window is higher than in the reference.
+- H15 (depth): the average depth in the best 10 levels of both sides in the pre-window is lower than in the reference.
+- H16 (feed delay): the 99th percentile of Bybit's publish delay, ts - cts per book update, in the pre-window is higher than in the reference.
+- H17 (imbalance through the cascade): the AUC of I1 for the next mid move is above 0.5 in each 15-minute step from T0 - 2 h to T0 + 2 h
+  (16 steps; per step a Mann-Whitney test; primary p = the largest of the 16).
+- H18a (Binance gap): the average absolute gap between Bybit's mid and Binance's last trade price (BTCUSDT perpetual, aggTrades, last trade
+  at or before the Bybit update) in the pre-window is wider than in the reference.
+- H18b (lean towards Binance): on 10 Oct, from T0 - 2 h to T0 + 2 h, the rank correlation between Bybit's I1 and the gap Binance minus Bybit
+  is positive (bootstrap over 15-minute blocks).
