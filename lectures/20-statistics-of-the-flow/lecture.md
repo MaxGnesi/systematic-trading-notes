@@ -303,11 +303,93 @@ Several questions remain open, and we invite independent tests:
 - What trades on a 10-second reaction time, the second peak of the Hawkes kernel?
 - Is the 36 ms lead of Binance over Bybit a lead or partly an offset between clocks, and why does the tail of the last trade lean the other way? Exchange-synchronised timestamps, or a third venue, could tell.
 
-*Section 4 follows.*
+## 4. 10 October
+
+**The question.** Lecture 19 asked whether the book gave a warning before the fall of 10 October; it found none before the price began to move. This section asks the same of the flow. If anyone traded on the news before it was public, the flow would be the place to see it: net selling before the post, one-sided volume, trading that feeds on itself, trades that move the price more than usual. Answering requires knowing exactly when the news arrived, which Section 4.1 establishes to the millisecond, before Section 4.2 looks at the flow and Section 4.3 at every warning measure of Lectures 19 and 20 together.
+
+One event cannot separate informed trading from chance, and it is not evidence of what anyone knew. No trader is named or identifiable in our data, and none is accused. The question is narrower: did the flow, on this day, look different from the same hours of the other 44 days?
+
+### 4.1 Timing the news
+
+There were two posts that day. At 14:57:52 UTC a first post on Truth Social criticised China's export controls; at 20:50:01.702 UTC a second announced an additional tariff of 100% on Chinese goods. News reports give times like "shortly before 5 pm", and the exact time matters: a flow that moved at 20:48 moved before the news, one that moved at 20:51 after it. The method below works for any post or announcement whose platform gives it a numeric ID, and readers can reuse it for their own event studies.
+
+| Step | Source | What it gives for the second post | How far to trust it |
+|---|---|---|---|
+| 1 | News reports | "Shortly before 5 pm" Eastern time | Rough; written after the fact |
+| 2 | Time an article was published | CNBC's report, 4:57 pm Eastern | An upper bound: the post came before |
+| 3 | Archives that copy posts to X | 4:50 pm in one, 4:53 pm in another | They disagree; one copy was posted later (see the box) |
+| 4 | The American Presidency Project's log of the posts (American Presidency Project, 2025) | 1:50 pm Pacific = 20:50 UTC; the first post 7:57 am Pacific = 14:57 UTC | A primary log, to the minute |
+| 5 | The post's ID on Truth Social | 20:50:01.702 UTC; the first post 14:57:52.308 UTC | To the millisecond, set by the platform when the post was created |
+| 6 | Cross-check | The decoded times fall in the logged minutes | Two independent sources agree |
+| 7 | What not to do | Time the news from the price | Circular: it assumes the price did not move before the news, which is the question |
+
+<sub><b>How to read the table.</b> Each step narrows the time; step 5 gives the time used in this lecture. The American Presidency Project (University of California, Santa Barbara) publishes the posts with their times in Pacific time. The X copy in step 3 decodes to 20:53:04.101 UTC: it was posted three minutes after the original.</sub>
+
+> **Box: Time inside an ID.** A large platform creates thousands of posts a second on many servers. If every server had to ask one central counter for the next number, that counter would be a bottleneck and a single point of failure. In 2010 Twitter, moving its storage to a database without such a counter, announced a scheme it called Snowflake: each server builds the ID itself from parts that make it unique without asking anyone (King, 2010). On X today, the ID of a post has four parts: a sign bit, 41 bits counting milliseconds since 4 November 2010, 01:42:54.657 UTC, 10 bits naming the machine, and 12 bits counting the IDs that machine made in that millisecond. It works like a ticket from a machine that prints the time, its own number and a counter: no two tickets are alike, and no machine needs to talk to another. The time comes first so that sorting posts by ID sorts them by time, and so the time of a post can be read from its ID as a by-product: shift away the lower 22 bits and add the 2010 starting point. Mastodon, on which Truth Social is built, uses a variant (Mastodon, n.d.): the upper 48 bits count milliseconds since 1 January 1970 and the lower 16 are a sequence. The second post's ID, 115351840469973590, divided by $`2^{16}`$ and rounded down, is 1,760,129,401,702 milliseconds since 1970, which is 20:50:01.702 UTC. Three cautions. The ID records when the post was created, not when people read it; the delay between the two is part of what an event study measures. The platform's clock may be off by a few milliseconds. And a copy of a post, on another platform or account, carries its own, later ID, which is why the archives in step 3 disagree.
+
+### 4.2 The flow before the post
+
+**The question.** If the news leaked, those who knew would sell before it was public, and the flow in the hour before the post would lean to selling (H8). In the two hours before, trading would become one-sided, feed on itself and move the price more per BTC than usual (H9). Each is compared with every window of the same length on the other 44 days, aligned to the same time past the hour.
+
+**Result.** On this day, the flow before the post looked unusual, but not in the way a leak would suggest. The hour before the post had net buying, among the highest of all hours. The selling came earlier: in the hour of the first post and again between 18:50 and 19:50 UTC, when nothing we can time was published.
+
+![10 October, 14:00 to 22:00 UTC: Bybit's mid and the net taker flow on Bybit and Binance added up, with the two posts and the windows of H8 and H9](figures/20_14_evening.png)
+<sub><b>How to read the figure.</b> <b>Top:</b> Bybit's mid at the end of each minute. <b>Bottom:</b> taker buys minus taker sells, added up from 14:00 UTC, in BTC: Bybit (blue) and Binance (orange); a falling line is net selling. Dotted lines: the first post (14:57:52), the tariff post (20:50:01.7) and T0 (21:14), the start of the cascade by Lecture 19's rule. Shaded: the two hours before the post (H9), the darker part the hour before it (H8).</sub>
+
+![H8 and H9: the window before the post on 10 October against every window of the same length on the other 44 days](figures/20_15_before_post.png)
+<sub><b>How to read the figure.</b> In each panel, grey bars: the distribution over the reference windows, of one hour for net taker flow and large sells (1,009 windows) and of two hours for VPIN, the branching ratio and Kyle's lambda (481 windows); windows touching a gap in the book's feed are left out. Red line: the window before the post on 10 October, with the share of reference windows below it.</sub>
+
+- **H8, was there net selling in the hour before the post? Fails, on both venues.** On Bybit takers bought a net 2,241 BTC, more than in 99.6% of the reference hours; on Binance they bought a net 434 BTC, more than in 85%.
+- **H9a, was trading unusually one-sided over the two hours? Fails, narrowly.** VPIN averaged 0.255, above 92% of reference windows (p = 0.018), which does not pass the correction (Section 3.6). VPIN stood above its usual range mostly during the selling hour, 18:50 to 19:50 (Section 4.3).
+- **H9b, was the market feeding on itself more than usual? Fails.** The branching ratio was 0.94, above 87% of reference windows (p = 0.13).
+- **H9c, did each BTC traded move the price more than usual? Fails, the other way.** Kyle's lambda was 2.2 ticks per BTC, below all but 1.5% of reference windows: in the two hours before the post, heavy flow moved the price less than usual.
+
+**A burst of buying, reported and not tested.** Most of Bybit's net buying in the hour came in 46 seconds. Between 20:43:52 and 20:44:38 UTC, six minutes before the post, 15 taker buy orders of 50 to 122 BTC each, mostly exactly 100, bought 1,495 BTC, about $175 million, in 13,107 trades. Several came exactly 500 milliseconds apart, as from a program releasing slices on a timer. Each walked far up a book with only about 6 to 11 BTC in its best ten levels, paying on average $88 per BTC above the mid, and each time the book refilled within seconds, so the minute ended where it began, near $117,000. It was the largest minute of large taker buys in our 45 days, though not by far: other days reached 900 to 1,145 BTC. Without it, the hour still had net buying of about 750 BTC. Who bought, and who sold to them through the refilling orders, the data cannot say; nor whether the timing had anything to do with the post. We report it because it is the largest single feature of the hour before the news, and because a reader who looks at that hour will find it.
+
+**The selling, a follow-up.** The two hours with the heaviest selling of the afternoon were 14:50 to 15:50, which contains the first post, and 18:50 to 19:50. In both, net taker flow was below 99% of the reference hours on both venues (Bybit −2,219 BTC and Binance −3,211 BTC in the second), and the number of sells of $1 million or more was above 99%. What drove the selling between 18:50 and 19:50, we have not established; it came an hour before the window that H8 tested, which was fixed in advance and could not be moved after the fact. The two large Binance sells that a first look found about 160 seconds before the post (results/hypotheses.md, disclosure) were ordinary: in the hour before the post Binance had 43 sells of $1 million or more, more than 70% of reference hours.
+
+### 4.3 Did any statistic warn?
+
+**The question.** A market maker who widens or pulls quotes when a measure turns extreme would like it to turn before the news, not after. The early-warning table asks this of every measure of Lectures 19 and 20 with one rule, fixed in advance: a measure **flags** when it stays beyond the 99th percentile of the calm days' minutes (below the 1st for depth) for five minutes in a row. The lead time is the time from the first flag to the post; the price of a warning is its false alarms, counted on the other 44 days.
+
+![Early warning on 10 October: minutes beyond the threshold and flags for eleven measures, 13:00 to 22:00 UTC](figures/20_16_early_warning.png)
+<sub><b>How to read the figure.</b> One row per measure, per minute, Bybit BTCUSDT. Light marks: minutes beyond the measure's threshold; red diamonds: flags, raised at the end of the fifth minute in a row; for each measure the first flag after the post is shown too. Dotted lines: the first post, the tariff post and T0. Every measure uses only data up to the end of its minute.</sub>
+
+| Measure | What it captures | Flags in the 6 hours before the post (UTC) | First flag after the post | False alarms per day: calm / after 10 Oct |
+|---|---|---|---|---|
+| Depth, best 10 levels | Liquidity resting near the price | None | +8 min | 0.00 / 7.12 |
+| Spread | Cost of crossing | None | None | 0.00 / 0.00 |
+| Refill chains (L19) | Levels refilled again and again | 15:03, 15:31, 15:42, 17:12, 19:13 | +5 min | 0.15 / 1.96 |
+| Publish delay (L19) | Congestion of the exchange's feed | None | None | 0.00 / 0.08 |
+| Order-flow imbalance | Pressure on the best prices | None | None | 0.00 / 0.00 |
+| Trade imbalance | Net taker flow | None | +26 min | 0.05 / 0.00 |
+| VPIN | One-sided volume | 19:27, 20:49 | (already flagged) | 0.30 / 0.17 |
+| Branching ratio, 15 min | Trading feeding on itself | 15:04, 15:34, 19:19 | +14 min | 0.80 / 2.46 |
+| Kyle's lambda, 15 min | Price move per BTC traded | None | None | 1.10 / 4.00 |
+| Pull rate | Orders pulled from the best 20 levels | 15:03, 15:34, 16:06, 19:32 | +5 min | 0.70 / 4.29 |
+| Synchronised pulls | Pulls on both sides at once | 15:03, 15:35, 16:06, 19:34 | +5 min | 0.40 / 4.29 |
+
+<sub><b>How to read the table.</b> A flag needs five minutes in a row beyond the threshold, so the earliest possible flag after an event is five minutes later. The signed flows enter as absolute values; VPIN is its last value, the branching ratio the fit on the last complete 15 minutes and Kyle's lambda the slope over the last 15 minutes, so every measure is known at the end of its minute (choices made before looking at 10 October). False alarms: flag episodes per day on the 20 calm days, from which the thresholds come, and on the 24 days after the cascade.</sub>
+
+**Result.** By the rule fixed in advance, four measures flagged almost six hours before the post: refill chains, the pull rate, synchronised pulls and the branching ratio, first at 15:03 and 15:04. But that is five and six minutes after the first post, the earliest a five-minute rule can respond. They reacted to news; they did not anticipate it. The same four, joined by VPIN, flagged again between 19:13 and 19:34, during the selling hour. In the last hour before the post, only VPIN flagged, at 20:49, after the burst of buying at 20:44 had made the volume one-sided. Order-flow imbalance, trade imbalance, depth, spread and the exchange's delay did not flag before the post.
+
+After the post, refill chains and both pull measures flagged at the earliest possible moment, 20:55, nineteen minutes before T0; depth followed at 20:58 and the branching ratio at 21:04. A market maker using them would have stepped back before the worst of the fall, but after the news, not before it. Kyle's lambda never flagged, even in the cascade: its highest values come in quiet minutes, when a few trades move the price (its rank correlation with the last 15 minutes' volume is −0.60 on the calm days), so a high lambda marks quiet, not stress. The price of the warnings is visible in the last column. On calm days the activity measures raise up to one false alarm a day; after the cascade, when the market stayed busier and the book thinner, two to seven, and depth, whose threshold came from the deeper books before the cascade, was below it in about a quarter of all minutes.
+
+On this sample, the flow and the book recorded the news quickly, within the five minutes the rule needs, and none of their measures anticipated the tariff post. One day, one venue and one event cannot show that warnings are impossible; they show that on this day, none of these measures gave one that the news itself did not.
+
+Several questions remain open, and we invite independent tests:
+
+- What drove the selling between 18:50 and 19:50 UTC? A timed source, news or another market, would tell whether it was a reaction or an anticipation.
+- Who absorbed the 1,495 BTC bought at 20:44, and do bursts of this kind, sliced on a timer and absorbed by refilling orders, recur before other events? Data with order IDs (L3) would show whether one participant refilled.
+- Does a warning rule that adapts its thresholds to the current regime keep its false alarms down after a cascade without losing its speed?
+- On how many other days do the activity measures react within five minutes to a timed post or a scheduled release? An event study over many posts would turn one day into a sample.
+
+*Section 5 follows.*
 
 ## References
 
 - Alexander, C. and Heck, D. F. (2020). Price discovery in Bitcoin: the impact of unregulated markets. *Journal of Financial Stability* 50, 100776. — perpetuals on unregulated venues led bitcoin price discovery (§3.5).
+- American Presidency Project (2025). Truth Social posts, October 10, 2025. University of California, Santa Barbara. presidency.ucsb.edu/documents/truth-social-posts-october-10-2025. — the logged times of both posts (§4.1).
 - Andersen, T. G. and Bondarenko, O. (2014). VPIN and the flash crash. *Journal of Financial Markets* 17, 1–46. — the critique of VPIN (§2.3).
 - Bacry, E., Mastromatteo, I. and Muzy, J.-F. (2015). Hawkes processes in finance. *Market Microstructure and Liquidity* 1(1), 1550005. — survey; kernels and estimation (§2.4).
 - Bouchaud, J.-P., Gefen, Y., Potters, M. and Wyart, M. (2004). Fluctuations and response in financial markets: the subtle nature of 'random' price changes. *Quantitative Finance* 4(2), 176–190. — the propagator model (§2.2).
@@ -321,8 +403,10 @@ Several questions remain open, and we invite independent tests:
 - Hayashi, T. and Yoshida, N. (2005). On covariance estimation of non-synchronously observed diffusion processes. *Bernoulli* 11(2), 359–379. — correlation without resampling (§2.5).
 - Hoffmann, M., Rosenbaum, M. and Yoshida, N. (2013). Estimation of the lead-lag parameter from non-synchronous data. *Bernoulli* 19(2), 426–461. — lead and lag (§2.5).
 - Huth, N. and Abergel, F. (2014). High frequency lead/lag relationships — empirical facts. *Journal of Empirical Finance* 26, 41–58. — the lead-lag ratio (§2.5).
+- King, R. (2010). Announcing Snowflake. Twitter Engineering blog, 1 June 2010. blog.x.com/engineering/en_us/a/2010/announcing-snowflake. — IDs built from time, machine and sequence (§4.1).
 - Kyle, A. S. (1985). Continuous auctions and insider trading. *Econometrica* 53(6), 1315–1335. — Kyle's lambda (§2.2).
 - Lillo, F. and Farmer, J. D. (2004). The long memory of the efficient market. *Studies in Nonlinear Dynamics & Econometrics* 8(3), 1–35. — slowly fading correlation of order signs (§3.2).
+- Mastodon (n.d.). lib/mastodon/snowflake.rb. github.com/mastodon/mastodon. — Mastodon's IDs: milliseconds since 1970 in the upper 48 bits (§4.1).
 - Silantyev, E. (2019). Order flow analysis of cryptocurrency markets. *Digital Finance* 1, 191–218. — trade and order-flow imbalance on the BitMEX bitcoin perpetual (§1).
 - Simpson, E. H. (1951). The interpretation of interaction in contingency tables. *Journal of the Royal Statistical Society, Series B* 13(2), 238–241. — Simpson's paradox (§3.5).
 - Xu, K., Gould, M. D. and Howison, S. D. (2019). Multi-level order-flow imbalance in a limit order book. *Market Microstructure and Liquidity* 4(3–4), 1950011. — order-flow imbalance over several levels (§2.1).
