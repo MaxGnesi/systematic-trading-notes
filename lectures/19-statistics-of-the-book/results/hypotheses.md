@@ -73,3 +73,26 @@ p = (1 + number of reference windows at least as extreme) / (1 + number of refer
   at or before the Bybit update) in the pre-window is wider than in the reference.
 - H18b (lean towards Binance): on 10 Oct, from T0 - 2 h to T0 + 2 h, the rank correlation between Bybit's I1 and the gap Binance minus Bybit
   is positive (bootstrap over 15-minute blocks).
+
+## Section 3.7: does the book have a clock? (added 2026-10-31, after the results above, fixed before any of these were computed)
+The design of Lecture 13 §7 (round times on the trades), applied to the book. Days: the 44 days other than 10 Oct (10 Oct reported apart).
+Slots, one minute each, from the schedule: minute :00 with funding (00:00, 08:00, 16:00 UTC); minute :00 without funding; minute :30;
+minutes :15 and :45; minute :59. Control: minutes :07, :17, :37 and :47, which nobody schedules.
+Per second (state at the end of each second, from l19_state): spread wider than one tick (0/1); depth in the best 5 levels of both sides
+(q_bid5 + q_ask5, BTC). Per book update (Lecture 18's pulls): a pull, 5 or more of the best 20 levels on one side losing size beyond trades.
+Baseline of each occurrence: the same measure over the hour ending 5 minutes before the slot starts. Per day and slot: ratio = sum over the
+slot's occurrences of the measure in the window / sum of their baselines (sums, so that rare events and zeros are handled); the same for the
+control; d = ratio(slot) - ratio(control). Statistic: mean d over the 44 days; one-sided p from 2,000 bootstrap resamples of days.
+Benjamini-Hochberg at 5% over the 22 tests below. Robustness, reported: the sign of d in sample (20 days) and out of sample (24 days).
+
+- H19 (spread): the share of seconds with a spread wider than one tick is higher in the slot minute than in the control (5 tests, one per slot).
+- H20a (depth): depth in the best 5 levels is lower in the slot minute than in the control (5 tests).
+- H20b (pulling back early): depth in the best 5 levels is lower over the 10 seconds before the slot than over the 10 seconds before the
+  control (5 tests).
+- H21 (pulls): the share of book updates with a pull is higher in the slot minute than in the control. The within-minute clock of Lecture 18
+  §5.5 is in both, so this asks for more than that clock (5 tests).
+- H22 (link to the trades): the funding minute differs more than other minutes :00 do, where Lecture 13 found trading heaviest: d(funding :00) -
+  d(other :00) > 0 for the spread and < 0 for depth (2 tests).
+- Left out beforehand: refilling chains (§3.4), about 38 a day, too rare to compare minutes (about 3 expected in all funding minutes together);
+  the book's update rate, which Bybit's 100 ms publication caps at about 10 a second all day.
+- Descriptive: each measure second by second from 60 s before to 60 s after the slot start, as a ratio to its baseline, slot and control.
