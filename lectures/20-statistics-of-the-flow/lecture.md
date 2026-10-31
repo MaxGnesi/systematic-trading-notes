@@ -174,10 +174,140 @@ The correlation peaks at 20 ms, the delay that was built in, and the lead-lag ra
 
 All statistics but the first are deltas, and all but order-flow imbalance are built from trades alone. They share one limit: they see what was done, not who did it or why. A one-sided hour can be informed selling or a fund rebalancing; a burst of triggered events can be traders reacting to each other or to a common piece of news; a lead can be speed or a clock. Section 3 measures what each says on the 45 days; Section 4 asks whether any of them changed before the fall of 10 October.
 
-*Section 3 follows.*
+## 3. On our 45 days
+
+Section 2 showed each statistic on invented flows. This section measures them on the 45 days of Bybit BTCUSDT, 20 September to 3 November 2025, with the trades of Binance beside them. The hypotheses, their tests and every setting were fixed before any result was computed ([results/hypotheses.md](results/hypotheses.md)). Every result below is a result on this sample: one symbol, two venues, 45 days that include one crash. On this data sample we cannot generalise, in either direction. A hypothesis that holds here may fail on another market or in another year, and one that fails here does not refute the study that proposed it, which was usually made on other markets, with other data and over other periods.
+
+**How the tests are set up.** As in Lecture 19, the days are split in three. The 20 calm days before the cascade, 20 September to 9 October, are **in sample**: every slope and every setting that has to be estimated is estimated on them only. The 24 days after it, 11 October to 3 November, are **out of sample**, and the tests are run on them. 10 October stands alone. The share of a price move that a statistic explains is measured by the out-of-sample $`R^2`$: one minus the squared errors of the in-sample fit, divided by the squared deviations of the moves from their in-sample mean. It is 0 for a fit that does no better than the average move and 1 for a perfect one. Uncertainty comes from resampling whole days, 2,000 times. Nine hypotheses with their parts make twelve tests, and some would pass by luck alone; Section 3.6 applies the Benjamini-Hochberg correction to all twelve together.
+
+| § | The question in plain words | Statistic | Hypotheses | Figure |
+|---|---|---|---|---|
+| 3.1 | Does the pressure on the book explain the price's moves better than the trades alone, and does it tell us where the price goes next? | Order-flow imbalance | H1, H2 | 20_08 |
+| 3.2 | When a trade pushes the price, does the push last or fade? | Propagator | H3 | 20_09 |
+| 3.3 | When trading turns one-sided, is a storm coming? | VPIN | H4 | 20_10 |
+| 3.4 | How much of the trading is a reaction to trading? | Hawkes branching ratio | H5 | 20_11 |
+| 3.5 | Which exchange moves first, and why did Bybit's book seem to lean against Binance's price? | Lead and lag | H6, H7 | 20_12, 20_13 |
+| 3.6 | Which answers survive the correction for testing many questions? | | All | |
+
+<sub><b>How to read the table.</b> One row per subsection, in the order of Section 2. Each subsection opens with its question and its result, then the figure, then each hypothesis in turn. Checks that were not fixed in advance, made to understand a result, are labelled <b>follow-up</b>: they suggest explanations, they do not test them.</sub>
+
+### 3.1 Order-flow imbalance
+
+**The question.** A price moves because someone pushed it: a taker who bought or sold, but also a market maker who placed new orders at a better price or pulled the ones that were there. The trade imbalance sees only the first kind of push; the order-flow imbalance adds the second. If the second matters, a trader who watches only the trades misses part of what moves the price. And if the push of the last ten seconds carries over into the next ten, it is a forecast.
+
+**Result.** On our sample, the pressure on the book explains about twice as much of the price's move over ten seconds as the trades alone, on days it was not fitted on. It forecasts the next ten seconds by a margin that is real but far too small to trade. On 10 October the book's pressure lost most of its grip and the trades explained more.
+
+![Order-flow imbalance on 45 days: share of the move explained out of sample, day by day, and the move per BTC against depth](figures/20_08_ofi_results.png)
+<sub><b>How to read the figure.</b> <b>Left:</b> the out-of-sample R² for intervals of 1, 10 and 60 seconds: the share of the variance of the mid's change over the interval explained by a straight line fitted on the in-sample days, for the trade imbalance (orange), the order-flow imbalance at the best (blue) and the order-flow imbalance over the best 10 levels (dark blue). <b>Middle:</b> the same R² day by day, 10-second intervals, with the in-sample slope; 10 October is shaded. <b>Right:</b> one dot per half hour: the slope of the mid's change on the order-flow imbalance, in ticks per BTC, against the average size at the best bid and ask; black: fitted line; dotted: a slope of exactly −1, the move per BTC inversely proportional to depth.</sub>
+
+- **H1, does the pressure on the book explain more than the trades? Holds.** Over 10 seconds, the order-flow imbalance explains 39% of the variance of the mid's change out of sample and the trade imbalance 17%. The difference, 22 percentage points, has a 95% interval of 17 to 26 points, and none of the 2,000 resamples went the other way. The order is the same over 1 second (31% against 15%) and over 60 seconds (33% against 27%), where the gap narrows: over a minute the trades catch up with the orders that were placed and pulled in it. Day by day, the book's pressure explains more on 43 of the 45 days. The two exceptions are 20 September, the quietest day of the sample, and 10 October.
+- **H2, does the pressure of the last ten seconds forecast the next ten? Holds, but the forecast is tiny.** The out-of-sample R² is 0.10% (0.04% to 0.17%): positive, and so too small to matter. One BTC of net pressure in the last ten seconds is followed by about 0.4 ticks in the same direction over the next ten, against about 3.8 ticks during the ten seconds in which it happened. Over 1 second the forecast explains 1.6%, over 60 seconds nothing (0.01%). On our sample the flow describes how the price moved far better than it tells where it will move.
+
+Three measurements were reported, not tested. **The best 10 levels** add little to the best alone: 41% against 39% over 10 seconds, less than on the US stocks of Xu, Gould and Howison (2019). **Depth**: per half hour, the price move per BTC of pressure falls with the size resting at the best, with a slope of −0.94 on the log scale, close to the −1 that Cont, Kukanov and Stoikov (2014) derived: a book twice as deep moves about half as far per BTC. **Kyle's lambda**, the move per BTC of net taker flow, had a median of 10 ticks ($1) per BTC per half hour, and it too falls with depth, but more slowly (slope −0.59).
+
+The depth result explains part of the drop from in sample to out of sample, 56% to 39%. After 10 October the size at the best halved, from about 4 BTC to about 2, so the same pressure moved the price further than the slope fitted on the calm days predicts. **Follow-up:** fitted on 20 October itself, the order-flow imbalance explains 57%, against 52% with the in-sample slope.
+
+**Follow-up: 10 October.** With the in-sample slope, the order-flow imbalance explained 6% of that day's moves and the trades 11%. Refitted on the day itself, the order-flow imbalance explains 7% and the trades 19%, so a wrong slope is not the reason. Hour by hour, between 18:00 and 20:00 UTC the book's pressure explained 56% to 66% and the trades 18%, a normal day; from 20:00 to 23:00, the hours of the post and the cascade, it explained 5% to 21% and the trades 31% to 38%, and the move per BTC of pressure tripled, from about 6 to about 20 ticks. We have not established why. One candidate is the 100 ms book: when takers sweep several levels and market makers requote within one update, what the book shows at the best between updates may say little about the pressure. We invite tests on data with finer book updates.
+
+### 3.2 Impact over time
+
+**The question.** Lecture 19 found that after a resting order was filled, the price kept moving against it for a minute. A maker needs to know why. Either each trade's push keeps growing after it, which would mean every fill is worse than it looks, or each push fades and more trades on the same side follow, which would mean the danger is in the flow that comes after, not in the one trade. The propagator separates the two (Section 2.2).
+
+**Result.** On our sample, a taker order's own impact builds for about a dozen orders and then fades; by 500 orders later it has lost about a third of its peak. The price keeps moving because buys follow buys: the move a maker sees is about nine times the order's own impact at its peak.
+
+![Impact over time on 45 days: correlation of signs, response and bare impact](figures/20_09_impact_results.png)
+<sub><b>How to read the figure.</b> Taker orders (trades with the same millisecond and side) of each day; lines are the median over the 45 days, bands the middle half of the days; log scale on the horizontal axes. <b>Left:</b> the correlation between the sign of an order (+1 buy, −1 sell) and the sign of the order $`\ell`$ orders later, log scale. <b>Right:</b> the response, how far the mid moved in the direction of an order $`\ell`$ orders later (orange), and the bare impact of the propagator model, the order's own share of that move (blue), both in ticks of $0.10. The dotted line marks where the bare impact peaks. Lags beyond 900 are left out: near the end of the window the least-squares solution is unstable.</sub>
+
+- **H3, has a trade's own impact faded 500 orders later, below where it started? Fails.** The bare impact 500 orders later is above its value at the first order on all 45 days: 6.9 ticks against 2.7 (medians). The hypothesis assumed that impact would be largest at once and then fade, as Bouchaud et al. (2004) found on the Paris Bourse. On our data it is not largest at once.
+
+**Follow-up.** The bare impact rises from 2.7 ticks at the first order to a peak of 10.5 ticks, at a median of 14 orders later, and then fades: by 500 orders it is 6.9 ticks, about two thirds of the peak, and it is below its value at 10 orders on all 45 days. Part of the rise is likely our measurement. The mid before each order is that of the last book update, which can be up to 100 ms old, and in a busy second a dozen orders arrive within one update, so the first orders after a trade often see a mid that does not yet show it. With book updates every 100 ms our data cannot tell how much of the rise is real.
+
+The signs explain the rest. An order's sign correlates 0.41 with the next order's, 0.17 ten orders later, 0.03 a hundred later and still 0.01 a thousand later. The correlation fades slowly, roughly as a power of the lag with exponent 0.47, close to the 0.6 that Lillo and Farmer (2004) found on the London Stock Exchange. So the response, what a maker sees, keeps climbing long after the bare impact has peaked: 5 ticks one order later, 35 ten orders later, about 62 from a hundred on. On our sample, the answer to Lecture 19's question is mostly the flow that follows: a maker filled by a buy is likely to face more buys.
+
+### 3.3 VPIN
+
+**The question.** When most of the volume is bought, or most is sold, someone may know something, and market makers who keep quoting lose to them. VPIN measures how one-sided the volume has been, and its authors proposed it as a warning that turbulence was coming (Section 2.3). If it works, it should say something about the next hour's volatility that the last hour's volatility and volume, which every trader already sees, do not.
+
+**Result.** On our sample, it does not. With the sides that Bybit records, VPIN's rank correlation with the next hour's volatility, after the last hour's volatility and volume are accounted for, is zero. Computed the original way, with sides estimated from price moves, its apparent warning largely echoes the moves that have already happened.
+
+![VPIN on the out-of-sample days: rank correlations with the next hour's volatility, with and without controls, for true and estimated sides](figures/20_10_vpin_results.png)
+<sub><b>How to read the figure.</b> One value per hour, at the start of the hour, on the 24 out-of-sample days. <b>Left:</b> the Spearman rank correlation of VPIN with the realised volatility of the next hour, plain and after removing what the last hour's realised volatility and volume explain (a partial correlation), for VPIN from the sides Bybit records (blue) and from bulk volume classification over one-minute bars, as the original (grey). <b>Middle:</b> ranks of VPIN with recorded sides against ranks of the next hour's volatility. <b>Right:</b> ranks of VPIN with estimated sides against ranks of the last hour's volatility.</sub>
+
+- **H4, does VPIN warn of volatility beyond what volume and the last hour already show? Fails.** The partial rank correlation is −0.004, with a 95% interval of −0.09 to +0.08, over 576 hours. Without the controls it is +0.12, and VPIN itself rises with the last hour's volume (rank correlation 0.24): what little VPIN appears to say is the activity that everyone can already see.
+
+The original's estimated sides tell a different story at first sight. Without controls their VPIN correlates +0.39 with the next hour's volatility, and +0.46 with the last hour's. Bulk classification counts a bar as bought in proportion to how far its price rose (Section 2.3), so a volatile hour shows up as one-sided volume whoever traded. After the controls, +0.08 remains. On our sample, the warning from estimated sides comes largely from the past moves it is built from, in line with the critique of Andersen and Bondarenko (2014). Our sample cannot refute VPIN as its authors used it: they built it for futures markets without trade sides, on other periods, and as a warning of rare events, of which our 24 out-of-sample days contain none.
+
+### 3.4 Hawkes processes
+
+**The question.** Some trading starts from outside the market: news, a fund's decision, a client's order. The rest reacts to trading: the next slice of a split order, a trader chasing a move, market makers reacting to each other. The branching ratio is the share of the second kind (Section 2.4). The closer it is to 1, the more a small shock can feed on itself, and the more fragile the market.
+
+**Result.** On our sample, most of the trading is a reaction to trading: in the median hour, 84% of taker orders were attributed to earlier orders. The market nevertheless stayed below the critical point of 1 in all but 2 of 1,080 hours.
+
+![Hawkes branching ratio on 45 days: distribution per hour, by hour of the day, and the weight of each reaction time](figures/20_11_hawkes_results.png)
+<sub><b>How to read the figure.</b> A Hawkes process fitted to the times of Bybit's taker orders, one hour at a time, with an outside rate that is constant within the hour and a kernel made of six exponentials with decay times from 1 ms to 100 s (Section 2.4); a median hour had 12,500 orders. <b>Left:</b> the branching ratio of each hour, in sample (blue) and out of sample (green); dotted lines at 0.9 and 1. <b>Middle:</b> the median by hour of the day, UTC, and 10 October hour by hour (orange). <b>Right:</b> the average weight of each part of the kernel; the weights add up to the branching ratio.</sub>
+
+- **H5, does the market stay clearly below the point where trading would never settle? Holds.** The branching ratio was below 0.9 in 74% of hours (95% interval 70% to 78%), with a median of 0.84; 5% of hours were below 0.64 and 5% above 0.96. Two hours reached 1. Our estimator, checked on simulated data, is close to unbiased at these values (0.83 for a true 0.8) but finds 0.07 where there is no excitation at all.
+
+The ratio was higher after the cascade than before it, a median of 0.87 against 0.80, and on the median day it was highest from 13:00 to 17:00 UTC, the hours when US markets are open, at about 0.9. On 10 October it was 1.00, to two decimals, at 07:00 UTC and again at 21:00, the hour of the cascade, but the day's median, 0.86, was not unusual. Our values lie between the 0.7 that Filimonov and Sornette (2012) found on S&P 500 futures and the values close to 1 of Hardiman, Bercot and Bouchaud (2013). Most of the weight sits at two reaction times: 10 ms (0.33) and 10 s (0.21). The first is the speed of machines reacting to machines; what the second is, our data cannot say, only that it is slower than any algorithm needs to be. The answer depends on the kernel. Ours stops at 100 s, and a kernel with a longer tail would attribute more of the slow clustering to excitation and raise the ratio, which is part of why the literature disagrees.
+
+### 3.5 Lead and lag between venues
+
+**The question.** When bitcoin moves, it moves on every venue, but not at the same instant. If one venue moves first, a market maker on the other venue who watches it can see a move coming a few milliseconds before it arrives, and one who does not is the one who gets picked off. Binance trades almost twice Bybit's volume, so it is the natural candidate to lead.
+
+**Result.** On our sample, Binance moves first: its price changes correlate most with Bybit's about 40 to 50 milliseconds later, on almost every day. The registered test still fails, because over a whole second the correlation on the Bybit-first side adds up to more.
+
+![Lead and lag between Binance and Bybit on 45 days: correlation by lag, and the lag of the peak day by day](figures/20_12_leadlag_results.png)
+<sub><b>How to read the figure.</b> <b>Left:</b> the Hayashi-Yoshida correlation of Binance's price changes with Bybit's, Bybit read τ milliseconds later, averaged over the 45 days; positive lags mean Binance moves first. Orange: Bybit's last trade, the registered test; blue: Bybit's mid. <b>Right:</b> the lag of the peak on each day, for the last trade (dots) and the mid (diamonds).</sub>
+
+- **H6, does Binance lead? Fails.** The hypothesis had two parts, and both had to hold. The first holds: the correlation peaks at a positive lag on 43 of 45 days, at a median of 48 ms (one-sided sign test, p < 0.001). The second fails: the lead-lag ratio, the squared correlations at positive lags over those at negative lags, is 0.61 out of sample (0.57 to 0.66). Near the peak, Binance-first lags dominate; beyond about 300 ms, the correlation on the Bybit-first side is larger, it fades more slowly, and over 1,000 lags on each side the tail outweighs the peak.
+
+With Bybit's mid instead of its last trade, reported and not tested, the picture is clean: a peak of 0.59 at a median of 36 ms, positive on all 45 days, within a narrow range of 28 to 43 ms, and a lead-lag ratio of 2.07. On 10 October the peak was at 35 ms on last trades and 37 on the mid, the same as on calm days. A lead that does not change with conditions cannot be told apart from a constant offset between the two venues' clocks (Section 2.5): from prices alone, our data cannot exclude that part of the 36 ms is an offset. Alexander and Heck (2020) found that perpetual swaps and futures on the large unregulated venues of their sample (Huobi, OKEx and BitMEX) led bitcoin price discovery, and regulated futures and US spot exchanges followed. Binance and Bybit were not among their venues; our first result is in the same spirit, for one pair of venues over 45 days.
+
+Why the last trade's tail leans the other way, we have not established. One candidate: Bybit's last trade changes less often than its mid and bounces between bid and ask, so each of its changes spans a longer interval and pairs with Binance's changes on both sides of it. We invite tests with other venue pairs and with exchange-synchronised clocks.
+
+**The Lecture 19 puzzle.** Lecture 19 found that on calm days Bybit's book imbalance correlated negatively with the gap between Binance's last trade and Bybit's mid. That is puzzling if Binance leads: when Binance trades above Bybit, Bybit's book should lean up, not down. H7 tested one mechanical explanation, the bounce of Binance's last trade between its bid and its ask.
+
+![The Lecture 19 puzzle on the 20 calm days: the registered test, and the split by Bybit's last move](figures/20_13_puzzle_results.png)
+<sub><b>How to read the figure.</b> The samples of Lecture 19 (one per interval between two changes of Bybit's mid, spread of one tick) on the 20 in-sample days. Each value is the Spearman rank correlation of Bybit's imbalance at the best with the gap, Binance's price minus Bybit's mid. <b>Left:</b> Binance's last trade (orange) against the midpoint of its last taker buy and last taker sell within the past second (blue), the registered test. <b>Middle,</b> follow-up: all samples (grey), samples after Bybit's mid last moved up (green) and down (red). <b>Right,</b> follow-up: the median over the 20 days by time since Bybit's mid last moved.</sub>
+
+- **H7, does Binance's bounce explain the puzzle? Fails.** With the bounce removed, the correlation is more negative, not less, on all 20 days: a median of −0.18 against −0.09.
+
+**Follow-up: a Simpson's paradox.** Splitting the samples by the direction of Bybit's last move dissolves the puzzle. After an up move, the correlation is positive on all 20 days (median +0.07); after a down move, on 19 of 20 (+0.08). Pooled, it is negative, because the last move pushes the two quantities in opposite directions. After Bybit's mid moves up, Bybit's imbalance leans up (rank correlation +0.69 with the sign of the move: successive moves of the mid tend to continue, Lecture 19, §3.2), while the gap to Binance falls (−0.18), because Bybit's mid has just jumped and Binance's last trade has not caught up. Mixing the two groups gives a negative correlation that neither group has, the pattern that Simpson (1951) described. The effect is strongest right after the move, −0.12 within 0.2 seconds, and gone after a second (−0.01 between 1 and 5 seconds, 0.00 after 5). This is the reading Lecture 19 suggested and did not check. On our sample, the puzzle is mechanical: within each direction, Bybit's book leans towards Binance's price, as a Binance lead would suggest, though weakly.
+
+### 3.6 Verdicts
+
+| The question in plain words | Hypothesis | Main number | p | Verdict after correction |
+|---|---|---|---|---|
+| Does the pressure on the book explain more of a move than the trades? | H1 | R² 39% against 17% | < 0.001 | Holds |
+| Does the last ten seconds' pressure forecast the next ten? | H2 | R² 0.10% | < 0.001 | Holds, too small to trade |
+| Has a trade's own impact faded below where it started? | H3 | Above on 45 of 45 days | 1.00 | Fails: impact peaks after about 14 orders |
+| Does VPIN warn of volatility beyond volume and the last hour? | H4 | Partial correlation −0.004 | 0.53 | Fails |
+| Does the market stay clearly below the critical point? | H5 | Below 0.9 in 74% of hours | < 0.001 | Holds |
+| Does Binance lead Bybit? | H6 | Peak at +48 ms; ratio 0.61 | 1.00 | Fails: the peak leads, the ratio does not |
+| Does Binance's bounce explain the Lecture 19 puzzle? | H7 | More negative on 20 of 20 days | 1.00 | Fails: a Simpson's paradox instead |
+| Was there net selling on Bybit in the hour before the post? | H8a | Net buying, +2,241 BTC | 1.00 | Fails (Section 4) |
+| Was there net selling on Binance in the hour before the post? | H8b | Net buying, +434 BTC | 0.85 | Fails (Section 4) |
+| Was trading unusually one-sided in the two hours before? | H9a | VPIN 0.255 against 0.191 | 0.018 | Fails, narrowly (Section 4) |
+| Was the market feeding on itself more than usual? | H9b | Branching ratio 0.94 against 0.88 | 0.13 | Fails (Section 4) |
+| Did each BTC traded move the price more than usual? | H9c | 2.2 against 6.7 ticks per BTC | 0.99 | Fails: it moved less (Section 4) |
+
+<sub><b>How to read the table.</b> One row per test of [results/hypotheses.md](results/hypotheses.md); H8 and H9 are split into their parts, twelve tests in all; Section 4 presents H8 and H9. "p" is one-sided, from 2,000 resamples of days, a sign test over days, or, for H8 and H9, the rank of 10 October among the same clock windows of the other 44 days; "< 0.001" means no resample went against the hypothesis. The Benjamini-Hochberg procedure at 5% ranks the twelve p-values and accepts the k smallest if the k-th is at most k × 0.05 / 12. Three p-values are below 0.001; the fourth, H9a's 0.018, is above its limit of 0.017, so three hold and nine fail.</sub>
+
+Three hypotheses hold and nine fail. The failures are results too, and several say more than a pass would have: impact on our data builds before it fades, VPIN's warning is mostly the activity everyone sees, and the Lecture 19 puzzle is a mixing of two groups. All of them are results on one symbol, two venues and 45 days, measured on a book that updates every 100 ms; on this data sample we cannot generalise. None of them is a trading result: an $`R^2`$ of 39% describes a move as it happens, and a forecast that explains 0.1% would not pay the fees.
+
+Several questions remain open, and we invite independent tests:
+
+- Why does the book's pressure lose its grip in a cascade, while the trades keep theirs? Would a book with faster updates, or an order-flow imbalance over more levels, keep it?
+- How much of the build-up of a trade's own impact over the first dozen orders is real, and how much the 100 ms book?
+- Does VPIN with recorded sides warn of anything on markets with rare, large events, or on futures where its authors used it?
+- What trades on a 10-second reaction time, the second peak of the Hawkes kernel?
+- Is the 36 ms lead of Binance over Bybit a lead or partly an offset between clocks, and why does the tail of the last trade lean the other way? Exchange-synchronised timestamps, or a third venue, could tell.
+
+*Section 4 follows.*
 
 ## References
 
+- Alexander, C. and Heck, D. F. (2020). Price discovery in Bitcoin: the impact of unregulated markets. *Journal of Financial Stability* 50, 100776. — perpetuals on unregulated venues led bitcoin price discovery (§3.5).
 - Andersen, T. G. and Bondarenko, O. (2014). VPIN and the flash crash. *Journal of Financial Markets* 17, 1–46. — the critique of VPIN (§2.3).
 - Bacry, E., Mastromatteo, I. and Muzy, J.-F. (2015). Hawkes processes in finance. *Market Microstructure and Liquidity* 1(1), 1550005. — survey; kernels and estimation (§2.4).
 - Bouchaud, J.-P., Gefen, Y., Potters, M. and Wyart, M. (2004). Fluctuations and response in financial markets: the subtle nature of 'random' price changes. *Quantitative Finance* 4(2), 176–190. — the propagator model (§2.2).
@@ -192,5 +322,7 @@ All statistics but the first are deltas, and all but order-flow imbalance are bu
 - Hoffmann, M., Rosenbaum, M. and Yoshida, N. (2013). Estimation of the lead-lag parameter from non-synchronous data. *Bernoulli* 19(2), 426–461. — lead and lag (§2.5).
 - Huth, N. and Abergel, F. (2014). High frequency lead/lag relationships — empirical facts. *Journal of Empirical Finance* 26, 41–58. — the lead-lag ratio (§2.5).
 - Kyle, A. S. (1985). Continuous auctions and insider trading. *Econometrica* 53(6), 1315–1335. — Kyle's lambda (§2.2).
+- Lillo, F. and Farmer, J. D. (2004). The long memory of the efficient market. *Studies in Nonlinear Dynamics & Econometrics* 8(3), 1–35. — slowly fading correlation of order signs (§3.2).
 - Silantyev, E. (2019). Order flow analysis of cryptocurrency markets. *Digital Finance* 1, 191–218. — trade and order-flow imbalance on the BitMEX bitcoin perpetual (§1).
+- Simpson, E. H. (1951). The interpretation of interaction in contingency tables. *Journal of the Royal Statistical Society, Series B* 13(2), 238–241. — Simpson's paradox (§3.5).
 - Xu, K., Gould, M. D. and Howison, S. D. (2019). Multi-level order-flow imbalance in a limit order book. *Market Microstructure and Liquidity* 4(3–4), 1950011. — order-flow imbalance over several levels (§2.1).
