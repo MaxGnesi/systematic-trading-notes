@@ -96,3 +96,16 @@ Benjamini-Hochberg at 5% over the 22 tests below. Robustness, reported: the sign
 - Left out beforehand: refilling chains (§3.4), about 38 a day, too rare to compare minutes (about 3 expected in all funding minutes together);
   the book's update rate, which Bybit's 100 ms publication caps at about 10 a second all day.
 - Descriptive: each measure second by second from 60 s before to 60 s after the slot start, as a ratio to its baseline, slot and control.
+
+## H23: who refreshes at :00 and :30? (added 2026-10-31, after the results of H19-H22, fixed before computing it)
+H19-H22 found pulls and depth jumping at the start of minutes :00 and :30. Two explanations: signals recomputed when 30-minute and hourly bars
+close (a direction, following the last bar), or liquidity providers refreshing on a timer (no direction). At each start s of minute :00 or :30
+(48 a day) and of the control minutes :07, :17, :37, :47 (96 a day), 44 days without 10 Oct: r = log return of the mid from s - 30 min to
+s - 5 s (bp); (a) change in depth asymmetry, (q_bid5 - q_ask5) at the end of second s + 10 minus at the end of second s - 5 (BTC);
+(b) net taker flow, taker buys minus sells (Bybit taker orders, BTC), over [s, s + 10 s). Per day: rank correlation of r with (a) and with (b)
+over the day's occurrences, slot and control apart. Statistic: mean over days of corr(slot) - corr(control); one-sided bootstrap over days
+(2,000). Benjamini-Hochberg at 5% over H23a and H23b.
+- H23a (depth follows the bar): corr(r, change in depth asymmetry) is higher at :00/:30 than in the control.
+- H23b (taker flow follows the bar): corr(r, net taker flow) is higher at :00/:30 than in the control.
+Reading fixed now: both hold -> signals on bars drive the refresh; both fail with correlations near the control's -> a refresh without
+direction, as by liquidity providers on a timer; mixed -> reported as such.
