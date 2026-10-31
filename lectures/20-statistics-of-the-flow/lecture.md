@@ -359,6 +359,23 @@ There were two posts that day. At 14:57:52 UTC a first post on Truth Social crit
 
 **The selling, a follow-up.** The two hours with the heaviest selling of the afternoon were 14:50 to 15:50, which contains the first post, and 18:50 to 19:50. In both, net taker flow was below 99% of the reference hours on both venues (Bybit −2,219 BTC and Binance −3,211 BTC in the second), and the number of sells of $1 million or more was above 99%. What drove the selling between 18:50 and 19:50, we have not established; it came an hour before the window that H8 tested, which was fixed in advance and could not be moved after the fact. The two large Binance sells that a first look found about 160 seconds before the post (results/hypotheses.md, disclosure) were ordinary: in the hour before the post Binance had 43 sells of $1 million or more, more than 70% of reference hours.
 
+**Did the price move ahead of the news? A follow-up.** Low impact before the post does not show that no one knew. In Kyle's model the informed trader hides in the noise, and in its extension with noise trading that varies over time an informed trader trades more when noise trading is high, because the trades are then better hidden (Collin-Dufresne and Fos, 2016). But hidden trades still move the price towards what the informed trader knows; that is how information enters the price in the model. So the most direct check is the price itself: did it fall before 20:50:01.7 more than it falls in ordinary hours?
+
+| Window before the post | Bybit mid | Binance last trade | Reference windows lower: Bybit / Binance |
+|---|---|---|---|
+| 1 minute | −1.5 bp | −2.3 bp | 31% / 24% |
+| 2 minutes | −9.6 bp | −10.2 bp | 6% / 5% |
+| 5 minutes | −13.5 bp | −16.8 bp | 8% / 5% |
+| 10 minutes | −0.8 bp | −5.1 bp | 46% / 31% |
+| 30 minutes | +10.5 bp | +8.4 bp | 72% / 69% |
+| 60 minutes | −15.4 bp | −16.9 bp | 27% / 25% |
+| 120 minutes | −45.6 bp | −48.7 bp | 14% / 12% |
+| *For scale: from the post to T0* | *−426 bp* | *−429 bp* | |
+
+<sub><b>How to read the table.</b> Log return over the window ending at the post, in basis points. Reference: every window of the same length ending at the same time past the hour (hh:50:01.7) on the other 44 days, about 1,050 windows; the last column is the share of them with a lower return, so a small share means an unusually large fall.</sub>
+
+It did not. The only low values, over 2 and 5 minutes, undo the 20:44 burst: it lifted the mid from about $116,880 to $117,015, and by the post the mid was back at $116,840, where it had stood at 20:41; measured from 20:40 the price was flat. The best of these sixteen comparisons, a 5% share on Binance over 5 minutes, would not survive a correction for testing sixteen windows, and the largest fall before the post, 17 bp, is about 4% of the 426 bp that followed it to T0. The fall over two hours is the afternoon's decline after the first, public post, and an ordinary one. On this day the price agrees with the flow: neither shows the news before it was published. One day cannot rule out informed trading in general; if there was any here, it left no trace beyond ordinary noise.
+
 ### 4.3 Did any statistic warn?
 
 **The question.** A market maker who widens or pulls quotes when a measure turns extreme would like it to turn before the news, not after. The early-warning table asks this of every measure of Lectures 19 and 20 with one rule, fixed in advance: a measure **flags** when it stays beyond the 99th percentile of the calm days' minutes (below the 1st for depth) for five minutes in a row. The lead time is the time from the first flag to the post; the price of a warning is its false alarms, counted on the other 44 days.
@@ -416,7 +433,31 @@ Several questions remain open, and we invite independent tests:
 - Do the square-root lambdas keep their link with stress on other markets and periods, and what exponent fits there? Do buys and sells move prices alike on other crypto perpetuals and before other falls, as on our sample, or does the sell side thin out as on equities (Brennan et al., 2010)?
 - On how many other days do the activity measures react within five minutes to a timed post or a scheduled release? An event study over many posts would turn one day into a sample.
 
-*Section 5 follows.*
+## 5. Summary, exercises and reading
+
+### 5.1 Six takeaways
+
+1. **A delta adds up what a level forgets.** The book's imbalance describes one moment and starts afresh whenever a queue empties; the flow over an interval, everything that pushed on the best prices, follows the price step for step. On our 45 days the pressure on the book explained 39% of the mid's moves over 10 seconds out of sample, the trades alone 17%, and the pressure of the last 10 seconds forecast the next 10 by 0.1%: the flow describes the price far better than it predicts it. In the cascade of 10 October the book's pressure lost its grip and the trades explained more.
+2. **A trade's own push builds for a moment and then fades; the flow that follows keeps the price moving.** Order signs stayed correlated for a thousand orders, so the move a maker sees after a fill kept growing while each trade's own impact faded. Part of the brief build-up comes from our 100 ms book; part is real movement after a trade that the model credits to Bybit's own orders.
+3. **VPIN with the true sides warned of nothing that volume and the last hour did not already show.** With sides estimated from price moves, as in the original, it mostly echoed the moves that had already happened.
+4. **Most trading is a reaction to trading, but the market stayed below the point where it would never settle.** About 84% of taker orders were attributed to earlier ones, mostly within 10 milliseconds or around 10 seconds; the share was higher after the cascade and in the hours when US markets were open.
+5. **Binance moved first, by about 40 to 50 milliseconds, on almost every day.** The registered ratio failed because, on last-trade prices, it would barely exceed 1 even under a perfect lead. The Lecture 19 puzzle, Bybit's book leaning away from Binance's price, is a Simpson's paradox: within up moves and within down moves it leans the expected way.
+6. **On 10 October, nothing in the flow or the price anticipated the tariff post.** The hour before it had net buying, much of it one burst; its price was flat once that burst unwound; impact was ordinary on the buy side and the sell side alike. The measures of activity reacted within five minutes to each of the two posts. Every result here is a result on one symbol, two venues and 45 days; on this data sample we cannot generalise, in either direction.
+
+### 5.2 Exercises
+
+- [ ] Redraw the key chart of Section 1 (figure 20_02) for ETHUSDT on one day. Does the pressure on the book explain as much more than the trades as it does for BTCUSDT?
+- [ ] Refit the order-flow imbalance of §3.1 on 10 October hour by hour with the best 1, 5 and 10 levels. Does a version over more levels keep its grip in the cascade?
+- [ ] Simulate a mid with a known, fading impact and look at it only every 100 ms, as in the audit of §3.2. How fast must the book update for the build-up to disappear?
+- [ ] Compute VPIN with buckets of 1/25 and 1/100 of a day's volume and windows of 25 and 100 buckets. Does the partial correlation of §3.3 stay at zero across the grid?
+- [ ] Fit the Hawkes process of §3.4 with a kernel that reaches 1,000 seconds instead of 100. How far does the branching ratio rise, and which part of the kernel takes the extra weight?
+- [ ] Repeat the lead-lag test of §3.5 with a third venue. Does Binance lead both, and does the lead change with the hour of the day, which a constant offset between clocks could not do?
+- [ ] Take another timed announcement, a scheduled US data release or another post, and repeat Section 4: the flow, the price and the early-warning table in the hours before it.
+- [ ] Pick one result of this lecture and test it on a market of your choice.
+
+### 5.3 Reading
+
+For order-flow imbalance, Cont, Kukanov and Stoikov (2014), and Xu, Gould and Howison (2019) for several levels. For impact over time, Bouchaud, Gefen, Potters and Wyart (2004) and Lillo and Farmer (2004); Bouchaud et al. (2018) is the reference for this lecture and the last. For VPIN and its critique, Easley, López de Prado and O'Hara (2012) and Andersen and Bondarenko (2014). For Hawkes processes, Bacry, Mastromatteo and Muzy (2015), and Filimonov and Sornette (2015) on what biases the branching ratio. For lead and lag, Hoffmann, Rosenbaum and Yoshida (2013). For measuring price impact, Kyle (1985), Hasbrouck (2009) and Brennan et al. (2010), and Collin-Dufresne and Fos (2016) for why low impact does not rule out informed trading.
 
 ## References
 
@@ -424,8 +465,10 @@ Several questions remain open, and we invite independent tests:
 - American Presidency Project (2025). Truth Social posts, October 10, 2025. University of California, Santa Barbara. presidency.ucsb.edu/documents/truth-social-posts-october-10-2025. — the logged times of both posts (§4.1).
 - Andersen, T. G. and Bondarenko, O. (2014). VPIN and the flash crash. *Journal of Financial Markets* 17, 1–46. — the critique of VPIN (§2.3).
 - Bacry, E., Mastromatteo, I. and Muzy, J.-F. (2015). Hawkes processes in finance. *Market Microstructure and Liquidity* 1(1), 1550005. — survey; kernels and estimation (§2.4).
+- Bouchaud, J.-P., Bonart, J., Donier, J. and Gould, M. (2018). *Trades, Quotes and Prices: Financial Markets Under the Microscope*. Cambridge University Press. — the book and the trades that move it (§5.3).
 - Bouchaud, J.-P., Gefen, Y., Potters, M. and Wyart, M. (2004). Fluctuations and response in financial markets: the subtle nature of 'random' price changes. *Quantitative Finance* 4(2), 176–190. — the propagator model (§2.2).
 - Brennan, M. J., Chordia, T., Subrahmanyam, A. and Tong, Q. (2010). Sell-side illiquidity and the cross-section of expected stock returns. *Global Management Conference*, Bali, April–May 2010, 75–88; published as Sell-order liquidity and the cross-section of expected stock returns, *Journal of Financial Economics* 105(3), 523–541 (2012). — separate lambdas for buy and sell orders, equation (4) (§4.3).
+- Collin-Dufresne, P. and Fos, V. (2016). Insider trading, stochastic liquidity, and equilibrium prices. *Econometrica* 84(4), 1441–1475. — informed trading hides in noise trading that varies over time (§4.2).
 - Cont, R., Cucuringu, M. and Zhang, C. (2023). Cross-impact of order flow imbalance in equity markets. *Quantitative Finance* 23(10), 1373–1393. — order-flow imbalance over several levels (§2.1).
 - Cont, R., Kukanov, A. and Stoikov, S. (2014). The price impact of order book events. *Journal of Financial Econometrics* 12(1), 47–88. — order-flow imbalance (§1).
 - Easley, D., López de Prado, M. and O'Hara, M. (2012). Flow toxicity and liquidity in a high-frequency world. *Review of Financial Studies* 25(5), 1457–1493. — VPIN (§2.3).
