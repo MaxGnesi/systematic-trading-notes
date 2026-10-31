@@ -90,13 +90,107 @@ With fading impact, twenty buys lift the mid by 12.7 ticks, not 20, and once ord
 
 **What it misses.** It is linear and an average: one large order and one small one count the same, and so do calm hours and a cascade. Time runs in orders, not seconds: on 1 October, 300 taker orders took 20 seconds in the busiest hour and about 3 minutes in the quietest. And the model has no cancellations: it describes trades only, while Section 2.1 showed that much of the pressure comes from orders that never trade.
 
-*Section 2.3 follows.*
+### 2.3 VPIN
+
+**Key message.** VPIN measures how one-sided trading has been, counted in volume rather than in time. Its authors built it as a warning of **toxic flow**, flow that is informed and that market makers lose to, and reported that it stood high hours before the US flash crash of 6 May 2010 (Easley, López de Prado and O'Hara, 2012). A later study found that it peaked after the crash, not before, and that it mostly tracks how much is being traded (Andersen and Bondarenko, 2014). Which reading holds on our data is hypothesis H4.
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | Cut the trades into buckets of equal volume $`V`$, one fiftieth of an average day's volume | A clock that ticks with trading: in a busy hour buckets fill in minutes, at night in hours |
+| 2 | In each bucket, the volume bought by takers, $`V^B`$, and sold, $`V^S`$ | Who was in a hurry within the bucket |
+| 3 | Imbalance of the bucket: $`\lvert V^B - V^S \rvert / V`$ | 0: as much bought as sold; 1: all on one side |
+| 4 | VPIN: the average imbalance over the last 50 buckets | How one-sided about the last day's volume has been |
+| 5 | Alarm: VPIN above the 90th percentile of its own history | The original use: a signal to widen quotes or step back |
+
+<sub><b>How to read the table.</b> VPIN: volume-synchronized probability of informed trading. The original estimates the sides of step 2 without trade-by-trade data, by **bulk volume classification**: within one-minute bars, the share of a bar's volume counted as bought is $`\Phi(\Delta p / \sigma)`$, with $`\Delta p`$ the bar's price change, $`\sigma`$ its standard deviation and $`\Phi`$ the normal distribution function. Bybit records the taker side of every trade, so we use the true sides and report the estimated version beside them.</sub>
+
+![VPIN on invented volume buckets, and how bulk volume classification turns a price move into one-sided volume](figures/20_05_vpin_card.png)
+<sub><b>How to read the figure.</b> Invented. <b>Left:</b> 100 buckets of equal volume; grey bars: the imbalance of each bucket; black line: VPIN, the average of the last 50 buckets, drawn once 50 buckets exist. Buckets 71 to 100 (shaded): sellers take the lead, about a quarter of each bucket's volume is bought. <b>Right:</b> under bulk classification, the share of a bar counted as bought (blue) and the imbalance this implies (dashed), against the bar's price change in standard deviations.</sub>
+
+On the left, VPIN stands at 0.15 while the buckets are balanced and climbs to 0.37 as the selling buckets fill its window. It moves slowly by design: one new bucket replaces one of fifty. Because buckets are counted in volume, the 30 selling buckets may last half a day in a quiet market or an hour in a busy one, and VPIN rises faster in clock time when the volume comes faster.
+
+The right panel shows one source of trouble with the original's estimated sides. Under bulk classification, a bar whose price moved by two standard deviations is counted as 98% bought, whoever actually traded: large moves turn into one-sided volume by construction, so VPIN partly measures volatility. Andersen and Bondarenko (2014) found a second, separate link: VPIN rises mechanically with trading intensity, and once intensity is accounted for it adds nothing to the forecast of volatility; its authors replied in the same journal, and the exchange did not settle the question. With the true sides the first link disappears and the second remains: whether VPIN says anything about the next hour that the last hour's volume and volatility do not already say. That is what H4 tests.
+
+**What it misses.** It has settings that matter: the bucket size, the window of 50, and for the original the classification. It counts trades only, not the orders placed and cancelled that Section 2.1 showed. And a one-sided bucket does not show who was informed: a large trader working an order looks the same as one who knows something.
+
+### 2.4 Hawkes processes
+
+**Key message.** Trades and cancellations come in clusters: one event raises the chance of more. A Hawkes process models this directly (Hawkes, 1971). It splits activity into events that come from outside, such as news or a trader's own decision, and events triggered by earlier events, such as the orders of a split order, traders reacting to a trade, or market makers reacting to each other. The **branching ratio** is the share that is triggered: how far the market feeds on itself.
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | Outside rate $`\mu`$, events per second | Activity that does not depend on the market's own recent past |
+| 2 | Intensity $`\lambda(t) = \mu + \sum_{t_j < t} \phi(t - t_j)`$ | The expected rate of events now: each past event adds a bump $`\phi`$ that fades with time |
+| 3 | Branching ratio $`n = \int_0^\infty \phi(s)\,ds`$ | The number of events one event triggers directly, on average; also the share of all events that are triggered |
+| 4 | Average rate $`\mu / (1 - n)`$ | With $`n`$ = 0.5 activity is twice the outside rate; with $`n`$ = 0.9 ten times; at $`n`$ = 1 it would never settle |
+| 5 | Fit $`\mu`$ and $`\phi`$ by maximum likelihood, hour by hour | So that the daily rise and fall of activity is not read as one event triggering another |
+
+<sub><b>How to read the table.</b> $`t_j`$: times of past events. We use for $`\phi`$ a sum of exponentials with decay times from 1 ms to 100 s, each with its own weight (Bacry, Mastromatteo and Muzy, 2015); the branching ratio is the sum of the weights. Step 5 follows Filimonov and Sornette (2015), who showed that ignoring the daily pattern, outliers or changes of regime makes $`n`$ look larger than it is.</sub>
+
+![A Hawkes process on invented events next to a Poisson process with the same average rate, events by origin, and the intensity](figures/20_06_hawkes_card.png)
+<sub><b>How to read the figure.</b> Invented, 120 seconds. <b>Top:</b> events at independent random times, 1.6 per second on average. <b>Middle:</b> a Hawkes process with the same average rate: events from outside (black) at 0.4 per second, each triggering on average 0.75 more after about a second (orange). <b>Bottom:</b> its intensity, the expected rate of events at each moment; the dotted line is the outside rate.</sub>
+
+Both rows hold about the same number of events, but they look different. Without excitation the events are spread evenly; with it they bunch: around 25 seconds one outside event sets off a cascade, and the intensity climbs to almost ten events a second, more than 20 times the outside rate, before it fades. In this simulation 73% of the events were triggered, close to the branching ratio of 0.75 that generated them. A market close to $`n`$ = 1 would be one where small shocks can set off very large bursts. Filimonov and Sornette (2012) estimated that the share rose from about 0.3 in 1998 to above 0.7 from 2007 on S&P 500 futures, and Hardiman, Bercot and Bouchaud (2013), with a kernel that fades more slowly, found it close to 1; whether BTCUSDT stays clearly below 1 is hypothesis H5.
+
+**Two causes of a burst.** A burst of cancellations can be a chain, one market maker reacting to another, or a common trigger, many reacting at once to the same news. The Hawkes kernel separates the two by timing: a chain spreads out with delays of about one reaction time; a common trigger arrives all at once, more events in the same instant than the kernel can explain. Our book arrives every 100 ms and market makers react in milliseconds, so for cancellations a whole chain can fit within one update and look simultaneous. Trades carry millisecond times, which is why Section 3 fits the model to taker orders and reports cancellations only from 100 ms upwards.
+
+**What it misses.** The branching ratio depends on the kernel: a fast-fading kernel and one with a long tail give different answers on the same data, which is part of why the literature disagrees. Excitation in the model is always positive; it does not let one event make others less likely. And a triggered event is a statistical attribution, not an observed cause.
+
+### 2.5 Lead and lag between venues
+
+**Key message.** BTCUSDT trades on many venues at once, and when the price moves, one venue usually moves first and the others follow within milliseconds. Correlating the price changes of two venues at different lags shows how far one is behind the other. On our data the two venues are Bybit and Binance; which one leads is hypothesis H6, and the answer matters to anyone who quotes on one venue and watches the other (Lecture 24).
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | The two price series, each at its own trade times | Prices as they were actually traded, without filling gaps |
+| 2 | Shift the times of one venue by a lag $`\tau`$ | Ask: does B, read $`\tau`$ later, move with A? |
+| 3 | Correlation of the price changes, from all pairs of changes whose time intervals overlap | The Hayashi-Yoshida estimator, built for prices that change at different times (Hayashi and Yoshida, 2005; Hoffmann, Rosenbaum and Yoshida, 2013) |
+| 4 | Repeat for $`\tau`$ from −1 s to +1 s; the lead is the lag with the highest correlation | How long the follower takes |
+| 5 | Lead-lag ratio: the sum of squared correlations at positive lags divided by that at negative lags | Above 1: A leads on balance (Huth and Abergel, 2014) |
+
+<sub><b>How to read the table.</b> Resampling both series on a common clock and taking the last price in each interval biases correlations towards zero at short intervals; the Hayashi-Yoshida estimator avoids this by never resampling.</sub>
+
+![Lead and lag on two invented venues: half a second of trades, and the correlation by lag with and without an offset between the clocks](figures/20_07_leadlag_card.png)
+<sub><b>How to read the figure.</b> Invented. <b>Left:</b> half a second of trades on two venues that follow the same price, venue B 20 ms behind venue A. <b>Right:</b> the Hayashi-Yoshida correlation of their price changes by lag; positive lags mean A moves first. Solid: both clocks correct; dotted: the same trades with B's clock running 8 ms fast.</sub>
+
+The correlation peaks at 20 ms, the delay that was built in, and the lead-lag ratio is 18: A clearly leads. The dotted line shows the limit of the method. If B's timestamps run 8 ms fast, the peak moves to 28 ms, and nothing in the prices tells the two cases apart. Bybit and Binance stamp their trades with their own clocks, and an offset of a few milliseconds between them is plausible. A lead measured on their data is therefore a lead plus an unknown constant. Two things help. A lead much larger than any plausible offset is real. And an offset is the same at all times, so a lead that changes with market conditions, larger in calm hours than in a cascade, cannot be an offset alone.
+
+**What it misses.** It measures who moves first on average, not why: the follower may be slower, or traders may arbitrage the gap from one side only. A lead of a few milliseconds is visible but not usable by a trader whose orders take longer to arrive. And correlation sees only linear co-movement; a venue can lead in large moves and follow in small ones.
+
+### 2.6 The statistics side by side
+
+| Statistic | Kind | What it captures | From | Blind spot | Tested in |
+|---|---|---|---|---|---|
+| Book imbalance (Lecture 19) | Level | Which side of the book outweighs the other | The book at one moment | What happened before; walls | Lecture 19 |
+| Order-flow imbalance | Delta | Pressure on the best prices: trades, additions, cancellations | Book updates | Deeper levels; events within one update | H1, H2 |
+| Trade imbalance | Delta | Net taker buying | Trades | Orders that never trade | H1 (as the rival) |
+| Kyle's lambda | Delta | The price move per BTC of net taker flow | Trades and mid | Time: it is one number per interval | Section 4 (H9) |
+| Propagator | Delta | Each order's own impact over time, apart from the orders that follow | Trades and mid | Size; cancellations | H3 |
+| VPIN | Delta | How one-sided the volume has been | Trades | What volume and volatility already say | H4, H9 |
+| Hawkes branching ratio | Delta | How far activity triggers more activity | Times of taker orders | The choice of kernel; causes | H5, H9 |
+| Lead and lag | Delta | Which venue moves first, by how much | Trades of both venues | Offsets between clocks | H6, H7 |
+
+<sub><b>How to read the table.</b> Kind: a level is a state at one moment; a delta is a change over an interval (Section 1). Tested in: the hypotheses of [results/hypotheses.md](results/hypotheses.md), fixed before the results; Section 4 tests some of the same statistics on 10 October.</sub>
+
+All statistics but the first are deltas, and all but order-flow imbalance are built from trades alone. They share one limit: they see what was done, not who did it or why. A one-sided hour can be informed selling or a fund rebalancing; a burst of triggered events can be traders reacting to each other or to a common piece of news; a lead can be speed or a clock. Section 3 measures what each says on the 45 days; Section 4 asks whether any of them changed before the fall of 10 October.
+
+*Section 3 follows.*
 
 ## References
 
+- Andersen, T. G. and Bondarenko, O. (2014). VPIN and the flash crash. *Journal of Financial Markets* 17, 1–46. — the critique of VPIN (§2.3).
+- Bacry, E., Mastromatteo, I. and Muzy, J.-F. (2015). Hawkes processes in finance. *Market Microstructure and Liquidity* 1(1), 1550005. — survey; kernels and estimation (§2.4).
 - Bouchaud, J.-P., Gefen, Y., Potters, M. and Wyart, M. (2004). Fluctuations and response in financial markets: the subtle nature of 'random' price changes. *Quantitative Finance* 4(2), 176–190. — the propagator model (§2.2).
 - Cont, R., Cucuringu, M. and Zhang, C. (2023). Cross-impact of order flow imbalance in equity markets. *Quantitative Finance* 23(10), 1373–1393. — order-flow imbalance over several levels (§2.1).
 - Cont, R., Kukanov, A. and Stoikov, S. (2014). The price impact of order book events. *Journal of Financial Econometrics* 12(1), 47–88. — order-flow imbalance (§1).
+- Easley, D., López de Prado, M. and O'Hara, M. (2012). Flow toxicity and liquidity in a high-frequency world. *Review of Financial Studies* 25(5), 1457–1493. — VPIN (§2.3).
+- Filimonov, V. and Sornette, D. (2012). Quantifying reflexivity in financial markets: towards a prediction of flash crashes. *Physical Review E* 85(5), 056108. — the branching ratio of S&P 500 futures, 1998–2010 (§2.4).
+- Filimonov, V. and Sornette, D. (2015). Apparent criticality and calibration issues in the Hawkes self-excited point process model: application to high-frequency financial data. *Quantitative Finance* 15(8), 1293–1314. — what biases the branching ratio upwards (§2.4).
+- Hardiman, S. J., Bercot, N. and Bouchaud, J.-P. (2013). Critical reflexivity in financial markets: a Hawkes process analysis. *European Physical Journal B* 86(10), 442. — a branching ratio close to 1 (§2.4).
+- Hawkes, A. G. (1971). Spectra of some self-exciting and mutually exciting point processes. *Biometrika* 58(1), 83–90. — the Hawkes process (§2.4).
+- Hayashi, T. and Yoshida, N. (2005). On covariance estimation of non-synchronously observed diffusion processes. *Bernoulli* 11(2), 359–379. — correlation without resampling (§2.5).
+- Hoffmann, M., Rosenbaum, M. and Yoshida, N. (2013). Estimation of the lead-lag parameter from non-synchronous data. *Bernoulli* 19(2), 426–461. — lead and lag (§2.5).
+- Huth, N. and Abergel, F. (2014). High frequency lead/lag relationships — empirical facts. *Journal of Empirical Finance* 26, 41–58. — the lead-lag ratio (§2.5).
 - Kyle, A. S. (1985). Continuous auctions and insider trading. *Econometrica* 53(6), 1315–1335. — Kyle's lambda (§2.2).
 - Silantyev, E. (2019). Order flow analysis of cryptocurrency markets. *Digital Finance* 1, 191–218. — trade and order-flow imbalance on the BitMEX bitcoin perpetual (§1).
 - Xu, K., Gould, M. D. and Howison, S. D. (2019). Multi-level order-flow imbalance in a limit order book. *Market Microstructure and Liquidity* 4(3–4), 1950011. — order-flow imbalance over several levels (§2.1).
