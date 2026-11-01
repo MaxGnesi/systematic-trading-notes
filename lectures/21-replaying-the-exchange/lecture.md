@@ -4,7 +4,7 @@
 
 Lectures 18 to 20 described Bybit's BTCUSDT book, measured its state and measured its flow. This lecture puts our own orders into the recorded market and asks what would have happened to them: when a resting order is filled, at what price a market order is executed, and what the price does afterwards. A replay is only useful if it tells the truth, so the lecture builds one piece by piece and then tests it on the same 45 days, 20 September to 3 November 2025. The hypotheses were fixed before any result was computed ([results/hypotheses.md](results/hypotheses.md)).
 
-*Draft: Sections 1, 2.1 and 2.2. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
+*Draft: Sections 1 and 2.1 to 2.3. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
 
 ## 1. Three replays of one order
 
@@ -128,3 +128,39 @@ On the book we saw, 0.6 BTC was offered at USD 100,000.1, enough for our 0.5 at 
 **Good orders fail.** Albers et al. (2025) measured this live: 3.1 million market orders of the minimum size on Bybit's inverse BTCUSD perpetual in April 2023, sent from a server close to the exchange, each one compared with the best price it had seen. Overall 1.35% could not be filled at that price. When the price then fell or stayed, almost none failed (0.09%); as soon as it rose in the order's favour, the share jumped to 4.2% and grew by 2.2 percentage points per basis point of return: 15% at +5 bp, 26% at +10 bp. Failures were also more frequent in volatile hours. A backtest that fills every order at the price seen at the decision is therefore wrong in a biased way: it keeps the trades that paid and that, in reality, others took first.
 
 **What it misses.** First, $`L`$ itself: it differs by trader, connection and moment, and it rises in busy markets, exactly when it matters; the replay takes it as a fixed parameter and reports results at 10, 50 and 100 ms. Second, the race: the recorded trades show who won each race, not who else was racing. In the replay, our order arrives after every recorded trade that happened before $`t + L`$, even if in reality we might have been faster. Third, the recorded book at $`t + L`$ is itself known only to the last update plus the trades since (§2.1). Fourth, Albers et al.'s numbers come from a different contract (inverse, priced in USD with a 0.5 USD tick) and from 2023; on our data the replay can show the mechanism but cannot measure true failure rates, which only live orders reveal.
+
+### 2.3 The queue
+
+**Key message.** A resting order is filled only when everything ahead of it at its price has traded or left. The book shows how long the line is, not who leaves it, so a replay must assume how cancellations split between ahead of us and behind us. One dial, $`a`$, spans the assumptions, from an even split to "never ahead of us".
+
+Lecture 19 (§2.4) introduced the line and showed that L2 data cannot say whose order was cancelled. This card turns the line into the queue rule of §1.
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | When our order arrives, the size ahead of it is the size displayed at our price: the last update minus the trades since (§2.1) | We join at the back: everyone already there was first |
+| 2 | A sell trade of size $`s`$ at our price: if $`s`$ is larger than the size ahead, we are filled; otherwise the size ahead falls by $`s`$ | Trades serve the line from the front |
+| 3 | A cancellation of size $`c`$ at our price (§2.1, step 3): the size ahead falls by $`p \cdot c`$, with $`p = x^a`$ and $`x`$ = ahead / (ahead + behind); never more is taken from behind us than stands there | Someone left the line; $`p`$ is the share assumed to have stood in front of us |
+| 4 | An increase at our price joins behind us | Later arrivals queue after us |
+| 5 | A sell trade below our price fills whatever is left of our order | The whole line at our price has been served |
+
+<sub><b>How to read the table.</b> $`x`$ is our position in the line, the share of the displayed size that stands ahead of us: 1 at the back, 0 at the front. The dial $`a`$ sets $`p`$: $`a = 1`$ splits a cancellation in proportion to the size on each side, as if every unit of size were equally likely to leave; a larger $`a`$ puts more of it behind us; $`a = \infty`$ puts none ahead unless nobody stands behind us, the "risk-averse" model of hftbacktest. Our results use $`a`$ = 1, 2, 5, 20 and ∞ (hypothesis H3).</sub>
+
+![The queue on the invented book: the size ahead of our bid under three dials, and the share of a cancellation put ahead of us as a function of our position](figures/21_05_queue_card.png)
+<sub><b>How to read the figure.</b> <b>Left:</b> the bid of §2.1 at USD 100,000.0 joins at 60 ms behind 1.7 BTC, and the invented book runs on to 420 ms. Grey: the size displayed at our price, without our order; blue lines: the size ahead of our bid, under $`a = 1`$ (solid), $`a = 2`$ (dotted) and $`a = \infty`$ (dashed); stars: our fill under each; orange line: the touch rule's fill. Triangles: sell trades at our price, with their size; cross: a sell below our price. <b>Right:</b> $`p = x^a`$ against $`x`$ for $`a`$ = 1, 2, 5 and 20, and $`a = \infty`$ (dashed); the dot marks our bid at 300 ms.</sub>
+
+Until 200 ms the dial plays no part. The cancellation at 100 ms happened before anyone joined behind us, so all of it stood ahead; trades then shorten the line from 1.7 to 0.8 BTC. At 200 ms, 0.8 BTC joins behind us. At 300 ms, 0.8 BTC is cancelled, and now the answer depends on the dial: with 0.6 BTC ahead and 0.8 behind, $`x = 0.43`$.
+
+| Dial | Share of the 0.8 BTC put ahead of us | Size ahead after 300 ms | Filled |
+|---|---|---|---|
+| Touch rule (no line) | | | at 70 ms, by the first sell of 0.2 BTC |
+| $`a = 1`$ | 43% | 0.26 BTC | at 340 ms, by the sell of 0.5 BTC |
+| $`a = 2`$ | 18% | 0.45 BTC | at 340 ms, by the sell of 0.5 BTC |
+| $`a = \infty`$ | 0% | 0.60 BTC | at 420 ms, when the price runs through |
+
+<sub><b>How to read the table.</b> The invented example of the figure. Under $`a = \infty`$ the sell of 0.5 BTC at 340 ms leaves 0.1 BTC ahead of us, and our turn never comes before the price moves through our level.</sub>
+
+The touch rule fills the bid 270 ms before any version of the line would, while 1.7 BTC still stood in front of it. Among the queue rules, the dial moves the fill from a trade at our price to the moment the price runs through it: the same order becomes a fill at a stable price or a fill just before a fall (§2.4).
+
+**The dial in the literature.** Rigtorp (2013) proposed the split for L2 data, with the share ahead set by a function of the size ahead and behind, and suggested calibrating it on one's own fills. The open-source backtester hftbacktest offers the risk-averse model and probabilistic splits of the same kind. Databento (2025), with order-by-order data from CME's E-mini S&P 500 future, reported that cancellations come mostly from the back of the line, "much stronger than you'd think"; the example code that goes with it uses a power of the position of the same shape as our $`x^a`$, with $`a`$ of 1 or more. One reason for the back, an argument rather than a measurement: an order that has just joined has the least to lose by leaving, while an order near the front is about to be filled.
+
+**What it misses.** First, the truth: which orders were cancelled is recorded only in order-by-order (L3) data, which Bybit does not publish (Lecture 18, §2), so on our data the dial can be varied but not measured. Second, the split may depend on more than our position: on how long the line is, on how fast the price is moving, on the hour (Lecture 19, §3.7). Third, everything inside one 100 ms update (§2.1): a large order that joins and leaves within it is never seen. Fourth, our own order is not in the displayed size, so the line behind us is the size added after we joined, not including us; for an order of 0.001 BTC this changes nothing, for 5 BTC it does (§2.5).
