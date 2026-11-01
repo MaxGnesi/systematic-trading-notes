@@ -1,5 +1,6 @@
 """Settings shared by the Lecture 19 scripts. Environment variables: BYBIT_ROOT, the Bybit data folder of Lecture 18 (default: data/bybit at the
-top of the repository), whose parquet/ holds the converted book and trades; BINANCE_ROOT, the Binance archive (default: data/binance), used in §4;
+top of the repository), whose parquet/ holds the converted book and trades; BINANCE_ROOT, the Binance archive (default: data/binance), used in §4; L18_OUT, where Lecture 18 wrote its
+results (default: BYBIT_ROOT/interim/l18), whose pulls §3.7 uses;
 L19_OUT, where results are written (default: BYBIT_ROOT/interim/l19); L19_PREFIX, put before the names of the figures (the notebook uses nb_, so
 that the lecture's own figures are never overwritten). Results are read from L19_OUT if there, otherwise from results/ next to this folder: the
 45-day results shipped with the lecture."""
@@ -12,6 +13,7 @@ SYM = "BTCUSDT"
 ROOT = Path(os.environ.get("BYBIT_ROOT", REPO / "data" / "bybit"))
 PARQUET = ROOT / "parquet"; TRADES = PARQUET / "trades" / SYM
 BN_RAW = Path(os.environ.get("BINANCE_ROOT", REPO / "data" / "binance")) / "raw" / "aggTrades" / SYM
+PULLS = Path(os.environ.get("L18_OUT", ROOT / "interim" / "l18")) / "pulls"                 # Lecture 18's pulls, for §3.7
 OUT = Path(os.environ.get("L19_OUT", ROOT / "interim" / "l19"))
 STATE, S3, BN = OUT / "state", OUT / "s3", OUT / "binance"
 for p in (STATE, S3, BN): p.mkdir(parents=True, exist_ok=True)

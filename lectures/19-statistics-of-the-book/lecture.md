@@ -221,6 +221,7 @@ Section 2 showed each statistic on invented books. This section measures them on
 | 3.4 | Shape of the book and queues | H9–H11 and icebergs | 19_13 |
 | 3.5 | Markouts | H12–H13: adverse selection, and by size | 19_14 |
 | 3.6 | Verdicts | All 13, corrected for multiple tests | |
+| 3.7 | The book's clock (added) | H19–H23: pulls, spread and depth at round times; who refreshes | 19_16 |
 
 <sub><b>How to read the table.</b> One row per subsection, in the order of Section 2. Each subsection opens with its result, then the figure, then each hypothesis in turn.</sub>
 
@@ -326,6 +327,45 @@ Several questions remain open, and we invite independent tests:
 - Do the age filter's inversion and the continuation of mid changes hold on other venues and with a model that cancels in proportion rather than from the back?
 - Do the refilling chains of 10 October come from icebergs or from market makers requoting one price, and did they rise before the cascade?
 
+### 3.7 Does the book have a clock?
+
+*Added after the results above, on the model of Lecture 13 §7; its hypotheses, H19 to H23, were fixed before any of them was computed ([results/hypotheses.md](results/hypotheses.md)) and are corrected for multiple tests on their own.*
+
+Lecture 13 found that trading bunches at round times: the first minute of the hour, above all when funding is paid (00:00, 08:00 and 16:00 UTC), the half and quarter hours. Lecture 18 found a clock in the book's cancellations: more of them in the first seconds of every minute. This section asks whether the book itself changes at the round times of the trades. If it does, a market maker quoting then (Lecture 23) meets a different book, and a replay (Lecture 21) must place our orders into it.
+
+**How the test is set up.** The slots of Lecture 13, one minute each, fixed by the schedule: minute :00 with funding, minute :00 without, minute :30, minutes :15 and :45, minute :59. The control: minutes :07, :17, :37 and :47, which nobody schedules. Each measure in a slot is divided by its own average over the hour that ends 5 minutes before the slot, so that the comparison is local; the same for the control; the test is whether the slot's ratio exceeds the control's, with a bootstrap over the 44 days without 10 October. Two quantities planned at first were left out before any result: the refilling chains of §3.4, about 38 a day, too rare to compare minutes, and the rate of book updates, which Bybit's 100 ms publication caps at about ten a second all day.
+
+**Result.** The book has a clock, and it is not the one we expected. Quotes are withdrawn and replaced at the start of every minute, and much more so at the start of minutes :00 and :30; at those moments depth near the price does not thin, it jumps. The spread widens a little more often at round times, for a few seconds in all. And in the first seconds of :00 and :30, taker orders follow the direction of the last half hour, while the new depth goes to both sides.
+
+![The book's clock on 44 days: pulls and depth by second of the minute; seconds with a wider spread by slot; whether the depth added and the taker flow follow the last half hour](figures/19_16_book_clock.png)
+<sub><b>How to read the figure.</b> Bybit BTCUSDT, 44 days without 10 October. <b>Top:</b> by second of the minute, in minutes :00 and :30 of the hour (blue) and in all other minutes (grey). Left, the share of book updates with a pull (5 or more of the best 20 levels on one side losing size beyond trades, Lecture 18), relative to the day's share; right, the depth in the best 5 levels of both sides, relative to its average in the same clock hour; 1 is ordinary. <b>Bottom left:</b> the share of seconds whose spread was wider than one tick, by slot, with the number of such seconds. <b>Bottom right:</b> H23, the rank correlation, averaged over days, between the mid's return over the 30 minutes before the start of the minute and, left, the change in depth on the bid minus the ask from 5 s before to 10 s after; right, the net taker flow over the first 10 s; in minutes :00 and :30 (blue) and in the control minutes (grey).</sub>
+
+- **H21 (pulls) holds at :00 and :30.** The question: are quotes withdrawn more at round times than at minutes nobody schedules? Over the slot minute, pulls ran at 1.45 times their rate in the hour before at :00 with funding, 1.18 at other minutes :00 and 1.11 at :30, against 1.05 in the control minutes (p ≤ 0.001 for all three), with the same sign in and out of sample. The quarter hours did not differ (1.06, p = 0.25). The control minutes carry Lecture 18's clock too, so this is more than that clock. Second by second, the clock has two layers: at second 0 of an ordinary minute pulls run at 1.37 times the day's rate and fade over 10 to 20 seconds; at second 0 of minutes :00 and :30 they run at 1.77, and 1.92 a second later. The bump at second 30 that Lecture 18 reported is faint here (1.00 against 0.95 to 0.97 around it). Minute :59 runs the other way: pulls 0.80 times the hour's rate against 1.05, a quiet minute before the burst at :00.
+- **H19 (spread) holds, but the effect is small in absolute terms.** The question: does crossing the spread cost more at round times? The spread is one tick almost always: wider in 0.22% of the seconds of the control minutes. It was wider in 0.44% of the seconds of the funding minutes, 35 seconds over 18 of the 44 days, in 0.28% of the other minutes :00 and 0.26% of the quarter hours (p = 0.012, < 0.001 and 0.012); not at :30 (0.25%, p = 0.23) nor at :59 (0.18%). The test's own ratios are larger, because seconds of a wider spread are so rare that a few of them move a day's ratio a lot; the shares are the numbers to quote.
+- **H20 (depth thins) fails, and the data point the other way.** The question: is there less to trade against at round times, or already in the seconds before? Over the slot minute, depth relative to the hour before was 1.02 to 1.05 against 0.99 in the control, the opposite of the hypothesis at every slot. Second by second, depth jumps at the very start of minutes :00 and :30, to 1.15 times the hour's average, at the moment of the burst of pulls, and stays raised for 20 to 30 seconds; at the start of an ordinary minute it rises by about 2%. In the 10 seconds before the slot there was no thinning either (H20b), except in the funding minutes, where depth stood at 0.89 to 0.92 of its hourly average in the last three seconds before 00:00, 08:00 and 16:00; that rests on 132 minutes and is not a result. Pulls and more depth together mean quotes cancelled and replaced with more size. That was not a hypothesis, so we report it as a result on our sample with a mechanism to test, not as a tested claim.
+- **H22 (the funding minute is special) fails.** The question: does the book change more at the funding minute than at other minutes :00, as trading does? For the spread it leans that way (p = 0.077); for depth it does not (p = 0.48).
+- **H23 (who refreshes at :00 and :30?) holds for the taker orders, not for the depth.** The question: do the orders at :00 and :30 follow the last half hour, as signals recomputed when a 30-minute or hourly bar closes would, or do they have no direction, as a liquidity provider's refresh would not? The net taker flow over the first 10 seconds followed the return of the last 30 minutes with a rank correlation of +0.107, against +0.023 in the control minutes (difference +0.084, 95% interval +0.040 to +0.129, p < 0.001, positive on 36 of 44 days, in sample and out of sample); the flow was also larger, 9.2 BTC in absolute value against 5.4. The change in depth, bid minus ask, did not follow it: −0.006 against −0.024 (p = 0.25). The rule fixed in advance for a mixed outcome was to report it as mixed.
+
+| The question in plain words | Hypothesis | Main number | p | Verdict after correction |
+|---|---|---|---|---|
+| Are quotes withdrawn more at round times? | H21 | 1.45 (:00 funding), 1.18 (:00), 1.11 (:30) against 1.05 | ≤ 0.001 (three slots) | Holds at :00 and :30; fails at :15/:45 and :59 |
+| Is the spread wider than a tick more often? | H19 | 0.44% (:00 funding), 0.28% (:00), 0.26% (:15/:45) against 0.22% of seconds | 0.012, < 0.001, 0.012 | Holds at three slots; small |
+| Is there less depth during the round minute? | H20a | 1.02–1.05 against 0.99 | 0.74 to 1.00 | Fails at every slot: more depth, not less |
+| Do makers pull back before it? | H20b | No thinning in the 10 s before | 0.53 to 1.00 | Fails at every slot |
+| Is the funding minute special beyond other :00 minutes? | H22 | Spread leans so; depth not | 0.077; 0.48 | Fails |
+| Does the depth added follow the last half hour? | H23a | −0.006 against −0.024 | 0.25 | Fails |
+| Do taker orders follow the last half hour? | H23b | +0.107 against +0.023 | < 0.001 | Holds |
+
+<sub><b>How to read the table.</b> One row per hypothesis of [results/hypotheses.md](results/hypotheses.md); H19 to H21 are tested at each of five slots and H22 for the spread and depth, 22 tests corrected together by Benjamini-Hochberg at 5%, of which six hold; H23 has two parts, corrected on their own. "Against" gives the control minutes. "p" is one-sided, from 2,000 resamples of days; "< 0.001" means no resample went against the hypothesis. 44 days, without 10 October.</sub>
+
+What the clock means can be told only partly from public data, and we keep the reading to what our sample shows. Directional orders do act when bars close: buying after an up half hour and selling after a down one, though a correlation of 0.1 leaves most of that flow unexplained. The depth added at the same moment goes to both sides, so it is not the same traders, and it is not a liquidity provider refreshing every 30 minutes for its own sake, since market makers requote in milliseconds. One reading, which we have not tested: liquidity providers know that flow arrives at :00 and :30 and put out more size, on both sides, to meet it. For a resting order this cuts both ways: more competition in the queue at those moments, and a burst of taker flow in the direction of the last bar, that is, fills against the trend.
+
+Several questions remain open, and we invite independent tests:
+
+- Do the same clocks appear on Binance's book and on other symbols, and do they follow the minutes of the hour in UTC or the bars of particular trading platforms?
+- Is the depth added at :00 and :30 filled more, or cancelled again within seconds? Following each order through the queues (§2.4) would tell.
+- Do resting orders filled in the first seconds of :00 and :30 have worse markouts (§3.5) than those filled at other times?
+
 ## 4. 10 October
 
 On the evening of 10 October 2025, after a post announcing 100% US tariffs on China at 20:50:01.7 UTC, Bybit's BTCUSDT fell from about $117,000 to about $103,100 within 35 minutes, and more than $19 billion of leveraged positions were liquidated across crypto venues (Lecture 5; Lecture 18, §5.4). This section asks whether any statistic of Section 3 changed before the fall: whether the book gave a warning that a trader watching it could have used.
@@ -367,7 +407,7 @@ Questions that remain open:
 
 ## 5. Summary, exercises and reading
 
-### 5.1 Six takeaways
+### 5.1 Seven takeaways
 
 1. **A level is the state of the book at one moment; it says where orders rest, not how they got there.** Imbalance, the microprice, the shape of the book and the queues are all read from one such state. What changed in between, the flow, is the subject of Lecture 20.
 2. **The imbalance at the best ranks the next move of the mid nine times in ten.** On 45 days of Bybit BTCUSDT its AUC was 0.90 out of sample, on every day, and still 0.84 on 10 October. Most of this is mechanics: when the smaller of the two best queues holds less than 0.1 BTC, one ordinary market order empties it, and the forecast is 0.96; two seconds or more before the move, it is 0.62. Deeper levels add nothing.
@@ -375,6 +415,7 @@ Questions that remain open:
 4. **The microprice is a better guess of the price than the mid, and on BTCUSDT it must be estimated, not computed.** Read off the data, it cut the error of the next mid by 19% out of sample. The weighted mid assumes moves of one tick; here the mid jumps a median of 44 ticks.
 5. **Resting orders are mostly cancelled, and filled ones lose.** 92% of the size that left the best was withdrawn rather than traded. One second after a fill, the average resting order was 59 ticks per BTC under water; over 10 seconds the price moved against it by 64 ticks after the smallest takers and 204 after the largest. This is adverse selection, and it comes on top of a base maker fee of about 200 ticks.
 6. **No statistic of the book warned of 10 October before the price began to fall.** Refilling surged and the forecast weakened once the fall had begun; after it, depth fell to a third and Bybit and Binance parted by hundreds of dollars, while Bybit's own feed stayed fast. News set off the cascade, and a book does not anticipate news.
+7. **The book has a clock.** Quotes are withdrawn and replaced at the start of every minute, and much more so at the start of minutes :00 and :30, when depth near the price rises rather than falls and taker orders follow the last half hour. The spread widens a little more often at round times, for seconds. On this one symbol and 44 days; whether it holds elsewhere is open.
 
 ### 5.2 Exercises
 
@@ -385,6 +426,7 @@ Questions that remain open:
 - [ ] Count the refilling chains of §3.4 by hour of the day and by day of the week. Is there a clock in hidden size, as Lecture 18 found in cancellations?
 - [ ] Deep levels change less often than the best ones. Carry levels beyond the 50th forward for 1 second and fill only the top 50 from the data. How large is the error in depth within 5 bp, on calm seconds and on fast ones?
 - [ ] On the calm days, Bybit's book leans away from Binance's last price (H18b). Split the samples by which venue's price moved last. Does that explain the sign?
+- [ ] Repeat §3.7 at another round time of your choice, for example Deribit's option settlement at 08:00 on expiry Fridays (Lecture 13 §7.5). Does the book refresh there too?
 - [ ] Pick one result of this lecture and test it on a market of your choice.
 
 ### 5.3 Reading
