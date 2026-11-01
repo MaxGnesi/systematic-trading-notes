@@ -4,7 +4,7 @@
 
 Lectures 18 to 20 described Bybit's BTCUSDT book, measured its state and measured its flow. This lecture puts our own orders into the recorded market and asks what would have happened to them: when a resting order is filled, at what price a market order is executed, and what the price does afterwards. A replay is only useful if it tells the truth, so the lecture builds one piece by piece and then tests it on the same 45 days, 20 September to 3 November 2025. The hypotheses were fixed before any result was computed ([results/hypotheses.md](results/hypotheses.md)).
 
-*Draft: Sections 1 and 2.1. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
+*Draft: Sections 1, 2.1 and 2.2. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
 
 ## 1. Three replays of one order
 
@@ -105,3 +105,26 @@ Between the first two updates the displayed size fell from 2.0 to 1.2 BTC. Trade
 **Net, not gross.** The book reports only the net change between two updates. The 0.8 BTC added could have been 1.0 added and 0.2 cancelled, or an order placed and withdrawn twice; a replay built on 100 ms updates cannot tell. Lecture 18 (§4.4) met the same blind spot from the other side: a tenth of the trades happened at prices that the book of up to 100 ms earlier never showed, orders that arrived and were filled between two updates.
 
 **What it misses.** First, the gross flow inside each update, as above. Second, who cancelled: the book says that 0.3 BTC left the price, not whether it stood ahead of our bid or behind it; §2.3 shows why that matters. Third, the exact order of events within the same millisecond, and any difference between the clocks of the two streams, such as Bybit's publish delay (Lecture 19, §4). Fourth, our footprint: in the replay our bid takes part in no trade's record, and its presence changes nobody's behaviour (§2.5).
+
+### 2.2 The latency gap
+
+**Key message.** Our order meets a later book than the one we decided on. In that gap faster traders act, and they act most when the price is about to move: the trades we miss are disproportionately the ones that would have paid.
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | The book we decide on was published at the last update and reached us after a delay | Feed latency: our picture is already old when we look at it |
+| 2 | An order decided at $`t`$ reaches the matching engine at $`t + L`$ | Order-entry latency $`L`$: the time it takes to get our decision to the exchange |
+| 3 | A market order walks the book that stands at $`t + L`$; slippage = the average price expected from the book seen at $`t`$ minus the average price paid (for a buy) | The cost of the gap for an order that must be filled |
+| 4 | A limit order at the best price seen at $`t`$ (immediate-or-cancel) takes only what stands at that price at $`t + L`$; the rest is not filled | The gap as missed trades, for an order that must not pay more |
+| 5 | A cancellation also takes $`L`$ to arrive: a resting order can be filled after we decided to withdraw it | The gap for a resting order: a stale quote picked off |
+
+<sub><b>How to read the table.</b> Steps 1 and 2 add up to the gap between the book we saw and the book our order meets. Steps 3 to 5 are its cost for the three kinds of order of this lecture. A replay applies them by evaluating every order of ours against the recorded book at $`t + L`$, never at $`t`$.</sub>
+
+![The latency gap: the book we decide on and the book our order meets, on the invented book; and how often live market orders on Bybit missed the best price, by the return that followed](figures/21_04_latency_card.png)
+<sub><b>How to read the figure.</b> <b>Left and middle:</b> the ask side of the invented book of §2.1, best three levels. At 10 ms we decide to buy 0.5 BTC on the book last seen (light blue: what we expect to buy); a faster buyer takes 0.4 BTC at the best ask at 40 ms; our order arrives at 60 ms and buys what stands then (dark blue). Grey: size left in the book. <b>Right:</b> from Albers, Cucuringu, Howison and Shestopaloff (2025), eq. 17 with their Table 6: the share of their own minimum-size market orders on Bybit that could not be filled at the best ask or bid they had seen, against the return over the next ten trigger events of their experiment (a median of 1.14 s), positive when the price moved in the order's favour.</sub>
+
+On the book we saw, 0.6 BTC was offered at USD 100,000.1, enough for our 0.5 at one price. By the time our order arrived, a faster buyer had taken 0.4 of it. A market order still gets its 0.5 BTC, 0.2 at USD 100,000.1 and 0.3 one tick higher, an average of USD 100,000.16 instead of 100,000.1. A limit order at USD 100,000.1 pays no more, but buys only 0.2 BTC. Suppose the faster buyer was right and the ask stands at USD 100,000.6 a second later: the 0.3 BTC the limit order missed is exactly the part that would have earned most.
+
+**Good orders fail.** Albers et al. (2025) measured this live: 3.1 million market orders of the minimum size on Bybit's inverse BTCUSD perpetual in April 2023, sent from a server close to the exchange, each one compared with the best price it had seen. Overall 1.35% could not be filled at that price. When the price then fell or stayed, almost none failed (0.09%); as soon as it rose in the order's favour, the share jumped to 4.2% and grew by 2.2 percentage points per basis point of return: 15% at +5 bp, 26% at +10 bp. Failures were also more frequent in volatile hours. A backtest that fills every order at the price seen at the decision is therefore wrong in a biased way: it keeps the trades that paid and that, in reality, others took first.
+
+**What it misses.** First, $`L`$ itself: it differs by trader, connection and moment, and it rises in busy markets, exactly when it matters; the replay takes it as a fixed parameter and reports results at 10, 50 and 100 ms. Second, the race: the recorded trades show who won each race, not who else was racing. In the replay, our order arrives after every recorded trade that happened before $`t + L`$, even if in reality we might have been faster. Third, the recorded book at $`t + L`$ is itself known only to the last update plus the trades since (§2.1). Fourth, Albers et al.'s numbers come from a different contract (inverse, priced in USD with a 0.5 USD tick) and from 2023; on our data the replay can show the mechanism but cannot measure true failure rates, which only live orders reveal.
