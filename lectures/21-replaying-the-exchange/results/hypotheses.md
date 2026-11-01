@@ -1,7 +1,6 @@
-# Lecture 21: hypotheses (DRAFT for review, not yet fixed)
+# Lecture 21: hypotheses, fixed before the results
 
-Draft of 2026-11-01. Nothing has been computed. Once agreed, the hypotheses are fixed with a date, before any result, as in Lectures 19
-and 20.
+H1-H9 fixed 2026-11-01, after review, before any of their results were computed.
 
 ## The plan of the lecture
 
