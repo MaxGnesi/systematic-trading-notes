@@ -56,3 +56,56 @@ fig.update_layout(title="A replay merges two recorded streams: trades explain pa
                   height=600, width=1100, margin=dict(t=95, l=120, r=30, b=60), legend=dict(orientation="h", y=-0.14, x=0))
 save_figure(fig, L21.PREFIX + "21_03_replay_card", FIG)
 print(steps)
+
+# 21_04: the latency gap. The same invented book, ask side: we decide at 10 ms to buy 0.5 BTC on the book last seen; a faster buyer takes 0.4 BTC
+# at the best ask at 40 ms; our order arrives at 60 ms. Right: the failure probability of minimum-size market orders on Bybit against the return
+# that followed them, the model of Albers, Cucuringu, Howison and Shestopaloff (2025), eq. (17) with their Table 6 (Bybit BTC).
+ASKS_SEEN = [(100_000.1, 0.6), (100_000.2, 1.5), (100_000.3, 2.0)]
+FAST, BUY = 0.4, 0.5
+ASKS_MET = [(p, q - FAST if i == 0 else q) for i, (p, q) in enumerate(ASKS_SEEN)]
+
+
+def walk(book, size):
+    """Fills of a market buy of `size` walking `book` [(price, size), ...]: [(price, filled), ...]."""
+    out = []
+    for p, q in book:
+        if size <= 1e-12: break
+        f = min(q, size); out.append((p, f)); size -= f
+    return out
+
+
+exp, got = walk(ASKS_SEEN, BUY), walk(ASKS_MET, BUY)
+avg = lambda f: sum(p * q for p, q in f) / sum(q for _, q in f)
+print("expected", exp, round(avg(exp), 2), "met", got, round(avg(got), 3), "IOC at the best:", got[0])
+C_, A_, B_ = 0.00088, 0.0424, 0.02187
+fig = make_subplots(rows=1, cols=3, column_widths=[0.27, 0.27, 0.46], horizontal_spacing=0.09,
+                    subplot_titles=("10 ms: the book we decide on", "60 ms: the book our order meets",
+                                    "Bybit, live orders: missing the best price"))
+ylab = [f"USD {p:,.1f}" for p, _ in ASKS_SEEN]
+for col, book, fills, lab in ((1, ASKS_SEEN, exp, "we expect to buy"), (2, ASKS_MET, got, "our market order buys")):
+    ours = [dict(fills).get(p, 0.0) for p, _ in book]
+    fig.add_bar(y=ylab, x=ours, orientation="h", marker_color=SERIES[0] if col == 2 else "#8fb8ea", name=lab,
+                text=[f"{q:.1f}" if q else "" for q in ours], textposition="inside", insidetextanchor="middle", textangle=0, textfont=dict(color="white", size=11), row=1, col=col)
+    fig.add_bar(y=ylab, x=[q - o for (_, q), o in zip(book, ours)], orientation="h", marker_color=GRID, showlegend=False,
+                text=[f"{q - o:.1f}" if q - o > 0.15 else "" for (_, q), o in zip(book, ours)], textposition="inside", textfont=dict(color=INK, size=11),
+                row=1, col=col)
+    fig.update_xaxes(title_text="BTC offered", range=[0, 2.2], row=1, col=col)
+fig.add_annotation(x=0.3, y=ylab[0], text=f"a faster buyer took {FAST:.1f} at 40 ms", showarrow=False, xanchor="left", font=dict(size=10, color=INK),
+                   row=1, col=2)
+for c in (1, 2): fig.update_yaxes(type="category", categoryorder="array", categoryarray=ylab, row=1, col=c)
+xs = [x / 10 for x in range(-50, 101)]
+ys = [C_ if x <= 0 else A_ + B_ * x for x in xs]
+fig.add_scatter(x=[x for x in xs if x <= 0], y=[C_] * sum(x <= 0 for x in xs), mode="lines", line=dict(color=INK, width=2), showlegend=False, row=1, col=3)
+fig.add_scatter(x=[x for x in xs if x > 0], y=[A_ + B_ * x for x in xs if x > 0], mode="lines", line=dict(color=INK, width=2), showlegend=False, row=1, col=3)
+for x in (5, 10):
+    fig.add_annotation(x=x, y=A_ + B_ * x, text=f"+{x} bp: {A_ + B_ * x:.0%}", showarrow=True, arrowhead=0, ax=-45, ay=-20, font=dict(size=10, color=INK),
+                       row=1, col=3)
+fig.add_annotation(x=-2.5, y=0.03, text=f"price fell or stayed: {C_:.1%}", showarrow=False, font=dict(size=10, color=INK), row=1, col=3)
+fig.update_xaxes(title_text="return after the order, bp (positive: in the order's favour)", zeroline=True, zerolinecolor=GRID, row=1, col=3)
+fig.update_yaxes(title_text="share of orders that missed it", tickformat=".0%", range=[0, 0.3], row=1, col=3)
+fig.update_layout(barmode="stack", bargap=0.35,
+                  title="The latency gap: our order meets a later book than the one we decided on,<br>and that book has most likely changed when the trade would have paid"
+                        "<br><sup>Left and middle: the invented book of §2.1, ask side; we decide at 10 ms to buy 0.5 BTC, the order arrives at 60 ms. "
+                        "Right: Albers et al. (2025), eq. 17, fitted on 3.1 million minimum-size market orders, Bybit BTCUSD inverse perpetual, April 2023</sup>",
+                  height=500, width=1300, margin=dict(t=150, l=110, r=30, b=60), legend=dict(orientation="h", y=-0.22, x=0))
+save_figure(fig, L21.PREFIX + "21_04_latency_card", FIG)
