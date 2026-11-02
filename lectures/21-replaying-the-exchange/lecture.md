@@ -4,7 +4,7 @@
 
 Lectures 18 to 20 described Bybit's BTCUSDT book, measured its state and measured its flow. This lecture puts our own orders into the recorded market and asks what would have happened to them: when a resting order is filled, at what price a market order is executed, and what the price does afterwards. A replay is only useful if it tells the truth, so the lecture builds one piece by piece and then tests it on the same 45 days, 20 September to 3 November 2025. The hypotheses were fixed before any result was computed ([results/hypotheses.md](results/hypotheses.md)).
 
-*Draft: Sections 1 and 2. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
+*Draft: Sections 1, 2 and 3.1. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
 
 ## 1. Three replays of one order
 
@@ -320,3 +320,39 @@ Every piece of Sections 2.1 to 2.5 has its own family of models, built for one s
 <sub><b>How to read the table.</b> One row per family of models. "What it needs" is the data required to use or fit it; "Main blind spot" is what no model of the family can know from that data. The last column says what this lecture does with the family on Bybit's data, with the hypotheses of [results/hypotheses.md](results/hypotheses.md). Examples are named for the reader to look up; they are listed in the reading list.</sub>
 
 The first two families decide when our order is filled, the third how often, the fourth what it meets, the fifth what the fill is worth and the last what our order does to the market. A replay needs a choice in each. The touch rule, a constant latency, no queue and no reaction is the simplest replay and the most flattering; each later choice makes it more cautious and asks for data that L2 feeds do not contain. Lo, MacKinlay and Zhang (2002) warned, on stock orders, that hypothetical executions computed from price paths or trades are "very poor proxies" for actual ones. That is the question of Section 4: how far from the truth is our replay, and in which direction?
+
+## 3. The replay on our data
+
+Section 2 laid out the pieces on an invented book. This section builds each of them on Bybit's recorded book and trades, 20 September to 3 November 2025, in the order of an order's life (Figure 21_09): how the two recorded streams line up, what a market order meets after the latency gap, where a resting order stands in the line, and which of its fills are adverse. The measurements here are descriptive; the tests of the replay are Section 4.
+
+| § | Piece of §2 | What is measured on our data |
+|---|---|---|
+| 3.1 | What a replay is (§2.1) | Whether trades and book share one clock, and how much flow the 100 ms book hides |
+| 3.2 | The latency gap (§2.2) | What market, immediate-or-cancel and limit orders meet after 10, 50 and 100 ms |
+| 3.3 | The queue (§2.3) | Where our resting order stands, under the dial from $`a = 1`$ to $`a = \infty`$ |
+| 3.4 | Adverse fills (§2.4) | Which fills come as the price runs through, and what they are worth |
+
+### 3.1 Ordering trades against the book
+
+**The trades and the book share one clock to the millisecond. Even so, a book published every 100 ms hides about a fifth of the flow at the best price: size that was traded and replaced within the same update.**
+
+A replay merges two streams (§2.1). If their clocks disagree, trades land in the wrong interval between two book updates, and every inference about what was cancelled or added goes wrong with them. Lecture 18 (§4.4) chose the matching engine's time as the book's clock because more trades fit the book under it. Here the same question is asked more sharply, through the quantity the replay infers.
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | For each pair of consecutive book updates in which the best bid stayed at the same price, the change of its displayed size, $`\Delta q`$ | How the queue at the best moved between two snapshots |
+| 2 | The size sold by takers at that price between the two updates, $`T`$ | What certainly left the queue as fills |
+| 3 | Added $`= \max(\Delta q + T, 0)`$, cancelled $`= \max(-(\Delta q + T), 0)`$ | The replay's net inference: the rest of the change was new orders or cancellations |
+| 4 | Refilled unseen $`= \min(\text{added}, T)`$ | Where more was traded than the queue fell, new size must have arrived within the same update; the book never showed it |
+| 5 | Shift the trades by $`d`$ milliseconds against the book and repeat | If the clocks agree, misplaced trades only create refills that never happened: the share is smallest at the right alignment |
+
+<sub><b>How to read the table.</b> The same for the best ask, with taker buys. A trade stamped in the same millisecond as a book update is applied before it, the event order fixed in [results/hypotheses.md](results/hypotheses.md); only 1% of trades fall on such a millisecond, and applying them after the update changes the result by less than one percentage point (1 October).</sub>
+
+![What the 100 ms book hides: the share of traded size refilled unseen, with the trades shifted against the book, and day by day](figures/21_10_hidden_flow.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: shift of the trades in ms (x), share of traded size refilled unseen (y), one line per day. Right: day (x), the same share (y). <b>Left:</b> sells at the best bid on five days spread over the sample, with the trades shifted from 100 ms earlier to 100 ms later than recorded. <b>Right:</b> both sides, every day of the 45, at no shift; weekends light, 10 October orange; the dotted line is the median day.</sub>
+
+- **The clocks agree.** On every one of the five days the share is smallest at no shift, and it rises steeply either way: from 18–24% at no shift to 26–36% at 10 ms and 32–46% at 20 ms. A trade's timestamp and the book's engine time are the same clock, to within a few milliseconds. The event order of the replay is right.
+- **The book hides a fifth of the flow at the best.** On the median day, 22% of the size traded at an unchanged best price was replaced within the same update, in about a third of the intervals with trades. The share is lower at weekends (14–23%), when trading is thinner, and was among the highest on 10 October (27%).
+- **Cancellation still dominates.** Of the size that left the best queues, 92% is inferred as cancelled rather than traded, the same split as Lecture 19 (§3.4) found by the same bookkeeping.
+
+**What it means for the replay.** The net bookkeeping of §2.1 is correct in its order of events but blind to what happens inside 100 ms, and the blind spot has a direction. Trades are all recorded, and an addition always joins the back of the line, so what the book can hide from the queue rule is a cancellation ahead of our order offset by an addition behind it. The replay then counts nothing, and keeps our order further back than it may be. As our reasoning, not a measurement: within one update, the net book never makes the queue rule too optimistic, only too cautious. Feeds that publish more often (Bybit's best level every 10 ms, Lecture 18, §1.3) would shrink the blind spot; how much is an open question we invite readers to test.
