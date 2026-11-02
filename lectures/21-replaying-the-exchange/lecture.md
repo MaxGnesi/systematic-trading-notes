@@ -4,7 +4,7 @@
 
 Lectures 18 to 20 described Bybit's BTCUSDT book, measured its state and measured its flow. This lecture puts our own orders into the recorded market and asks what would have happened to them: when a resting order is filled, at what price a market order is executed, and what the price does afterwards. A replay is only useful if it tells the truth, so the lecture builds one piece by piece and then tests it on the same 45 days, 20 September to 3 November 2025. The hypotheses were fixed before any result was computed ([results/hypotheses.md](results/hypotheses.md)).
 
-*Draft: Sections 1 and 2.1 to 2.4. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
+*Draft: Sections 1 and 2.1 to 2.5. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
 
 ## 1. Three replays of one order
 
@@ -124,6 +124,8 @@ Between the first two updates the displayed size fell from 2.0 to 1.2 BTC. Trade
 <sub><b>How to read the figure.</b> <b>Left and middle:</b> the ask side of the invented book of §2.1, best three levels. At 10 ms we decide to buy 0.5 BTC on the book last seen (light blue: what we expect to buy); a faster buyer takes 0.4 BTC at the best ask at 40 ms; our order arrives at 60 ms and buys what stands then (dark blue). Grey: size left in the book. <b>Right:</b> from Albers, Cucuringu, Howison and Shestopaloff (2025), eq. 17 with their Table 6: the share of their own minimum-size market orders on Bybit that could not be filled at the best ask or bid they had seen, against the return over the next ten trigger events of their experiment (a median of 1.14 s), positive when the price moved in the order's favour.</sub>
 
 On the book we saw, 0.6 BTC was offered at USD 100,000.1, enough for our 0.5 at one price. By the time our order arrived, a faster buyer had taken 0.4 of it. A market order still gets its 0.5 BTC, 0.2 at USD 100,000.1 and 0.3 one tick higher, an average of USD 100,000.16 instead of 100,000.1. A limit order at USD 100,000.1 pays no more, but buys only 0.2 BTC. Suppose the faster buyer was right and the ask stands at USD 100,000.6 a second later: the 0.3 BTC the limit order missed is exactly the part that would have earned most.
+
+**A limit order that misses stays in the book.** A plain limit order, unlike an immediate-or-cancel order, is not cancelled when it cannot be filled at once: the part that finds nothing at its price becomes a resting order, with all the questions of §2.3 and §2.4. In the example, a limit buy of 0.5 BTC at USD 100,000.1 buys the 0.2 BTC still offered there and leaves 0.3 BTC resting at USD 100,000.1. The ask there is gone, so the bid becomes the new best bid, alone at the front of its line. If the faster buyer was right and the price rises, the bid is left behind unfilled: we missed the move. If the price comes back down, a seller fills it at once, just when buying was wrong. The order we meant as a trade has turned into a quote, and its fills lean towards the bad ones (§2.4). A replay must therefore know the type of every order: a market order walks the book at $`t + L`$; an immediate-or-cancel order takes what stands at its price and drops the rest; a limit order takes what stands and rests with the remainder, joining the line at its price from $`t + L`$ on. How often our marketable limit orders end up resting, and what their remainders earn, is measured in Section 3, by size.
 
 **Good orders fail.** Albers et al. (2025) measured this live: 3.1 million market orders of the minimum size on Bybit's inverse BTCUSD perpetual in April 2023, sent from a server close to the exchange, each one compared with the best price it had seen. Overall 1.35% could not be filled at that price. When the price then fell or stayed, almost none failed (0.09%); as soon as it rose in the order's favour, the share jumped to 4.2% and grew by 2.2 percentage points per basis point of return: 15% at +5 bp, 26% at +10 bp. Failures were also more frequent in volatile hours. A backtest that fills every order at the price seen at the decision is therefore wrong in a biased way: it keeps the trades that paid and that, in reality, others took first.
 
@@ -263,3 +265,38 @@ On the day of §1 the same picture appears in real data. The touch rule's fills 
 <sub><b>How to read the table.</b> Lalor and Swishchuk's shares are our computation from their Table 2: 81.5% (E-mini S&P 500), 65.8% (E-mini Nasdaq-100), 82.9% (crude oil), 88.8% (10-year note). Lalor and Swishchuk also show that simulations which treat every fill as non-adverse and at the front of the line are "over-inflated".</sub>
 
 **What it misses.** First, the definition depends on the interval: a fill just before the price runs through counts as non-adverse, as at 340 ms, so the split understates how bad fills are. Second, size: the formula counts one tick, while a fill before a large fall loses more. Third, $`R`$ is not a constant: it depends on our place in the line (§2.3), on the hour (Lecture 19, §3.7) and on the market. Fourth, scale: Bybit's base maker fee is 0.02%, 2 bp per fill (Lecture 19, §2.5), larger than every markout in the figure, so the sign of a maker's result is decided by fees, rebates and these fractions of a basis point together.
+
+### 2.5 Our footprint
+
+**Key message.** A replay assumes that our orders take nothing from the recorded market and change nobody's behaviour. For the smallest orders this is close to true. As our size grows towards the size of the queues, it fails, and in a direction that flatters us. This lecture measures where it starts to fail; Lecture 22 adds the footprint back.
+
+| Step | What the replay leaves out | Financial meaning |
+|---|---|---|
+| 1 | What our market order took is still in the recorded book afterwards | Liquidity counted twice: a second order of ours, or a later trader in the record, finds it again |
+| 2 | A recorded trade that fills our resting order also filled the recorded orders it filled in reality | Our fill is added to the record, not taken from someone in it |
+| 3 | Our trades do not move the recorded price | Impact (Lecture 20, §3.2): a large order pushes the price, and the push fades only slowly |
+| 4 | Nobody reacts to our resting size | A large bid can draw sellers to it, or scare others into cancelling or moving ahead (hypothesis H8) |
+| 5 | Our trades trigger no further trading | Most trading reacts to trading (Lecture 20, §3.4), and ours would too |
+
+<sub><b>How to read the table.</b> Each step is a way in which the real market would differ from the record if our order had been there. Steps 1 and 2 are mechanical and could be added by bookkeeping; steps 3 to 5 are behaviour and must be measured on other people's orders.</sub>
+
+![Our footprint: the invented book as recorded and as it would stand after our market buy; the size at the best bid on 1 October 2025 against the lecture's order sizes](figures/21_08_footprint_card.png)
+<sub><b>How to read the figure.</b> <b>Left and middle:</b> the ask side of the invented book of §2.2 at 100 ms. Left, as recorded: what the replay uses. Middle, as it would stand after our market buy of 0.5 BTC at 60 ms, if nobody refilled. <b>Right:</b> Bybit BTCUSDT, 1 October 2025: the size displayed at the best bid at each of the 5,760 moments of §1, as a cumulative share (log scale); dotted lines mark the lecture's order sizes, labelled with the share of moments in which the whole best queue was smaller than the order.</sub>
+
+In the record, 0.2 BTC still stands at USD 100,000.1 at 100 ms; our buy at 60 ms took it. A second buy of ours at 80 ms would be filled from it again, and a buyer in the record who took it at 90 ms would, in reality, have found the best ask a tick higher. One order of 0.5 BTC in a book of a few BTC is enough to make the record wrong about what stood there afterwards.
+
+The scale decides how much this matters. On 1 October the median queue at the best bid was 3.7 BTC:
+
+| Our order | Against the median best queue | Moments the whole best queue was smaller than our order |
+|---|---|---|
+| 0.001 BTC | 0.03% | 0.5% |
+| 0.01 BTC | 0.3% | 0.7% |
+| 0.1 BTC | 3% | 3% |
+| 1 BTC | 27% | 16% |
+| 5 BTC | 137% | 66% |
+
+<sub><b>How to read the table.</b> Our calculation for 1 October 2025, the size displayed at the best bid every 15 s; one in-sample day. The orders of 0.001 BTC are Bybit's minimum and the size of the test order of H1 to H4.</sub>
+
+At 0.001 BTC our order is a speck in the queue, and leaving the footprint out costs almost nothing. At 5 BTC our order is larger than the whole best queue two times in three: it would empty the level, move the price and be seen by everyone. The replay reports results at all five sizes, and two hypotheses measure where it stops being trustworthy. H7 compares what real large market orders paid with what the replay predicts from the book just before them. H8 measures how the market reacted when large size was added at the best, and the smallest addition that moved it sets the size above which replayed resting orders are flagged.
+
+**What it misses.** First, the reaction to *our* orders: H7 and H8 measure the market's reaction to other traders' large orders, and ours might be read differently, for example if they are recognisably the same size every time. Second, the slow part: impact that builds over minutes from many small orders of ours (Lecture 20, §3.2) is not visible in any single order. Third, everything that only live orders reveal. Lecture 22 adds the footprint back as layers on the recorded market, each calibrated on what Lectures 18 to 21 measured: depletion and refill, impact and its decay, triggered trading and the reaction of H8.
