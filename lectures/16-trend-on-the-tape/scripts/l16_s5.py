@@ -42,7 +42,7 @@ for c, (smp, key) in enumerate((("2021-2024", "sharpe"), ("2025-2026", "sharpe")
     fig.add_shape(type="rect", xref=("x" if c == 1 else f"x{c}"), yref=("y domain" if c == 1 else f"y{c} domain"), x0=1.5, x1=4.5, y0=0, y1=1, fillcolor="rgba(27,175,122,0.12)",
                   line_width=0, layer="below")
     if key == "sharpe": fig.add_hline(y=0, line=dict(color=INK, dash="dot", width=1), row=1, col=c)
-fig.update_yaxes(type="log", title_text="% a year (log scale)", row=1, col=3)
+fig.update_yaxes(type="log", title_text="% a year (log scale)", tickvals=[0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50], ticktext=["0.1", "0.2", "0.5", "1", "2", "5", "10", "20", "50"], row=1, col=3)
 fig.update_layout(title="A patient entry saves most where the rule trades most: at the fast speeds<br><sup>The rule of §2 with plain sizing and funding; the patient "
                         "entry's saving of 1.96 bp per unit traded is Lecture 15's measurement; shaded: the plateau; right of each panel: the blend</sup>",
                   height=480, width=1200, margin=dict(t=110, l=60), legend=dict(orientation="h", y=-0.3, x=0))
