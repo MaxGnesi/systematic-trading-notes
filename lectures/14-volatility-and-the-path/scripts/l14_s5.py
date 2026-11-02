@@ -111,7 +111,7 @@ for lab, col in (("realised variance", SERIES[0]), ("bipower", SERIES[3]), ("rea
     fig.add_scatter(x=xx, y=yy, mode="lines+markers", line=dict(color=col, width=2.3), marker=dict(size=7), name=lab)
 fig.add_hline(y=1, line=dict(color=MUTED, dash="dot"))
 fig.update_xaxes(type="log", tickvals=[1, 10, 60, 600, 3600, 86400, 604800], ticktext=["1 s", "10 s", "1 min", "10 min", "1 hour", "1 day", "1 week"], title_text="length of the bars the measure uses")
-fig.update_yaxes(title_text="÷ realised variance from one-minute returns", range=[0.5, 1.12])
+fig.update_yaxes(title_text="measure ÷ one-minute realised variance", range=[0.5, 1.12])
 fig.update_layout(title="Each measure has its own best interval<br><sup>Realised variance and bipower peak around a minute; the realised range (Parkinson per bar) needs bars of five minutes "
                         "or more and then stays level. Below a minute from 59 sample days, above from all days</sup>", height=470, width=1100, margin=dict(t=100),
                   legend=dict(orientation="h", y=-0.2, x=0))
