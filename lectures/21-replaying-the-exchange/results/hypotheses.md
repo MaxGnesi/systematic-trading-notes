@@ -82,4 +82,18 @@ Descriptive, not tested:
 - **Effective latency:** the L at which walking the book reproduces the prices of real large taker orders best.
 - **Limit orders that miss** (added 2026-11-02, before any result): for marketable limit orders of ours at the best price seen at t, the share left
   resting at t + L, by size and L, and the later fill rate and 10-s markout of the remainder under Q2 (a = 1).
+- **The reaction curve** (added 2026-11-02, before any result; it describes H8, it does not replace it). What it shows: how strongly the market
+  reacts to size added at the best, as a function of how large the addition was, so that the reader sees where the reaction starts and whether it
+  grows gradually or jumps, instead of a single threshold chosen in advance.
+  - Each point is one size class of additions. The size of an addition is measured against the queue it joined: x = size added in one book
+    update / size displayed at that price just before. Classes, by x: 5-10%, 10-25%, 25-50%, 50-100%, 100-200%, 200-400%, 400-800%, above 800%.
+  - For each addition: the move of the mid over the next 1 s and 10 s, in bp, signed so that positive is away from the addition (up after an
+    addition to the bid, down after one to the ask); minus the same move at its matched control moments, chosen as in H8 (same side, same decile
+    of the imbalance at the best, same hour of the day, same day). The point is the average over the additions in the class; the band is a 95%
+    interval from 2,000 resamples of days.
+  - Two curves: additions still there 1 s later, and additions removed within 1 s (spoof-like), the latter shown apart. Out of sample, by horizon.
+  - How to read it. A curve near zero for small x that rises from some class on: the market ignores small additions and notices large ones, and
+    the class where it leaves zero is the size from which a replay of resting orders is unreliable. A curve that rises from the smallest class
+    on: no size is safe, and the reaction is a cost that grows with size. A curve near zero everywhere: within our sizes, a replay of resting
+    orders needs no reaction layer. The verdict on validity remains H8's rule; the curve shows the shape around it.
 - Every result by size S, with sizes above the validity of H8 flagged.
