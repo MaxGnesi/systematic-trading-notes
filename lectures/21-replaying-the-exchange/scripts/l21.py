@@ -59,13 +59,14 @@ class Bid:
         lv = np.nonzero(btk == self.p)[0]; k0 = np.searchsorted(bc[lv], self.ta, "right") - 1
         self.ok = k0 >= 0
         if not self.ok: return
-        self.q = float(bsz[lv[k0]])                                                # displayed size when we join
-        ups = lv[k0 + 1:]; ups = ups[bc[ups] <= self.ta + hold]
         tt, ts_, tk, tz = (T[c].to_numpy() for c in ("ts", "side", "tick", "size"))
+        pre = float(tz[(tt > bc[lv[k0]]) & (tt <= self.ta) & (ts_ == -1) & (tk == self.p)].sum())   # sold at our price since that update
+        self.q = max(float(bsz[lv[k0]]) - pre, 0.0)                               # displayed size when we join: last update minus trades since
+        ups = lv[k0 + 1:]; ups = ups[bc[ups] <= self.ta + hold]
         tr = np.nonzero((tt > self.ta) & (tt <= self.ta + hold) & (ts_ == -1) & (tk <= self.p))[0]
         self.q0 = int(tt[tr[0]]) if len(tr) else None
         thr = [j for j in tr if tk[j] < self.p]; self.q1 = int(tt[thr[0]]) if thr else None
-        self.q2 = None; V, qlev, tsum = self.q, self.q, 0.0; path = [(self.ta, V, qlev)]
+        self.q2 = None; V, qlev, tsum = self.q, float(bsz[lv[k0]]), pre; path = [(self.ta, V, self.q)]
         for t, kind, j in sorted([(tt[j], 0, j) for j in tr] + [(bc[u], 1, u) for u in ups]):
             if kind == 0:
                 if tk[j] < self.p or tz[j] > V: self.q2 = int(t); break

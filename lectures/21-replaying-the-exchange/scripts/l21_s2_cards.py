@@ -187,18 +187,30 @@ MODELS = [  # (label, share ahead as a function of (front, back), colour, dash)
     ("hftbacktest power variant 3, n = 2; our a = 2", lambda f, b: (f / (f + b)) ** 2, "#5d9be3", "dash"),
     ("hftbacktest risk-averse; our a = ∞", lambda f, b: 0.0 if b > 0 else 1.0, INK, "dash"),
 ]
-fig = go.Figure()
+fig = make_subplots(rows=1, cols=2, column_widths=[0.58, 0.42], horizontal_spacing=0.1,
+                    subplot_titles=("Each model's share, by our position in the line", "How the parameter moves it, at our position x = 0.43"))
 xs = [i / 200 for i in range(1, 200)]
 for lab, fn, c, dash in MODELS:
-    fig.add_scatter(x=xs, y=[fn(x * LINE, (1 - x) * LINE) for x in xs], mode="lines", line=dict(color=c, width=2, dash=dash), name=lab)
+    fig.add_scatter(x=xs, y=[fn(x * LINE, (1 - x) * LINE) for x in xs], mode="lines", line=dict(color=c, width=2, dash=dash), name=lab, row=1, col=1)
     v = fn(0.6, 0.8)
-    fig.add_scatter(x=[0.6 / 1.4], y=[v], mode="markers", marker=dict(size=8, color=c, line=dict(width=1, color=INK)), showlegend=False)
+    fig.add_scatter(x=[0.6 / 1.4], y=[v], mode="markers", marker=dict(size=8, color=c, line=dict(width=1, color=INK)), showlegend=False, row=1, col=1)
     print(f"{lab}: share ahead {v:.3f}, size ahead after {0.6 - v * 0.8 + min(0.8 - (1 - v) * 0.8, 0):.3f}")
-fig.add_vline(x=0.6 / 1.4, line=dict(color=GRID, width=1))
-fig.add_annotation(x=0.6 / 1.4, y=1.02, text="our bid at 300 ms (x = 0.43)", showarrow=False, yanchor="bottom", font=dict(size=10, color=INK))
-fig.update_xaxes(title_text="our position x: share of the line ahead of us (0 = front, 1 = back)", range=[0, 1])
-fig.update_yaxes(title_text="share of a cancellation put ahead of us", range=[-0.02, 1.08])
-fig.update_layout(title="Queue models disagree most in the middle of the line: from 'most cancellations ahead of us' to 'none'"
-                        "<br><sup>Share of a cancellation each model puts ahead of our order, for a line of 1.4 BTC; dots: the cancellation of 0.8 BTC at 300 ms in Figure 21_05</sup>",
-                  height=560, width=1100, margin=dict(t=90, l=70, r=30, b=60), legend=dict(orientation="h", y=-0.17, x=0, font=dict(size=11)))
+fig.add_vline(x=0.6 / 1.4, line=dict(color=GRID, width=1), row=1, col=1)
+fig.update_xaxes(title_text="our position x (0 = front, 1 = back)", range=[0, 1], row=1, col=1)
+fig.update_yaxes(title_text="share of a cancellation put ahead of us", range=[-0.02, 1.05], row=1, col=1)
+# right (annotations on a log axis take log10 of x): the share at x = 0.43 against the parameter n (or a) of the three power families
+X0 = 0.6 / 1.4; ns = [1 + i / 10 for i in range(0, 191)]
+for lab, fn, c, dash in (("power variant 3, x^n = our dial x^a", lambda n: X0 ** n, "#5d9be3", "dash"),
+                         ("power, x^n / (x^n + (1 - x)^n)", lambda n: X0 ** n / (X0 ** n + (1 - X0) ** n), SERIES[4], "solid"),
+                         ("power variant 2, 1 - (1 - x)^n", lambda n: 1 - (1 - X0) ** n, SERIES[4], "dot")):
+    fig.add_scatter(x=ns, y=[fn(n) for n in ns], mode="lines", line=dict(color=c, width=2, dash=dash), showlegend=False, row=1, col=2)
+    fig.add_annotation(x=math.log10(3.2), y=fn(3.2), text=lab, showarrow=False, xanchor="left", xshift=6, font=dict(size=10, color=INK), row=1, col=2)
+fig.add_hline(y=X0, line=dict(color=SERIES[0], width=1), row=1, col=2)
+fig.add_annotation(x=math.log10(20), y=X0, text="even split, n = 1", showarrow=False, xanchor="right", yanchor="bottom", font=dict(size=10, color=SERIES[0]), row=1, col=2)
+fig.update_xaxes(title_text="parameter n (for our dial: a)", type="log", tickvals=[1, 2, 5, 10, 20], range=[0, 1.31], row=1, col=2)
+fig.update_yaxes(title_text="share ahead of us at x = 0.43", range=[-0.02, 1.05], row=1, col=2)
+fig.update_layout(title="Queue models disagree most in the middle of the line, and their parameters push in opposite directions"
+                        "<br><sup>Left: the share of a cancellation each model puts ahead of our order, for a line of 1.4 BTC in units of 1 BTC; dots: the cancellation "
+                        "of 0.8 BTC at 300 ms in Figure 21_05. Right: the same share at that position as the parameter of the power models grows</sup>",
+                  height=600, width=1300, margin=dict(t=100, l=70, r=30, b=60), legend=dict(orientation="h", y=-0.17, x=0, font=dict(size=11)))
 save_figure(fig, L21.PREFIX + "21_06_queue_models", FIG)
