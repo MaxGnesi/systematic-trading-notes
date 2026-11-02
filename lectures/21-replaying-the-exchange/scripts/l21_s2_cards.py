@@ -172,3 +172,33 @@ fig.update_layout(title="The queue: L2 shows how long the line is, not who leave
                   height=520, width=1300, margin=dict(t=100, l=70, r=30, b=60), legend=dict(orientation="h", y=-0.2, x=0))
 save_figure(fig, L21.PREFIX + "21_05_queue_card", FIG)
 print("queue fills", fills, {a: [(t, round(q, 3), round(l, 3)) for t, q, l in queue(a)[0]] for a, *_ in DIALS})
+
+# 21_06: the queue models of the literature side by side: the share of a cancellation each puts ahead of us, against our position x, for a line
+# of 1.4 BTC (the log models depend on the sizes, not only on x); the dots mark the cancellation at 300 ms of 21_05 (0.6 BTC ahead, 0.8 behind).
+# Formulas as in Rigtorp (2013) and in hftbacktest's queue.rs: there "prob" is the share BEHIND us, so the share ahead is 1 - prob.
+import math
+LINE = 1.4
+MODELS = [  # (label, share ahead as a function of (front, back), colour, dash)
+    ("even split: Rigtorp with f = identity; hftbacktest power, n = 1; our a = 1", lambda f, b: f / (f + b), SERIES[0], "solid"),
+    ("Rigtorp with f = log(1 + x); hftbacktest log", lambda f, b: math.log1p(f) / (math.log1p(f) + math.log1p(b)), SERIES[3], "solid"),
+    ("hftbacktest log, variant 2", lambda f, b: 1 - math.log1p(b) / math.log1p(f + b), SERIES[3], "dot"),
+    ("hftbacktest power, n = 2", lambda f, b: f ** 2 / (f ** 2 + b ** 2), SERIES[4], "solid"),
+    ("hftbacktest power variant 2, n = 2", lambda f, b: 1 - (b / (f + b)) ** 2, SERIES[4], "dot"),
+    ("hftbacktest power variant 3, n = 2; our a = 2", lambda f, b: (f / (f + b)) ** 2, "#5d9be3", "dash"),
+    ("hftbacktest risk-averse; our a = ∞", lambda f, b: 0.0 if b > 0 else 1.0, INK, "dash"),
+]
+fig = go.Figure()
+xs = [i / 200 for i in range(1, 200)]
+for lab, fn, c, dash in MODELS:
+    fig.add_scatter(x=xs, y=[fn(x * LINE, (1 - x) * LINE) for x in xs], mode="lines", line=dict(color=c, width=2, dash=dash), name=lab)
+    v = fn(0.6, 0.8)
+    fig.add_scatter(x=[0.6 / 1.4], y=[v], mode="markers", marker=dict(size=8, color=c, line=dict(width=1, color=INK)), showlegend=False)
+    print(f"{lab}: share ahead {v:.3f}, size ahead after {0.6 - v * 0.8 + min(0.8 - (1 - v) * 0.8, 0):.3f}")
+fig.add_vline(x=0.6 / 1.4, line=dict(color=GRID, width=1))
+fig.add_annotation(x=0.6 / 1.4, y=1.02, text="our bid at 300 ms (x = 0.43)", showarrow=False, yanchor="bottom", font=dict(size=10, color=INK))
+fig.update_xaxes(title_text="our position x: share of the line ahead of us (0 = front, 1 = back)", range=[0, 1])
+fig.update_yaxes(title_text="share of a cancellation put ahead of us", range=[-0.02, 1.08])
+fig.update_layout(title="Queue models disagree most in the middle of the line: from 'most cancellations ahead of us' to 'none'"
+                        "<br><sup>Share of a cancellation each model puts ahead of our order, for a line of 1.4 BTC; dots: the cancellation of 0.8 BTC at 300 ms in Figure 21_05</sup>",
+                  height=560, width=1100, margin=dict(t=90, l=70, r=30, b=60), legend=dict(orientation="h", y=-0.17, x=0, font=dict(size=11)))
+save_figure(fig, L21.PREFIX + "21_06_queue_models", FIG)
