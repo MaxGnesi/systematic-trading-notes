@@ -80,4 +80,6 @@ Descriptive, not tested:
   often when the later return is positive, and more in volatile hours. In a replay the outcome follows from the recorded book by
   construction, so this shows the mechanism, not the truth.
 - **Effective latency:** the L at which walking the book reproduces the prices of real large taker orders best.
+- **Limit orders that miss** (added 2026-11-02, before any result): for marketable limit orders of ours at the best price seen at t, the share left
+  resting at t + L, by size and L, and the later fill rate and 10-s markout of the remainder under Q2 (a = 1).
 - Every result by size S, with sizes above the validity of H8 flagged.

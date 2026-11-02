@@ -254,3 +254,36 @@ fig.update_layout(barmode="group", title="Adverse fills: a fall through our pric
                   height=500, width=1300, margin=dict(t=100, l=70, r=30, b=60), legend=dict(orientation="h", y=-0.22, x=0))
 save_figure(fig, L21.PREFIX + "21_07_adverse_card", FIG)
 print("adverse", [round(x, 3) for x in adv], [round(x, 3) for x in m_adv], [round(x, 3) for x in m_non])
+
+# 21_08: our footprint. Left: the ask side of §2.2 at 100 ms, as recorded and as it would stand after our market buy of 0.5 BTC at 60 ms (if
+# nobody refilled). Right: the size displayed at the best bid when the bid of §1 was placed, every 15 s of 1 October 2025 (results/key), as a
+# cumulative share, with the five order sizes of the lecture.
+REC = [(100_000.1, 0.2), (100_000.2, 1.5), (100_000.3, 2.0)]
+after = [(100_000.1, 0.2 - 0.2), (100_000.2, 1.5 - 0.3), (100_000.3, 2.0)]
+fig = make_subplots(rows=1, cols=3, column_widths=[0.25, 0.25, 0.5], horizontal_spacing=0.08,
+                    subplot_titles=("100 ms, as recorded", "100 ms, after our buy",
+                                    "1 October: size at the best bid, and our order sizes"))
+yl = [f"USD {p:,.1f}" for p, _ in REC]
+for col, book, c in ((1, REC, GRID), (2, after, GRID)):
+    fig.add_bar(y=yl, x=[q for _, q in book], orientation="h", marker_color=c, showlegend=False, text=[f"{q:.1f}" for _, q in book],
+                textposition="outside", textfont=dict(size=11, color=INK), row=1, col=col)
+    fig.update_yaxes(type="category", categoryorder="array", categoryarray=yl, row=1, col=col)
+    fig.update_xaxes(title_text="BTC offered", range=[0, 2.6], row=1, col=col)
+fig.add_annotation(x=0.3, y=yl[0], text="taken by us: the best ask<br>is now one tick higher", showarrow=False, xanchor="left", font=dict(size=10, color=SERIES[0]),
+                   row=1, col=2)
+fig.add_annotation(x=0.55, y=yl[0], text="still here in the record:<br>a second order of ours<br>would buy it again", showarrow=False, xanchor="left",
+                   font=dict(size=10, color=INK), row=1, col=1)
+DQ = pl.read_parquet(L21.result_path(L21.KEY, "day_orders.parquet"))["q"].sort().to_list()
+n = len(DQ)
+fig.add_scatter(x=DQ, y=[(i + 1) / n for i in range(n)], mode="lines", line=dict(color=INK, width=2), showlegend=False, row=1, col=3)
+for s in (0.001, 0.01, 0.1, 1, 5):
+    sh = sum(q < s for q in DQ) / n
+    fig.add_scatter(x=[s, s], y=[0, 1], mode="lines", line=dict(color=SERIES[0], width=1, dash="dot"), showlegend=False, row=1, col=3)
+    fig.add_annotation(x=math.log10(s), y=1.0, text=f"{s:g} BTC<br>{sh:.1%}", showarrow=False, yanchor="bottom", font=dict(size=10, color=INK), row=1, col=3)
+fig.update_xaxes(title_text="BTC at the best bid (log scale)", type="log", range=[-3.3, 1.8], row=1, col=3)
+fig.update_yaxes(title_text="share of moments with at most this size", tickformat=".0%", range=[0, 1.18], row=1, col=3)
+fig.update_layout(title="Our footprint: the replay assumes our orders take nothing and change nothing; that holds for the smallest orders, not for the largest"
+                        "<br><sup>Left and middle: the invented ask side of §2.2 at 100 ms, after our market buy of 0.5 BTC at 60 ms, before anyone refills.<br>"
+                        "Right: Bybit BTCUSDT, 1 October 2025, every 15 s; the percentages are the share of moments in which the whole best queue was smaller than our order</sup>",
+                  height=520, width=1300, margin=dict(t=130, l=110, r=30, b=60))
+save_figure(fig, L21.PREFIX + "21_08_footprint_card", FIG)
