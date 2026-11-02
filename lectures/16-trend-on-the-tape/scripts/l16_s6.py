@@ -84,7 +84,7 @@ for k, (smp, col) in enumerate((("2021-2024", SERIES[0]), ("2025-2026", SERIES[1
                 marker=dict(color=col, line=dict(width=0)), text=[f"t {b[t]['btc_24h'][1]:+.1f}" for t in ("low", "middle", "high")], textposition="outside", row=1, col=2)
 fig.add_hline(y=0, line=dict(color=INK, dash="dot", width=1), row=1, col=2)
 fig.update_yaxes(title_text="bp", row=1, col=1); fig.update_yaxes(title_text="mean return, bp", range=[-16, 34], row=1, col=2)
-fig.update_layout(barmode="group", title="The perpetual's premium: what the crowd pays to be long, and what follows<br><sup>BTCUSDT on Binance, October 2021 to September 2026; "
+fig.update_layout(barmode="group", title="The perpetual's premium: what the crowd pays to be long, and what follows<br><sup>BTCUSDT on Binance, 30 December 2021 to September 2026, after the rule's three-month warm-up; "
                         "premium: the perpetual over the spot index, averaged over each 8-hour funding interval; thirds cut on 2021-2024</sup>",
                   height=480, width=1200, margin=dict(t=110, l=70), legend=dict(orientation="h", y=-0.2, x=0))
 save_figure(fig, PREFIX + "16_09_premium", FIG)
