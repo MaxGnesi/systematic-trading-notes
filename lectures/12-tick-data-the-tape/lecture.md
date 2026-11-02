@@ -367,7 +367,7 @@ Activity and volatility jump at every full hour, and more at the funding times t
 ### 6.3 Time between trades
 
 ![Distribution of the time to the next trade, against trades arriving at random with the same average wait](figures/12_09_durations.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> Time to the next trade, milliseconds (x, log); percent of waits in each bin (y, log). All waits between consecutive trades over the five years (blue) against the waits that trades arriving at random would give with the same 60-millisecond average (orange, dashed). Waits of 0 or 1 millisecond, 54% of the total, fall off the log axis and are not shown.</sub>
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time to the next trade, milliseconds (x, log); percent of waits in each bin (y, log). All waits between consecutive trades over the five years (blue) against the waits that trades arriving at random would give with the same 60-millisecond average (orange, dashed). Waits of 0 or 1 millisecond, 54% of the total, fall off the log axis and are not shown; waits of 0 alone, trades in the same millisecond, are the 51% of the table below.</sub>
 
 | Measure | What we measure, in plain words | Benchmark: trades arriving at random | Result | What it means |
 |---|---|---|---|---|
