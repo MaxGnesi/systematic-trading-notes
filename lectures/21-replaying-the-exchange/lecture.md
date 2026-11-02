@@ -4,7 +4,7 @@
 
 Lectures 18 to 20 described Bybit's BTCUSDT book, measured its state and measured its flow. This lecture puts our own orders into the recorded market and asks what would have happened to them: when a resting order is filled, at what price a market order is executed, and what the price does afterwards. A replay is only useful if it tells the truth, so the lecture builds one piece by piece and then tests it on the same 45 days, 20 September to 3 November 2025. The hypotheses were fixed before any result was computed ([results/hypotheses.md](results/hypotheses.md)).
 
-*Draft: Sections 1, 2.1 and 2.2. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
+*Draft: Sections 1 and 2.1 to 2.3. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
 
 ## 1. Three replays of one order
 
@@ -128,3 +128,78 @@ On the book we saw, 0.6 BTC was offered at USD 100,000.1, enough for our 0.5 at 
 **Good orders fail.** Albers et al. (2025) measured this live: 3.1 million market orders of the minimum size on Bybit's inverse BTCUSD perpetual in April 2023, sent from a server close to the exchange, each one compared with the best price it had seen. Overall 1.35% could not be filled at that price. When the price then fell or stayed, almost none failed (0.09%); as soon as it rose in the order's favour, the share jumped to 4.2% and grew by 2.2 percentage points per basis point of return: 15% at +5 bp, 26% at +10 bp. Failures were also more frequent in volatile hours. A backtest that fills every order at the price seen at the decision is therefore wrong in a biased way: it keeps the trades that paid and that, in reality, others took first.
 
 **What it misses.** First, $`L`$ itself: it differs by trader, connection and moment, and it rises in busy markets, exactly when it matters; the replay takes it as a fixed parameter and reports results at 10, 50 and 100 ms. Second, the race: the recorded trades show who won each race, not who else was racing. In the replay, our order arrives after every recorded trade that happened before $`t + L`$, even if in reality we might have been faster. Third, the recorded book at $`t + L`$ is itself known only to the last update plus the trades since (§2.1). Fourth, Albers et al.'s numbers come from a different contract (inverse, priced in USD with a 0.5 USD tick) and from 2023; on our data the replay can show the mechanism but cannot measure true failure rates, which only live orders reveal.
+
+### 2.3 The queue
+
+**Key message.** A resting order is filled only when everything ahead of it at its price has traded or left. The book shows how long the line is, not who leaves it, so a replay must assume how cancellations split between ahead of us and behind us. One dial, $`a`$, spans the assumptions, from an even split to "never ahead of us".
+
+Lecture 19 (§2.4) introduced the line and showed that L2 data cannot say whose order was cancelled. This card turns the line into the queue rule of §1.
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | When our order arrives, the size ahead of it is the size displayed at our price: the last update minus the trades since (§2.1) | We join at the back: everyone already there was first |
+| 2 | A sell trade of size $`s`$ at our price: if $`s`$ is larger than the size ahead, we are filled; otherwise the size ahead falls by $`s`$ | Trades serve the line from the front |
+| 3 | A cancellation of size $`c`$ at our price (§2.1, step 3): the size ahead falls by $`p \cdot c`$, with $`p = x^a`$ and $`x`$ = ahead / (ahead + behind); never more is taken from behind us than stands there | Someone left the line; $`p`$ is the share assumed to have stood in front of us |
+| 4 | An increase at our price joins behind us | Later arrivals queue after us |
+| 5 | A sell trade below our price fills whatever is left of our order | The whole line at our price has been served |
+
+<sub><b>How to read the table.</b> $`x`$ is our position in the line, the share of the displayed size that stands ahead of us: 1 at the back, 0 at the front. The dial $`a`$ sets $`p`$: $`a = 1`$ splits a cancellation in proportion to the size on each side, as if every unit of size were equally likely to leave; a larger $`a`$ puts more of it behind us; $`a = \infty`$ puts none ahead unless nobody stands behind us, the "risk-averse" model of hftbacktest. Our results use $`a`$ = 1, 2, 5, 20 and ∞ (hypothesis H3).</sub>
+
+![The queue on the invented book: the size ahead of our bid under three dials, and the share of a cancellation put ahead of us as a function of our position](figures/21_05_queue_card.png)
+<sub><b>How to read the figure.</b> <b>Left:</b> the bid of §2.1 at USD 100,000.0 joins at 60 ms behind 1.7 BTC, and the invented book runs on to 420 ms. Grey: the size displayed at our price, without our order; blue lines: the size ahead of our bid, under $`a = 1`$ (solid), $`a = 2`$ (dotted) and $`a = \infty`$ (dashed); stars: our fill under each; orange line: the touch rule's fill. Triangles: sell trades at our price, with their size; cross: a sell below our price. <b>Right:</b> $`p = x^a`$ against $`x`$ for $`a`$ = 1, 2, 5 and 20, and $`a = \infty`$ (dashed); the dot marks our bid at 300 ms.</sub>
+
+Until 200 ms the dial plays no part. The cancellation at 100 ms happened before anyone joined behind us, so all of it stood ahead; trades then shorten the line from 1.7 to 0.8 BTC. At 200 ms, 0.8 BTC joins behind us. At 300 ms, 0.8 BTC is cancelled, and now the answer depends on the dial: with 0.6 BTC ahead and 0.8 behind, $`x = 0.43`$.
+
+| Dial | Share of the 0.8 BTC put ahead of us | Size ahead after 300 ms | Filled |
+|---|---|---|---|
+| Touch rule (no line) | | | at 70 ms, by the first sell of 0.2 BTC |
+| $`a = 1`$ | 43% | 0.26 BTC | at 340 ms, by the sell of 0.5 BTC |
+| $`a = 2`$ | 18% | 0.45 BTC | at 340 ms, by the sell of 0.5 BTC |
+| $`a = \infty`$ | 0% | 0.60 BTC | at 420 ms, when the price runs through |
+
+<sub><b>How to read the table.</b> The invented example of the figure. Under $`a = \infty`$ the sell of 0.5 BTC at 340 ms leaves 0.1 BTC ahead of us, and our turn never comes before the price moves through our level.</sub>
+
+The touch rule fills the bid 270 ms before any version of the line would, while 1.7 BTC still stood in front of it. Among the queue rules, the dial moves the fill from a trade at our price to the moment the price runs through it: the same order becomes a fill at a stable price or a fill just before a fall (§2.4).
+
+**The models in the literature.** Every queue model for L2 data answers the same question as our dial: when the size at our price falls by more than was traded, how much of the cancellation stood ahead of us? The published models differ only in that answer, and they span a wide range:
+
+| Model | Share of a cancellation put ahead of us | Leaning | On the cancellation at 300 ms: share ahead, size ahead after |
+|---|---|---|---|
+| Rigtorp (2013), $`f`$ = identity; hftbacktest power, $`n = 1`$; our $`a = 1`$ | $`\frac{\text{ahead}}{\text{ahead} + \text{behind}} = x`$ | even | 43%, 0.26 BTC |
+| Rigtorp (2013), $`f = \ln(1 + \cdot)`$; hftbacktest log | $`\frac{\ln(1 + \text{ahead})}{\ln(1 + \text{ahead}) + \ln(1 + \text{behind})}`$ | towards the shorter side; depends on the unit of size | 44%, 0.25 BTC |
+| hftbacktest log, variant 2 | $`1 - \frac{\ln(1 + \text{behind})}{\ln(1 + \text{ahead} + \text{behind})}`$ | behind us; depends on the unit | 33%, 0.34 BTC |
+| hftbacktest power, $`n = 2`$ | $`\frac{x^2}{x^2 + (1 - x)^2}`$ | towards the longer side | 36%, 0.31 BTC |
+| hftbacktest power, variant 2, $`n = 2`$ | $`1 - (1 - x)^2`$ | ahead of us | 67%, 0.06 BTC |
+| hftbacktest power, variant 3, $`n = 2`$; our $`a = 2`$ | $`x^2`$ | behind us | 18%, 0.45 BTC |
+| hftbacktest risk-averse; our $`a = \infty`$ | 0, unless nobody stands behind us | all behind us | 0%, 0.60 BTC |
+
+<sub><b>How to read the table.</b> Ahead and behind: the size in the line in front of our order and after it, in BTC; $`x`$ = ahead / (ahead + behind), our position (0 at the front, 1 at the back). Rigtorp (2013) writes the share ahead as $`p = f(\text{ahead}) / (f(\text{ahead}) + f(\text{behind}))`$ with $`f`$ any increasing function, naming the identity and $`\ln(1 + x)`$. hftbacktest (queue.rs) writes the share behind, $`1 - p`$; its power functions are $`f(x) = x^n`$, its variants 2 and 3 normalise differently. hftbacktest, like our replay, takes the excess from ahead of us when a cancellation is larger than the size behind, and never lets the size ahead exceed the size displayed; Rigtorp (2013) states no such rule. Last column: the cancellation of 0.8 BTC at 300 ms in Figure 21_05, with 0.6 BTC ahead and 0.8 behind.</sub>
+
+![The queue models of the literature side by side: the share of a cancellation each puts ahead of our order, by position in the line](figures/21_06_queue_models.png)
+<sub><b>How to read the figure.</b> <b>Left:</b> for a line of 1.4 BTC counted in BTC, the share of a cancellation each model of the table puts ahead of our order, against our position $`x`$. Lines above the even split (blue) let our order advance faster than an even split; lines below hold it back. The dots mark the cancellation at 300 ms of Figure 21_05. <b>Right:</b> at that position, $`x = 0.43`$, the share ahead under the three power models as their parameter $`n`$ grows from 1 to 20 (log scale); for our dial, $`n`$ is $`a`$.</sub>
+
+On the same cancellation the models leave between 0.06 and 0.60 BTC ahead of our order, a factor of ten. What separates them is their leaning: an even split; towards whichever side of us is longer (hftbacktest power) or shorter (log); towards the front, which is optimistic for us (power variant 2); or towards the back, which is cautious (power variant 3 and risk-averse).
+
+**How the parameters move the split.** Each family has one parameter, and in each it does something different:
+
+- **Our dial $`a`$, the same as $`n`$ in hftbacktest's power variant 3.** The share ahead is $`x^a`$. Raising $`a`$ means assuming that cancellations come more and more from the late arrivals behind us: at our position $`x = 0.43`$, the share ahead falls from 43% ($`a = 1`$) to 18% ($`a = 2`$), 1.5% ($`a = 5`$) and practically 0 ($`a = 20`$). The effect is strongest near the front of the line; near the back every value of $`a`$ puts almost everything ahead of us, because almost nobody stands behind.
+- **$`n`$ in hftbacktest's power model, $`x^n / (x^n + (1 - x)^n)`$.** Raising $`n`$ hands the cancellation to whichever side of us is longer, as if cancellations came from large groups out of proportion to their size. With more size behind us than ahead, as here, it falls from 43% to 36%, 19% and 0.3% for $`n`$ = 1, 2, 5 and 20; with more ahead it would rise instead. The split is even only when we stand in the middle.
+- **$`n`$ in hftbacktest's power variant 2, $`1 - (1 - x)^n`$.** Raising $`n`$ puts more of every cancellation ahead of us: 43%, 67%, 94% and 100%. This is the optimistic direction, and the one the evidence below argues against.
+- **The unit of size, in the log models.** $`\ln(1 + x)`$ has no parameter, but it is not proportional, so the answer depends on whether size is counted in BTC, in thousandths of a BTC or in contracts. The unit is a hidden parameter:
+
+| Size counted in | Rigtorp, log; hftbacktest log | hftbacktest log, variant 2 |
+|---|---|---|
+| 10 BTC | 43% | 41% |
+| 1 BTC | 44% | 33% |
+| 0.01 BTC | 48% | 11% |
+| 0.001 BTC, Bybit's minimum order | 49% | 8% |
+
+<sub><b>How to read the table.</b> The share of the cancellation at 300 ms put ahead of our order (0.6 BTC ahead, 0.8 behind, $`x = 0.43`$) by the two log models, with size counted in different units. For comparison, the even split puts 43% ahead at any unit.</sub>
+
+In small units, the first log model puts about half of every cancellation ahead of us wherever we stand (41% at $`x = 0.1`$, 59% at $`x = 0.9`$, counted in 0.001 BTC), and variant 2 puts almost none. Rigtorp suggests the log as an example, not a recommendation, and the unit should be chosen deliberately or the model avoided.
+
+**Do we reproduce them?** We use three of the models and checked our code against their published rules on 3,000 random sequences of trades and book updates. Our $`a = 1`$ gives the same fill as Rigtorp's rule with $`f`$ = identity in every sequence, and our $`a = \infty`$ the same as hftbacktest's risk-averse model. Our $`x^a`$ is the formula of hftbacktest's power variant 3, and gives the same fill except in 1.8% of the sequences at $`n = 1`$ (0.6% at $`n = 2`$). The difference is one detail of hftbacktest's code: it measures the size behind us from the level before the trades since the last update, so size already traded still counts as behind us. Measured after the trades, as Rigtorp and we do, the two agree in every sequence. The check is our calculation for these notes.
+
+**Which is right?** None of these formulas is derived from the behaviour of traders; each is a convenient shape, and Rigtorp (2013) recommends estimating $`f`$ from one's own fills. Evidence comes only from order-by-order data. Databento (2025) used such data for CME's E-mini S&P 500 future and concluded: "It's evident that cancels are mostly pulled from the back of the queue." They describe the bias with one parameter, from no bias towards a strong pull from the back; the formula in their example code is not legible on the page we read, so we quote only their conclusion. One reason for the back, an argument rather than a measurement: an order that has just joined has the least to lose by leaving, while an order near the front is about to be filled. On Bybit we cannot measure the leaning (no order-by-order data), so the lecture spans it with the dial $`a`$ from 1 to ∞, from the even split to the risk-averse model, and reports whether the answer changes inside that range (hypothesis H3); the models that lean ahead of us, against that evidence, are left out.
+
+**What it misses.** First, the truth: which orders were cancelled is recorded only in order-by-order (L3) data, which Bybit does not publish (Lecture 18, §2), so on our data the dial can be varied but not measured. Second, the split may depend on more than our position: on how long the line is, on how fast the price is moving, on the hour (Lecture 19, §3.7). Third, everything inside one 100 ms update (§2.1): a large order that joins and leaves within it is never seen. Fourth, our own order is not in the displayed size, so the line behind us is the size added after we joined, not including us; for an order of 0.001 BTC this changes nothing, for 5 BTC it does (§2.5).
