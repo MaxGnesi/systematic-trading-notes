@@ -30,7 +30,7 @@ REG = ["swings", "random walk", "trend days", "large jumps", "runs"]
 S = per(pl.read_parquet(L17_RESULTS / "l17_shapes.parquet").filter((pl.col("width") == 200) & (pl.col("levels") >= 2)))
 G = S.group_by("step", "shape", "p").agg(pl.col("gross").mean().alias("g"), (pl.col("gross").std() / pl.len().sqrt()).alias("se"))
 fig = make_subplots(rows=1, cols=2, column_widths=[0.5, 0.5], horizontal_spacing=0.1,
-                    subplot_titles=("(a) Simulated prices: each shape wins in its own regime", "(b) The tape: all three near zero, gross"))
+                    subplot_titles=("(a) Simulated prices: each profile wins in its own regime", "(b) The tape: the four profiles close together, gross"))
 for sh, c in COL.items():
     m = M.filter(pl.col("shape") == sh); m = m.sort(pl.col("regime").replace_strict({r: i for i, r in enumerate(REG)}))
     fig.add_bar(x=m["regime"], y=m["gross"], error_y=dict(array=1.96 * m["se"].to_numpy(), color=INK, thickness=1), marker=dict(color=c), name=sh, legendgroup=sh, row=1, col=1)
