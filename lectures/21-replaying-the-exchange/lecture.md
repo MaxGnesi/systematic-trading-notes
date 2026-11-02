@@ -4,7 +4,7 @@
 
 Lectures 18 to 20 described Bybit's BTCUSDT book, measured its state and measured its flow. This lecture puts our own orders into the recorded market and asks what would have happened to them: when a resting order is filled, at what price a market order is executed, and what the price does afterwards. A replay is only useful if it tells the truth, so the lecture builds one piece by piece and then tests it on the same 45 days, 20 September to 3 November 2025. The hypotheses were fixed before any result was computed ([results/hypotheses.md](results/hypotheses.md)).
 
-*Draft: Sections 1 and 2.1 to 2.3. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
+*Draft: Sections 1 and 2.1 to 2.4. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
 
 ## 1. Three replays of one order
 
@@ -198,8 +198,68 @@ On the same cancellation the models leave between 0.06 and 0.60 BTC ahead of our
 
 In small units, the first log model puts about half of every cancellation ahead of us wherever we stand (41% at $`x = 0.1`$, 59% at $`x = 0.9`$, counted in 0.001 BTC), and variant 2 puts almost none. Rigtorp suggests the log as an example, not a recommendation, and the unit should be chosen deliberately or the model avoided.
 
+**Reading the code.** hftbacktest's documentation describes its queue models in words; the formulas are only in its source. We took them from the file that implements the models, [`hftbacktest/src/backtest/models/queue.rs`](https://github.com/nkaz001/hftbacktest/blob/master/hftbacktest/src/backtest/models/queue.rs), read on 2 November 2026, and translated each line into the notation of this card. When the size displayed at our price changes, the probabilistic models run these lines (Rust):
+
+```rust
+let mut chg = prev_qty - new_qty;      // how much the level fell since the last update
+chg -= q.cum_trade_qty;                // minus what was traded there: the rest was cancelled
+let front = q.front_q_qty;             // size ahead of our order
+let back = prev_qty - front;           // size behind it
+let mut prob = self.prob.prob(front, back);
+let est_front = front - (1.0 - prob) * chg + (back - prob * chg).min(0.0);
+q.front_q_qty = est_front.min(new_qty);
+```
+
+| Line | What it does | In this card |
+|---|---|---|
+| `chg = prev_qty - new_qty - cum_trade_qty` | The decrease of the level beyond the trades | The cancellation $`c`$ of §2.1, step 3 |
+| `front`, `back` | Size ahead of and behind our order | ahead, behind; $`x`$ = front / (front + back) |
+| `prob` | The share of the cancellation assumed to be **behind** us; the documentation: "the probability of a decrease behind the order's queue position" | $`1 - p`$: hftbacktest counts the other way round |
+| `front - (1.0 - prob) * chg` | The size ahead loses its share of the cancellation | ahead − $`p \cdot c`$ |
+| `+ (back - prob * chg).min(0.0)` | If more is assigned behind us than stands there, the excess comes from ahead | "never more is taken from behind us than stands there" |
+| `.min(new_qty)` | The size ahead never exceeds the size displayed | the same |
+
+<sub><b>How to read the table.</b> Each probabilistic model differs only in `prob`. For the power model, `f(back) / (f(back) + f(front))` with `f(x) = x^n`; for variant 3, `1.0 - f(front / (front + back))`, which makes the share ahead $`x^n`$, our dial. The risk-averse model replaces all of it with `front = front.min(new_qty)`: a cancellation moves us only if the level falls below the size ahead of us. A trade at our price runs `front -= qty`, and our order is filled once `front` is negative. One detail differs from our rule: `back` is computed from `prev_qty`, the level at the last update, which still contains the size traded since; the check below shows that this is the only difference.</sub>
+
+Reading the source rather than the description matters for a replay. The documentation of a tool says what its authors meant; the code says what it does, and a backtest's results come from the code. Here it showed a convention we would otherwise have reversed (`prob` is the share behind us, not ahead) and a detail the documentation does not mention (the size behind measured before the trades).
+
 **Do we reproduce them?** We use three of the models and checked our code against their published rules on 3,000 random sequences of trades and book updates. Our $`a = 1`$ gives the same fill as Rigtorp's rule with $`f`$ = identity in every sequence, and our $`a = \infty`$ the same as hftbacktest's risk-averse model. Our $`x^a`$ is the formula of hftbacktest's power variant 3, and gives the same fill except in 1.8% of the sequences at $`n = 1`$ (0.6% at $`n = 2`$). The difference is one detail of hftbacktest's code: it measures the size behind us from the level before the trades since the last update, so size already traded still counts as behind us. Measured after the trades, as Rigtorp and we do, the two agree in every sequence. The check is our calculation for these notes.
 
 **Which is right?** None of these formulas is derived from the behaviour of traders; each is a convenient shape, and Rigtorp (2013) recommends estimating $`f`$ from one's own fills. Evidence comes only from order-by-order data. Databento (2025) used such data for CME's E-mini S&P 500 future and concluded: "It's evident that cancels are mostly pulled from the back of the queue." They describe the bias with one parameter, from no bias towards a strong pull from the back; the formula in their example code is not legible on the page we read, so we quote only their conclusion. One reason for the back, an argument rather than a measurement: an order that has just joined has the least to lose by leaving, while an order near the front is about to be filled. On Bybit we cannot measure the leaning (no order-by-order data), so the lecture spans it with the dial $`a`$ from 1 to ∞, from the even split to the risk-averse model, and reports whether the answer changes inside that range (hypothesis H3); the models that lean ahead of us, against that evidence, are left out.
 
 **What it misses.** First, the truth: which orders were cancelled is recorded only in order-by-order (L3) data, which Bybit does not publish (Lecture 18, §2), so on our data the dial can be varied but not measured. Second, the split may depend on more than our position: on how long the line is, on how fast the price is moving, on the hour (Lecture 19, §3.7). Third, everything inside one 100 ms update (§2.1): a large order that joins and leaves within it is never seen. Fourth, our own order is not in the displayed size, so the line behind us is the size added after we joined, not including us; for an order of 0.001 BTC this changes nothing, for 5 BTC it does (§2.5).
+
+### 2.4 Adverse fills
+
+**Key message.** A resting order is not filled at random moments. When the price runs through it, it is filled for certain; when the price moves away, it is filled only if a counterparty reaches it first. So the fills an order gets lean towards those followed by a loss, even in a market with no trend. A replay that fills too easily, like the touch rule, hides this.
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | A fill is **adverse** if, in the interval in which it happens, the best price on our side moves through our level (for a bid: below it); otherwise it is non-adverse | Adverse: we bought just as the price fell through us |
+| 2 | A move through our level fills us with certainty | A price cannot pass a resting order without filling it |
+| 3 | A move away fills us only with a chance $`R`$ | Someone must sell to us before the price leaves |
+| 4 | Expected move after a fill, in ticks: $`E[d \mid \text{fill}] = \dfrac{R \cdot P(U) - P(D)}{P(D) + R \cdot P(U)}`$ | Negative whenever $`R < 1`$ and the market has no trend: the fill itself is bad news |
+| 5 | Report the markout of adverse and non-adverse fills separately (hypothesis H2) | Whether the replay's fills are the bad ones, and by how much |
+
+<sub><b>How to read the table.</b> Steps 2 to 4 are the model of DeLise (2024), eq. 3, for a bid at the best: the next move of the price is one tick down with probability $`P(D)`$, which trades through our bid and fills it, or one tick up with probability $`P(U)`$, in which case we are filled only with chance $`R`$. $`d`$ is the move after the fill: −1 tick after a down move, +1 after an up move. Lalor and Swishchuk (2024) define adverse fills the same way in spirit: the first change in the value of the position after the fill is negative. Our definition of step 1 is the one fixed in [results/hypotheses.md](results/hypotheses.md).</sub>
+
+![Adverse fills: the expected move after a fill in DeLise's model; the share of fills made as the price ran through, and the price after them, for the bid of §1](figures/21_07_adverse_card.png)
+<sub><b>How to read the figure.</b> <b>Left:</b> DeLise's formula of step 4 against $`R`$, for a next move up with probability 50% (black), 60% and 40% (grey); at $`R = 1`$, every touch is a fill and the bias vanishes. <b>Middle and right:</b> the resting bid of 0.001 BTC of §1, every 15 s of 1 October 2025. Middle: the share of each rule's fills that came at the very trade that took the price through our level. Right: the mid 10 s after those fills (dark) and after the others (light), minus our price, in bp. One in-sample day, before the maker fee.</sub>
+
+Take a fair coin: the price is as likely to tick up as down, so it has no drift. If our bid is filled on every down move and on only 30% of up moves, then of every 100 moves, 50 down moves and 15 up moves fill us. The average move after a fill is (15 − 50) / 65 = −0.54 ticks, although the price itself has no trend. The fill is evidence about what happens next.
+
+The running example shows the three cases. The touch rule filled our bid at 70 ms, while the price was steady: non-adverse. With $`a = 1`$, it was filled at 340 ms by a trade at our price: non-adverse by the definition, yet 80 ms before the price ran through. With $`a = \infty`$, it was filled at 420 ms, by the trade below our price: adverse.
+
+On the day of §1 the same picture appears in real data. The touch rule's fills were mostly non-adverse, and the price hardly moved after them. Most of the queue rule's fills came only when the price ran through, and those lost about 0.75 bp in 10 s. Its other fills lost too, about 0.5 bp: they came just before the fall, like the fill at 340 ms. Whether this holds out of sample is hypothesis H2.
+
+**What others measured.** The effect is known from live and recorded orders:
+
+| Study | Market and data | Result |
+|---|---|---|
+| DeLise (2024) | US 10-year Treasury note future, one day of 2023, 100 fills | Move after a fill: −0.48 ticks predicted by the formula, −0.45 measured |
+| Lalor and Swishchuk (2024) | Four CME futures (E-mini S&P 500, E-mini Nasdaq-100, crude oil, 10-year note), one day each of 2024, simulated live orders | Share of fills that were adverse: 66% to 89% |
+| Albers et al. (arXiv 2502.18625) | Binance BTCUSDT perpetual, live minimum-size orders at the best, one week of 2024 | Fills more likely before an adverse move; 1-s markout from −0.06 bp (front of a short line) to −1.16 bp (back of long lines) |
+
+<sub><b>How to read the table.</b> Lalor and Swishchuk's shares are our computation from their Table 2: 81.5% (E-mini S&P 500), 65.8% (E-mini Nasdaq-100), 82.9% (crude oil), 88.8% (10-year note). Lalor and Swishchuk also show that simulations which treat every fill as non-adverse and at the front of the line are "over-inflated".</sub>
+
+**What it misses.** First, the definition depends on the interval: a fill just before the price runs through counts as non-adverse, as at 340 ms, so the split understates how bad fills are. Second, size: the formula counts one tick, while a fill before a large fall loses more. Third, $`R`$ is not a constant: it depends on our place in the line (§2.3), on the hour (Lecture 19, §3.7) and on the market. Fourth, scale: Bybit's base maker fee is 0.02%, 2 bp per fill (Lecture 19, §2.5), larger than every markout in the figure, so the sign of a maker's result is decided by fees, rebates and these fractions of a basis point together.

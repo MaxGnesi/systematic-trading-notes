@@ -214,3 +214,43 @@ fig.update_layout(title="Queue models disagree most in the middle of the line, a
                         "of 0.8 BTC at 300 ms in Figure 21_05. Right: the same share at that position as the parameter of the power models grows</sup>",
                   height=600, width=1300, margin=dict(t=100, l=70, r=30, b=60), legend=dict(orientation="h", y=-0.17, x=0, font=dict(size=11)))
 save_figure(fig, L21.PREFIX + "21_06_queue_models", FIG)
+
+# 21_07: adverse fills. Left: DeLise (2024), eq. 3: the expected move after a fill of a bid, in ticks, when the next move is down with probability
+# P(D) (the price runs through our bid: always filled) or up with P(U) = 1 - P(D) (filled only with probability R_f before it leaves), against R_f.
+# Right: the bid of §1 on 1 October 2025 (results/key/day_orders.parquet): the share of each rule's fills made as the price ran through our level,
+# and the mid 10 s after those fills and after the others.
+import polars as pl
+fig = make_subplots(rows=1, cols=3, column_widths=[0.4, 0.28, 0.32], horizontal_spacing=0.09,
+                    subplot_titles=("A fair coin, yet the fill predicts a fall", "1 October: fills made as the price ran through",
+                                    "1 October: mid 10 s after the fill"))
+rs = [i / 100 for i in range(0, 101)]
+for pu, c, dash in ((0.5, INK, "solid"), (0.6, MUTED, "dash"), (0.4, MUTED, "dot")):
+    pd_ = 1 - pu
+    fig.add_scatter(x=rs, y=[(r * pu - pd_) / (pd_ + r * pu) for r in rs], mode="lines", line=dict(color=c, width=2, dash=dash),
+                    name=f"next move up with probability {pu:.0%}", row=1, col=1)
+fig.add_scatter(x=[0.3], y=[(0.3 * 0.5 - 0.5) / (0.5 + 0.15)], mode="markers", marker=dict(size=9, color=SERIES[0]), showlegend=False, row=1, col=1)
+fig.add_annotation(x=0.3, y=(0.15 - 0.5) / 0.65, text="R = 0.3: −0.54 ticks", showarrow=True, ax=70, ay=40, font=dict(size=10, color=INK), row=1, col=1)
+fig.add_hline(y=0, line=dict(color=GRID, width=1), row=1, col=1)
+fig.update_xaxes(title_text="R: chance of a fill when the price moves away from us", range=[0, 1], row=1, col=1)
+fig.update_yaxes(title_text="expected move after a fill, ticks", range=[-1.05, 0.45], row=1, col=1)
+DD = pl.read_parquet(L21.result_path(L21.KEY, "day_orders.parquet"))
+rules = [("q0", "touch", SERIES[1]), ("q2", "queue, a = 1", SERIES[0]), ("q2i", "queue, a = ∞", "#8fb8ea")]
+adv, m_adv, m_non = [], [], []
+for k, lab, c in rules:
+    f = DD.filter(pl.col(k).is_not_null()); a = (f[k] == f["q1"]).fill_null(False)
+    adv.append(a.mean()); m_adv.append(f.filter(a)[f"{k}_m10"].mean()); m_non.append(f.filter(~a)[f"{k}_m10"].mean())
+fig.add_bar(x=[l for _, l, _ in rules], y=adv, marker_color=[c for *_, c in rules], text=[f"{v:.0%}" for v in adv], textposition="outside",
+            textfont=dict(size=10, color=INK), showlegend=False, row=1, col=2)
+fig.update_yaxes(tickformat=".0%", range=[0, 0.9], row=1, col=2)
+fig.add_bar(x=[l for _, l, _ in rules], y=m_adv, marker_color=MUTED, name="fills made as the price ran through", text=[f"{v:+.2f}" for v in m_adv],
+            textposition="outside", textfont=dict(size=10, color=INK), row=1, col=3)
+fig.add_bar(x=[l for _, l, _ in rules], y=m_non, marker_color=GRID, name="other fills", text=[f"{v:+.2f}" for v in m_non], textposition="outside",
+            textfont=dict(size=10, color=INK), row=1, col=3)
+fig.add_hline(y=0, line=dict(color=GRID, width=1), row=1, col=3)
+fig.update_yaxes(title_text="bp: mid minus our price", range=[-0.95, 0.1], row=1, col=3)
+fig.update_layout(barmode="group", title="Adverse fills: a fall through our price always fills our bid, a rise only sometimes, so the fills we get lean towards losses"
+                        "<br><sup>Left: DeLise (2024), eq. 3: a bid at the best; the next move is one tick down (traded through: filled) or one tick up (filled only with chance R). Middle and right: the resting bid of 0.001 BTC of §1, "
+                        "every 15 s of 1 October 2025, Bybit BTCUSDT (one in-sample day)</sup>",
+                  height=500, width=1300, margin=dict(t=100, l=70, r=30, b=60), legend=dict(orientation="h", y=-0.22, x=0))
+save_figure(fig, L21.PREFIX + "21_07_adverse_card", FIG)
+print("adverse", [round(x, 3) for x in adv], [round(x, 3) for x in m_adv], [round(x, 3) for x in m_non])
