@@ -56,6 +56,7 @@ It matters only when two levels lie inside the same bar. A rule that enters at t
 **The distance travelled.** Measured minute by minute, the typical hour travels about four times its own range: up, down and up again before it closes. Among hours with almost the same candle, the distance runs from 3 to 5.3 times the range (10th to 90th percentile).
 
 ![Two hours with almost the same open, high, low and close, minute by minute](figures/14_01_same_candle_different_paths.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Minute of the hour (x), price in bp from the open (y). Two hours of BTCUSDT, one-minute closes: <b>Left:</b> 4 August 2024, 08:00 UTC; <b>Right:</b> 1 May 2024, 14:00 UTC. The dotted lines mark each hour's open, high, low and close, almost the same in both panels; the blue line is the path between them. The panel titles give the distance travelled as a multiple of the hour's range.</sub>
 
 The two hours in the figure have the same candle to within a few basis points. The first rose almost steadily from its low; the second swung back and forth and travelled more than twice as far. A trend rule sees no difference; a grid, which earns each time the price swings through one of its levels, would have earned more than twice as much in the second hour.
 
@@ -83,6 +84,7 @@ At small steps bitcoin turns back slightly more often than a path without memory
 **Two regimes.** The same test, with the days grouped by their realised variance:
 
 ![Continuation against the shuffled path, by step size, for days grouped by their volatility](figures/14_02_two_regimes.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Step size (x), continuation in points above the shuffled path (y). For each step of the ladder (20, 50 and 100 bp), the share of steps that continue in the same direction on the tape minus the same share on its own one-minute returns shuffled within the same days. Each colour is a group of days ranked by realised variance, from the calmest half (blue) to the most volatile 2% (black); whiskers are 95% intervals. The dotted line at 0 is a path without memory; the points of each step are offset sideways so the groups do not overlap.</sub>
 
 | Days | 20 bp | 50 bp | 100 bp |
 |---|---|---|---|
@@ -99,6 +101,7 @@ On calm and ordinary days the price turns back clearly more often than chance, a
 **And √t?** If the price turns back, its moves over longer horizons are smaller than √t predicts from one-minute moves. The variance ratio measures by how much: the variance of returns over a horizon, divided by what the one-minute returns of the same weeks imply.
 
 ![The variance ratio from five minutes to a week, five years and year by year](figures/14_03_variance_ratio.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Horizon (x, log), variance ratio (y). The variance of returns over each horizon, from five minutes to a week, divided by the variance that one-minute returns of the same weeks imply. The blue line is the five-year value with its 90% interval (shaded); each grey line is one year. The dotted line at 1 is where √t holds; below 1 the price turns back at that horizon.</sub>
 
 At four hours the variance is 13% below what one-minute returns imply (90% interval: 9% to 16%), and the shortfall appears in every year.
 
@@ -115,6 +118,7 @@ A grid lives on the number of times the price crosses its levels; a stop on what
 For a random walk the number of steps of a given size per day is simple: the day's variance divided by the step squared. A grid that expects that many round trips is disappointed:
 
 ![Steps per day of 20, 50 and 100 bp against the random-walk count, calm and volatile days](figures/14_04_crossings.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Grid spacing (x), steps per day ÷ random-walk count (y). For steps of 20, 50 and 100 bp, the steps per day counted on one-minute prices, divided by the count a random walk would give, the day's realised variance over the step squared. Blue bars are the calm half of days, pink the most volatile 10%. The dotted line at 1 is the random-walk count.</sub>
 
 The price completes only 40% to 72% of the steps the day's variance promises. The main reason is the size of the moves, not their order: a jump of 3% crosses six levels 50 bp apart, but it counts in the variance like 36 small moves. Large moves inflate variance much more than they cross levels, which is why the shortfall is largest for tight grids on volatile days. On calm days the turning back of §3 costs crossings as well: a price that keeps returning does not travel far. **A grid's spacing should be planned on counted crossings, not on variance.**
 
@@ -123,6 +127,7 @@ The price completes only 40% to 72% of the steps the day's variance promises. Th
 Open a position at every full hour, hold it four hours, and record the worst move against it, in units of the volatility expected for four hours (σ√T, with σ from the past 28 days):
 
 ![The share of positions whose worst move exceeds k times the expected volatility, against a random walk](figures/14_05_excursions.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Worst move against the position in units of σ√T (x), share of positions (y, log). Positions opened at every full hour and held four hours, long and short; for each k on the x-axis, the share whose worst move exceeds k times the expected four-hour volatility, with σ from the past 28 days' one-minute variance. Lines: all days (grey), calm half (blue), most volatile 10% (pink), and a random walk (black, dotted).</sub>
 
 The typical bad move is smaller than a random walk's: 0.64 σ√T on average, against 0.80. The rare one is far larger: a move beyond 3 σ√T, which a random walk makes 0.27% of the time, comes in 1.7% of positions, six times as often, and in 8.8% on the most volatile days, thirty times. A stop set on √t is too wide most of the time and too close in the tail. What a stop should be depends on its purpose: an active stop, which ends a trade that is not working, belongs where the typical excursion would rarely reach; a ring-fence, which only guards against disaster, is reached in the tail, and there the question is what it gets.
 
@@ -133,6 +138,7 @@ Measured with the right side of the trades (a sell stop is filled by sellers, at
 **What a stop gets, approximately.** The tape does not show the order book, so it cannot say what a stop-market order would have received. It shows what the sellers who followed the trigger actually got. Read within a second, it approximates what an instant order meets; within ten seconds, what a larger order spread over time would face, including the market's move meanwhile. The worst price any of them got is a conservative estimate, valid for orders no larger than what traded in that time.
 
 ![The worst price of the sellers who followed a stop's trigger, by time window, calm and volatile days](figures/14_06_stop_fills.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time after the trigger (x, log), worst seller's price beyond the stop level in bp (y). <b>Left:</b> calm half of days. <b>Right:</b> most volatile 10%. For every first crossing of levels 20, 50 and 100 bp apart, the worst price of the trades on the stop's side within each time window: median (solid), worst 5% (dashed) and worst 1% (dotted). It approximates what a stop gets; the order book is not on the tape.</sub>
 
 | Worst seller's price beyond the level | Median | Worst 5% | Worst 1% |
 |---|---|---|---|
@@ -157,12 +163,14 @@ The path half of this lecture measured its moves in units of volatility. This ha
 Every volatility measure adds up the price's moves in some way. Realised variance squares each move between sampling points and adds them; a range estimator takes the distance between the highest and the lowest price (Parkinson's estimator, the basis of ATR); bipower adds up products of neighbouring moves, so that a single sudden jump among calm neighbours hardly counts. The chart builds each of them through two days, one ordinary and one with a central-bank decision:
 
 ![Each estimator's volatility accumulated through an ordinary day and the day of a Fed decision](figures/14_07_volatility_built_up.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time of day, UTC (x). Top: price in USDT (y). Bottom: volatility so far, % (y). <b>Left:</b> an ordinary day, 22 May 2024. <b>Right:</b> the day of the Fed decision, 21 September 2022. In the bottom panels each line is one estimator's volatility accumulated through the day, the square root of the variance so far: realised variance at 1 second (orange), 1 minute (blue) and 5 minutes (green), bipower at 1 minute (pink) and Parkinson from the range so far (black). The diamond is the single close-to-close return.</sub>
 
 On the ordinary day the measures agree within a factor of about one and a half: 1.7% to 2.4%. The single close-to-close return says 1.4%: it sees only where the day ended. On the Fed day the gap is large: the price moved 7.6% measured minute by minute, but closed only 2.3% from its open, and close-to-close sees nothing of the rest. Measured on every single trade, both days would look absurd, 9% and 80%: each sweep through the book (Lecture 13, §3.5) counts as a move. Bipower, finally, rose at 18:00 almost as much as realised variance: the reaction to the decision was a burst of large minutes in a row, not one isolated jump.
 
 **How precise is each measure?** Over five years, each day's estimate divided by the day's one-minute realised variance:
 
 ![Each estimator divided by one-minute realised variance, median day and 10th to 90th percentile, five years](figures/14_09_estimators_five_years.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Estimate ÷ one-minute realised variance (x, log); one row per estimator. For each day of five years of BTCUSDT, each estimator's variance divided by the day's one-minute realised variance. The dot is the median day, the bar spans the 10th to the 90th percentile of days. The dotted line at 1 is agreement with the one-minute value: a narrow bar is a precise estimator, a bar away from 1 a biased one.</sub>
 
 A single close-to-close return is almost useless for one day: on one day in ten it is below a hundredth of the day's variance, on another in ten more than twice it. The day's range is far better, but still scatters by a factor of two either way. Realised variance at five minutes stays within 20% of the one-minute value on four days in five, bipower within 13%.
 
@@ -180,6 +188,7 @@ A single close-to-close return is almost useless for one day: on one day in ten 
 §3 found that realised variance changes with the interval it is measured at. The other measures change too, but differently:
 
 ![Realised variance, bipower and the realised range by the length of the bars they use, from one second to a week](figures/14_08_interval.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Length of the bars the measure uses (x, log, one second to a week), measure ÷ realised variance from one-minute returns (y). Lines: realised variance (blue), bipower (pink) and the realised range, Parkinson per bar (black). Points below a minute come from 59 sample days, the rest from all days. The dotted line at 1 is the one-minute realised variance.</sub>
 
 Realised variance and bipower peak around one minute: below it, trades continue in the same direction for a few seconds and the measures fall short; above it, the turning back of §3 lowers them. The range does the opposite. On short bars it is far too low, because a one-second bar has only a few trades and its high and low miss much of the movement; from about five minutes on it is reliable and stays level up to an hour, because a candle's high and low capture the extremes that the turning back hides from closing prices.
 
@@ -192,6 +201,7 @@ A strategy needs the risk of its next bars, not of the past. The test: on hourly
 **The yardstick must not be built like the forecast.** Scored against a target made of one-minute returns, the one-minute measure wins at every horizon, but partly at home: forecast and target share the same construction and its quirks. Scored against targets built differently, from five-minute returns or from the ranges of five-minute bars, each measure does best against the yardstick built like itself. A forecast should be judged against a target that does not share its construction, just as §3 judged the path against its own shuffled returns.
 
 ![How much each measure reduces the forecast error against squared hourly returns, by horizon, for three yardsticks](figures/14_10_forecasts.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Less forecast error than squared hourly returns, % (x); one row per measure. Each panel scores the forecasts against a different yardstick: <b>Left:</b> realised variance at 1 minute. <b>Middle:</b> realised variance at 5 minutes. <b>Right:</b> ranges of 5-minute bars. Each dot is the reduction in forecast error, out of sample from July 2023 to September 2026, for the next hour (blue), 4 hours (orange) and 24 hours (pink); 0 means no better than squared hourly returns. The duration measure, a count of range bars, is introduced in §6.</sub>
 
 What survives every yardstick: any measure that uses the inside of the bar beats the bar's own squared returns, by 7% to 26% less forecast error, more for longer horizons. Which form of the inside matters little; ranges from ordinary candles do about as well as minute data. Bipower alone forecasts slightly worse: the jumps it leaves out carry information about the risk ahead. Given both parts, smooth and jumps, with separate weights, it forecasts as well as realised variance, and slightly better for the next day against the return-based yardsticks only: no gain that holds across yardsticks.
 
@@ -204,6 +214,7 @@ On time bars, risk lives in the size of the returns, and √t turns the risk of 
 **One identity.** On any clock, a day's variance is the number of bars in the day times the average variance of a bar's move. Which of the two carries the day's risk depends on the clock:
 
 ![Left: the share of the day-to-day variation of a day's variance due to the number of bars and to the size of each bar's move. Right: the sampling error of one day's variance by clock](figures/14_11_risk_on_any_clock.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: clock (x), % of the day-to-day variation (y). Right: clock (x), median relative error of one day's variance, % (y). <b>Left:</b> the day-to-day variation of each day's variance on 30-minute time, dollar and range bars, split into the part due to the size of each bar's move (orange) and the part due to the number of bars (blue). <b>Right:</b> the sampling error of one day's variance on clocks of about 50 bars a day (green), and on one-minute time bars, 1,440 a day (grey), for comparison. Five years of BTCUSDT.</sub>
 
 On time bars the number of bars never changes, so all of the risk is in the size of the moves: volatility feels like a property of time because, on a time clock, it is one. On price clocks each bar's move is about the same by construction, so most of the risk is in how many bars there are: volatility becomes the speed of the clock. Dollar bars lie between: busier days have more bars and, on top, larger moves per bar.
 
