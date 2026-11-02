@@ -26,7 +26,8 @@ for c, (f, _) in enumerate(FILES, start=1):
         x = [100 * (q0 - R[h][m]["qlike"]) / q0 for m in MEAS]; out[f][h] = dict(zip(MEAS, [round(v, 1) for v in x]))
         fig.add_scatter(x=x, y=MEAS, mode="markers", marker=dict(size=11, color=col), name=lab, legendgroup=lab, showlegend=(c == 1), row=1, col=c)
 fig.update_yaxes(categoryorder="array", categoryarray=MEAS[::-1])
-fig.update_xaxes(title_text="less forecast error than squared hourly returns, %", range=[0, 30])
+fig.update_xaxes(range=[0, 30])
+fig.update_xaxes(title_text="forecast error cut, % (against squared hourly returns)", row=1, col=2)
 fig.update_layout(title="Using the inside of the bar cuts the forecast error by 7% to 26%; which form matters little<br><sup>Risk of the next 1, 4 and 24 hours on hourly bars, "
                         "out of sample July 2023 to September 2026, scored against three yardsticks built in different ways; each measure does best against the yardstick built like itself</sup>",
                   height=430, width=1100, margin=dict(t=100, l=170), legend=dict(orientation="h", y=-0.22, x=0))

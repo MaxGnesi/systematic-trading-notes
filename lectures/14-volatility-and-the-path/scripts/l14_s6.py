@@ -52,7 +52,7 @@ fig.update_yaxes(title_text="% of the day-to-day variation", range=[0, 105], row
 fig.update_yaxes(title_text="relative error of a day's variance, median", range=[0, 32], row=1, col=2)
 fig.update_xaxes(tickvals=pl_, ticktext=["time, 30 min", "dollar", "range", "time, 1 min (1,440 bars)"], row=1, col=2)
 fig.update_layout(title="Risk on any clock: the same risk, carried by different parts of the bars<br><sup>Five years of BTCUSDT; left: the variation of each day's variance from day to day, split "
-                        "into bar count and move size; right: the sampling error of one day's variance, clocks at about 50 bars a day and one-minute bars for comparison</sup>",
-                  height=460, width=1100, margin=dict(t=100), legend=dict(orientation="h", y=-0.2, x=0))
+                        "into bar count and move size;<br>right: the sampling error of one day's variance, clocks at about 50 bars a day and one-minute bars for comparison</sup>",
+                  height=480, width=1100, margin=dict(t=125), legend=dict(orientation="h", y=-0.2, x=0))
 save_figure(fig, PREFIX + "14_11_risk_on_any_clock", FIG)
 (L14_RESULTS / "l14_s6.json").write_text(json.dumps(R, indent=1))
