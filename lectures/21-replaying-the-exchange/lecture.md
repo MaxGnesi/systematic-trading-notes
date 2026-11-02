@@ -4,7 +4,7 @@
 
 Lectures 18 to 20 described Bybit's BTCUSDT book, measured its state and measured its flow. This lecture puts our own orders into the recorded market and asks what would have happened to them: when a resting order is filled, at what price a market order is executed, and what the price does afterwards. A replay is only useful if it tells the truth, so the lecture builds one piece by piece and then tests it on the same 45 days, 20 September to 3 November 2025. The hypotheses were fixed before any result was computed ([results/hypotheses.md](results/hypotheses.md)).
 
-*Draft: Sections 1 and 2.1 to 2.5. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
+*Draft: Sections 1 and 2. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
 
 ## 1. Three replays of one order
 
@@ -300,3 +300,23 @@ The scale decides how much this matters. On 1 October the median queue at the be
 At 0.001 BTC our order is a speck in the queue, and leaving the footprint out costs almost nothing. At 5 BTC our order is larger than the whole best queue two times in three: it would empty the level, move the price and be seen by everyone. The replay reports results at all five sizes, and two hypotheses measure where it stops being trustworthy. H7 compares what real large market orders paid with what the replay predicts from the book just before them. H8 measures how the market reacted when large size was added at the best, and the smallest addition that moved it sets the size above which replayed resting orders are flagged.
 
 **What it misses.** First, the reaction to *our* orders: H7 and H8 measure the market's reaction to other traders' large orders, and ours might be read differently, for example if they are recognisably the same size every time. Second, the slow part: impact that builds over minutes from many small orders of ours (Lecture 20, §3.2) is not visible in any single order. Third, everything that only live orders reveal. Lecture 22 adds the footprint back as layers on the recorded market, each calibrated on what Lectures 18 to 21 measured: depletion and refill, impact and its decay, triggered trading and the reaction of H8.
+
+### 2.6 The models side by side
+
+Every piece of Sections 2.1 to 2.5 has its own family of models, built for one step of an order's life in a replay:
+
+![The life of an order in a replay: six steps, and the family of models that covers each](figures/21_09_order_life.png)
+<sub><b>How to read the figure.</b> Top row: what happens to our order, from the decision to the price after the fill; a market order is filled at step 3, a resting order goes on to steps 4 and 5. Middle row: the family of models used for that step, with the card that introduces it. Bottom: our footprint, which acts at every step and is left out of this lecture.</sub>
+
+| Family | The question it answers | Examples | What it needs | Main blind spot | In this lecture |
+|---|---|---|---|---|---|
+| Fill rules | When is a resting order filled? | Touch; trade-through (Lecture 17); queue (§2.3); NautilusTrader's probability of a fill when the price touches our order | Trades; the book for the queue rule | Touch ignores the line ahead; trade-through ignores fills at our price | All three, side by side (H1) |
+| Queue-position models | How much stands ahead of our order? | Rigtorp (2013); hftbacktest's probabilistic and risk-averse models; Databento (2025) | Book and trades | Who cancels, which L2 does not show | The dial $`a`$ from 1 to ∞ (H3) |
+| Fill-probability models | How likely is a fill, and how soon? | Survival models of the time to execution (Lo, MacKinlay and Zhang, 2002); fill probability from the queues (Albers et al., arXiv 2502.18625); $`R`$ for non-adverse fills (Lalor and Swishchuk, 2024; DeLise, 2024) | Real fills: one's own or live experiments | Fitted on one market and period; used elsewhere | Not fitted here; our replay's fills are compared with real fills (H4) |
+| Latency models | What does our order meet when it arrives? | A constant delay; delays measured on live orders (hftbacktest); failure given the later return (Albers et al., 2025); latency as a cost to optimise (Cartea, Jaimungal and Sánchez-Betancourt, arXiv 1908.03281) | Measured delays of one's own orders | The race against faster traders | $`L`$ = 10, 50, 100 ms; effective latency (descriptive) |
+| Adverse selection | What is a fill worth? | Adverse and non-adverse fills (Lalor and Swishchuk, 2024); the drift after a fill (DeLise, 2024); markouts (Lecture 19, §2.5) | Prices after the fill | The interval that defines "adverse" | Markouts by kind of fill (H2), at round times (H5), on 10 October (H6) |
+| Market reaction | How does the market respond to our order? | Impact over time (Lecture 20, §3.2); simulated traders (ABIDES; Byrd, Hybinette and Balch, 2019); queues whose rates depend on their size (Huang, Lehalle and Rosenbaum, 2015) | Reactions measured on others' orders, or live orders | Calibrated on other traders' orders, not ours | Where the replay breaks, by size (H7, H8 and its reaction curve); Lecture 22 |
+
+<sub><b>How to read the table.</b> One row per family of models. "What it needs" is the data required to use or fit it; "Main blind spot" is what no model of the family can know from that data. The last column says what this lecture does with the family on Bybit's data, with the hypotheses of [results/hypotheses.md](results/hypotheses.md). Examples are named for the reader to look up; they are listed in the reading list.</sub>
+
+The first two families decide when our order is filled, the third how often, the fourth what it meets, the fifth what the fill is worth and the last what our order does to the market. A replay needs a choice in each. The touch rule, a constant latency, no queue and no reaction is the simplest replay and the most flattering; each later choice makes it more cautious and asks for data that L2 feeds do not contain. Lo, MacKinlay and Zhang (2002) warned, on stock orders, that hypothetical executions computed from price paths or trades are "very poor proxies" for actual ones. That is the question of Section 4: how far from the truth is our replay, and in which direction?
