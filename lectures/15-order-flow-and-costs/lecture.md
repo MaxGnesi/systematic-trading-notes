@@ -35,6 +35,7 @@ When buyers hurry, the price rises: they take the offers in the book, one level 
 **How it is measured.** Cut five years into windows of equal length: 1, 5 and 30 minutes. In each window measure the flow and sort the windows into fifths, from most selling to most buying. For each fifth, record the return during the window, the impact, and over the next window of the same length, what follows. Repeat for three volatility regimes, defined by the last hour's realised variance against its median over the past 28 days, so that the regime is known before the window starts.
 
 ![The return during 30-minute windows and over the next 30 minutes, by fifth of net aggressive buying, for calm, normal and volatile hours](figures/15_01_impact_and_after.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Fifth of net aggressive buying (x), return in bp (y). Left: during the window. Right: over the next 30 minutes. Each point is the mean return of one fifth of the 30-minute windows over five years of BTCUSDT, sorted from most selling to most buying. The colours are the volatility regime known before the window starts: calm (blue), normal (orange) and volatile (pink) hours. <b>Right:</b> the bars are 95% intervals; note the much smaller scale than on the left.</sub>
 
 | | 1 minute | 5 minutes | 30 minutes |
 |---|---|---|---|
@@ -49,12 +50,14 @@ Flow moves the price strongly while it happens. Afterwards a small part comes ba
 **With or against the trend?** The reversal could depend on what the flow pushes against. The same test, now only on the strongest flow (the top and bottom fifths), split by the slower trend known at the time (the past three days' return, divided by its typical size: up, down, or no clear trend beyond half a standard deviation) and by the volatility regime:
 
 ![The next window's return in the direction of strong flow, by trend relation and volatility regime, 5- and 30-minute windows](figures/15_02_flow_matrix.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Volatility regime (x), relation of the flow to the slower trend (y); left 5-minute, right 30-minute windows. Each cell covers the windows in the top and bottom fifths of flow and gives the mean next-window return in the direction of the flow, in bp (negative: the price came back), with its t-statistic, days as clusters. The colour is the t-statistic: pink for a reversal, blue for continuation, white near zero.</sub>
 
 The price comes back reliably in one corner only: after strong flow **with** the slower trend, in normal and volatile hours, by 0.2 to 0.5 bp after five-minute windows and 1.7 bp after thirty-minute windows in volatile hours. After flow against the trend, or with no clear trend, nothing is distinguishable from zero. When the market piles in on the side the trend already favours, at a moment of stress, the price overshoots and gives some back. In some cells the average and the day-based test point different ways, because a few extreme windows pull the average; the figure shows the day-based statistics, which are not dominated by them.
 
 **At scheduled releases.** At a CPI release or a Fed decision, flow and price both explode. Three examples, minute by minute:
 
 ![Price and net aggressive buying from 10 minutes before to an hour after three releases](figures/15_03_releases.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Minutes from the release (x). Top: price in bp from before the release (y). Bottom: net aggressive buying, USD millions per minute (y). One column per release: the CPI releases of 10 November and 13 September 2022 and the Fed decision of 21 September 2022, from 10 minutes before to an hour after, in one-minute steps. Blue bars are net buying, pink bars net selling; the dashed vertical line marks the release.</sub>
 
 In November 2022 buyers sent $118 million of net buying in the first minute and the price kept rising; in September 2022 sellers sent $165 million and the price kept falling; at the Fed decision of September 2022 heavy selling and heavy buying followed within two minutes and the price reversed over the hour. Across all releases, the first five minutes' **move** predicts the next thirty minutes (a correlation of +0.45 for CPI releases, −0.32 for Fed decisions, Lecture 13, §7.4), but the first five minutes' **flow** does not (+0.15 and −0.10, neither distinguishable from zero). At a release the book reprices itself: the move carries the news, and the aggressive trades are only part of it.
 
@@ -85,6 +88,7 @@ Section 2 looked at flow added up over minutes. A single order can do the same i
 **How it is measured.** A sweep is one aggressive order, all fills in the same millisecond on the same side, that moves the price by at least 5, 10 or 20 bp from its first to its last fill. Over five years there are 622,818 of at least 5 bp and 179,082 of at least 10 bp. Sweeps come in bursts, so only the first in each 10-minute block is kept; with a clear slower trend, this leaves about 19,000, 5,800 and 1,600 independent sweeps for the three sizes. For each, the price is read just before it, at its last fill, and 10 seconds, 1 minute, 10 minutes and 1 hour later. The slower trend is the one of §2, the past three days' return divided by its typical size, read in the minute before the sweep.
 
 ![The median price path after independent sweeps of at least 5, 10 and 20 bp, with and against the slower trend](figures/15_04_sweep_absorption.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time from the sweep (x, in steps, not to scale), price in bp from before the sweep, in the sweep's direction (y). Left: sweeps with the slower trend. Right: sweeps against it. Each line is the median price path after independent sweeps (the first in each 10-minute block) of at least 5 bp (orange), 10 bp (blue) and 20 bp (green), read just before the sweep, at its last fill and 10 seconds to 1 hour later. 0 means the price is back where the sweep started.</sub>
 
 *The time axis is in steps, not to scale.*
 
@@ -137,12 +141,14 @@ Lecture 14 found an explosive regime: hours in which the price moves many times 
 **Risk clusters.**
 
 ![The chance that the next hour is a cascade, by the last hour's volatility, 2021-2024 and 2025-2026](figures/15_05_risk_clusters.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Fifth of the last hour's realised variance against its 28-day median (x), chance that the next hour is a cascade, % (y). Blue bars are 2021–2024, where the cut-offs were set; orange bars are 2025–2026, out of sample. A cascade is an hour whose move is at least 4.3 times its typical size; the dotted line is the average rate, 1 hour in 100.</sub>
 
 After the calmest fifth of hours the next hour is a cascade about once in a thousand; after the most volatile fifth, three times in a hundred, in both periods. The reason is the mechanism itself: a cascade takes time to build, each round of forced selling triggering the next, so its first stages are visible in the volatility before the worst hour comes. This is volatility clustering (Lecture 14, §5.3) at its extreme, and it answers the question Lecture 14 (§3) left open: yesterday's volatility does not say whether today will be explosive, but within the day the last hour's volatility does.
 
 **What the warnings add.**
 
 ![What each warning adds to the chance of a cascade beyond the last hour's volatility, next hour and within 24 hours, in-sample and out of sample](figures/15_06_warnings.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Added chance of a cascade, percentage points (x), warning (y). Left: next hour. Right: within 24 hours, fuel measures only. Each marker is what a warning in its top (or bottom) fifth adds to the chance of a cascade beyond the last hour's volatility fifths, with a 95% interval: blue dots for 2021–2024, where the cut-offs were set, orange diamonds for 2025–2026, out of sample. The dashed line at 0 means no added risk; the two panels have different scales.</sub>
 
 Only a sweep adds to the warning: after one in the last 15 minutes, the next hour is a cascade four to five times as often, 1.7 percentage points beyond the control in 2021–2024 (t 3.1). There is a reason to expect it: a single order that clears several levels shows that the book is thin, and a thin book is where forced sales move the price most. Out of sample sweeps are rarer and the effect, though as large, is not significant; it is a lead, not an established result.
 
@@ -178,12 +184,14 @@ A market order pays three things: the exchange's fee, half the spread (it buys a
 **How it is measured.** Binance published its best bid and ask, every change of them, only from May 2023 to March 2024; every fourth day of that window is used, 80 days and 1,903 hours. Each aggressive order (all fills in the same millisecond on the same side, as in §3) is matched to the best bid and ask in force just before it; 98.5% of orders find a quote less than a second old. The effective half-spread splits into two parts that add up to it: the **impact**, how far the mid moves in the order's direction over the next seconds, and the **realised half-spread**, what the resting side keeps against that later mid. Fees are those of a regular account in Binance's USDⓈ-M futures: 5 bp for a market (taker) order and 2 bp for a resting (maker) order, lower at higher volume tiers.
 
 ![The cost per trade by order size: a market order (fee plus spread and impact) against the resting order it fills (fee plus the move of the price in the next 60 seconds)](figures/15_07_cost_by_size.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Size of the market order (x), cost per trade in bp of the amount traded (y). Left: what the market order pays. Right: what the resting order it fills pays. Mean per order over 80 days from May 2023 to March 2024. Each bar stacks the exchange fee of a regular account (grey, 5 bp taker, 2 bp maker) and, on the left, the spread and impact paid (blue) or, on the right, what is lost to the move of the price in the next 60 seconds (pink); the number on top is the total.</sub>
 
 **H1 holds.** The book sits at one tick 99.6% of the time; the quoted half-spread averages 0.015 bp. For orders under $10,000 the spread and impact together cost 0.04 to 0.07 bp, a hundredth of the 5 bp fee.
 
 **H2 holds.** The cost rises with size, from 0.04 bp under $1,000 to 0.5 bp between $100,000 and $1 million and 2.5 bp above, where an order walks through several levels. It roughly doubles from calm to volatile hours, from 0.05 to 0.12 bp per order. Only the largest orders pay a cost comparable to the fee.
 
 ![What the resting side keeps 1 s, 10 s and 60 s after the fill, by volatility regime and in the minute after a sweep](figures/15_08_adverse_selection.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time after the fill (x), bp kept by the resting side (y). The realised half-spread: the fill price against the mid 1, 10 and 60 seconds later, mean per order over 80 days from May 2023 to March 2024. Solid lines are calm (blue), normal (orange) and volatile (pink) hours; the black dotted line is the minute after a sweep of 10 bp or more. Below 0 the price moved against the resting order.</sub>
 
 **H3 holds.** For every order size and in every regime, the mid moves against the resting side by more than the half-tick it earned: it keeps −0.13 bp after 60 seconds in calm hours and −0.22 bp in volatile ones (t-statistics from −8 to −34, with days as clusters). The loss is largest, in basis points, against large orders (−0.55 bp against orders of $100,000 to $1 million). One reading, not tested here: a large order is more likely to carry information, or to start a move. In the minute after a sweep the resting side does better for the first ten seconds, when half of the sweep comes back (§3), and the same as at any other time after sixty.
 
@@ -219,10 +227,12 @@ Section 5 showed that a resting order pays 2 bp where a market order pays 5. But
 **How it is measured.** At every seventh minute of the five years a trader decides to buy, and, mirrored, to sell, so that the drift of the price cancels. The choice is between a market order at once, paying the taker fee and the half-spread of §5, and a resting order one tick or a few basis points inside the last price, which pays the maker fee if filled. If it is not filled by a cut-off, it becomes a market order at the price then. Both choices end with the same position, so the difference in what they paid is the whole comparison. A resting order counts as filled only when a later trade goes strictly through its price, a conservative rule, since our place in the queue is unknown; a trade at the price would fill it sooner. The grid of distances and waiting times uses one-minute bars over the five years; the cut-offs shorter than a minute use the tick tape on every tenth day, 180 days. Fees are those of a regular account. The t-statistics below use days as clusters. All fills are simulated from the tape; simulated fills can differ from real ones (Lo, MacKinlay and Zhang, 2002), an open question that Part IV, with the order book, takes up.
 
 ![How often a resting order is filled, and what it saves against a market order when it chases at the cut-off, by distance and waiting time](figures/15_09_resting_fill_and_saving.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Resting order's distance from the price (x). Left: share filled, % (y). Right: cost against a market order, bp (y). Five years of BTCUSDT, a decision every seventh minute, buys and mirrored sells, simulated on one-minute bars; an order is filled when the price trades through it. Colours are the waiting time: 1 minute (blue), 10 minutes (orange), 60 minutes (green). <b>Right:</b> orders not filled by then are chased with a market order; negative means cheaper than trading at once.</sub>
 
 **H1 holds.** One tick inside, an order is filled 79% of the time within a minute and 94% within ten; 5 bp away, 26% and 66%; 20 bp away, 2% and 22%. Moving the order away from the price does not pay: it is filled less often, and the chases eat what the better price saves. One tick inside is the best distance at every waiting time.
 
 ![The price one hour after the decision, for orders that were filled and orders that were not, trend entries and grid entries](figures/15_10_resting_what_it_misses.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Resting order's distance from the price, waiting 10 minutes (x), price one hour after the decision, bp (y). Left: trend entries, buying after a rise. Right: grid entries, buying after a fall (sells mirrored). Pink bars are the orders that were filled, labelled with the share filled; blue bars are those that were not. Positive means the price moved in the order's favour.</sub>
 
 **H2 holds.** The orders that are filled are those the price came against: an hour after the decision the price stands about where the order was filled, and after the fill it moves on against it by a further 1 to 1.7 bp. The orders that are not filled are those it ran away from: 5 bp away with a ten-minute wait, the price an hour later is 6 bp against the filled orders and 11 bp in favour of the missed ones. Much of this is geometry, since an order is filled only if the price reaches it, but for a strategy with an edge it is decisive: dropping the misses removes the trades that moved its way.
 
@@ -231,6 +241,7 @@ Section 5 showed that a resting order pays 2 bp where a market order pays 5. But
 **The cut-off.**
 
 ![Cost of the resting order against a market order by cut-off time: average, 95th and 99th percentile, and the average of the worst 5%](figures/15_11_resting_cutoff.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Cut-off after which a market order is sent (x, in steps, not to scale), cost against a market order sent at once, bp (y). Left: resting one tick inside. Right: resting 2 bp inside. Tick tape, every tenth day from November 2021 to September 2026, over all orders; negative means cheaper. Lines are the average (blue), the 95th percentile (orange), the average of the worst 5% (pink) and the 99th percentile (pink, dotted). <b>Left:</b> the diamonds are the order re-posted one tick inside the current price every 5 seconds: its average (blue) and the average of its worst 5% (pink).</sub>
 
 | Cut-off, one tick inside | 10 s | 30 s | 1 min | 10 min | 60 min |
 |---|---|---|---|---|---|
@@ -292,16 +303,19 @@ The impact grows with the square root of size: a trade four times as large moves
 **The capacity map.** With a cost of 3 bp per trade for fee and spread (the re-posted entry of §6) and impact from the square-root law, the largest trade at which costs take half or all of a given edge is:
 
 ![The largest trade at which costs take half or all of the edge per trade, 2021 and 2023](figures/15_12_capacity.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Edge per trade, bp (x, log), largest trade, USD million (y, log). Left: 2021. Right: 2023. The largest trade at which costs take all (pink) or half (blue) of the edge, with costs of 3 bp plus square-root impact for a trade executed over about a day, using the year's median volume and volatility. The line is for a constant Y = 1; the shaded band reaches to Y = 0.5.</sub>
 
 A trend trade with an edge of 50 bp loses half of it to costs at about $65 million in 2021 and $135 million in 2023, all of it at about $290 million and $620 million. The capacity rises with the square of the edge left after the fixed cost, and falls with the square of volatility: the calm year 2023 allowed twice the size of the volatile 2021, with less volume. A grid, whose fills earn a few basis points each, would reach its limit in the low millions per level; but its fills are passive, and for them the binding cost is the adverse selection of §5, not impact.
 
 **Funding: the cost of holding.** A perpetual has no expiry; instead, every eight hours longs pay shorts, or shorts pay longs, an amount that keeps its price close to spot. On Binance the rate has an interest component of 0.01% per eight hours, 0.03% a day, plus a premium when the perpetual trades above spot. On BTCUSDT longs paid in 74 to 99% of the eight-hour periods each year.
 
 ![Funding paid by a long perpetual and interest on the cash it frees, by year](figures/15_13_funding.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Year (x), % of the position over the year (y). Pink bars are the funding paid by a long BTCUSDT perpetual on Binance, summed over the year's settlements; orange bars are the interest earned by the cash it does not tie up, at the 3-month T-bill rate. 2021 covers October to December only and 2026 runs to September.</sub>
 
 A long perpetual needs only margin, so the rest of its capital can earn interest; long spot ties up all of it. In every full year the funding was the larger, most of all in the rising year 2024, when longs paid 12% against 5% on cash: those who want to be long when the market rises pay most to stay long.
 
 ![Long spot against long perpetual, October 2021 to September 2026](figures/15_14_perp_vs_spot.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Date (x), value of USD 1 invested (y, log). Long spot (black), long perpetual after funding with the spare cash in T-bills (orange), and long perpetual after funding alone (pink), October 2021 to September 2026; the legend gives each final value.</sub>
 
 Over the five years the perpetual's price tracked spot within a median of 5 bp, but a dollar held long grew to $1.74 in spot, $1.21 in the perpetual after funding, and $1.46 with the spare cash in Treasury bills: the perpetual trailed spot by about 8% a year, and by 4% after interest. The gap between the two is, period by period, the funding paid plus the change in the basis, the perpetual's price over spot; over these five years the basis ended where it began, within a few basis points, so the gap is the funding (Lecture 16, §6, measures the long-spot, short-perpetual structure that earns it). A trend trade held long for 20 days paid 16 to 110 bp in funding, depending on the year, against 4 to 10 bp to enter and leave; a short received it.
 
@@ -423,5 +437,6 @@ For the impact of trades and why it is partly transient, Bouchaud, Farmer and Li
 The square-root law describes one trader's metaorder. The net flow of all traders together, measured on our tape over windows of 5, 15 and 60 minutes, moves the price close to linearly with its size over the range observed, with slopes of 0.8 to 1.0 on a log-log scale, not 0.5:
 
 ![Aggregate impact against net flow as a share of daily volume, log-log, with lines of slope 1/2 and 1](figures/15_15_aggregate_impact.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Net aggressive buying in the window as a share of a typical day's volume (x, log), price move with the flow in daily volatilities (y, log). Five years of BTCUSDT; windows of 5 (blue), 15 (orange) and 60 minutes (green) are sorted into twenty groups by size, one dot per group, with the fitted slope in the legend. The grey lines are reference slopes: 1/2 for the square-root law (dotted) and 1 for linear (dashed). The prefix μ on the x-axis means millionths.</sub>
 
 The two do not contradict each other: a window's net flow mixes many traders, informed and not, and the price responds to their sum, not to the size of any one order (Patzelt and Bouchaud, 2018). The square-root law cannot be tested on an anonymous tape, which is why §7 takes it from the literature.
