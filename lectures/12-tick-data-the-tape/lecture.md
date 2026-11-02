@@ -268,8 +268,10 @@ A flagged trade can be a fast market, a poor execution in a thin book, or an err
 Comparing with Binance's published candles, with other exchanges or with news would add evidence; this lecture uses the tape alone. The largest persisting and the largest reverting print of the five years:
 
 ![Every trade two minutes either side of the largest persisting print, 17 August 2023, coloured by the aggressor's side, large trades as bubbles; below, cumulative net aggressive buying](figures/12_02_event_largest_jump_that_persists.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time, UTC (x). Top: trade price (y). Bottom: net aggressive buying (y). Every trade on BTCUSDT two minutes either side of the largest persisting print, 17 August 2023, one dot per trade: blue when the buyer was the aggressor, pink when the seller was. Trades of USD 250,000 or more are drawn as bubbles that grow with their dollar value; the black ring marks the flagged print. <b>Bottom:</b> cumulative net aggressive buying from the start of the window, in USD millions.</sub>
 
 ![Every trade twenty seconds either side of the largest reverting print, 6 September 2022](figures/12_03_event_largest_spike_and_revert.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time, UTC (x). Top: trade price (y). Bottom: net aggressive buying (y). Every trade on BTCUSDT twenty seconds either side of the largest reverting print, 6 September 2022, one dot per trade: blue when the buyer was the aggressor, pink when the seller was. Trades of USD 250,000 or more are drawn as bubbles that grow with their dollar value; the black ring marks the flagged print, a single small dot far above the rest. <b>Bottom:</b> cumulative net aggressive buying from the start of the window, in USD millions.</sub>
 
 | | 17 August 2023, 21:45:03 UTC | 6 September 2022, 17:12:26 UTC |
 |---|---|---|
@@ -285,8 +287,10 @@ Comparing with Binance's published candles, with other exchanges or with news wo
 Two other flags are extreme without being suspicious, and they show what the tape looks like at its limits:
 
 ![The largest single trade of the five years, 27 April 2026](figures/12_04_event_largest_single_trade.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time, UTC (x). Top: trade price (y). Bottom: net aggressive buying (y). Every trade on BTCUSDT two minutes either side of the largest single trade of the five years, 27 April 2026, one dot per trade: blue when the buyer was the aggressor, pink when the seller was. Trades of USD 250,000 or more are drawn as bubbles that grow with their dollar value; the black ring marks the trade itself, the large pink bubble. <b>Bottom:</b> cumulative net aggressive buying from the start of the window, in USD millions.</sub>
 
 ![The busiest minute of the five years, 21 September 2022](figures/12_05_event_busiest_minute.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time, UTC (x). Top: trade price (y). Bottom: net aggressive buying (y). Every trade on BTCUSDT two minutes either side of the busiest minute of the five years, 21 September 2022, which begins one minute after the Federal Reserve decision at 18:00 UTC, one dot per trade: blue when the buyer was the aggressor, pink when the seller was. Trades of USD 250,000 or more are drawn as bubbles that grow with their dollar value; the black ring marks the middle of that minute. <b>Bottom:</b> cumulative net aggressive buying from the start of the window, in USD millions.</sub>
 
 | | Largest single trade: 27 April 2026, 06:05:33 UTC | Busiest minute: 21 September 2022, 18:01 UTC |
 |---|---|---|
@@ -302,6 +306,7 @@ With the data checked, the tape can be described. This section asks how much is 
 ### 6.1 Activity over five years
 
 ![Trades and dollars per day, October 2021 to September 2026, with the repaired days and the outages marked](figures/12_01_activity.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Day (x). Top: trades per day, millions (y). Bottom: dollars traded per day, USD billions (y). BTCUSDT perpetual, October 2021 to September 2026. Orange diamonds mark the days filled from the daily files (§5.2); pink crosses mark the outages, days with no trade for more than a minute.</sub>
 
 | | Trades per day | Dollars per day |
 |---|---|---|
@@ -315,6 +320,7 @@ Activity moves in regimes: quieter in 2023, at its peak in dollars in 2024. The 
 ### 6.2 Time of day, and the funding times
 
 ![Dollars traded per minute of the day, relative to the day's average, on weekdays and at weekends](figures/12_08_time_of_day.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Minute of the day, UTC (x); dollars traded in that minute divided by the day's average minute (y). Averaged over the five years, separately for Monday to Friday (blue) and for Saturday and Sunday (orange). A value of 1 is the day's average pace. Dotted vertical lines mark the funding times, 00:00, 08:00 and 16:00 UTC.</sub>
 
 | Measure | What we measure, in plain words | Benchmark | Result | What it means |
 |---|---|---|---|---|
@@ -343,6 +349,7 @@ When funding is highest, the last ten minutes before the payment show net aggres
 **Activity, volatility and price around funding.** A wider look, an hour either side of every funding time, minute by minute, with the hours halfway between (04:00, 12:00 and 20:00 UTC) as a control:
 
 ![Minute by minute, an hour either side of the funding times, by funding rate, against the control hours: dollars traded, size of the move, and average cumulative return](figures/12_17_funding_event.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Minutes from the funding time (x) in all three panels. Left: dollars traded per minute ÷ day's average (y). Centre: size of the move per minute ÷ day's average (y). Right: average cumulative return, basis points (y). Each line averages the payments in one funding group: funding above 0.01% (pink), exactly 0.01% (green), zero or negative (blue); grey is the control, the hour four hours later, halfway between funding times. The dotted line marks the payment; in the left and centre panels a value of 1 is the day's average minute.</sub>
 
 | | Funding above 0.01% | Exactly 0.01% | Zero or negative | Control hours |
 |---|---|---|---|---|
@@ -360,6 +367,7 @@ Activity and volatility jump at every full hour, and more at the funding times t
 ### 6.3 Time between trades
 
 ![Distribution of the time to the next trade, against trades arriving at random with the same average wait](figures/12_09_durations.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time to the next trade, milliseconds (x, log); percent of waits in each bin (y, log). All waits between consecutive trades over the five years (blue) against the waits that trades arriving at random would give with the same 60-millisecond average (orange, dashed). Waits of 0 or 1 millisecond, 54% of the total, fall off the log axis and are not shown; waits of 0 alone, trades in the same millisecond, are the 51% of the table below.</sub>
 
 | Measure | What we measure, in plain words | Benchmark: trades arriving at random | Result | What it means |
 |---|---|---|---|---|
@@ -373,6 +381,7 @@ Random arrival, a Poisson process, would put most waits near the average and alm
 ### 6.4 Trade sizes
 
 ![Share of trades and of dollars by trade size, and the share of trades at least a given size on log-log axes](figures/12_06_trade_sizes.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: trade size in USD (x, log), percent (y). Right: trade size in USD (x, log), share of trades at least that large (y, log). All 2.6 billion trades of the five years. <b>Left:</b> the share of trades (blue) and the share of dollars (orange) in each size bin. <b>Right:</b> the share of trades of at least each size (blue), with a straight line fitted above USD 100,000 (pink, dashed); on log-log axes its slope is the tail exponent.</sub>
 
 | Measure | What we measure, in plain words | Benchmark | Result | What it means |
 |---|---|---|---|---|
@@ -385,6 +394,7 @@ The left-hand chart is the most important picture of this section. The blue curv
 ### 6.5 Who is aggressive
 
 ![Daily share of aggressive buying, and the day's return against it](figures/12_07_aggressor.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: aggressive buying, percent of the day's dollars (x); number of days (y). Right: the same share (x); the day's return, percent (y). One observation per day over the five years. <b>Left:</b> histogram of the daily share of dollars bought aggressively; 50% means buying and selling aggressors balanced. <b>Right:</b> one dot per day.</sub>
 
 | Measure | What we measure, in plain words | Benchmark | Result | What it means |
 |---|---|---|---|---|
@@ -407,6 +417,7 @@ The correlation is contemporaneous: flow and price move together, which does not
 **A limit of the aggregated tape.** Binance merges consecutive fills on the same side at the same price into one row (§3.1). Two neighbouring rows are therefore more often different than the underlying fills would be, and the correlation at lags of one or two rows is distorted: the correlation at lag 2 exceeds the one at lag 1. The measures below use lags of five trades or more, and two versions: per trade, and per order, merging trades in the same millisecond on the same side into one, so that a sweep through several prices (§6.3) counts once. A third measure does not depend on the rows at all: the net aggressive dollars of each second, correlated with those of the next second.
 
 ![Correlation of trade signs with the sign k trades later, per trade and per order, on log-log axes; and month by month, the sign correlation at 100 trades, the correlation of net dollar flow from one second to the next, and realised volatility](figures/12_11_flow_persistence.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: lag k in trades (x, log); sign correlation (y, log). Right: month (x); correlation (left y), realised volatility, % a year (right y). <b>Left:</b> correlation of a trade's sign (+1 buy, −1 sell) with the sign k trades later, over the five years, per trade (blue) and per order, with trades in the same millisecond on the same side merged (green); the pink dashed line is a power law fitted to the per-trade curve. <b>Right:</b> month by month, the sign correlation at 100 trades (blue) and the correlation of one second's net dollar flow with the next second's (orange), both on the left axis, and realised volatility (grey) on the right axis.</sub>
 
 | Measure | What we measure, in plain words | Benchmark: no persistence | Result | What it means |
 |---|---|---|---|---|
@@ -442,6 +453,7 @@ This section only describes. Lecture 15 asks whether the unexpected part of the 
 | Bounce, one second | The same for returns from one second to the next, using the last price of each second | 0 | +0.07 | The bounce has gone; a small positive correlation remains: moves continue for a few seconds |
 
 ![Annualised realised volatility measured from returns over intervals from one second to one hour](figures/12_10_signature.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Sampling interval, one second to one hour (x, log); annualised volatility, percent (y). Realised volatility averaged over the five years, measured from returns at each interval: from trade prices (blue) and from the mid estimated from the last buy and the last sell of each second (green, dotted). The orange dashed line is the volatility of daily close-to-close returns. A flat curve would mean returns are independent.</sub>
 
 Realised volatility adds up squared returns over short intervals. In theory, the shorter the interval, the more precise the estimate; in practice, the answer depends on the interval. The chart, a **signature plot** (Andersen, Bollerslev, Diebold and Labys, 2000), shows annualised volatility for each interval, averaged over the five years:
 
@@ -467,6 +479,7 @@ The practical result is reassuring: from 15 minutes to an hour, every interval l
 Lecture 2 treated volume as one number per bar. The tape splits it into its two parts: how many trades, and how large each one is. Which of the two goes with volatility? The literature gives a clear answer for stocks. Prices move with the rate at which information arrives, and the number of trades is a good measure of that rate (Clark, 1973). Hour by hour, volatility follows the number of trades, and the average trade size adds almost nothing (Jones, Kaul and Lipson, 1994). At the level of single orders, a large order does not move the price much more than a small one; large price changes come from gaps in the order book, moments when few resting orders stand near the price (Farmer, Gillemot, Lillo, Mike and Sen, 2004).
 
 ![Volatility of each hour against its number of trades; and the size of each one-minute move against the number of trades in that minute, with the largest 0.1% of moves highlighted](figures/12_12_large_moves.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: trades in the hour (x, log); volatility of the hour, basis points (y, log). Right: trades in the minute ÷ day's median minute (x, log); size of the one-minute return, basis points (y, log). <b>Left:</b> one dot per hour of the five years (blue), its volatility measured from one-minute returns. <b>Right:</b> a sample of one-minute moves (grey), with the largest 0.1% of moves shown in pink; the dotted vertical line at 1 marks a minute with the day's median number of trades.</sub>
 
 **Activity or size?** Each of the 43,818 hours of the five years, with its variance measured from one-minute returns, its number of trades and its average trade size:
 
@@ -548,6 +561,7 @@ No single source is perfect. The tape is the primary record, and the candles are
 ### 8.2 The same candle, different flow
 
 ![Two hours with nearly the same hourly candle: minute candles and cumulative net aggressive buying inside each](figures/12_15_same_candle.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time, UTC (x). Top: price, minute candles (y). Bottom: net aggressive buying, USD millions (y). <b>Left:</b> 6 July 2026, 11:00 to 12:00 UTC. <b>Right:</b> 3 September 2026, 22:00 to 23:00 UTC. Top panels show the one-minute candles of each hour, blue when the minute rose and pink when it fell; the panel titles give the hourly return, range and dollars traded. Bottom panels show cumulative net aggressive buying from the start of the hour.</sub>
 
 | | 6 July 2026, 11:00 UTC | 3 September 2026, 22:00 UTC |
 |---|---|---|
@@ -564,6 +578,7 @@ As hourly candles, the two are almost identical. On the tape they are opposites.
 Lecture 3, §7 estimated order flow from bars. The **tick rule**, the signed volume behind on-balance volume, gives all of a bar's volume to buyers if the close rose and to sellers if it fell. **Bulk volume classification** (Easley, López de Prado and O'Hara, 2012) splits the volume by the size of the move: the share bought is the probability of the move under a normal distribution, Φ(return ÷ volatility), with the volatility measured over past bars only. The tape gives the true answer for every bar:
 
 ![Daily net aggressive buying estimated from the candle against the true value; and the share of each day's dollars bought aggressively, estimated and true](figures/12_13_flow_from_candles.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: true net aggressive buying, USD billions (x); estimate from the candle, USD billions (y). Right: percent of the day's dollars bought aggressively (x); number of days (y). One observation per day over the five years. <b>Left:</b> one dot per day, estimated by bulk volume classification (blue) and by the tick rule (light orange); a perfect estimate would lie on the diagonal. <b>Right:</b> histograms of the share bought aggressively, estimated by bulk volume classification (blue) and true from the tape (green); the tick rule is not drawn, since it always gives 0 or 100.</sub>
 
 | Measure | What we measure, in plain words | One minute | One hour | One day |
 |---|---|---|---|---|
@@ -582,6 +597,7 @@ The candle gets the direction of the flow right four times in five, and its size
 Lecture 3, §4.2 estimated volatility from the high, low, open and close of daily bars, and §4.4 there argued that every range estimate is biased down. The tape gives the benchmark: realised volatility from five-minute returns (§7.2). Each estimator is averaged over 28-day windows and compared with realised volatility over the same window:
 
 ![Volatility over the past 28 days from daily candles (close to close, Parkinson, Yang-Zhang) against realised volatility from the tape](figures/12_14_range_estimators.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Date (x); volatility over the past 28 days, % a year (y). Realised volatility from five-minute returns on the tape (black), the benchmark, against three estimators from daily candles: close to close (orange), Parkinson (blue) and Yang–Zhang (green). The arrow marks the 28 days after 6 September 2022, when one flagged print (§5.4) set the day's high.</sub>
 
 | Estimator | Uses | Level relative to realised volatility | Typical error over 28 days | Correlation with realised variance, day by day |
 |---|---|---|---|---|
@@ -613,6 +629,7 @@ A backtest of a daily strategy that trades at the close, as in Parts I and II, a
 ### 8.6 Volume by price
 
 ![15-minute candles of 21 September 2022, the day of a Federal Reserve rate decision, and the dollars traded at each price, bought and sold aggressively](figures/12_16_volume_profile.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: time of day, UTC (x), price (y). Right: dollars traded, USD millions per USD 10 of price (x), at the same price (y). 21 September 2022, the day of the Federal Reserve decision at 18:00 UTC. <b>Left:</b> 15-minute candles, blue when the price rose and pink when it fell; dotted lines mark the day's VWAP and the close. <b>Right:</b> the volume profile: the dollars traded in each USD 10 price band, split into those bought aggressively (blue) and sold aggressively (pink).</sub>
 
 A candle reports four prices. The tape shows where the trading actually happened. On 21 September 2022, the day of a 0.75-point rate rise, 2.7 million trades:
 
@@ -630,6 +647,7 @@ The daily candle spans $2,070, but most of the dollars traded within a few hundr
 **The same day as net buying.** Figure 12_18 draws the profile differently: at each price, aggressive buying minus aggressive selling, which traders call the **volume delta**.
 
 ![15-minute candles of 21 September 2022, and the net aggressive buying at each price](figures/12_18_volume_delta.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: time of day, UTC (x), price (y). Right: net aggressive buying, USD millions per USD 10 of price (x), at the same price (y). The same day and candles as Figure 12_16. <b>Right:</b> at each USD 10 price band, aggressive buying minus aggressive selling: bars to the right (blue) where more was bought aggressively, to the left (pink) where more was sold.</sub>
 
 In short: buyers dominated between $18,900 and $19,300 but were absorbed without a breakout, while sellers drove the decline below $18,800, and that pressure was not absorbed.
 
