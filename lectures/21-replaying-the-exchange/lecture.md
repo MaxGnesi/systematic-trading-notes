@@ -198,6 +198,31 @@ On the same cancellation the models leave between 0.06 and 0.60 BTC ahead of our
 
 In small units, the first log model puts about half of every cancellation ahead of us wherever we stand (41% at $`x = 0.1`$, 59% at $`x = 0.9`$, counted in 0.001 BTC), and variant 2 puts almost none. Rigtorp suggests the log as an example, not a recommendation, and the unit should be chosen deliberately or the model avoided.
 
+**Reading the code.** hftbacktest's documentation describes its queue models in words; the formulas are only in its source. We took them from the file that implements the models, [`hftbacktest/src/backtest/models/queue.rs`](https://github.com/nkaz001/hftbacktest/blob/master/hftbacktest/src/backtest/models/queue.rs), read on 2 November 2026, and translated each line into the notation of this card. When the size displayed at our price changes, the probabilistic models run these lines (Rust):
+
+```rust
+let mut chg = prev_qty - new_qty;      // how much the level fell since the last update
+chg -= q.cum_trade_qty;                // minus what was traded there: the rest was cancelled
+let front = q.front_q_qty;             // size ahead of our order
+let back = prev_qty - front;           // size behind it
+let mut prob = self.prob.prob(front, back);
+let est_front = front - (1.0 - prob) * chg + (back - prob * chg).min(0.0);
+q.front_q_qty = est_front.min(new_qty);
+```
+
+| Line | What it does | In this card |
+|---|---|---|
+| `chg = prev_qty - new_qty - cum_trade_qty` | The decrease of the level beyond the trades | The cancellation $`c`$ of §2.1, step 3 |
+| `front`, `back` | Size ahead of and behind our order | ahead, behind; $`x`$ = front / (front + back) |
+| `prob` | The share of the cancellation assumed to be **behind** us; the documentation: "the probability of a decrease behind the order's queue position" | $`1 - p`$: hftbacktest counts the other way round |
+| `front - (1.0 - prob) * chg` | The size ahead loses its share of the cancellation | ahead − $`p \cdot c`$ |
+| `+ (back - prob * chg).min(0.0)` | If more is assigned behind us than stands there, the excess comes from ahead | "never more is taken from behind us than stands there" |
+| `.min(new_qty)` | The size ahead never exceeds the size displayed | the same |
+
+<sub><b>How to read the table.</b> Each probabilistic model differs only in `prob`. For the power model, `f(back) / (f(back) + f(front))` with `f(x) = x^n`; for variant 3, `1.0 - f(front / (front + back))`, which makes the share ahead $`x^n`$, our dial. The risk-averse model replaces all of it with `front = front.min(new_qty)`: a cancellation moves us only if the level falls below the size ahead of us. A trade at our price runs `front -= qty`, and our order is filled once `front` is negative. One detail differs from our rule: `back` is computed from `prev_qty`, the level at the last update, which still contains the size traded since; the check below shows that this is the only difference.</sub>
+
+Reading the source rather than the description matters for a replay. The documentation of a tool says what its authors meant; the code says what it does, and a backtest's results come from the code. Here it showed a convention we would otherwise have reversed (`prob` is the share behind us, not ahead) and a detail the documentation does not mention (the size behind measured before the trades).
+
 **Do we reproduce them?** We use three of the models and checked our code against their published rules on 3,000 random sequences of trades and book updates. Our $`a = 1`$ gives the same fill as Rigtorp's rule with $`f`$ = identity in every sequence, and our $`a = \infty`$ the same as hftbacktest's risk-averse model. Our $`x^a`$ is the formula of hftbacktest's power variant 3, and gives the same fill except in 1.8% of the sequences at $`n = 1`$ (0.6% at $`n = 2`$). The difference is one detail of hftbacktest's code: it measures the size behind us from the level before the trades since the last update, so size already traded still counts as behind us. Measured after the trades, as Rigtorp and we do, the two agree in every sequence. The check is our calculation for these notes.
 
 **Which is right?** None of these formulas is derived from the behaviour of traders; each is a convenient shape, and Rigtorp (2013) recommends estimating $`f`$ from one's own fills. Evidence comes only from order-by-order data. Databento (2025) used such data for CME's E-mini S&P 500 future and concluded: "It's evident that cancels are mostly pulled from the back of the queue." They describe the bias with one parameter, from no bias towards a strong pull from the back; the formula in their example code is not legible on the page we read, so we quote only their conclusion. One reason for the back, an argument rather than a measurement: an order that has just joined has the least to lose by leaving, while an order near the front is about to be filled. On Bybit we cannot measure the leaning (no order-by-order data), so the lecture spans it with the dial $`a`$ from 1 to ∞, from the even split to the risk-averse model, and reports whether the answer changes inside that range (hypothesis H3); the models that lean ahead of us, against that evidence, are left out.
