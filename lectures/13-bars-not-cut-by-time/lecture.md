@@ -136,6 +136,7 @@ The multiple is a property of the market, not of the month it was measured in: b
 ### 3.2 Where each clock ticks
 
 ![One mark for every bar that closes, on the Fed decision day and on the quietest day of the five years, for each of the six clocks](figures/13_01_where_clocks_tick.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time of day, UTC (x). Top: price (y). Bottom: one row per clock. <b>Left:</b> 21 September 2022, the day of the Fed decision; <b>right:</b> 7 January 2023, the quietest day of the five years. The top panels show the BTCUSDT price through the day; below, each vertical mark is one bar closing on that clock: time (black), tick (yellow), volume (orange), dollar (blue), range (green) and CUSUM (pink). Every clock is set for 48 bars a day on average, from the past 28 days; the bar counts of each day are printed under the panels.</sub>
 
 | Bars that day | Time | Tick | Volume | Dollar | Range | CUSUM |
 |---|---|---|---|---|---|---|
@@ -147,12 +148,14 @@ Time bars tick on regardless. The market's clocks run twice as fast as usual on 
 ### 3.3 How each clock runs
 
 ![Bars closed through the week of the Fed decision, 19 to 25 September 2022, one line per clock](figures/13_02_how_clocks_run.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Day (x), bars closed since Monday 00:00 UTC (y). One line per clock through the week of the Fed decision, 19 to 25 September 2022: time bars (black, dashed), tick (yellow), volume (orange), dollar (blue), range (green) and CUSUM (pink); the legend gives each clock's total for the week. The slope of a line is the number of bars per hour, so a steep stretch is a clock running fast.</sub>
 
 The slope of each line is the number of bars per hour. The time bars climb at a constant rate, 336 in the week. The market's clocks keep pace on quiet days, jump at the Fed decision on Wednesday evening, and slow at the weekend: 395 to 478 bars in the same week. A clock that follows the market is a clock that changes speed.
 
 ### 3.4 Thresholds from the past
 
 ![Dollar bars per day, weekly average, with a threshold fixed from the first 28 days and with an adaptive threshold from the past 28 days](figures/13_03_fixed_vs_adaptive.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Week (x), dollar bars per day, weekly average (y). Dollar bars on BTCUSDT, October 2021 to September 2026, under two thresholds: fixed once from the first 28 days (orange) and adaptive, the median of the past 28 days (blue). The dotted line is the target of 48 bars a day.</sub>
 
 | Dollar bars per day | 2021 | 2022 | 2023 | 2024 | 2025 | 2026 |
 |---|---|---|---|---|---|---|
@@ -195,8 +198,10 @@ The crash itself, on the tape:
 *Our measurement for these notes.*
 
 ![The evening of 10 October 2025: one-minute candles, trades per minute and cumulative net aggressive buying](figures/13_05_crash_evening.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time, UTC (x), 18:15 to 22:45 on 10 October 2025. Top: price (y). Middle: trades per minute (y). Bottom: cumulative net aggressive buying, USD billions (y). <b>Top:</b> one-minute candles of BTCUSDT, blue for a rising minute and pink for a falling one. <b>Middle:</b> the number of trades in each minute. <b>Bottom:</b> aggressive buying minus aggressive selling, added up from the start of the window; a falling line means sellers were the aggressors. The dotted lines mark the start of the steep fall at 20:44 and the low at 21:20.</sub>
 
 ![The 40 seconds around the sweep: every trade, coloured by the aggressor's side, large trades as bubbles, the sweep ringed](figures/13_06_crash_sweep.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time, UTC (x), 21:19:50 to 21:20:30 on 10 October 2025. Top: price (y). Bottom: cumulative net aggressive buying, USD millions (y). <b>Top:</b> every trade as a dot, blue when the buyer was the aggressor, pink when the seller was; trades of USD 250,000 or more are drawn as bubbles that grow with their dollar value (key: USD 250,000, USD 2.5 million, USD 25 million). The black ring marks the sweep of §3.5: one buy order filling at 407 prices. <b>Bottom:</b> aggressive buying minus aggressive selling, added up from the start of the window.</sub>
 
 The evening shows the anatomy of a cascade (Lecture 12, §2): hours of slow drift, then waves of aggressive selling in which trading ran a hundred times faster than usual, then a sharp reversal. Around the bottom, buy orders swept the thin book upwards several times within seconds; the largest of them is the one described above.
 
@@ -270,6 +275,7 @@ Activity and price clocks differ more (0.80 to 0.89): a busy hour is not always 
 The hypothesis of §1: on a clock that follows trading, returns should look more like the normal distribution. The test uses the return from one bar's close to the next on each clock, all at about 48 bars a day over the same five years, so that no clock looks smoother only because it is finer (§2.5).
 
 ![The share of bars with a move larger than a given number of standard deviations, on six clocks, against the normal distribution](figures/13_04_tails.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Size of the move, in standard deviations of the clock's own returns (x); share of bars with a larger move (y, log). Bar-to-bar returns of BTCUSDT over the five years, every clock at about 48 bars a day: time (black, dashed), tick (yellow), volume (orange), dollar (blue), range (green) and CUSUM (pink). The grey dotted curve is the normal distribution; a line above it has more large moves than the normal distribution allows.</sub>
 
 **How to read the chart.** Each line starts at 1, since every move is larger than zero, and falls to the right: at each size of move, measured in standard deviations of that clock's own returns, it gives the share of bars with a larger move. The vertical axis is logarithmic, so each gridline down is a factor of ten: 10⁻⁴ is one bar in 10,000. The dotted curve is the normal distribution; a line above it has more large moves than the normal distribution allows. Below about 1.5 standard deviations the order reverses: returns with fat tails also have more very small moves, many quiet bars and a few large ones.
 
@@ -323,6 +329,7 @@ The construction is self-referential: the threshold is set by past bars, and pas
 Step 2 leaves one choice open. "A moving average of past signed dollars" can average over the **orders** of recent bars, or over the **bars** themselves, each bar giving its net dollars per order. Both readings appear in practice, and both fail on our tape:
 
 ![Orders per bar, August to October 2022: López de Prado's construction in two readings, the fixed band of §6.5 and dollar bars](figures/13_13_imbalance_failures.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Day (x), orders per bar (y, log). BTCUSDT, August to October 2022; all constructions start from the same 48 bars a day (grey dotted line). López de Prado's construction in reading 1, averaging over orders (pink), the fixed band of §6.5 (green) and dollar bars (blue) show the orders per bar. For reading 2, averaging over bars (orange), the line is the expected bar length, since almost no bars close. Moving averages use a span of 10 bars.</sub>
 
 | Reading | What goes wrong | On our tape |
 |---|---|---|
@@ -396,6 +403,7 @@ On 10 October 2025 the band closed 156 bars, the most of any day in the window, 
 **Where it ticks.** On the Fed day the band closed 76 bars, against 92 dollar bars and 48 time bars, in a pattern of its own:
 
 ![The Fed day, 21 September 2022: where the time, dollar and fixed-band imbalance clocks close their bars](figures/13_14_imbalance_fed_day.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time of day, UTC (x), 21 September 2022. Top: price (y). Bottom: one row per clock. The top panel shows the BTCUSDT price; below, each vertical mark is one bar closing on the time clock (black, 30 minutes), the dollar clock (blue) and the fixed-band imbalance clock (green). The dotted vertical line is the Fed decision at 18:00 UTC. The bar counts of the day, including those of López de Prado's two readings, are printed under the panel.</sub>
 
 The band went quiet for five hours after midnight, when the dollar clock still ticked every hour or so: there was trading, but it was two-sided. It bunched in the afternoon and around the decision, when one side pushed. Only 23% to 39% of its closes fall within a minute of a dollar bar's close. The imbalance clock is a third kind of clock, next to activity and price: it follows how one-sided the flow is.
 
@@ -404,6 +412,7 @@ The band went quiet for five hours after midnight, when the dollar clock still t
 **Its returns are no closer to normal than on dollar bars.**
 
 ![The share of bars with a move larger than a given number of standard deviations: time, dollar and fixed-band imbalance bars, against the normal distribution](figures/13_15_imbalance_tails.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Size of the move, in standard deviations of the clock's own returns (x); share of bars with a larger move (y, log). Bar-to-bar returns of BTCUSDT in the two windows of the comparison, August to October 2022 and January to March 2023, each window standardised on its own: time bars of 30 minutes (black, dashed), dollar bars (blue) and fixed-band imbalance bars (green). The grey dotted curve is the normal distribution. No bar is capped or cut.</sub>
 
 | Measure | What we measure | Time bars | Dollar bars | Fixed band | What it means |
 |---|---|---|---|---|---|
@@ -474,6 +483,7 @@ H1 and H2 concern when to trade and how much risk a slot carries; H3 to H5 conce
 ### 7.2 H1 and H2: when the market is busy, and how much it moves
 
 ![Activity and the size of moves in each slot, against its control, with 95% intervals](figures/13_08_h1_h2_activity_volatility.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: activity ÷ control (x, log), one slot per row (y). Right: size of moves ÷ control (x, log), same rows. Each dot is a slot's ratio to its control, with its 95% interval as a horizontal bar; the dotted line at 1 means the slot is like its control. Colours group the slots by rhythm: time of day (blue), week (orange), round times (green), releases (pink) and option expiries (yellow). A filled dot survives the Benjamini-Hochberg correction for the 120 tests at 5%, a hollow one does not.</sub>
 
 **How to read the chart.** Each row is a slot, each dot its ratio to the control: 2 means twice as busy, 0.5 half. The horizontal axis is logarithmic, so doubling and halving are the same distance from the line at 1. The bars are 95% intervals; a filled dot survives the correction for the 120 tests, a hollow one does not.
 
@@ -503,6 +513,7 @@ H1 and H2 concern when to trade and how much risk a slot carries; H3 to H5 conce
 **Whose day is it? The daylight-saving test.** The US moves its clocks twice a year, Europe on different dates and Asia not at all. If bitcoin's busiest hours follow the US, they must move by an hour, in UTC, when the US changes its clocks:
 
 ![Dollars traded per minute of the day, relative to the day's average, on weekdays in US summer time and in US winter time](figures/13_07_time_of_day_dst.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time of day, UTC (x); dollars per minute ÷ the day's average (y). Weekdays of BTCUSDT, October 2021 to September 2026, split into US summer time (orange, second Sunday of March to first Sunday of November) and US winter time (blue); each point is one minute of the day. The dotted vertical lines mark the US stock market opening at 9:30 New York time: 13:30 UTC in summer, 14:30 UTC in winter.</sub>
 
 | | US summer time | US winter time |
 |---|---|---|
@@ -515,6 +526,7 @@ They do. The busiest hour moves by exactly one hour, and the minute the US stock
 **Round times: a crowd of ten seconds.** At one-second resolution, on weekdays of 43 sample days:
 
 ![Dollars traded per second from two minutes before to five minutes after the full and the half hour, relative to the surrounding hour and a half](figures/13_10_round_seconds.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Seconds from the round time (x); dollars per second ÷ average (y, log). Weekdays on 43 sample days, every full and half hour from 01:00 to 22:30 UTC: around the full hour (pink) and around the half hour (blue), from two minutes before to five minutes after. The average is that of the surrounding hour and a half, so the dotted line at 1 is ordinary activity; the solid vertical line is the round time itself.</sub>
 
 | Around the full hour | Dollars per second ÷ the average |
 |---|---|
@@ -540,6 +552,7 @@ Trading that carries information moves the price; trading that only adjusts posi
 ### 7.3 H3 and H4: one-sided flow and direction
 
 ![Net aggressive buying, return and follow-through in each slot, in standard errors from its control](figures/13_09_h3_h5_flow_direction_follow.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Difference from the control, in standard errors (x), one slot per row (y). Left: net aggressive buying (H3). Middle: return in the slot (H4). Right: follow-through (H5). Each dot is a slot's difference from its control divided by its standard error; the dotted lines at ±1.96 enclose what chance produces 95 times in 100, and points beyond ±8 are drawn at the edge. Colours group the slots as in the figure of §7.2; a filled dot survives the correction for the 120 tests, a hollow one does not.</sub>
 
 **How to read the chart.** Each dot is the difference between a slot and its control, divided by its standard error: how far the slot lies from what chance would give. Inside the dotted lines at ±1.96 lies what chance produces 95 times in 100; filled dots survive the correction for the 120 tests. A dot far from zero is a reliable difference; it need not be a large one.
 
@@ -632,6 +645,7 @@ The follow-through after CPI releases came from 2021 to 2023 and has gone since;
 Bitcoin options on Deribit, the largest exchange for them, expire on Fridays at 08:00 UTC; the largest expiries are on the last Friday of each month, and the largest of all on the last Friday of March, June, September and December. The settlement price is the average of Deribit's bitcoin index over the 30 minutes from 07:30 to 08:00 UTC, measured every four seconds, so that no single trade can set it (Deribit, Settlement; Coinbase, Settlement). Positions are hedged and closed while that average is formed.
 
 ![Dollars traded and size of the move per minute from 07:00 to 09:30 UTC, on quarterly, monthly and weekly expiry Fridays and on Thursdays](figures/13_11_option_expiry.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time of day, UTC (x), 07:00 to 09:30. Top: dollars per minute ÷ the day's average (y). Bottom: size of the move per minute ÷ the day's average (y). Medians over five years of BTCUSDT, smoothed over three minutes, on quarterly expiry Fridays (pink), monthly expiry Fridays (orange), other Fridays with a weekly expiry (blue) and Thursdays without an expiry, the control (grey); the legend gives the number of days in each group. The dotted vertical line is the expiry at 08:00 UTC; the settlement window runs from 07:30 to 08:00.</sub>
 
 On quarterly expiry days, trading rises from 07:30, exactly when the settlement window opens, peaks at about twice its usual pace around 07:40, and the price moves most at 08:00 itself; monthly expiries show a smaller version, weekly expiries hardly any. The hypotheses give a consistent picture: expiries are busier (H1) with moves smaller than their trading would predict (H2), and they have no reliable flow (H3), direction (H4) or follow-through (H5).
 
