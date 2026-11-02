@@ -150,7 +150,7 @@ Time bars tick on regardless. The market's clocks run twice as fast as usual on 
 ![Bars closed through the week of the Fed decision, 19 to 25 September 2022, one line per clock](figures/13_02_how_clocks_run.png)
 <sub><b>How to read the figure.</b> <b>Axes.</b> Day (x), bars closed since Monday 00:00 UTC (y). One line per clock through the week of the Fed decision, 19 to 25 September 2022: time bars (black, dashed), tick (yellow), volume (orange), dollar (blue), range (green) and CUSUM (pink); the legend gives each clock's total for the week. The slope of a line is the number of bars per hour, so a steep stretch is a clock running fast.</sub>
 
-The slope of each line is the number of bars per hour. The time bars climb at a constant rate, 336 in the week. The market's clocks keep pace on quiet days, jump at the Fed decision on Wednesday evening, and slow at the weekend: 395 to 478 bars in the same week. A clock that follows the market is a clock that changes speed.
+The slope of each line is the number of bars per hour. The time bars climb at a constant rate, 336 in the week. The market's clocks keep pace on quiet days, jump at the Fed decision on Wednesday evening, and slow at the weekend: 395 to 538 bars in the same week, the most for the clocks that count price moves (range and CUSUM). A clock that follows the market is a clock that changes speed.
 
 ### 3.4 Thresholds from the past
 
@@ -182,14 +182,14 @@ The first version of the range clock read every trade, and on the day of the Fed
 
 The Fed decision was not the most extreme moment. Among the 20 days with the largest one-minute price ranges of the five years, the busiest second was 18:39:03 UTC on 28 October 2021: 7,990 trades at 6,913 different prices. The largest single sweep came in the crash of 10 October 2025.
 
-**Example: the bottom of 10 October 2025.** That day, after the US announced new tariffs on imports from China, crypto markets saw the largest liquidations on record, about $19 billion within a day, as reported from Bloomberg data (Business Today, 2025). On BTCUSDT the price fell from $122,497 to $101,517, 17%, reaching its low at 21:20:08 UTC; the day traded $45 billion, more than twice the days either side. Two seconds after the low, at 21:20:10.325, a single buy order took 326 bitcoin, $33.7 million, filling at 407 prices from $101,881 to $104,750: 2.8% in one millisecond, about $83,000 at each price. A second later the price was back at $101,697, just above the low; then it turned, to $106,016 ten seconds later and $109,314 ten minutes later. Whether the order was a buyer stepping in or a forced closing of short positions, the tape does not say, since it does not mark liquidations. It shows a book so thin that one order moved the price by almost 3%, within seconds of the day's low.
+**Example: the bottom of 10 October 2025.** That day, after the US announced new tariffs on imports from China, crypto markets saw the largest liquidations on record, about $19 billion within a day, as reported from Bloomberg data (Business Today, 2025). On BTCUSDT the price fell from $122,497 to $101,516.5, 17%, reaching its low at 21:20:08 UTC; the day traded $45 billion, more than twice the days either side. Two seconds after the low, at 21:20:10.325, a single buy order took 326 bitcoin, $33.7 million, filling at 407 prices from $101,881 to $104,750: 2.8% in one millisecond, about $83,000 at each price. A second later the price was back at $101,697, just above the low; then it turned, to $106,016 ten seconds later and $109,314 ten minutes later. Whether the order was a buyer stepping in or a forced closing of short positions, the tape does not say, since it does not mark liquidations. It shows a book so thin that one order moved the price by almost 3%, within seconds of the day's low.
 
 The crash itself, on the tape:
 
 | 10 October 2025, UTC | |
 |---|---|
 | The day's high | $122,497 at 13:39 |
-| The steep fall | From $117,145 at 20:44 to $101,517 at 21:20: 13.3% in 36 minutes |
+| The steep fall | From $117,145 at 20:44 to $101,516.5 at 21:20: 13.3% in 36 minutes |
 | Traded during the fall | $11.4 billion, with net aggressive selling of 14.5% of the dollars |
 | The busiest minute | 21:19: 75,273 trades, 107 times the typical minute of the day before |
 | The sweep | 21:20:10, two seconds after the low |
@@ -645,7 +645,7 @@ The follow-through after CPI releases came from 2021 to 2023 and has gone since;
 Bitcoin options on Deribit, the largest exchange for them, expire on Fridays at 08:00 UTC; the largest expiries are on the last Friday of each month, and the largest of all on the last Friday of March, June, September and December. The settlement price is the average of Deribit's bitcoin index over the 30 minutes from 07:30 to 08:00 UTC, measured every four seconds, so that no single trade can set it (Deribit, Settlement; Coinbase, Settlement). Positions are hedged and closed while that average is formed.
 
 ![Dollars traded and size of the move per minute from 07:00 to 09:30 UTC, on quarterly, monthly and weekly expiry Fridays and on Thursdays](figures/13_11_option_expiry.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> Time of day, UTC (x), 07:00 to 09:30. Top: dollars per minute ÷ the day's average (y). Bottom: size of the move per minute ÷ the day's average (y). Medians over five years of BTCUSDT, smoothed over three minutes, on quarterly expiry Fridays (pink), monthly expiry Fridays (orange), other Fridays with a weekly expiry (blue) and Thursdays without an expiry, the control (grey); the legend gives the number of days in each group. The dotted vertical line is the expiry at 08:00 UTC; the settlement window runs from 07:30 to 08:00.</sub>
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time of day, UTC (x), 07:00 to 09:30. Top: dollars per minute ÷ the day's average (y). Bottom: size of the move per minute ÷ the day's average (y). Medians over five years of BTCUSDT, smoothed over three minutes, on quarterly expiry Fridays (pink), monthly expiry Fridays (orange), other Fridays with a weekly expiry (blue) and Thursdays without an expiry, the control (grey); the legend gives the number of days in each group. The dotted vertical line is the expiry at 08:00 UTC; the settlement window runs from 07:30 to 08:00. The legend counts 201 weekly-expiry Fridays; the tests of §7 use 200, because they need at least a week of history before each day.</sub>
 
 On quarterly expiry days, trading rises from 07:30, exactly when the settlement window opens, peaks at about twice its usual pace around 07:40, and the price moves most at 08:00 itself; monthly expiries show a smaller version, weekly expiries hardly any. The hypotheses give a consistent picture: expiries are busier (H1) with moves smaller than their trading would predict (H2), and they have no reliable flow (H3), direction (H4) or follow-through (H5).
 
