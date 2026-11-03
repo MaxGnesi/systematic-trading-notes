@@ -341,7 +341,7 @@ Section 2 laid out the pieces on an invented book. This section builds each of t
 | The book's depth at chosen moments (§3.2) | The book file once, levels near the best at each moment | About a minute | Yes |
 | Taker orders after the latency gap (§3.2) | Depth at every decision and after each latency, by size | Minutes | Yes, run overnight for months of data |
 | One resting order in the queue (§3.3) | Every update at its price and the trades there, for its life | Milliseconds per order | Yes |
-| Quoting strategies (§4) | Chains of resting orders for every variant, every event of their lives | Tens of minutes, most on busy days | A sample of days, yes; months and many variants, no |
+| Quoting strategies (§4) | Chains of resting orders for every variant, every event of their lives | Minutes on quiet days, up to tens of minutes on busy ones | A sample of days, yes; months and many variants, no |
 
 <sub><b>How to read the table.</b> Orders of magnitude from the runs behind this lecture, in Python, one process at a time. The cost of the last row grows with the activity of the market: a busy day costs several times a quiet one.</sub>
 
