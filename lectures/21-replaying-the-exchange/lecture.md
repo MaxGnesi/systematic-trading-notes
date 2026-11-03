@@ -332,27 +332,27 @@ Section 2 laid out the pieces on an invented book. This section builds each of t
 | 3.3 | The queue (§2.3) | Where our resting order stands, under the dial from $`a = 1`$ to $`a = \infty`$ |
 | 3.4 | Adverse fills (§2.4) | Which fills come as the price runs through, and what they are worth |
 
-**What it costs to compute.** The cost of a replay is set by how many moments it asks about and how much of the book each one needs, not by the size of the data. On the same 8 GB of book and trades, the jobs of this lecture range from seconds to hours per day. Measured on the PC these notes were written on (16 GB of memory, often less than 1 GB free, one Python process at a time):
+**What it costs to compute.** The cost of a replay is set by how many moments it asks about and how much of the book each one needs, not by the size of the data. On the same few gigabytes of book and trades per month and a half, the jobs of this lecture range from seconds to hours per day of data.
 
-| Job | What it needs | Time per day | 45 days |
+| Job | What it needs | Order of cost per day of data | Normal laptop? |
 |---|---|---|---|
-| Net bookkeeping at the best price (§3.1) | Lecture 19's best price and size after each of 0.86 million updates, and the trades | 1.5 s | about 1 min |
-| Full rebuild of the book (Lecture 19) | Every message, 17 to 79 million a day | 2 min on average, 37 s to 5.4 min | 1.5 h |
-| The book's depth at chosen moments (§3.2) | The book file block by block, levels near the best at 8,640 moments | 40 to 65 s | about 45 min |
-| Taker orders after the latency gap (§3.2) | Depth at 8,640 decisions and at $`t + L`$ for three latencies, five sizes, both sides | 4 min on average, at most 7.6 min | 3.7 h |
-| One resting order in the queue (§3.3, `Bid`) | Every update at its price and the trades there, for its life | milliseconds per order | — |
-| Quoting at every update or once a second (§4) | Chains of resting orders for two quoters, three latencies, four fill rules, both sides | 8 to 22 min | 8 days: 2 to 3 h |
+| Net bookkeeping at the best price (§3.1) | The best price and size after each update, and the trades | Seconds | Yes |
+| Full rebuild of the book (Lecture 19) | Every message, tens of millions a day | Minutes | Yes, streamed in blocks |
+| The book's depth at chosen moments (§3.2) | The book file once, levels near the best at each moment | About a minute | Yes |
+| Taker orders after the latency gap (§3.2) | Depth at every decision and after each latency, by size | Minutes | Yes, run overnight for months of data |
+| One resting order in the queue (§3.3) | Every update at its price and the trades there, for its life | Milliseconds per order | Yes |
+| Quoting strategies (§4) | Chains of resting orders for every variant, every event of their lives | Tens of minutes, most on busy days | A sample of days, yes; months and many variants, no |
 
-<sub><b>How to read the table.</b> Times from the logs of the runs behind this lecture. The book is 6.1 GB and the trades 2.1 GB for the 45 days, in Parquet; the outputs are small (Lecture 19's state 361 MB, the §3.2 orders 25 MB). The quoting chains are slowest on busy days: a quiet half-hour, used to estimate their run time, gave 2 to 3 min a day, several times too little.</sub>
+<sub><b>How to read the table.</b> Orders of magnitude from the runs behind this lecture, in Python, one process at a time. The cost of the last row grows with the activity of the market: a busy day costs several times a quiet one.</sub>
 
 What is reasonable depends on the question:
 
-- **Teaching and checking a rule.** One day, or one window of it: seconds to minutes. The lecture's notebook works this way, on the shipped results.
-- **A strategy that decides now and then** (the hourly and daily systems of Parts I to III, or any signal-driven taker). Only the decision moments need the book, so the depth at each can be looked up exactly at little cost: most of the time goes into reading the day's file once, under a minute.
-- **Resting orders and market making.** Every event in the life of every order counts, and the cost grows with the activity of the market, so busy days are the expensive ones. Fix a sample of days and a small grid before the results, as was done for the quoting test, and time a busy window, not a quiet one, before launching.
-- **Production backtests of high-frequency strategies.** Full event-by-event replays over months, in compiled code; hftbacktest and NautilusTrader both have their core in Rust. A Python replay like ours is for understanding the mechanics and testing a few designs, not for searching thousands of parameters.
+- **Teaching and checking a rule.** One day, or one window of it: seconds to minutes on a laptop. The lecture's notebook works this way, on the shipped results.
+- **A strategy that decides now and then** (the hourly and daily systems of Parts I to III, or any signal-driven taker). Only the decision moments need the book, so the depth at each can be looked up exactly at little cost; a laptop is enough for years of data.
+- **Resting orders and market making.** Every event in the life of every order counts, and the cost grows with the activity of the market. On a laptop: fix a sample of days and a small grid before the results, as was done for the quoting test, and time a busy window, not a quiet one, before launching.
+- **Searching many designs of a high-frequency strategy over months.** Full event-by-event replays of every variant: this is where big computing power is needed, and compiled code run in parallel on many cores or machines; hftbacktest and NautilusTrader both have their core in Rust. A Python replay like ours is for understanding the mechanics and testing a few designs.
 
-The pattern that kept every job within one PC: stream the data in blocks, never the whole day at once; check the cheap method once against the full rebuild (as §3.2's tool was, exactly); then ask only about the moments the question needs.
+The pattern that keeps the work on a laptop: stream the data in blocks, never the whole day at once; check the cheap method once against the full rebuild (as §3.2's tool was, exactly); then ask only about the moments the question needs.
 
 ### 3.1 Ordering trades against the book
 
