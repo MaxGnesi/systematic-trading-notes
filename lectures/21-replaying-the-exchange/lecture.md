@@ -332,6 +332,28 @@ Section 2 laid out the pieces on an invented book. This section builds each of t
 | 3.3 | The queue (§2.3) | Where our resting order stands, under the dial from $`a = 1`$ to $`a = \infty`$ |
 | 3.4 | Adverse fills (§2.4) | Which fills come as the price runs through, and what they are worth |
 
+**What it costs to compute.** The cost of a replay is set by how many moments it asks about and how much of the book each one needs, not by the size of the data. On the same 8 GB of book and trades, the jobs of this lecture range from seconds to hours per day. Measured on the PC these notes were written on (16 GB of memory, often less than 1 GB free, one Python process at a time):
+
+| Job | What it needs | Time per day | 45 days |
+|---|---|---|---|
+| Net bookkeeping at the best price (§3.1) | Lecture 19's best price and size after each of 0.86 million updates, and the trades | 1.5 s | about 1 min |
+| Full rebuild of the book (Lecture 19) | Every message, 17 to 79 million a day | 2 min on average, 37 s to 5.4 min | 1.5 h |
+| The book's depth at chosen moments (§3.2) | The book file block by block, levels near the best at 8,640 moments | 40 to 65 s | about 45 min |
+| Taker orders after the latency gap (§3.2) | Depth at 8,640 decisions and at $`t + L`$ for three latencies, five sizes, both sides | 4 min on average, at most 7.6 min | 3.7 h |
+| One resting order in the queue (§3.3, `Bid`) | Every update at its price and the trades there, for its life | milliseconds per order | — |
+| Quoting at every update or once a second (§4) | Chains of resting orders for two quoters, three latencies, four fill rules, both sides | 8 to 22 min | 8 days: 2 to 3 h |
+
+<sub><b>How to read the table.</b> Times from the logs of the runs behind this lecture. The book is 6.1 GB and the trades 2.1 GB for the 45 days, in Parquet; the outputs are small (Lecture 19's state 361 MB, the §3.2 orders 25 MB). The quoting chains are slowest on busy days: a quiet half-hour, used to estimate their run time, gave 2 to 3 min a day, several times too little.</sub>
+
+What is reasonable depends on the question:
+
+- **Teaching and checking a rule.** One day, or one window of it: seconds to minutes. The lecture's notebook works this way, on the shipped results.
+- **A strategy that decides now and then** (the hourly and daily systems of Parts I to III, or any signal-driven taker). Only the decision moments need the book, so the depth at each can be looked up exactly at little cost: most of the time goes into reading the day's file once, under a minute.
+- **Resting orders and market making.** Every event in the life of every order counts, and the cost grows with the activity of the market, so busy days are the expensive ones. Fix a sample of days and a small grid before the results, as was done for the quoting test, and time a busy window, not a quiet one, before launching.
+- **Production backtests of high-frequency strategies.** Full event-by-event replays over months, in compiled code; hftbacktest and NautilusTrader both have their core in Rust. A Python replay like ours is for understanding the mechanics and testing a few designs, not for searching thousands of parameters.
+
+The pattern that kept every job within one PC: stream the data in blocks, never the whole day at once; check the cheap method once against the full rebuild (as §3.2's tool was, exactly); then ask only about the moments the question needs.
+
 ### 3.1 Ordering trades against the book
 
 **The trades and the book share one clock to the millisecond. Even so, a book published every 100 ms hides about a fifth of the flow at the best price: size that was traded and replaced within the same update.**
@@ -361,7 +383,7 @@ A replay merges two streams (§2.1). If their clocks disagree, trades land in th
 
 **Most of the time our order meets the book we saw. The gap grows with order size and delay, and the immediate-or-cancel orders it leaves short are, as Albers et al. found live, the ones that would have paid.**
 
-A market order of up to 5 BTC walks several levels, so this section needs the book's depth at chosen moments, not only its best price. A full rebuild runs through about 60 million messages a day and holds the whole book in memory. Instead, the day's book file is read one half-hour block at a time, carrying the book from block to block, and the levels near the best are looked up at each moment we ask for ([l21_ladder.py](scripts/l21_ladder.py)). The result is exact: at 8,640 moments of 1 October and of 25 September, a day with a feed gap, it reproduces Lecture 19's book state exactly: the best prices, the sizes at the best and the depth of the best five levels. The same tool serves any question tied to points in time: the cost of an order at a signal, the book around an event, or the book just before a real large trade (§4, H7).
+A market order of up to 5 BTC walks several levels, so this section needs the book's depth at chosen moments, not only its best price. A full rebuild runs through every message of the day, 45 million on the median day and 79 million on 10 October, and holds the whole book in memory. Instead, the day's book file is read one half-hour block at a time, carrying the book from block to block, and the levels near the best are looked up at each moment we ask for ([l21_ladder.py](scripts/l21_ladder.py)). The result is exact: at 8,640 moments of 1 October and of 25 September, a day with a feed gap, it reproduces Lecture 19's book state exactly: the best prices, the sizes at the best and the depth of the best five levels. The same tool serves any question tied to points in time: the cost of an order at a signal, the book around an event, or the book just before a real large trade (§4, H7).
 
 | Step | Calculation | Financial meaning |
 |---|---|---|
