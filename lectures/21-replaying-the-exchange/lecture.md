@@ -352,6 +352,8 @@ What is reasonable depends on the question:
 - **Resting orders and market making.** Every event in the life of every order counts, and the cost grows with the activity of the market. On a laptop: fix a sample of days and a small grid before the results, as was done for the quoting test, and time a busy window, not a quiet one, before launching.
 - **Searching many designs of a high-frequency strategy over months.** Full event-by-event replays of every variant: this is where big computing power is needed, and compiled code run in parallel on many cores or machines; hftbacktest and NautilusTrader both have their core in Rust. A Python replay like ours is for understanding the mechanics and testing a few designs.
 
+**Where a laptop stops, as of 2026.** The full book of one market for a year is roughly 50 GB of compressed data and about half a day per pass of a full rebuild: a laptop can do it overnight. What it cannot do is the multiplication around it: dozens of markets (terabytes), several years, and a new pass for every variant tested, with event-level replays of resting orders costing tens of hours per variant grid and year. That is work for servers or the cloud. The line moves: each generation of disks, memory and processors brings more of it within reach of a single machine, so the boundary drawn here is a snapshot, not a rule.
+
 The pattern that keeps the work on a laptop: stream the data in blocks, never the whole day at once; check the cheap method once against the full rebuild (as §3.2's tool was, exactly); then ask only about the moments the question needs.
 
 ### 3.1 Ordering trades against the book
