@@ -96,4 +96,15 @@ Descriptive, not tested:
     the class where it leaves zero is the size from which a replay of resting orders is unreliable. A curve that rises from the smallest class
     on: no size is safe, and the reaction is a cost that grows with size. A curve near zero everywhere: within our sizes, a replay of resting
     orders needs no reaction layer. The verdict on validity remains H8's rule; the curve shows the shape around it.
+- **Quoting once a second** (added 2026-11-03, before any result). A market maker that looks at the book only once a second: at every whole
+  second r it checks whether its bid (ask) still stands at the best bid (ask) seen at r; if so the order is kept with its place in the line;
+  if not, it is cancelled and a new order sent, the cancellation and the new order both arriving at r + L, the new order at the best
+  standing then (as the test order). After a fill,
+  a new order is posted at the next whole second. Compared with the instant quoter, the test resting order above, which reacts to every book
+  update in the same way. Both at 0.001 BTC, both sides, on eight out-of-sample days (11-15, 22 and 28 October, 1 November; cut from 24
+  on 2026-11-03 for run time, days chosen by date before any result), L in {10, 50, 100} ms, under Q2 with a in {1, infinity} and under Q0 and
+  Q1. Measures: fills per hour, share of adverse fills, the 1-s and 10-s markout per fill before and after the maker fee, and the net position
+  (buys minus sells) over each day. What it shows: what a slow quote costs, as fills that come late (the price ran through a quote not yet
+  moved) and fills that are missed (the quote was left behind). Inventory control, skewing the quotes and sizes above the minimum are left out
+  (Lecture 22 and the capstone).
 - Every result by size S, with sizes above the validity of H8 flagged.

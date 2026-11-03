@@ -1,10 +1,14 @@
 """Lecture 21 §3 figures. 21_10 (§3.1): left, the share of the size sold at the best bid that must have been refilled within the same book update, with
 the trades shifted against the book, on five days (clock_shift.parquet); right, the same share at no shift, both sides, every day of the 45
-(net_days.parquet). From L21_OUT/s31, or results/s31 as shipped."""
+(net_days.parquet). From L21_OUT/s31, or results/s31 as shipped.
+21_11 (§3.2): what our taker orders meet after the latency gap, from L21_OUT/s32 (size.parquet, ret.parquet of l21_s32_sum.py) or results/s32:
+left, the share of market orders that paid more than the book seen at the decision promised, by size, one line per latency; middle, the share
+of a limit order at the best price seen left resting, by size and latency; right, the share of minimum-size IOC orders filled short at 50 ms,
+by the move of the mid over the next second."""
 import sys
 from datetime import date
 from pathlib import Path
-import polars as pl
+import numpy as np, polars as pl
 from plotly.subplots import make_subplots
 sys.path.insert(0, str(Path(__file__).resolve().parent)); import l21 as L21
 from trading_models.plotting import INK, MUTED, GRID, SERIES, apply_theme, save_figure
@@ -36,3 +40,34 @@ fig.update_layout(title="The trades and the book share one clock to the millisec
                   height=470, width=1250, margin=dict(t=100, l=80, r=30, b=60), legend=dict(orientation="h", y=-0.2, x=0))
 save_figure(fig, L21.PREFIX + "21_10_hidden_flow", L21.FIG)
 print("median", round(float(N["share"].median()), 3), "min", round(float(N["share"].min()), 3), "max", round(float(N["share"].max()), 3))
+
+S32 = L21.OUT / "s32"
+Z = pl.read_parquet(L21.result_path(S32, "size.parquet")).sort("S"); M = pl.read_parquet(L21.result_path(S32, "ret.parquet"))
+fig = make_subplots(rows=1, cols=3, column_widths=[0.33, 0.33, 0.34], horizontal_spacing=0.07,
+                    subplot_titles=("Market orders: paid more than seen", "Limit orders: share left resting", "IOC, 0.001 BTC, 50 ms: filled short"))
+sizes = [0.001, 0.01, 0.1, 1, 5]
+for i, L in enumerate((10, 50, 100)):
+    g = Z.filter(pl.col("L") == L); c = SERIES[i]
+    for col, y, lo, hi in ((1, "worse", "worse_lo", "worse_hi"), (2, "left", None, None)):
+        if lo:
+            fig.add_scatter(x=np.r_[g["S"], g["S"][::-1]], y=np.r_[g[hi], g[lo][::-1]], fill="toself", fillcolor=c, opacity=0.15, line=dict(width=0),
+                            hoverinfo="skip", showlegend=False, row=1, col=col)
+        fig.add_scatter(x=g["S"], y=g[y], mode="lines+markers", line=dict(color=c, width=2), marker=dict(size=7), name=f"L = {L} ms",
+                        legendgroup=str(L), showlegend=col == 1, row=1, col=col)
+for col in (1, 2):
+    fig.update_xaxes(type="log", tickvals=sizes, ticktext=["0.001", "0.01", "0.1", "1", "5"], title_text="order size, BTC", row=1, col=col)
+fig.update_yaxes(tickformat=".0%", range=[0, 0.32], row=1, col=1); fig.update_yaxes(tickformat=".0%", range=[0, 0.5], row=1, col=2)
+order = ["< -2", "-2 to -0.5", "about 0", "0.5 to 2", "2 to 5", "> 5"]
+R = M.filter(pl.col("by") == "move").with_columns(pl.col("cls").replace_strict({k: i for i, k in enumerate(order)}).alias("o")).sort("o")
+fig.add_bar(x=R["cls"], y=R["short"], marker=dict(color=[MUTED if k.startswith(("<", "-")) else SERIES[1] for k in R["cls"]], line=dict(width=0)),
+            error_y=dict(type="data", symmetric=False, array=R["hi"] - R["short"], arrayminus=R["short"] - R["lo"], color=INK, thickness=1, width=3),
+            showlegend=False, row=1, col=3)
+for k, n, h in zip(R["cls"], R["n"], R["hi"]):
+    fig.add_annotation(x=k, y=h, text=f"{n:,}", showarrow=False, yanchor="bottom", yshift=2, font=dict(size=9, color=MUTED), row=1, col=3)
+fig.update_xaxes(title_text="1-s move of the mid, bp (+: order's favour)", row=1, col=3)
+fig.update_yaxes(tickformat=".0%", range=[0, 0.42], row=1, col=3)
+fig.update_layout(title="The latency gap grows with order size and delay, and the IOC orders it leaves short are the ones that would have paid"
+                        "<br><sup>Bybit BTCUSDT, 45 days, a decision every 10 s, buys and sells; the book at t + L is the last update before it less the "
+                        "trades since; bands and whiskers: 95% from resampling days; numbers above bars: decisions</sup>",
+                  height=480, width=1300, margin=dict(t=100, l=70, r=30, b=70), legend=dict(orientation="h", y=-0.22, x=0))
+save_figure(fig, L21.PREFIX + "21_11_latency_data", L21.FIG)
