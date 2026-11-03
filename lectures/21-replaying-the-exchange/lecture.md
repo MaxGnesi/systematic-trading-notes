@@ -348,7 +348,7 @@ Section 2 laid out the pieces on an invented book. This section builds each of t
 What is reasonable depends on the question:
 
 - **Teaching and checking a rule.** One day, or one window of it: seconds to minutes on a laptop. The lecture's notebook works this way, on the shipped results.
-- **A strategy that decides now and then** (the hourly and daily systems of Parts I to III, or any signal-driven taker). Only the decision moments need the book, so the depth at each can be looked up exactly at little cost; a laptop is enough for years of data.
+- **A strategy that decides now and then** (the hourly and daily systems of Parts I to III, or any signal-driven taker). Only the decision moments need the book, so the depth at each can be looked up exactly; the cost is mostly reading each day's book once, and a laptop gets through a year of data overnight.
 - **Resting orders and market making.** Every event in the life of every order counts, and the cost grows with the activity of the market. On a laptop: fix a sample of days and a small grid before the results, as was done for the quoting test, and time a busy window, not a quiet one, before launching.
 - **Searching many designs of a high-frequency strategy over months.** Full event-by-event replays of every variant: this is where big computing power is needed, and compiled code run in parallel on many cores or machines; hftbacktest and NautilusTrader both have their core in Rust. A Python replay like ours is for understanding the mechanics and testing a few designs.
 
