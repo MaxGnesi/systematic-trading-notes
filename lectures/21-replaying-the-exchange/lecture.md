@@ -4,7 +4,7 @@
 
 Lectures 18 to 20 described Bybit's BTCUSDT book, measured its state and measured its flow. This lecture puts our own orders into the recorded market and asks what would have happened to them: when a resting order is filled, at what price a market order is executed, and what the price does afterwards. A replay is only useful if it tells the truth, so the lecture builds one piece by piece and then tests it on the same 45 days, 20 September to 3 November 2025. The hypotheses were fixed before any result was computed ([results/hypotheses.md](results/hypotheses.md)).
 
-*Draft: Sections 1, 2 and 3.1. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
+*Draft: Sections 1, 2, 3.1 and 3.2. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
 
 ## 1. Three replays of one order
 
@@ -332,6 +332,30 @@ Section 2 laid out the pieces on an invented book. This section builds each of t
 | 3.3 | The queue (§2.3) | Where our resting order stands, under the dial from $`a = 1`$ to $`a = \infty`$ |
 | 3.4 | Adverse fills (§2.4) | Which fills come as the price runs through, and what they are worth |
 
+**What it costs to compute.** The cost of a replay is set by how many moments it asks about and how much of the book each one needs, not by the size of the data. On the same few gigabytes of book and trades per month and a half, the jobs of this lecture range from seconds to hours per day of data.
+
+| Job | What it needs | Order of cost per day of data | Normal laptop? |
+|---|---|---|---|
+| Net bookkeeping at the best price (§3.1) | The best price and size after each update, and the trades | Seconds | Yes |
+| Full rebuild of the book (Lecture 19) | Every message, tens of millions a day | Minutes | Yes, streamed in blocks |
+| The book's depth at chosen moments (§3.2) | The book file once, levels near the best at each moment | About a minute | Yes |
+| Taker orders after the latency gap (§3.2) | Depth at every decision and after each latency, by size | Minutes | Yes, run overnight for months of data |
+| One resting order in the queue (§3.3) | Every update at its price and the trades there, for its life | Milliseconds per order | Yes |
+| Quoting strategies (§4) | Chains of resting orders for every variant, every event of their lives | Minutes on quiet days, up to tens of minutes on busy ones | A sample of days, yes; months and many variants, no |
+
+<sub><b>How to read the table.</b> Orders of magnitude from the runs behind this lecture, in Python, one process at a time. The cost of the last row grows with the activity of the market: a busy day costs several times a quiet one.</sub>
+
+What is reasonable depends on the question:
+
+- **Teaching and checking a rule.** One day, or one window of it: seconds to minutes on a laptop. The lecture's notebook works this way, on the shipped results.
+- **A strategy that decides now and then** (the hourly and daily systems of Parts I to III, or any signal-driven taker). Only the decision moments need the book, so the depth at each can be looked up exactly; the cost is mostly reading each day's book once, and a laptop gets through a year of data overnight.
+- **Resting orders and market making.** Every event in the life of every order counts, and the cost grows with the activity of the market. On a laptop: fix a sample of days and a small grid before the results, as was done for the quoting test, and time a busy window, not a quiet one, before launching.
+- **Searching many designs of a high-frequency strategy over months.** Full event-by-event replays of every variant: this is where big computing power is needed, and compiled code run in parallel on many cores or machines; hftbacktest and NautilusTrader both have their core in Rust. A Python replay like ours is for understanding the mechanics and testing a few designs.
+
+**Where a laptop stops, as of 2026.** The full book of one market for a year is roughly 50 GB of compressed data and about half a day per pass of a full rebuild: a laptop can do it overnight. What it cannot do is the multiplication around it: dozens of markets (terabytes), several years, and a new pass for every variant tested, with event-level replays of resting orders costing tens of hours per variant grid and year. That is work for servers or the cloud. The line moves: each generation of disks, memory and processors brings more of it within reach of a single machine, so the boundary drawn here is a snapshot, not a rule.
+
+The pattern that keeps the work on a laptop: stream the data in blocks, never the whole day at once; check the cheap method once against the full rebuild (as §3.2's tool was, exactly); then ask only about the moments the question needs.
+
 ### 3.1 Ordering trades against the book
 
 **The trades and the book share one clock to the millisecond. Even so, a book published every 100 ms hides about a fifth of the flow at the best price: size that was traded and replaced within the same update.**
@@ -356,3 +380,28 @@ A replay merges two streams (§2.1). If their clocks disagree, trades land in th
 - **Cancellation still dominates.** Of the size that left the best queues, 92% is inferred as cancelled rather than traded, the same split as Lecture 19 (§3.4) found by the same bookkeeping.
 
 **What it means for the replay.** The net bookkeeping of §2.1 is correct in its order of events but blind to what happens inside 100 ms, and the blind spot has a direction. Trades are all recorded, and an addition always joins the back of the line, so what the book can hide from the queue rule is a cancellation ahead of our order offset by an addition behind it. The replay then counts nothing, and keeps our order further back than it may be. As our reasoning, not a measurement: within one update, the net book never makes the queue rule too optimistic, only too cautious. Feeds that publish more often (Bybit's best level every 10 ms, Lecture 18, §1.3) would shrink the blind spot; how much is an open question we invite readers to test.
+
+### 3.2 The latency gap on data
+
+**Most of the time our order meets the book we saw. The gap grows with order size and delay, and the immediate-or-cancel orders it leaves short are, as Albers et al. found live, the ones that would have paid.**
+
+A market order of up to 5 BTC walks several levels, so this section needs the book's depth at chosen moments, not only its best price. A full rebuild runs through every message of the day, 45 million on the median day and 79 million on 10 October, and holds the whole book in memory. Instead, the day's book file is read one half-hour block at a time, carrying the book from block to block, and the levels near the best are looked up at each moment we ask for ([l21_ladder.py](scripts/l21_ladder.py)). The result is exact: at 8,640 moments of 1 October and of 25 September, a day with a feed gap, it reproduces Lecture 19's book state exactly: the best prices, the sizes at the best and the depth of the best five levels. The same tool serves any question tied to points in time: the cost of an order at a signal, the book around an event, or the book just before a real large trade (§4, H7).
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | One decision moment $`t`$ at a random millisecond in every 10 s, 8,640 a day, 45 days; a buy and a sell at each | Moments that do not line up with the bots that act on round seconds |
+| 2 | Expected price: the average price of size $`S`$ walking the book published at $`t`$ | What the order promises on the book we decide on |
+| 3 | Paid price: the same walk on the book at $`t + L`$, the last update before it less the size traded at each price since (§2.1) | What a market order actually meets |
+| 4 | An IOC order at the best price seen at $`t`$ takes what stands at that price or better at $`t + L`$; a limit order takes the same and rests with the remainder | The gap for orders that must not pay more |
+| 5 | The move of the mid from $`t`$ over the next second, signed for the order; the volatility of the hour | Whether the orders that miss are the ones that would have paid (Albers et al.'s mechanism) |
+
+<sub><b>How to read the table.</b> $`S`$ in {0.001, 0.01, 0.1, 1, 5} BTC and $`L`$ in {10, 50, 100} ms, as fixed in [results/hypotheses.md](results/hypotheses.md); prices in bp of the mid at $`t`$. The book is read to the 200 levels Bybit publishes. In 481 of the 11.7 million orders these held less than the order (thin books after 10 October, or a sweep just before $`t + L`$); those orders are counted, not priced.</sub>
+
+![The latency gap on data: market orders that paid more than the book seen promised, limit orders left resting, and minimum-size IOC orders filled short by the move that followed](figures/21_11_latency_data.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left and middle: order size (x, log), share of orders (y), one line per latency. Right: 1-s move of the mid (x, bp), share of IOC orders filled short (y). <b>Left:</b> market orders whose average price at $`t + L`$ was worse than the walk on the book seen at $`t`$. <b>Middle:</b> the share of a limit order's size not filled at once and left resting at its price. <b>Right:</b> orders of 0.001 BTC at 50 ms; positive moves in the order's favour (orange), negative against it (grey); each moment counts once as a buy and once as a sell, so the bins mirror in size. Bands and whiskers: 95% from 2,000 resamples of days; numbers above the bars: decisions.</sub>
+
+- **Small orders mostly meet the book they saw.** A market order of 0.001 BTC paid more than expected in 1.5% of decisions at 10 ms, 2.6% at 50 ms and 3.7% at 100 ms. Large orders meet a changed book far more often: at 5 BTC, 8%, 18% and 29%. The book moves both ways, though: at 50 ms, 1.6% of the small orders paid less than expected. On average the gap costs about 0.003 bp, a third of a tick, against 0.37 bp from the mid for walking the book with 5 BTC at all. In the replay, latency is a lottery with a mean near zero for market orders; what it changes is which orders win.
+- **A limit order's remainder is mostly about size, not speed.** A limit order of 0.001 BTC at the best price seen was left partly resting in 1.5% to 3.7% of decisions, rising with $`L`$. At 1 BTC 15%, and at 5 BTC 46%, of the size was left resting, almost the same at every latency: the best level often holds less than the order, so the remainder rests whatever the delay. Only for small orders is the remainder the latency gap of §2.2.
+- **The orders that miss are the ones that would have paid.** When the mid hardly moved over the next second (within 0.5 bp), 1.1% of the minimum-size IOC orders were filled short. When it moved 0.5 to 2 bp in the order's favour, 15%; 2 to 5 bp, 24%; more than 5 bp, 33%. Moves against the order left 1.5% to 4% short. By the volatility of the hour: 0.8% in the calmest third of hours, 1.9% in the middle and 5.0% in the most volatile. Albers et al. (2025) found the same shape live on Bybit: 1.35% overall, almost none after a fall, 15% at +5 bp.
+
+**What it means for the replay.** The shape of the curve on the right is the mechanism of §2.2 on our data: an order arriving L later than its decision misses exactly when the price has started to move its way. A backtest that fills at the price seen keeps those trades; the replay removes them. Two warnings, both fixed before the results. First, in a replay the miss follows from the recorded book by construction: the move over the next second already contains the move during $`L`$, so the curve shows the mechanism, not a measured failure rate, which only live orders give. Second, the comparison with Albers et al. is of shape, not level: their contract is inverse BTCUSD with a 0.5 USD tick, in April 2023, and their horizon is ten events of their experiment rather than one second; our overall share at 50 ms (2.6%) is of the same order as their 1.35%, at 10 ms (1.5%) close to it.
