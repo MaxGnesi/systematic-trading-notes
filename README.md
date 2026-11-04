@@ -31,6 +31,8 @@ testing and portfolio construction) and the style and formula conventions are in
 | 20 | [Statistics of the Flow: Order-Flow Imbalance, Impact, VPIN, Hawkes Processes and Lead-Lag](lectures/20-statistics-of-the-flow/lecture.md) | [20_statistics_of_the_flow.ipynb](lectures/20-statistics-of-the-flow/20_statistics_of_the_flow.ipynb) | The flow as a delta; the statistics introduced on invented flows: order-flow imbalance, impact over time (propagator, Kyle's lambda), VPIN, Hawkes processes, lead and lag between venues; 9 hypotheses fixed beforehand and tested on 45 days of Bybit BTCUSDT with Binance: the book's pressure explains twice what the trades do but forecasts almost nothing; impact builds then fades; VPIN with true sides adds nothing; 84% of trading reacts to trading; Binance moves first by 40-50 ms; the Lecture 19 puzzle is a Simpson's paradox; audits of the unexpected results; 10 October: timing the news to the millisecond, flow and price before the post, an early-warning table, Kyle's lambda in published forms; summary, exercises and reading |
 | 21 | [Replaying the Exchange: Fill Rules, Queue Position, Latency and Adverse Fills](lectures/21-replaying-the-exchange/lecture.md) | notebook to follow | In progress. Three replays of one resting order (touch, queue, trade-through): the naive rule fills more, sooner and at better prices; hypotheses H1-H9 fixed beforehand ([results/hypotheses.md](lectures/21-replaying-the-exchange/results/hypotheses.md)) |
 
+Part IV (Lectures 18 to 24) follows one plot, from the order book to market making: see the [Part IV roadmap](lectures/PART_IV_ROADMAP.md).
+
 ## Layout
 
 ```
