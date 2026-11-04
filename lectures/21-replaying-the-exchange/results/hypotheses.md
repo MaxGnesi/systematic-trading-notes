@@ -96,6 +96,11 @@ Descriptive, not tested:
     the class where it leaves zero is the size from which a replay of resting orders is unreliable. A curve that rises from the smallest class
     on: no size is safe, and the reaction is a cost that grows with size. A curve near zero everywhere: within our sizes, a replay of resting
     orders needs no reaction layer. The verdict on validity remains H8's rule; the curve shows the shape around it.
+- **The sample of §3.3 and §3.4** (added 2026-11-03, before any result). On each of the 45 days, eight half-hours drawn at random (seeded by
+  the day), bids and asks. In each, an order of 0.001 BTC sent every 15 s, joining at the best price standing at t + L (L = 50 ms) and held up
+  to 120 s without re-posting (as §1's orders of the day). Fill times under Q0, Q1 and Q2 with a in {1, 2, 5, 20, infinity}; for each fill,
+  whether it was adverse and the mid 1 s and 10 s after it. Reported: the share filled by time since joining, by rule; the share filled within
+  120 s by the size ahead at joining; and, in §3.4, adverse against non-adverse fills and their markouts. Descriptive; the tests are Section 4.
 - **Quoting once a second** (added 2026-11-03, before any result). A market maker that looks at the book only once a second: at every whole
   second r it checks whether its bid (ask) still stands at the best bid (ask) seen at r; if so the order is kept with its place in the line;
   if not, it is cancelled and a new order sent, the cancellation and the new order both arriving at r + L, the new order at the best
@@ -107,4 +112,6 @@ Descriptive, not tested:
   (buys minus sells) over each day. What it shows: what a slow quote costs, as fills that come late (the price ran through a quote not yet
   moved) and fills that are missed (the quote was left behind). Inventory control, skewing the quotes and sizes above the minimum are left out
   (Lecture 22 and the capstone).
+- **Parked for Lecture 23 (2026-11-04, before any result):** ping-pong quoting, steering the quotes by Lecture 20's statistics and
+  Avellaneda-Stoikov with extras. Strategy design belongs with market making; this lecture keeps the comparison of the two quoters above.
 - Every result by size S, with sizes above the validity of H8 flagged.
