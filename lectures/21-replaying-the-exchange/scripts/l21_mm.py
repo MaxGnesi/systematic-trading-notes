@@ -6,7 +6,8 @@ under Q0, Q1 and Q2 (a = 1 and a = infinity), each rule its own chain, by the ru
 The day is read in half-hour windows (with the 5 minutes before and 10 after), the chain carried from one window to the next.
 Output: L21_OUT/mm/<day>.parquet, one row per order: quoter, rule, L, side, sent, arrival, price, end (fill or cancellation), filled, adverse
 (the best price on our side moved through ours at the first book update after the fill), mid 1 s and 10 s after the fill.
-Usage: python l21_mm.py [DAY ...] (the eight days of results/hypotheses.md if none)."""
+Usage: python l21_mm.py [DAY ...] (the eight days of results/hypotheses.md if none); python l21_mm.py --tests: the instant quoter (the test resting
+order) at L = 50 ms under Q0, Q1 and Q2 with a = 1, the other out-of-sample days, for H1 and H2."""
 import sys, time
 from pathlib import Path
 import numpy as np, polars as pl
@@ -105,15 +106,15 @@ def chain(W, r, b, quoter, L, rule, a, rows, meta):
     return r
 
 
-def day_mm(day):
+def day_mm(day, quoters=("1s", "instant"), lats=LATS, rules=RULES):
     d0 = L21.ms(day); rows = []
     for side in (1, -1):
         nxt = {}
         for a0 in range(d0, d0 + 86_400_000, WIN):
             wait_memory(); W = Window(day, a0, a0 + WIN, side)
-            for quoter in ("1s", "instant"):
-                for L in LATS:
-                    for rule, a in RULES:
+            for quoter in quoters:
+                for L in lats:
+                    for rule, a in rules:
                         key = (quoter, L, rule, a)
                         nxt[key] = chain(W, nxt.get(key, a0), a0 + WIN, quoter, L, rule, a,
                                          rows, (quoter, rule if a is None else f"Q2 a={a:g}", L, side))
@@ -123,6 +124,13 @@ def day_mm(day):
 
 
 if __name__ == "__main__":
+    if "--tests" in sys.argv:
+        for day in (p.stem for p in sorted(L21.STATE.glob("*.parquet")) if p.stem >= "2025-10-11" and p.stem not in DAYS):
+            f = OUT / f"{day}.parquet"
+            if f.exists(): continue
+            t0 = time.time(); D = day_mm(day, ("instant",), (50,), RULES[:3]); D.write_parquet(f)
+            print(day, f"{time.time() - t0:.0f} s", D.group_by("rule").agg(pl.col("filled").sum()).sort("rule").rows(), flush=True)
+        sys.exit()
     days = sys.argv[1:] or DAYS
     for day in days:
         f = OUT / f"{day}.parquet"

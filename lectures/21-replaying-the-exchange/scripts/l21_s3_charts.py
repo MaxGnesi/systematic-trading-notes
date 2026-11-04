@@ -7,7 +7,9 @@ of a limit order at the best price seen left resting, by size and latency; right
 by the move of the mid over the next second.
 21_12 (§3.3): resting orders in the queue, from L21_OUT/s33_sum (l21_s33_sum.py) or results/s33_sum: left, the share filled by time since joining,
 by fill rule; middle, the share filled within 120 s by the size ahead at joining; right, every sampled half-hour, median size ahead against
-median time to fill under Q2 (a = 1), 10 October marked."""
+median time to fill under Q2 (a = 1), 10 October marked.
+21_13 (§3.4): what the fills earn, from L21_OUT/s34 (l21_s34_sum.py) or results/s34: left, the markout by fill rule; middle, adverse against non-adverse
+fills under Q2 (a = 1); right, every sampled half-hour, share adverse against the 10-s markout, 10 October marked."""
 import sys
 from datetime import date
 from pathlib import Path
@@ -108,3 +110,29 @@ fig.update_layout(title="Our order joins behind a few BTC; most queue fills come
                         "joining after 50 ms, held up to 120 s; bands: 95% from resampling days</sup>",
                   height=480, width=1300, margin=dict(t=100, l=70, r=30, b=70), legend=dict(orientation="h", y=-0.22, x=0))
 save_figure(fig, L21.PREFIX + "21_12_queue_data", L21.FIG)
+
+S34 = L21.OUT / "s34"
+RU = pl.read_parquet(L21.result_path(S34, "rules.parquet")); SP = pl.read_parquet(L21.result_path(S34, "split.parquet")).filter(pl.col("rule") == "Q2 a=1")
+H4 = pl.read_parquet(L21.result_path(S34, "halfhours.parquet"))
+fig = make_subplots(rows=1, cols=3, column_widths=[0.36, 0.26, 0.38], horizontal_spacing=0.08,
+                    subplot_titles=("Markout of a fill, by rule", "Queue rule: adverse or not", "Every sampled half-hour"))
+names = [("Q0", "touch"), ("Q2 a=1", "queue, a = 1"), ("Q2 a=inf", "queue, a = \u221e"), ("Q1", "trade-through")]
+g = pl.concat([RU.filter(pl.col("rule") == k) for k, _ in names])
+sp = SP.sort("adverse_fill", descending=True)
+for k, nm, c in (("m1", "after 1 s", SERIES[0]), ("m10", "after 10 s", SERIES[1])):
+    fig.add_bar(x=[n for _, n in names], y=g[k], marker=dict(color=c, line=dict(width=0)), name=nm, legendgroup=k,
+                error_y=dict(type="data", symmetric=False, array=g[k + "_hi"] - g[k], arrayminus=g[k] - g[k + "_lo"], color=INK, thickness=1, width=3), row=1, col=1)
+    fig.add_bar(x=[f"adverse ({sp['fills'][0] / sp['fills'].sum():.0%})", f"not adverse ({sp['fills'][1] / sp['fills'].sum():.0%})"], y=sp[k],
+                marker=dict(color=c, line=dict(width=0)), legendgroup=k, showlegend=False,
+                error_y=dict(type="data", symmetric=False, array=sp[k + "_hi"] - sp[k], arrayminus=sp[k] - sp[k + "_lo"], color=INK, thickness=1, width=3), row=1, col=2)
+fig.update_yaxes(title_text="markout before the fee, bp", range=[-1.15, 0.05], row=1, col=1); fig.update_yaxes(range=[-1.15, 0.05], row=1, col=2)
+o = H4.filter(pl.col("day") != "2025-10-10"); t = H4.filter(pl.col("day") == "2025-10-10")
+fig.add_scatter(x=o["adverse"], y=o["m10"], mode="markers", marker=dict(size=6, color=GRID, line=dict(width=0.5, color=MUTED)), name="other days", row=1, col=3)
+fig.add_scatter(x=t["adverse"], y=t["m10"], mode="markers+text", marker=dict(size=9, color=SERIES[2], line=dict(width=1, color="white")),
+                text=[f"{h // 2:02d}:{30 * (h % 2):02d}" if h in (43, 44) else "" for h in t["hh"]], textposition="middle right", textfont=dict(size=9, color=INK), name="10 October (UTC)", row=1, col=3)
+fig.update_xaxes(tickformat=".0%", title_text="share of fills adverse", row=1, col=3); fig.update_yaxes(title_text="10-s markout, bp", row=1, col=3)
+fig.update_layout(title="Most fills under the queue rule are adverse, they carry nearly all the loss, and the touch rule hides them"
+                        "<br><sup>Bybit BTCUSDT, 45 days, the orders of Figure 21_12; markout: the mid after the fill minus the fill price, signed for our side, before the "
+                        "2 bp maker fee; whiskers: 95% from resampling days</sup>",
+                  barmode="group", height=480, width=1300, margin=dict(t=100, l=70, r=30, b=70), legend=dict(orientation="h", y=-0.2, x=0))
+save_figure(fig, L21.PREFIX + "21_13_adverse_data", L21.FIG)

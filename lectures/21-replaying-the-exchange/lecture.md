@@ -4,7 +4,7 @@
 
 Lectures 18 to 20 described Bybit's BTCUSDT book, measured its state and measured its flow. This lecture puts our own orders into the recorded market and asks what would have happened to them: when a resting order is filled, at what price a market order is executed, and what the price does afterwards. A replay is only useful if it tells the truth, so the lecture builds one piece by piece and then tests it on the same 45 days, 20 September to 3 November 2025. The hypotheses were fixed before any result was computed ([results/hypotheses.md](results/hypotheses.md)).
 
-*Draft: Sections 1, 2 and 3.1 to 3.3. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
+*Draft: Sections 1, 2 and 3. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
 
 ## 1. Three replays of one order
 
@@ -433,3 +433,20 @@ A market order of up to 5 BTC walks several levels, so this section needs the bo
 **In the crash.** The two half-hours of the sample inside the cascade of 10 October, 21:30 and 22:00 UTC, stand apart from all others. The median order joined behind 0.30 and 0.45 BTC, against 2.5 BTC in the median half-hour, and was filled in 0.18 and 0.20 s, against 5 s; these are the lowest and second lowest of the 360 half-hours on both measures. Almost every order was filled (98% against 89%). In a crash the question of where we stand in the line nearly disappears: the risk of a resting order is no longer that the fill does not come. It does not follow that every fill was worse. The share of adverse fills was ordinary (74% and 82%, against 76% in the median half-hour). The loss 10 s after the fill was the largest of all half-hours at 21:30 (−1.76 bp against −0.79 bp), and smaller than usual at 22:00 (−0.54 bp). Two half-hours of about 235 fills each decide nothing; Section 5 replays the whole cascade.
 
 **What it means for the replay.** On whether an order is filled, the dial is a small uncertainty: about two percentage points across its whole range, the plateau that H3 tests on what fills earn. The rule itself matters far more: touch is off by a factor of three in the first second. Two limits remain. The queue rule cannot be checked here, because only an exchange's order-level data or live orders of our own show true fills. And the grid stops at $`a = 1`$: if cancellations came mostly from ahead of us, more orders would reach the front than any line in the figure shows. What these fills earn is the subject of §3.4.
+
+### 3.4 Adverse fills on data
+
+**Three queue fills in four are adverse, and they carry nearly all the loss: about 1 bp after ten seconds, against 0.16 bp for the others. The touch rule makes the same orders look three times better than they are.**
+
+§2.4 argued that the fills an order gets lean towards the bad ones. Here the orders of §3.3 are sorted by that definition, and each fill is scored by its **markout**: the mid after the fill minus the fill price, signed for our side, before the maker fee. A fill is adverse if the best price on our side has moved through our level at the first book update after it.
+
+![What the fills earn: the markout by fill rule, adverse against non-adverse fills under the queue rule, and every sampled half-hour with 10 October marked](figures/21_13_adverse_data.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left and middle: fill rule or kind of fill (x), markout in bp (y), one bar per horizon. Right: share of fills adverse (x), 10-s markout (y), one dot per half-hour. <b>Left:</b> 72,800 to 83,200 fills per rule. <b>Middle:</b> the queue rule at $`a = 1`$; the shares of the fills are in the labels. <b>Right:</b> the queue rule at $`a = 1`$; 360 half-hours, those of 10 October in green, the two inside the cascade labelled with their start time in UTC. Whiskers: 95% from 2,000 resamples of days.</sub>
+
+- **Every rule loses before the fee, and the touch rule hides most of it.** After 10 s the same orders show −0.26 bp under touch, −0.80 to −0.88 bp under the queue rule, and −0.98 bp under trade-through. Touch counts 26% of its fills as adverse, the queue rule 75 to 86%, trade-through 98%. Lalor and Swishchuk (2024) report adverse shares of 66 to 89%; the queue rule falls in that range.
+- **The adverse fills are where the loss is.** Under the queue rule at $`a = 1`$, the adverse fills lose 1.01 bp after 10 s and the others 0.16 bp. The second number is small, but it is not zero, and it stays negative at $`a = \infty`$ (−0.07 bp): even the fills we would call good do not earn the half-spread, about 0.005 bp, on average.
+- **The dial changes the mix, not the sign.** From $`a = 1`$ to $`a = \infty`$, fewer fills count as good ones and the 10-s markout moves by 0.09 bp. The maker fee of 2 bp is more than twenty times that. After the fee the same fills stand at about −2.8 to −2.9 bp.
+
+**In the crash.** The right panel separates two things the eye tends to join. Across half-hours, a higher adverse share goes with a larger loss (correlation −0.48). But the worst half-hour of all, 10 October at 21:30, has an ordinary share (74%): there the loss came from how far the price went after each fill, not from how many fills were adverse. Half an hour later, still in the cascade, the fills lost less than usual. On two half-hours this is a description only; Section 5 tests it on the whole cascade (H6).
+
+**What it means for the replay.** The fill rule decides the verdict on a resting order more than any other choice in this section: under touch the order seems to lose a quarter of a basis point, under the queue rule three times as much. None of the rules, on any setting, comes near paying the fee at the minimum size. Whether the replay's fills are as bad as real ones is a separate question, one of those Section 4 tests.
