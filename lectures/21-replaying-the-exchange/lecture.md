@@ -4,7 +4,7 @@
 
 Lectures 18 to 20 described Bybit's BTCUSDT book, measured its state and measured its flow. This lecture puts our own orders into the recorded market and asks what would have happened to them: when a resting order is filled, at what price a market order is executed, and what the price does afterwards. A replay is only useful if it tells the truth, so the lecture builds one piece by piece and then tests it on the same 45 days, 20 September to 3 November 2025. The hypotheses were fixed before any result was computed ([results/hypotheses.md](results/hypotheses.md)).
 
-*Draft: Sections 1, 2, 3.1 and 3.2. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
+*Draft: Sections 1, 2 and 3.1 to 3.3. The rest follows the plan in [results/hypotheses.md](results/hypotheses.md).*
 
 ## 1. Three replays of one order
 
@@ -405,3 +405,31 @@ A market order of up to 5 BTC walks several levels, so this section needs the bo
 - **The orders that miss are the ones that would have paid.** When the mid hardly moved over the next second (within 0.5 bp), 1.1% of the minimum-size IOC orders were filled short. When it moved 0.5 to 2 bp in the order's favour, 15%; 2 to 5 bp, 24%; more than 5 bp, 33%. Moves against the order left 1.5% to 4% short. By the volatility of the hour: 0.8% in the calmest third of hours, 1.9% in the middle and 5.0% in the most volatile. Albers et al. (2025) found the same shape live on Bybit: 1.35% overall, almost none after a fall, 15% at +5 bp.
 
 **What it means for the replay.** The shape of the curve on the right is the mechanism of §2.2 on our data: an order arriving L later than its decision misses exactly when the price has started to move its way. A backtest that fills at the price seen keeps those trades; the replay removes them. Two warnings, both fixed before the results. First, in a replay the miss follows from the recorded book by construction: the move over the next second already contains the move during $`L`$, so the curve shows the mechanism, not a measured failure rate, which only live orders give. Second, the comparison with Albers et al. is of shape, not level: their contract is inverse BTCUSD with a 0.5 USD tick, in April 2023, and their horizon is ten events of their experiment rather than one second; our overall share at 50 ms (2.6%) is of the same order as their 1.35%, at 10 ms (1.5%) close to it.
+
+### 3.3 The queue on data
+
+**Our order joins behind a few BTC, and the naive rule fills it far too fast. The unknown cancellation split barely changes whether it is filled: most fills under the queue rule come as the price runs through our level, not because we reached the front. In the cascade of 10 October the line shrank to about a tenth.**
+
+§2.3 set up the question on an invented book: we see how much stands at our price, not where the cancellations come from, so the dial $`a`$ stands for what we do not know. Here the same rule runs on the recorded book. How much does the dial matter, and how far is the queue rule from the two simple rules that bracket it?
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | On each of the 45 days, eight half-hours drawn at random, bids and asks | Every day is covered, at a fraction of the cost of a full run |
+| 2 | In each, an order of 0.001 BTC sent every 15 s, joining at the best price standing 50 ms later | 86,392 orders of the smallest size, so our own footprint is negligible |
+| 3 | The order is held up to 120 s and not re-posted | If the price moves away, it stays behind and is filled only if the price returns |
+| 4 | The fill time under touch ($`Q_0`$), trade-through ($`Q_1`$) and the queue rule ($`Q_2`$) at $`a`$ = 1, 2, 5, 20 and $`\infty`$ | One order, several possible histories, as in Section 1 |
+| 5 | For each queue fill: did it come with the first trade through our price, or earlier, at our price? | Whether we got there by waiting our turn or by the price running over us |
+
+<sub><b>How to read the table.</b> The sample is fixed in [results/hypotheses.md](results/hypotheses.md). The fill times use the rules of the replay of §2.3 and agree with it order by order on a random check. Time is counted from the moment the order joins.</sub>
+
+![Resting orders on data: the share filled by time since joining, by fill rule; the share filled within 120 s by the size ahead at joining; and every sampled half-hour, with 10 October marked](figures/21_12_queue_data.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: seconds since joining (x, log), share filled (y). Middle: size ahead at joining (x), share filled within 120 s (y, from 70%). Right: median size ahead (x, log), median time to fill (y, log), one dot per half-hour. <b>Left and middle:</b> one line per fill rule; touch dotted, trade-through dashed; the queue rule at $`a`$ = 2, 5 and 20 lies between its two lines and is left out. Bands: 95% from 2,000 resamples of days. <b>Right:</b> the queue rule at $`a = 1`$; 360 half-hours, those of 10 October in orange with their start time in UTC.</sub>
+
+- **The line is long.** The median order joins behind 2.5 BTC, 2,500 times its own size, and three orders in four join behind more than 1 BTC.
+- **The touch rule fills far too fast.** Within one second it has filled 56% of the orders, the queue rule 18 to 19%; within ten seconds 89% against 54 to 57%. Half the orders are filled within a second under touch, within 7 to 9 s under the queue rule and within 10 s under trade-through. After 120 s the gap has closed to 96% against 86 to 88%: touch misstates when an order is filled, and which fills it gets (§3.4), more than whether.
+- **The dial hardly changes whether we are filled.** Within 120 s: 87.5% at $`a = 1`$, 86.5% at 2, 86.1% at 5, and 85.9% at both 20 and $`\infty`$. A likely reason, by our reasoning from the rule: when we join, nobody stands behind us, so every cancellation must come from ahead whatever $`a`$ is. The dial only starts to act once new orders have joined behind us.
+- **Most queue fills are not a turn reached.** Of the queue rule's fills, 64% at $`a = 1`$ and 78% at $`a = \infty`$ came with the first trade through our price. Only 36% to 22% reached the front first. That is why the queue rule stays so close to trade-through, which fills 84%: the best price usually moves before a line of a few BTC has been worked off. The rules part where the line is long: behind more than 5 BTC, touch fills 94%, the queue rule 77 to 79%, trade-through 75%; behind less than 0.01 BTC they all fill 99%.
+
+**In the crash.** The two half-hours of the sample inside the cascade of 10 October, 21:30 and 22:00 UTC, stand apart from all others. The median order joined behind 0.30 and 0.45 BTC, against 2.5 BTC in the median half-hour, and was filled in 0.18 and 0.20 s, against 5 s; these are the lowest and second lowest of the 360 half-hours on both measures. Almost every order was filled (98% against 89%). In a crash the question of where we stand in the line nearly disappears: the risk of a resting order is no longer that the fill does not come. It does not follow that every fill was worse. The share of adverse fills was ordinary (74% and 82%, against 76% in the median half-hour). The loss 10 s after the fill was the largest of all half-hours at 21:30 (−1.76 bp against −0.79 bp), and smaller than usual at 22:00 (−0.54 bp). Two half-hours of about 235 fills each decide nothing; Section 5 replays the whole cascade.
+
+**What it means for the replay.** On whether an order is filled, the dial is a small uncertainty: about two percentage points across its whole range, the plateau that H3 tests on what fills earn. The rule itself matters far more: touch is off by a factor of three in the first second. Two limits remain. The queue rule cannot be checked here, because only an exchange's order-level data or live orders of our own show true fills. And the grid stops at $`a = 1`$: if cancellations came mostly from ahead of us, more orders would reach the front than any line in the figure shows. What these fills earn is the subject of §3.4.

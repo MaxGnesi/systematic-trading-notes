@@ -96,6 +96,11 @@ Descriptive, not tested:
     the class where it leaves zero is the size from which a replay of resting orders is unreliable. A curve that rises from the smallest class
     on: no size is safe, and the reaction is a cost that grows with size. A curve near zero everywhere: within our sizes, a replay of resting
     orders needs no reaction layer. The verdict on validity remains H8's rule; the curve shows the shape around it.
+- **The sample of §3.3 and §3.4** (added 2026-11-03, before any result). On each of the 45 days, eight half-hours drawn at random (seeded by
+  the day), bids and asks. In each, an order of 0.001 BTC sent every 15 s, joining at the best price standing at t + L (L = 50 ms) and held up
+  to 120 s without re-posting (as §1's orders of the day). Fill times under Q0, Q1 and Q2 with a in {1, 2, 5, 20, infinity}; for each fill,
+  whether it was adverse and the mid 1 s and 10 s after it. Reported: the share filled by time since joining, by rule; the share filled within
+  120 s by the size ahead at joining; and, in §3.4, adverse against non-adverse fills and their markouts. Descriptive; the tests are Section 4.
 - **Quoting once a second** (added 2026-11-03, before any result). A market maker that looks at the book only once a second: at every whole
   second r it checks whether its bid (ask) still stands at the best bid (ask) seen at r; if so the order is kept with its place in the line;
   if not, it is cancelled and a new order sent, the cancellation and the new order both arriving at r + L, the new order at the best
@@ -107,4 +112,22 @@ Descriptive, not tested:
   (buys minus sells) over each day. What it shows: what a slow quote costs, as fills that come late (the price ran through a quote not yet
   moved) and fills that are missed (the quote was left behind). Inventory control, skewing the quotes and sizes above the minimum are left out
   (Lecture 22 and the capstone).
+- **Ping-pong quoting** (added 2026-11-03, before any result; suggested after the quoting comparison showed that the instant quoter's fills
+  within 1 s of a fill on the same side were its worst). The position is limited to one order of 0.001 BTC: with no position, a bid at the best
+  bid and an ask at the best ask, re-posted at every book update; after one side is filled, that side is switched off and only a closing order
+  works until it is filled, then both sides quote again. Closing order: (a) at the best price on its side, re-posted at every book update;
+  (b) a target k ticks from the entry price (k in {1, 11}; 11 ticks is about 1 bp), left in place until filled, which waits for the price to
+  come back. A closing order whose price can trade at once on arrival is filled there as a taker. Same eight days, L = 50 ms, Q2 with a in
+  {1, infinity}. Measures: round trips per hour; gain per round trip before fees, in bp; the fee per side at which it breaks even; time a
+  position is held; the worst move against it while held; the position open at the end of each day, valued at the mid. Levels at prices with
+  no message in the window are treated as empty (our order first in line).
+- **Could Lecture 20's statistics have told the quoter when to step back?** (added 2026-11-03, before any result). For every fill of the
+  two quoters and the ping-pong variants (Q2, a = 1, L = 50 ms), three signals measured on the data up to the fill time minus L, the last
+  moment at which a cancellation could still have arrived in time: speed, the number of taker trades on Bybit in the second before; flow
+  against us, the taker volume on Bybit in the 10 s before, sells minus buys for a bid (buys minus sells for an ask); Binance's lead, the move
+  of Binance's last trade price in the 100 ms before, in bp, signed against our order (a fall for a bid). VPIN is left out (it failed in
+  Lecture 20). Reported: the 10-s markout of the fills by fifth of each signal (fifths over all fills), and the share of fills and of the total
+  loss in the top fifth. Descriptive. Dropping the fills of the top fifth is not the same as a quoter that steps back, which also loses its
+  place in the line; if a signal separates the fills clearly, such a quoter is run on the same eight days, fixed here: it cancels its quote
+  on a side when that side's signal is in the top fifth (thresholds from the in-sample days) and re-posts when it falls below.
 - Every result by size S, with sizes above the validity of H8 flagged.
