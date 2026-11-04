@@ -13,6 +13,8 @@ Part IV moves from describing the order book to trading on it, one step per lect
 ![Part IV in one line: Lecture 21 puts our own orders into the recorded market](figures/21_01_part_iv.png)
 <sub><b>How to read the figure.</b> Each box is one lecture of Part IV, each building on the one before; this lecture is outlined, Lectures 18 to 20 are done. Above the boxes, the four stages: describing the book, measuring it, simulating our own orders in it, and trading strategies on it.</sub>
 
+The plot behind these lectures, and what each one settles: [Part IV roadmap](../PART_IV_ROADMAP.md).
+
 A **replay** runs the recorded book and trades forward in time and inserts hypothetical orders of ours into them. The recorded market does not react to our orders: nobody cancels because our bid appeared, and nobody sells into it because it is there. That reaction is left out on purpose here and is the subject of Lecture 22. A market order in a replay is simple to judge: it trades against the book that stands when it arrives. A resting order is not, because the data never say when it would have been filled. The replay has to supply a **fill rule**, and the three rules in common use give different answers:
 
 | Rule | Our resting bid is filled when | What it assumes |

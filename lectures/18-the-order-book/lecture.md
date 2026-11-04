@@ -11,6 +11,8 @@ Part IV moves from describing the order book to trading on it, one step per lect
 ![Part IV in one line: from describing the order book to trading on it](figures/18_01_part_iv.png)
 <sub><b>How to read the figure.</b> Each box is one lecture of Part IV, each building on the one before; this lecture is outlined. Above the boxes, the four stages: describing the book, measuring it, simulating our own orders in it, and trading strategies on it.</sub>
 
+The plot behind these lectures, and what each one settles: [Part IV roadmap](../PART_IV_ROADMAP.md).
+
 This lecture is the first stage: what the book is, what public data show of it, and what it reveals before anything is measured or traded. It runs as follows:
 
 | § | Step | Question |

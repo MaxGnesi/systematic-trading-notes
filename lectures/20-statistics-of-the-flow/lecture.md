@@ -11,6 +11,8 @@ Part IV moves from describing the order book to trading on it, one step per lect
 ![Part IV in one line: Lecture 20 measures what changes in the book](figures/20_01_part_iv.png)
 <sub><b>How to read the figure.</b> Each box is one lecture of Part IV, each building on the one before; this lecture is outlined, Lectures 18 and 19 are done. Above the boxes, the four stages: describing the book, measuring it, simulating our own orders in it, and trading strategies on it.</sub>
 
+The plot behind these lectures, and what each one settles: [Part IV roadmap](../PART_IV_ROADMAP.md).
+
 Lecture 19 distinguished two kinds of quantity: a **level**, the state of the book at one moment, like a balance sheet, and a **delta**, what changed over an interval, like a cash-flow statement. The same word, imbalance, names one of each. **Book imbalance** compares the sizes resting at the best bid and the best ask at one moment (Lecture 19, §2.1). **Order-flow imbalance** adds up, over an interval, everything that pushed on the best prices: size added to the best bid or taken from the best ask pushes the price up; size added to the best ask or taken from the best bid pushes it down, whether it was taken by a trade or by a cancellation (Cont, Kukanov and Stoikov, 2014; Section 2.1 gives the calculation). **Trade imbalance** counts only the trades: size bought by takers minus size sold, the net aggressive flow of Lecture 15.
 
 The idea of the lecture fits in one chart. On the left, one minute of our data; on the right, the whole of that day:
