@@ -62,11 +62,33 @@ Layers, each estimated in sample and added to the replay of Lecture 21:
 - **H8 (no free profit, a condition on layer E).** With layer E on and at zero fee, a round trip that posts a resting bid of x = 100%, sells at the ask at minimum size and cancels the bid must not earn more than the same round trip without the bid. If it does, E is not a cause we can use: it is left out of the hybrid replay, and its effect on results is reported only as a band, E on against E off. We expect this to be a real risk: Lecture 21's H8 measured an association, net +0.25 bp after one second, not proof of cause.
 - **H9 (10 October).** In the cascade window, 20:50-22:50 UTC, actual over predicted response of orders of 1 BTC or more, with curves from the calm days, exceeds that of the same window on any other day (rank among the 45). In the model in x, the ratio is closer to 1 than in the model in S.
 
+- **H10 (a sniper's footprint, and why it matters for our layers).** Orders sent within 100 ms after a move of Binance's price of 2 bp or more, in the same direction, have a larger net R(10 s) than other orders of the same size class, out of sample. Such orders are informed about a price that has already moved elsewhere, and ours would not be. If H10 holds, the impact layer is calibrated without them, and the difference is reported. Races themselves cannot be seen: the losers leave no trace.
+- **H11 (a trend follower's footprint).** In the 60 s after the mid crosses its 50-minute average from below (above), signed taker flow is more on the side of the crossing than at matched moments without a crossing (same hour, same day, same tercile of the mid's move over the last 60 s), out of sample. 20-minute against 50-minute averages reported beside it. A simple rule, which a real trend follower need not use, so a failure says only that this footprint is absent.
+- **H12 (a sliced order's footprint).** The share of taker size in runs of five or more orders of one exact size on one side, with near-regular gaps (coefficient of variation below 0.2), is larger than in the same day with the order of sizes shuffled within 5-minute blocks, out of sample.
+
 **Reported, no test.**
+
+- **The market maker's footprint:** the share of updates in which both best prices or both best sizes change together, against what independent sides would give; the refilling chains of Lecture 19.
 
 - The waterfall of layers A to D for market orders of each size, at once and sliced, 10 slices over 1 s, 10 s and 60 s: does the footprint reverse a ranking that the plain replay reports?
 - Lecture 21's resting order at 0.1, 1 and 5 BTC under the hybrid replay, with our size in the line, against the plain replay; the same with the layer curves scaled by 0.5, 1 and 2. A result that changes sign inside that range is reported as undetermined.
 - **The size at which the footprint matters:** the smallest size at which hybrid minus plain exceeds 0.1 bp (the margin of Lecture 21's H4). This replaces or confirms Lecture 21's flag from 0.1 BTC up. Below the sizes we can measure, 0.001 and 0.01 BTC, any statement is an extrapolation and is labelled so.
+
+## The teaching simulation (§2, no results claimed)
+
+A small simulated market written for this lecture, to show the mechanics. Invented data; it runs in seconds on a laptop, and nothing about the real market is concluded from it. No ABIDES and no comparison run.
+
+- **The market:** one book with a tick and a matching queue (price, then time), an event loop, and a hidden fair value that moves as a random walk.
+- **Noise traders:** market orders, limit orders and cancellations at fixed rates (zero intelligence).
+- **Market maker:** quotes a ladder around the mid every refresh, leaning its quotes against its position.
+- **Trend follower:** sends a market order when a fast average crosses a slow one.
+- **Sniper:** sees the fair value early, and hits quotes it has left stale, after its own latency.
+- **Scalper:** our own definition, since the literature has none: joins the best price, then closes at a small gain or a stop, staying nearly flat.
+- **Our order:** the same order of ours, inserted at the same moment.
+
+**Experiments.** (1) Add one type at a time: what happens to our order's cost and to the path after it? (2) Different mixes that look alike on the usual statistics, the point of Platt and Gebbie (2018). (3) **Detection with the truth known:** publish only what Bybit publishes, a book every 100 ms and trades with no identities, and ask how much of each type's size the footprints of H10 to H12 recover. Where they fail on a simulation with the answer known, a result on real data means little.
+
+**Can players be identified on real data?** Not as players. We have no accounts, so a round trip, a scalper's profit or one trader's sliced order cannot be followed, and we found no paper that classifies traders from public book and trade data alone. Only footprints can be measured, each labelled as a footprint of a behaviour and not a count of traders.
 
 ## Running it
 
