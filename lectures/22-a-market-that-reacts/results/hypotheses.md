@@ -76,7 +76,7 @@ H1 to H9 test the hybrid replay; H10 to H15 are the styles. The correction runs 
 
 **Reported, no test.**
 
-- **The market maker's footprint:** the share of updates in which both best prices or both best sizes change together, against what independent sides would give; the refilling chains of Lecture 19.
+- **The market maker's footprint:** the share of updates with three or more levels near the best changing on both sides at once, against the same with one side shifted in time (at the best price alone the measure is too crude: in the simulation a market maker with 38% of traded size barely shows); the same size added on both sides; the clock of the changes; the refilling chains of Lecture 19. A one-hour look at 1 October (in sample) prompted the shifted comparison.
 
 - The waterfall of layers A to D for market orders of each size, at once and sliced, 10 slices over 1 s, 10 s and 60 s: does the footprint reverse a ranking that the plain replay reports?
 - Lecture 21's resting order at 0.1, 1 and 5 BTC under the hybrid replay, with our size in the line, against the plain replay; the same with the layer curves scaled by 0.5, 1 and 2. A result that changes sign inside that range is reported as undetermined.
