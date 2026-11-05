@@ -82,6 +82,20 @@ H1 to H9 test the hybrid replay; H10 to H15 are the styles. The correction runs 
 - Lecture 21's resting order at 0.1, 1 and 5 BTC under the hybrid replay, with our size in the line, against the plain replay; the same with the layer curves scaled by 0.5, 1 and 2. A result that changes sign inside that range is reported as undetermined.
 - **The size at which the footprint matters:** the smallest size at which hybrid minus plain exceeds 0.1 bp (the margin of Lecture 21's H4). This replaces or confirms Lecture 21's flag from 0.1 BTC up. Below the sizes we can measure, 0.001 and 0.01 BTC, any statement is an extrapolation and is labelled so.
 
+## Added 2026-11-05: patterns that can be recognised as they start (DRAFT)
+
+**What prompted this, stated before any out-of-sample result.** A quick look at three in-sample days (24 September, 1 and 7 October) found same-size taker orders about 30.22 s apart, with gaps that vary by a few milliseconds: for example, sells of exactly 20 BTC ten times at 30.215 s. Pieces join up to round parents, e.g. 1.667 BTC × 40 and 1.666 BTC × 20 = 100 BTC in 30 minutes, and 0.834 BTC × 40 and 0.833 BTC × 80 = 100 BTC in one hour. Bybit documents a TWAP strategy order with a 30-second default interval and a minimum run of 5 minutes, which is 10 slices. This is consistent with that tool, and we cannot prove it; it also offers randomised sizes (±20%), which an exact-size search misses. Out-of-sample days have not been looked at.
+
+**A run.** Taker orders on one side, of equal size within 0.01 BTC, with a gap within 1 s of 30.22 s (other regular gaps reported apart). It is **recognised** at its third order, when two equal gaps have been seen, using only what was known then.
+
+- **H16 (a run can be recognised as it starts).** Out of sample, recognised runs of 1 BTC a slice or more: a next slice arrives within 100 ms of the predicted time more often than at the same delay after matched non-runs of the same size and side. Reported: the share with a next slice, the number of slices that remain, the false alarms, and the share of taker size in such runs, day by day and by hour.
+- **H17 (does the market see it coming?).** The net response to a slice recognised as part of a run, the fourth or later, is smaller than to a single order of the same size and same relative size x at a moment with no run under way. Reason: flow that can be expected should move the price less than a surprise. Reported: whether the mid, the depth at the best on the side to be hit and other takers' flow change in the 1 s before a predicted slice, against the same second in matched moments. Also the path over a whole run and after its end: this is the real test case for layers C and D, so H7 is reported on these runs beside its own.
+- **H18 (levels).** Depth standing at prices that are multiples of 1,000 USDT is larger than at the neighbouring non-round prices (3 to 10 ticks away either side), out of sample, within 1% of the mid; the same for multiples of 100 USDT, reported. Reason: Lecture 18 saw walls at 111,000 USDT, and Osler (2003) found customer orders in currencies clustered at round numbers (to be checked against the source). Reported: pulls and additions at those prices as the mid comes near, and whether the price stops at them more than at neighbouring prices.
+
+**Times, already measured.** Lecture 18: pulls in 7% of updates after a quiet second, 79% after a move of more than 5 bp, and 1.4 times the day's average in the first seconds of a minute. Lecture 19: at the start of minutes :00 and :30 pulls burst and depth jumps to 1.15 times the hour's average. Section 5 uses them as market-maker activity by time and adds them to H13 and H14 as a fourth profile.
+
+The correction runs over one p-value each for H16, H17 and H18 as well, if these are fixed.
+
 ## The teaching simulation (§2, no results claimed)
 
 A small simulated market written for this lecture, to show the mechanics. Invented data; it runs in seconds on a laptop, and nothing about the real market is concluded from it. No ABIDES and no comparison run.
