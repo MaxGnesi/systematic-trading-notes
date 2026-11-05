@@ -10,7 +10,7 @@ The question: what if the market responds to our order? Lecture 21 replayed the 
 2. **The pieces, one card each on invented data:** depletion (what we took is gone); refill (how it comes back); impact that fades; triggered trading; the reaction to resting size. Then **who gets simulated**, a card of its own: the traders a simulated market is built from (noise, value, momentum, market maker, high-frequency; snipers and scalpers), how each one's rule is written, whether the type has ever been measured, and what our data can show of it. Then the families of models side by side: plain replay, hybrid replay, event propagators, queue-reactive and agent-based simulation, generative models, and where each is used.
 3. **The layers on our data:** each measured on real orders in sample, by size and by size relative to the queue.
 4. **Does the hybrid replay tell the truth?** H1 to H9.
-5. **Styles in the book.** H10 to H15: what shares, over time, in what circumstances, and does one set off another?
+5. **How to read a market.** The method, built on H10 to H19: what is at work, in what shares, at what times and levels, does one style set off another, and is a reading worth anything?
 6. **10 October.** Do layers calibrated on calm days hold in the cascade, and did the mix of styles change in it?
 7. **Summary, exercises and reading.** What the footprint does to Lecture 21's flag; what remains for live orders.
 
@@ -81,6 +81,37 @@ H1 to H9 test the hybrid replay; H10 to H15 are the styles. The correction runs 
 - The waterfall of layers A to D for market orders of each size, at once and sliced, 10 slices over 1 s, 10 s and 60 s: does the footprint reverse a ranking that the plain replay reports?
 - Lecture 21's resting order at 0.1, 1 and 5 BTC under the hybrid replay, with our size in the line, against the plain replay; the same with the layer curves scaled by 0.5, 1 and 2. A result that changes sign inside that range is reported as undetermined.
 - **The size at which the footprint matters:** the smallest size at which hybrid minus plain exceeds 0.1 bp (the margin of Lecture 21's H4). This replaces or confirms Lecture 21's flag from 0.1 BTC up. Below the sizes we can measure, 0.001 and 0.01 BTC, any statement is an extrapolation and is labelled so.
+
+## Added 2026-11-05, before any of their results: patterns that can be recognised as they start
+
+**What prompted this, stated before any out-of-sample result.** A quick look at three in-sample days (24 September, 1 and 7 October) found same-size taker orders about 30.22 s apart, with gaps that vary by a few milliseconds: for example, sells of exactly 20 BTC ten times at 30.215 s. Pieces join up to round parents, e.g. 1.667 BTC × 40 and 1.666 BTC × 20 = 100 BTC in 30 minutes, and 0.834 BTC × 40 and 0.833 BTC × 80 = 100 BTC in one hour. Bybit documents a TWAP strategy order with a 30-second default interval and a minimum run of 5 minutes, which is 10 slices. This is consistent with that tool, and we cannot prove it; it also offers randomised sizes (±20%), which an exact-size search misses. Out-of-sample days have not been looked at.
+
+**A run.** Taker orders on one side, of equal size within 0.01 BTC, with a gap within 1 s of 30.22 s (other regular gaps reported apart). It is **recognised** at its third order, when two equal gaps have been seen, using only what was known then.
+
+- **H16 (a run can be recognised as it starts).** Out of sample, recognised runs of 1 BTC a slice or more: a next slice arrives within 100 ms of the predicted time more often than at the same delay after matched non-runs of the same size and side. Reported: the share with a next slice, the number of slices that remain, the false alarms, and the share of taker size in such runs, day by day and by hour.
+- **H17 (does the market see it coming?).** The net response to a slice recognised as part of a run, the fourth or later, is smaller than to a single order of the same size and same relative size x at a moment with no run under way. Reason: flow that can be expected should move the price less than a surprise. Reported: whether the mid, the depth at the best on the side to be hit and other takers' flow change in the 1 s before a predicted slice, against the same second in matched moments. Also the path over a whole run and after its end: this is the real test case for layers C and D, so H7 is reported on these runs beside its own.
+- **H18 (levels).** Depth standing at prices that are multiples of 1,000 USDT is larger than at the neighbouring non-round prices (3 to 10 ticks away either side), out of sample, within 1% of the mid; the same for multiples of 100 USDT, reported. Reason: Lecture 18 saw walls at 111,000 USDT, and Osler (2003) found customer orders in currencies clustered at round numbers (to be checked against the source). Reported: pulls and additions at those prices as the mid comes near, and whether the price stops at them more than at neighbouring prices.
+
+**Times, already measured.** Lecture 18: pulls in 7% of updates after a quiet second, 79% after a move of more than 5 bp, and 1.4 times the day's average in the first seconds of a minute. Lecture 19: at the start of minutes :00 and :30 pulls burst and depth jumps to 1.15 times the hour's average. Section 5 uses them as market-maker activity by time and adds them to H13 and H14 as a fourth profile.
+
+The correction runs over one p-value each for H16, H17, H18 and H19 as well.
+
+## Added 2026-11-05: a method for reading a market
+
+The aim of this part of the lecture is to teach a method for reading a market, usable on any market with a public book and trades, not a catalogue of patterns. Section 5 is built around it.
+
+| Step | The question | What to look at | From |
+|---|---|---|---|
+| 1. The state | Is there anything to trade against, and which way does it lean? | Spread, depth, the imbalance at the best | Lectures 18, 19 |
+| 2. The flow | Who is pushing, and how hard? | Order-flow imbalance, taker size, how much reacts to what | Lecture 20 |
+| 3. The styles | What is at work now? | A run under way, sniper-like orders, trend-like flow, market makers pulling or refilling | H10 to H16 |
+| 4. Clock and levels | What is about to come? | Time to the next :00 or :30, the next slice of a run, round prices nearby | Lecture 19, H13, H16, H18 |
+| 5. The circumstances | Is this an ordinary hour? | Volatility and depth against their usual values, a cascading pattern | H14, Section 6 |
+| 6. The read | What do we expect next, and what would prove us wrong? | One sentence, written before looking ahead, then checked | H19 |
+
+Taught on three real moments, each read in full using only what was known then: a calm hour, a run under way, and the cascade of 10 October. Then the reader does it alone, as an exercise on another market.
+
+- **H19 (is a reading worth anything?).** A read, the measures of steps 1 to 5 known at each moment, with a simple model fitted in sample, predicts the size of the mid's move and the 10-s markout of Lecture 21's resting order over the next minute with a lower mean squared error than volatility and the time of day alone, out of sample. The primary measure is the size of the move. If this fails, the method describes a market and forecasts nothing, and the lecture says so. Reported: which steps add anything, one at a time.
 
 ## The teaching simulation (§2, no results claimed)
 
