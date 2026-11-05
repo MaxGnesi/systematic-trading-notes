@@ -1,6 +1,6 @@
 # Lecture 22: hypotheses, fixed before the results
 
-DRAFT for review, 2026-11-05. No result of this lecture has been computed.
+H1-H15 fixed 2026-11-05, after review, before any of their results were computed.
 
 ## The plan of the lecture
 
@@ -9,9 +9,10 @@ The question: what if the market responds to our order? Lecture 21 replayed the 
 1. **The key chart.** One real market order of about 5 BTC beside a moment that had none, where the same order is injected: the book and the mid as the plain replay reports them, as the hybrid replay reports them, and what happened after the real order. Message: a plain replay lets the price forget our order at once, and restores what we took.
 2. **The pieces, one card each on invented data:** depletion (what we took is gone); refill (how it comes back); impact that fades; triggered trading; the reaction to resting size. Then **who gets simulated**, a card of its own: the traders a simulated market is built from (noise, value, momentum, market maker, high-frequency; snipers and scalpers), how each one's rule is written, whether the type has ever been measured, and what our data can show of it. Then the families of models side by side: plain replay, hybrid replay, event propagators, queue-reactive and agent-based simulation, generative models, and where each is used.
 3. **The layers on our data:** each measured on real orders in sample, by size and by size relative to the queue.
-4. **Does the hybrid replay tell the truth?** The tests below.
-5. **10 October.** Do layers calibrated on calm days hold in the cascade, and did the mix of styles change in it?
-6. **Summary, exercises and reading.** What the footprint does to Lecture 21's flag; what remains for live orders.
+4. **Does the hybrid replay tell the truth?** H1 to H9.
+5. **Styles in the book.** H10 to H15: what shares, over time, in what circumstances, and does one set off another?
+6. **10 October.** Do layers calibrated on calm days hold in the cascade, and did the mix of styles change in it?
+7. **Summary, exercises and reading.** What the footprint does to Lecture 21's flag; what remains for live orders.
 
 ## Literature read for the design
 
@@ -50,7 +51,9 @@ Layers, each estimated in sample and added to the replay of Lecture 21:
 
 **Assumptions to state.** The effects add on top of the record. The record's later traders act as they did, though some would have acted otherwise. Reactions are measured on other traders' orders, not ours.
 
-## Hypotheses (draft)
+## Hypotheses
+
+H1 to H9 test the hybrid replay; H10 to H15 are the styles. The correction runs over one p-value each for H1 to H7, H9 (actual over predicted), H10, H11, H12 and H15, and three each for H13 and H14. H8 is a condition on layer E and stands outside it.
 
 - **H1 (refill at fixed prices).** After real orders of 1 BTC or more, depth is back more slowly at the prices taken than around the new mid: the share of orders with 90% of the depth back within 1 s, around the new mid (Lecture 18, §5.5) minus at the fixed prices, is above zero, out of sample.
 - **H2 (impact is concave in size).** The exponent δ in net R(10 s) = c S^δ, fitted over the classes out of sample, is below 1. Reported beside it: the local exponent between the two smallest classes, against the literature's near-linear small-size regime.
