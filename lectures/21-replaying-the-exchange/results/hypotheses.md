@@ -115,3 +115,12 @@ Descriptive, not tested:
 - **Parked for Lecture 23 (2026-11-04, before any result):** ping-pong quoting, steering the quotes by Lecture 20's statistics and
   Avellaneda-Stoikov with extras. Strategy design belongs with market making; this lecture keeps the comparison of the two quoters above.
 - Every result by size S, with sizes above the validity of H8 flagged.
+
+## Changes while running, recorded before the text of Section 4 was written
+
+- **H1, H2, H5:** the test resting order, Q0, Q1 and Q2 (a = 1), L = 50 ms, on all 24 out-of-sample days, as fixed. The wider grid of the quoting comparison ran on eight of them.
+- **H3:** the re-posted test order was run at a in {1, infinity} and L in {10, 50, 100} ms on eight days; the five values of a at L = 50 ms ran on the held orders of §3.3. Reported as such.
+- **H8:** the additions "removed within 1 s" are defined by what happens after the addition, so the split into removed and not removed cannot carry the test: the test uses all additions and the removed ones are reported apart. Primary horizon 1 s, which the plan left open. A second, stricter control was added: updates where the queue changed by less than 5% either way, since a falling queue is itself a signal.
+- **H7:** orders the 200 published levels could not price are counted and left out. Smaller classes are random samples of 500 orders a day.
+- **Effective latency:** not computed.
+- **H6:** "loss per fill" is taken as the 10-s markout.
