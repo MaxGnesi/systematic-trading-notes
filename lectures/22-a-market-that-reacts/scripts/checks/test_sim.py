@@ -2,7 +2,7 @@
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-import l22_sim as Sim
+import polars as pl, l22_sim as Sim
 B = Sim.Book()
 a = B.add(-1, 101, 0.5, "x"); b = B.add(-1, 101, 0.3, "y"); c = B.add(-1, 102, 1.0, "z")
 f, left = B.take(1, 0.6)
@@ -27,3 +27,10 @@ assert set(m.book.where) == set(n.mine), "the player lost track of its resting o
 for side in (1, -1):
     for p, q in m.book.lev[side].items(): assert q, "an empty line was left in the book"
 print("noise run: no crossed book,", len(m.trades), "trades,", len(m.book.where), "orders resting")
+
+m = Sim.Market(seed=2); mm = Sim.MarketMaker(); m.players += [Sim.Noise(limit=12.0, depth=8.0), Sim.FairValue(), Sim.Value(), mm]; m.run(120_000)
+T = m.public_trades().filter(pl.col("maker") == "market maker")
+buys, sells = T.filter(pl.col("side") == -1)["size"].sum(), T.filter(pl.col("side") == 1)["size"].sum()
+assert abs((buys - sells) - mm.pos) < 1e-9, "the market maker's position does not match its fills"
+assert set(mm.mine) <= set(m.book.where), "the market maker lost track of its resting orders"
+print("market maker: position", round(mm.pos, 3), "matches its", T.height, "fills")

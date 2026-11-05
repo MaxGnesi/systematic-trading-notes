@@ -2,7 +2,7 @@
 The book: limit orders by price, in time order at each price; a market order takes the best price first, the oldest order first. Prices in whole ticks,
 sizes in BTC, time in ms. Every order carries its owner, which the public feed does not show. The feed publishes what Bybit publishes: the book every 100 ms
 (size at each price, no owners) and the trades (time, price, size, side, no owners).
-Players are objects with a next wake-up time and a method act(market, t); the market runs whichever wakes first. Step 1: noise traders only."""
+Players are objects with a next wake-up time and a method act(market, t); the market runs whichever wakes first. Added one at a time; each step has its chart script."""
 import heapq
 from collections import deque
 import numpy as np, polars as pl
@@ -56,7 +56,7 @@ class Market:
 
     def __init__(self, seed=0, start=1_000_000, band=60):
         self.book = Book(); self.rng = np.random.default_rng(seed); self.t = 0; self.start = start; self.last = start; self.band = band
-        self.players = []; self.trades = []; self.snaps = []; self.nsnap = 100
+        self.players = []; self.trades = []; self.snaps = []; self.nsnap = 100; self.fair = float(start)
 
     def mid(self):
         b, a = self.book.best(1), self.book.best(-1)
@@ -66,7 +66,8 @@ class Market:
         fills, left = self.book.take(side, size)
         for p, z, maker, oid in fills:
             self.trades.append((t, p, z, side, owner, maker)); self.last = p
-            for pl_ in self.players: pl_.on_fill(self, oid, z, t)
+            for pl_ in self.players:
+                if pl_.name == maker: pl_.on_fill(self, oid, z, t, -side, p)
         return fills, left
 
     def snapshot(self, t):
@@ -101,7 +102,8 @@ class Player:
     name = "player"; next_time = 0
 
     def act(self, m, t): ...
-    def on_fill(self, m, oid, size, t): ...
+    def on_fill(self, m, oid, size, t, side, price):
+        """Our resting order was filled: side +1, we bought."""
 
 
 class Noise(Player):
@@ -136,5 +138,57 @@ class Noise(Player):
         i = self.pos.pop(oid); last = self.mine.pop()
         if last != oid: self.mine[i] = last; self.pos[last] = i
 
-    def on_fill(self, m, oid, size, t):
+    def on_fill(self, m, oid, size, t, side, price):
         if oid in self.pos and oid not in m.book.where: self.drop(oid)
+
+
+class FairValue(Player):
+    """The hidden value of the asset: a random walk in ticks, `sigma` per step of `step` ms. No order comes from it; players may read m.fair, some of them late."""
+    name = "fair value"
+
+    def __init__(self, sigma=0.15, step=100):
+        self.sigma, self.step = sigma, step; self.next_time = step
+
+    def act(self, m, t):
+        m.fair += float(m.rng.normal(0, self.sigma)); self.next_time = t + self.step
+
+
+class MarketMaker(Player):
+    """Quotes a ladder on both sides around its estimate of the value, which is the fair value as it stood at its last refresh, leaned against its position: `lean` ticks per BTC held. Every `refresh` ms it
+    works out `levels` prices on each side, from `half` ticks off its centre, `size` BTC each. Orders already at a wanted price stay, keeping their place in the line; the rest are cancelled and the missing ones
+    sent. It never crosses: a price the other side has already reached is skipped."""
+    name = "market maker"
+
+    def __init__(self, refresh=500, levels=5, half=1, size=0.5, lean=4.0):
+        self.refresh, self.levels, self.half, self.size, self.lean = refresh, levels, half, size, lean
+        self.mine = {}; self.pos = 0.0; self.cash = 0.0; self.next_time = refresh; self.path = []
+
+    def act(self, m, t):
+        c = m.fair - self.lean * self.pos
+        want = {(1, int(np.floor(c) - self.half - k)) for k in range(self.levels)} | {(-1, int(np.ceil(c) + self.half + k)) for k in range(self.levels)}
+        for oid, key in list(self.mine.items()):
+            if key not in want: m.book.cancel(oid); del self.mine[oid]
+        have = set(self.mine.values())
+        for side, p in sorted(want - have, key=lambda x: (x[0], -x[0] * x[1])):
+            o = m.book.best(-side)
+            if o is not None and (p >= o if side == 1 else p <= o): continue
+            self.mine[m.book.add(side, p, self.size, self.name)] = (side, p)
+        self.path.append((t, self.pos, self.cash + self.pos * m.fair)); self.next_time = t + self.refresh
+
+    def on_fill(self, m, oid, size, t, side, price):
+        self.pos += side * size; self.cash -= side * price * size
+        if oid not in m.book.where: self.mine.pop(oid, None)
+
+
+class Value(Player):
+    """Trades towards the hidden value: at rate `rate` per second it looks, and if the mid is more than `gap` ticks from the value it sends a market order towards it. This is what ties the price to the value."""
+    name = "value"
+
+    def __init__(self, rate=5.0, gap=1.0, size=0.1):
+        self.rate, self.gap, self.size = rate, gap, size; self.next_time = 1; self.pos = 0.0
+
+    def act(self, m, t):
+        d = m.fair - m.mid()
+        if abs(d) > self.gap:
+            side = 1 if d > 0 else -1; fills, _ = m.market_order(side, self.size, self.name, t); self.pos += side * sum(z for _, z, _, _ in fills)
+        self.next_time = t + max(1, int(m.rng.exponential(1000 / self.rate)))
