@@ -10,7 +10,7 @@ The question: what if the market responds to our order? Lecture 21 replayed the 
 2. **The pieces, one card each on invented data:** depletion (what we took is gone); refill (how it comes back); impact that fades; triggered trading; the reaction to resting size. Then **who gets simulated**, a card of its own: the traders a simulated market is built from (noise, value, momentum, market maker, high-frequency; snipers and scalpers), how each one's rule is written, whether the type has ever been measured, and what our data can show of it. Then the families of models side by side: plain replay, hybrid replay, event propagators, queue-reactive and agent-based simulation, generative models, and where each is used.
 3. **The layers on our data:** each measured on real orders in sample, by size and by size relative to the queue.
 4. **Does the hybrid replay tell the truth?** The tests below.
-5. **10 October.** Do layers calibrated on calm days hold in the cascade?
+5. **10 October.** Do layers calibrated on calm days hold in the cascade, and did the mix of styles change in it?
 6. **Summary, exercises and reading.** What the footprint does to Lecture 21's flag; what remains for live orders.
 
 ## Literature read for the design
@@ -66,6 +66,11 @@ Layers, each estimated in sample and added to the replay of Lecture 21:
 - **H11 (a trend follower's footprint).** In the 60 s after the mid crosses its 50-minute average from below (above), signed taker flow is more on the side of the crossing than at matched moments without a crossing (same hour, same day, same tercile of the mid's move over the last 60 s), out of sample. 20-minute against 50-minute averages reported beside it. A simple rule, which a real trend follower need not use, so a failure says only that this footprint is absent.
 - **H12 (a sliced order's footprint).** The share of taker size in runs of five or more orders of one exact size on one side, with near-regular gaps (coefficient of variation below 0.2), is larger than in the same day with the order of sizes shuffled within 5-minute blocks, out of sample.
 
+- **Style shares, used by H13 to H15.** Each taker order goes to one footprint, in this order: sliced (H12), sniper-like (H10), large (1 BTC or more), other. The trend-like share cannot be given order by order, so it is the excess of H11 over its matched controls. All shares are of taker size, and are shares of footprints, not of traders.
+- **H13 (do styles come at expected times?).** For the sliced, sniper-like and trend-like shares: the profile over the 24 hours in sample has a positive rank correlation with the profile out of sample. Reported: the shares day by day over the 45 days, in sample against out of sample, so that a change of style shows.
+- **H14 (in what circumstances?).** Between the most and the least volatile third of hours (thirds fixed in sample), within the same hour of the day: the sniper-like and trend-like shares are higher, the sliced share is lower, out of sample. Reason: a move on Binance and a crossing of an average are both likelier in volatile hours, and someone working a large order may wait. Reported: the same by depth at the best and by spread.
+- **H15 (does one style set off another?).** A Hawkes process with one type per footprint, extending Lecture 20's: the sum of the effects of one type on another (the off-diagonal branching ratios) is larger than with the labels shuffled within 5-minute blocks, out of sample. Each pair is reported after correction. What this shows is one style following another, not cause: both can answer the same move, and the footprints are partly defined by past prices, which is what the shuffling and the simulation with a known trigger are there to bound.
+
 **Reported, no test.**
 
 - **The market maker's footprint:** the share of updates in which both best prices or both best sizes change together, against what independent sides would give; the refilling chains of Lecture 19.
@@ -86,11 +91,11 @@ A small simulated market written for this lecture, to show the mechanics. Invent
 - **Scalper:** our own definition, since the literature has none: joins the best price, then closes at a small gain or a stop, staying nearly flat.
 - **Our order:** the same order of ours, inserted at the same moment.
 
-**Experiments.** (1) Add one type at a time: what happens to our order's cost and to the path after it? (2) Different mixes that look alike on the usual statistics, the point of Platt and Gebbie (2018). (3) **Detection with the truth known:** publish only what Bybit publishes, a book every 100 ms and trades with no identities, and ask how much of each type's size the footprints of H10 to H12 recover. Where they fail on a simulation with the answer known, a result on real data means little.
+**Experiments.** (1) Add one type at a time: what happens to our order's cost and to the path after it? (2) Different mixes that look alike on the usual statistics, the point of Platt and Gebbie (2018). (3) **Styles with the truth known:** publish only what Bybit publishes, a book every 100 ms and trades with no identities, and ask whether the methods of H10 to H15 recover each style's true share, a mix that was changed on purpose during the run, and a trigger built in on purpose (the sniper's push setting off the trend follower, the market maker pulling after it). Where they fail on a simulation with the answer known, a result on real data means little.
 
 **The footprint chart.** One panel per player, drawn from the simulation with each player's orders coloured, since there we know who did what: size at each price over time, with the trades on top. Beneath it, the same seconds as the public feed shows them, colours gone. Then, for each player, a real moment from Bybit with the same shape, labelled as looking alike, not as that player.
 
-**Can players be identified on real data?** Not as players. We have no accounts, so a round trip, a scalper's profit or one trader's sliced order cannot be followed, and we found no paper that classifies traders from public book and trade data alone. Only footprints can be measured, each labelled as a footprint of a behaviour and not a count of traders.
+**The aim is styles, not names.** The question is not who a trader is. It is how large each style's share is, how the shares change over time, when a style can be expected to come in, and whether one style sets off another. Only footprints of behaviour are measured, each labelled as such; a round trip or one trader's sliced order cannot be followed without accounts.
 
 ## Running it
 
