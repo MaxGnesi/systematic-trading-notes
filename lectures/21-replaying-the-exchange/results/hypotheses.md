@@ -124,3 +124,9 @@ Descriptive, not tested:
 - **H7:** orders the 200 published levels could not price are counted and left out. Smaller classes are random samples of 500 orders a day.
 - **Effective latency:** not computed.
 - **H6:** "loss per fill" is taken as the 10-s markout.
+
+## Section 5, recorded before its numbers were computed
+
+Description of the cascade window, 20:50-22:50 UTC, on 10 October against the same window on the other 44 days; the one test is H6. No new replay. From the runs already made: the taker orders of §3.2 sent in the window (share paying more than seen, IOC orders filled short, slippage, orders without a price, the 200 levels being the limit); the held orders of §3.3 in the half-hours 21:30 and 22:00 by fill rule; and, for the two quoters of H6, which have no limit on their position, the largest position and the result at the mid at 22:50 before the fee, split into what came in the 10 s after each fill and what came from the position carried afterwards. Latency is held at 10, 50 and 100 ms as everywhere: whether a real connection stayed that fast in the cascade is not measured.
+
+Added after a first look at these numbers, as description only: the average size of the 10-s move of the mid in the window, and the standard deviation of the 10-s markouts. They explain why the loss per fill rose so much less than the price moved; they test nothing.

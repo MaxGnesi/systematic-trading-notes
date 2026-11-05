@@ -9,7 +9,7 @@ Part IV starts from the order book and ends with market making. One question run
 | [18. The order book](18-the-order-book/lecture.md) | What is in the book, and what can public data show? | The stage: where quotes stand. Public data show the size at each price, not who stands where, so a fill can never be read directly | Done |
 | [19. Levels](19-statistics-of-the-book/lecture.md) | What does the book's state say about the next move? | A better fair price than the mid (the microprice), and the first bad news: filled resting orders lose | Done |
 | [20. Deltas](20-statistics-of-the-flow/lecture.md) | What does the flow say? | Who a quote faces: most trading reacts to trading, and Binance moves first by tens of milliseconds. The candidates for telling a quoter when to step back | Done |
-| [21. Replay](21-replaying-the-exchange/lecture.md) | What would have happened to our own orders? | The instrument: a way to test quotes on the recorded market, and how far it can be trusted, at the smallest size | In progress |
+| [21. Replay](21-replaying-the-exchange/lecture.md) | What would have happened to our own orders? | The instrument: a way to test quotes on the recorded market, and how far it can be trusted, at the smallest size | Done |
 | 22. A market that reacts | What if the market responds to our order? | Size: the replay ignores our footprint. Here the measured reaction is added on top, for orders too large to ignore | Planned |
 | 23. Market making on one venue | Which quoting rules pay, at which fee, and why? | The strategies: the grid at the best price, Avellaneda-Stoikov with extras, ping-pong, steering by the signals of Lectures 19 and 20, and choosing when to quote. Every result split into what earned and what cost | Planned |
 | 24. Cross-exchange market making | Does hedging on a second venue help? | The hedge: quote on Bybit, lay off the risk on Binance, against latency and two sets of fees | Planned |
@@ -24,9 +24,10 @@ Everything in Part IV feeds one sum. For a resting order:
 |---|---|---|
 | Half the spread | What we earn if the price does not move | About 0.005 bp |
 | The move after the fill | Adverse selection: how far the price goes against us after we are filled | About −0.8 bp after 10 s ([Lecture 21, §3.4](21-replaying-the-exchange/lecture.md)) |
+| The position carried | What the fills leave behind, held until it is closed | Small with either sign on ordinary evenings; −7.3 bp in the 10 October cascade for a quoter with no limit ([Lecture 21, §5.1](21-replaying-the-exchange/lecture.md)) |
 | The maker fee | What the exchange charges at the base tier | −2 bp |
 
-<sub><b>How to read the table.</b> A quote at the best price, at Bybit's base fee, on our sample, loses about 2.8 bp per fill. The later lectures ask what can change this sum: quoting wider, a lower fee, stepping back at the right moments, or a hedge.</sub>
+<sub><b>How to read the table.</b> A quote at the best price, at Bybit's base fee, on our sample, loses about 2.8 bp per fill before the position. A markout is measured from our own price, so the move after the fill already contains the half-spread. The later lectures ask what can change this sum: quoting wider, a lower fee, stepping back at the right moments, a limit on the position, or a hedge.</sub>
 
 ## The threads
 
