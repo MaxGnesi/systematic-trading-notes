@@ -70,3 +70,8 @@ Layers, each estimated in sample and added to the replay of Lecture 21:
 ## Running it
 
 Run time on a 16 GB laptop: orders are sampled by the book lookups of Lecture 21, one heavy job at a time. Before the full run, a busy window is timed and any cut to days or grids is recorded here before results are seen.
+
+## Left out, and why
+
+- **Other market makers pulling their quotes together, on news or anything else.** The recorded background does not change in a hybrid replay, so it cannot produce a withdrawal that the record does not hold. News is also hard to time on our data. Stepping back is taken up in Lecture 23 as a choice of our own quoter, on triggers we can observe: the time of day, volatility, and cascading patterns in the flow.
+- **Live tests with large orders.** Large orders are discussed, since they change the book and that is why the replay breaks. They are measured only on other traders' orders in the record. Live validation stays at the minimum size (capstone).
