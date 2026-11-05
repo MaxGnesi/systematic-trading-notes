@@ -121,13 +121,15 @@ A small simulated market written for this lecture, to show the mechanics. Invent
 - **Noise traders:** market orders, limit orders and cancellations at fixed rates (zero intelligence).
 - **Market maker:** quotes a ladder around the mid every refresh, leaning its quotes against its position.
 - **Trend follower:** sends a market order when a fast average crosses a slow one.
-- **Sniper:** sees the fair value early, and hits quotes it has left stale, after its own latency.
+- **Sniper:** sees the fair value first and trades when the mid is a set distance from it, holding a position until the other edge is reached. The threshold rule follows the band of Rabechini Amaral (2026, arXiv 2608.00885, theoretical, preliminary draft), whose trader leaves the book unmoved. The fair value gets occasional jumps, since without them nothing goes stale.
 - **Scalper:** our own definition, since the literature has none: joins the best price, then closes at a small gain or a stop, staying nearly flat.
 - **Our order:** the same order of ours, inserted at the same moment.
 
 **Experiments.** (1) Add one type at a time: what happens to our order's cost and to the path after it? (2) Different mixes that look alike on the usual statistics, the point of Platt and Gebbie (2018). (3) **Styles with the truth known:** publish only what Bybit publishes, a book every 100 ms and trades with no identities, and ask whether the methods of H10 to H15 recover each style's true share, a mix that was changed on purpose during the run, and a trigger built in on purpose (the sniper's push setting off the trend follower, the market maker pulling after it). Where they fail on a simulation with the answer known, a result on real data means little.
 
 **The footprint chart.** One panel per player, drawn from the simulation with each player's orders coloured, since there we know who did what: size at each price over time, with the trades on top. Beneath it, the same seconds as the public feed shows them, colours gone. Then, for each player, a real moment from Bybit with the same shape, labelled as looking alike, not as that player.
+
+**What rests on what.** Each footprint in the lecture is labelled by its support. From the literature: the player types, and stale quotes as a cost to the maker. From exchange documents: Bybit's TWAP default of 30 s. Our own measures, not validated by any source we found: two-sided pulses, the clock of the changes, and every setting of the simulation. A test on a venue that shows accounts (Hyperliquid's fills carry wallets) is an open option, and has not been run.
 
 **The aim is styles, not names.** The question is not who a trader is. It is how large each style's share is, how the shares change over time, when a style can be expected to come in, and whether one style sets off another. Only footprints of behaviour are measured, each labelled as such; a round trip or one trader's sliced order cannot be followed without accounts.
 

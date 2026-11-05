@@ -34,3 +34,9 @@ buys, sells = T.filter(pl.col("side") == -1)["size"].sum(), T.filter(pl.col("sid
 assert abs((buys - sells) - mm.pos) < 1e-9, "the market maker's position does not match its fills"
 assert set(mm.mine) <= set(m.book.where), "the market maker lost track of its resting orders"
 print("market maker: position", round(mm.pos, 3), "matches its", T.height, "fills")
+
+m = Sim.Market(seed=2); sn = Sim.Sniper(theta=2.0); m.players += [Sim.Noise(limit=12.0, depth=8.0), Sim.FairValue(jump=5.0, jump_rate=0.1), Sim.Value(), Sim.MarketMaker(), sn]; m.run(120_000)
+T = m.public_trades().filter(pl.col("taker") == "sniper"); q = T.filter(pl.col("side") == 1)["size"].sum() - T.filter(pl.col("side") == -1)["size"].sum()
+assert abs(q - sn.pos) < 1e-9, "the sniper's position does not match its trades"
+assert abs(sn.pos) <= sn.size + 1e-9, "the sniper went past its position limit"
+print("sniper: position", round(sn.pos, 3), "matches its", T.height, "fills")

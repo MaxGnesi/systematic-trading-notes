@@ -143,14 +143,15 @@ class Noise(Player):
 
 
 class FairValue(Player):
-    """The hidden value of the asset: a random walk in ticks, `sigma` per step of `step` ms. No order comes from it; players may read m.fair, some of them late."""
+    """The hidden value of the asset: a random walk in ticks, `sigma` per step of `step` ms, with jumps of `jump` ticks either way at rate `jump_rate` per second. No order comes from it; players may read m.fair, some of them late."""
     name = "fair value"
 
-    def __init__(self, sigma=0.15, step=100):
-        self.sigma, self.step = sigma, step; self.next_time = step
+    def __init__(self, sigma=0.15, step=100, jump=0.0, jump_rate=0.0):
+        self.sigma, self.step, self.jump, self.jump_rate = sigma, step, jump, jump_rate; self.next_time = step
 
     def act(self, m, t):
         m.fair += float(m.rng.normal(0, self.sigma)); self.next_time = t + self.step
+        if self.jump_rate and m.rng.random() < self.jump_rate * self.step / 1000: m.fair += self.jump * (1 if m.rng.random() < 0.5 else -1)
 
 
 class MarketMaker(Player):
@@ -192,3 +193,21 @@ class Value(Player):
         if abs(d) > self.gap:
             side = 1 if d > 0 else -1; fills, _ = m.market_order(side, self.size, self.name, t); self.pos += side * sum(z for _, z, _, _ in fills)
         self.next_time = t + max(1, int(m.rng.exponential(1000 / self.rate)))
+
+
+class Sniper(Player):
+    """Sees the fair value at once and trades the gap between the mid and it. Looks every `look` ms: if the mid is `theta` or more ticks below the value it goes long `size` BTC at the market, if `theta` or more above it goes
+    short, otherwise it holds, flipping through zero as in the band of Rabechini Amaral (2026). Marked at the fair value. Its orders do take the book's size, unlike the small trader of that paper."""
+    name = "sniper"
+
+    def __init__(self, theta=2.0, size=0.5, look=20):
+        self.theta, self.size, self.look = theta, size, look
+        self.pos = 0.0; self.cash = 0.0; self.next_time = look; self.n = 0; self.path = []; self.edge = {}
+
+    def act(self, m, t):
+        g = m.mid() - m.fair; want = self.size if g <= -self.theta else -self.size if g >= self.theta else self.pos; d = want - self.pos
+        if abs(d) > 1e-12:
+            side = 1 if d > 0 else -1; fills, _ = m.market_order(side, abs(d), self.name, t); self.n += 1
+            for p, z, w, _ in fills: self.pos += side * z; self.cash -= side * p * z; self.edge[w] = self.edge.get(w, 0.0) + side * (m.fair - p) * z
+        if t % 1000 < self.look: self.path.append((t, self.pos, self.cash + self.pos * m.fair))
+        self.next_time = t + self.look
