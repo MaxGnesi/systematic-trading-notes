@@ -88,6 +88,8 @@ A small simulated market written for this lecture, to show the mechanics. Invent
 
 **Experiments.** (1) Add one type at a time: what happens to our order's cost and to the path after it? (2) Different mixes that look alike on the usual statistics, the point of Platt and Gebbie (2018). (3) **Detection with the truth known:** publish only what Bybit publishes, a book every 100 ms and trades with no identities, and ask how much of each type's size the footprints of H10 to H12 recover. Where they fail on a simulation with the answer known, a result on real data means little.
 
+**The footprint chart.** One panel per player, drawn from the simulation with each player's orders coloured, since there we know who did what: size at each price over time, with the trades on top. Beneath it, the same seconds as the public feed shows them, colours gone. Then, for each player, a real moment from Bybit with the same shape, labelled as looking alike, not as that player.
+
 **Can players be identified on real data?** Not as players. We have no accounts, so a round trip, a scalper's profit or one trader's sliced order cannot be followed, and we found no paper that classifies traders from public book and trade data alone. Only footprints can be measured, each labelled as a footprint of a behaviour and not a count of traders.
 
 ## Running it
