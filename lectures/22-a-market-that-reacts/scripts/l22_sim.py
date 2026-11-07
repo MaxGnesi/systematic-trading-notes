@@ -211,3 +211,28 @@ class Sniper(Player):
             for p, z, w, _ in fills: self.pos += side * z; self.cash -= side * p * z; self.edge[w] = self.edge.get(w, 0.0) + side * (m.fair - p) * z
         if t % 1000 < self.look: self.path.append((t, self.pos, self.cash + self.pos * m.fair))
         self.next_time = t + self.look
+
+
+class Twap(Player):
+    """Slices parent orders into equal market orders at a fixed interval, as an exchange's TWAP tool does (Bybit's default interval is 30 s, with an optional randomisation of the interval by up to 20%).
+    Parents arrive at `rate` per minute, given as (from time ms, rate) so the mix can be changed during a run; each has a size from `sizes` BTC, a side at random and a duration from `minutes`.
+    The slice is the parent's size over the number of slices, rounded to 0.001 BTC; the first is sent on arrival. `slices` keeps (time, parent, side, size), the truth that the public feed hides."""
+    name = "twap"
+
+    def __init__(self, rate=((0, 0.5),), interval=30_000, jitter=0.0, sizes=(1.0, 2.0, 3.0, 5.0), minutes=(5, 10, 20, 30)):
+        self.rate, self.interval, self.jitter, self.sizes, self.minutes = sorted(rate), interval, jitter, sizes, minutes
+        self.live = []; self.parents = []; self.slices = []; self.arrival = None; self.next_time = 1
+
+    def gap(self, m, t):
+        r = [x for t0, x in self.rate if t >= t0][-1]
+        return max(1, int(m.rng.exponential(60_000 / r))) if r > 0 else 60_000
+
+    def act(self, m, t):
+        if self.arrival is None: self.arrival = t + self.gap(m, t)
+        elif t >= self.arrival:
+            side = 1 if m.rng.random() < 0.5 else -1; q = float(m.rng.choice(self.sizes)); n = max(2, int(float(m.rng.choice(self.minutes)) * 60_000 / self.interval)); z = round(q / n, 3)
+            heapq.heappush(self.live, (t, len(self.parents), side, z, n)); self.parents.append((t, side, q, n, z)); self.arrival = t + self.gap(m, t)
+        while self.live and self.live[0][0] <= t:
+            _, pid, side, z, k = heapq.heappop(self.live); m.market_order(side, z, self.name, t); self.slices.append((t, pid, side, z))
+            if k > 1: heapq.heappush(self.live, (t + int(self.interval * (1 + self.jitter * m.rng.uniform(-1, 1))), pid, side, z, k - 1))
+        self.next_time = min(self.arrival, self.live[0][0]) if self.live else self.arrival

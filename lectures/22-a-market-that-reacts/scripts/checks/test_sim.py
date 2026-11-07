@@ -40,3 +40,13 @@ T = m.public_trades().filter(pl.col("taker") == "sniper"); q = T.filter(pl.col("
 assert abs(q - sn.pos) < 1e-9, "the sniper's position does not match its trades"
 assert abs(sn.pos) <= sn.size + 1e-9, "the sniper went past its position limit"
 print("sniper: position", round(sn.pos, 3), "matches its", T.height, "fills")
+
+import numpy as np, l22_styles as St
+m = Sim.Market(seed=4); tw = Sim.Twap(rate=((0, 2.0),)); m.players += [Sim.Noise(limit=12.0, depth=8.0), Sim.FairValue(), Sim.Value(), Sim.MarketMaker(), tw]; m.run(600_000)
+for pid, (t0, side, q, n, z) in enumerate(tw.parents):
+    s = [x for x in tw.slices if x[1] == pid]; assert all(x[2] == side and x[3] == z for x in s), "a slice changed side or size"
+    assert len(s) <= n and np.allclose(np.diff([x[0] for x in s]), 30_000), "slices not 30 s apart"
+    if t0 + (n - 1) * 30_000 <= 600_000: assert len(s) == n, "a parent lost slices"
+O = pl.DataFrame({"t": [0, 30_000, 60_000, 90_000, 120_000, 500, 61_000], "side": [1] * 6 + [-1], "q": [0.2] * 5 + [0.3, 0.2]}).sort("t"); R, lab = St.runs(O, min_n=5)
+assert R.height == 1 and R["n"][0] == 5 and lab.tolist() == [0, -1, 0, 0, -1, 0, 0], "the run rule on a hand case: another size or side stays out"
+print("twap:", len(tw.parents), "parents,", len(tw.slices), "slices; run rule holds on a hand case")
