@@ -60,3 +60,8 @@ print("marks: flow and spread hold on a hand case")
 X5 = St.marks(O, Q, slow=3, offset=5000); r5 = X5.filter(pl.col("t") == 185_000).row(0, named=True)
 assert abs(r5["w0"]) < 1e-9 and abs(r5["wc"] - r["wc"]) < 1e-9, "a fake mark keeps its minute's quiet seconds"
 print("fake marks: compared with their minute's quiet seconds")
+
+m = Sim.Market(seed=3); sc = Sim.Scalper(); m.players += [Sim.Noise(limit=12.0, depth=8.0), Sim.FairValue(), Sim.Value(gap=3.0), Sim.MarketMaker(), sc]; m.run(300_000)
+T = m.public_trades(); q = T.filter(pl.col("taker") == "scalper").select((pl.col("side") * pl.col("size")).sum()).item() - T.filter(pl.col("maker") == "scalper").select((pl.col("side") * pl.col("size")).sum()).item()
+assert abs(q - sc.pos) < 1e-9 and abs(sc.pos) <= sc.size + 1e-9, "the scalper's position does not match its fills or passed its size"
+print("scalper: position", round(sc.pos, 3), "matches its fills;", len(sc.trips), "round trips")

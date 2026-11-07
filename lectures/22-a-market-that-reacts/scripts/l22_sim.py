@@ -264,3 +264,50 @@ class TrendFollower(Player):
         if abs(d) > 1e-12:
             side = 1 if d > 0 else -1; fills, _ = m.market_order(side, abs(d), self.name, t); self.flips.append((t, side))
             for p, z, _, _ in fills: self.pos += side * z; self.cash -= side * p * z
+
+
+class Scalper(Player):
+    """Our own definition, since the literature has none. Flat, it joins the best bid or ask (side at random) with `size` BTC and follows the best if it moves. Once filled, it rests an exit `gain` ticks
+    better than its entry, and closes at the market if the mid moves `stop` ticks against it or after `hold` ms. Looks every `look` ms. `trips` keeps (time in, time out, side, gain in ticks per BTC, how)."""
+    name = "scalper"
+
+    def __init__(self, size=0.05, gain=2, stop=3, hold=30_000, look=200):
+        self.size, self.gain, self.stop, self.hold, self.look = size, gain, stop, hold, look
+        self.entry = None; self.exit = None; self.pos = 0.0; self.cash = 0.0; self.t_in = None; self.p_in = None; self.cash_in = 0.0; self.trips = []; self.next_time = look
+
+    def close(self, m, t, how):
+        if self.exit: m.book.cancel(self.exit[0]); self.exit = None
+        side = -1 if self.pos > 0 else 1; fills, _ = m.market_order(side, abs(self.pos), self.name, t)
+        for p, z, _, _ in fills: self.pos += side * z; self.cash -= side * p * z
+        self.done(t, how)
+
+    def done(self, t, how):
+        if abs(self.pos) < 1e-9:
+            self.trips.append((self.t_in, t, self.side_in, (self.cash - self.cash_in) / self.size, how)); self.pos = 0.0; self.t_in = None
+
+    def act(self, m, t):
+        self.next_time = t + self.look
+        if self.t_in is None:
+            if self.entry and (self.entry[0] not in m.book.where or m.book.best(self.entry[1]) != self.entry[2]): m.book.cancel(self.entry[0]); self.entry = None
+            if self.entry is None:
+                side = 1 if m.rng.random() < 0.5 else -1; b = m.book.best(side)
+                if b is not None: self.entry = (m.book.add(side, b, self.size, self.name), side, b)
+            return
+        if self.entry: m.book.cancel(self.entry[0]); self.entry = None
+        d = 1 if self.pos > 0 else -1; mid = m.mid()
+        if d * (mid - self.p_in) <= -self.stop: return self.close(m, t, "stop")
+        if t - self.t_in >= self.hold: return self.close(m, t, "time")
+        if self.exit is None or self.exit[0] not in m.book.where or abs(self.exit[1] - abs(self.pos)) > 1e-9:
+            if self.exit: m.book.cancel(self.exit[0]); self.exit = None
+            p = self.p_in + d * self.gain; o = m.book.best(d)
+            if o is not None and (o >= p if d == 1 else o <= p): return self.close(m, t, "gain at market")
+            self.exit = (m.book.add(-d, p, abs(self.pos), self.name), abs(self.pos))
+
+    def on_fill(self, m, oid, size, t, side, price):
+        self.pos += side * size; self.cash -= side * price * size
+        if self.entry and oid == self.entry[0]:
+            if self.t_in is None: self.t_in, self.p_in, self.side_in, self.cash_in = t, self.entry[2], side, self.cash + side * price * size
+            if oid not in m.book.where: self.entry = None
+        elif self.exit and oid == self.exit[0]:
+            self.exit = (oid, abs(self.pos)) if oid in m.book.where else None
+            self.done(t, "gain")
