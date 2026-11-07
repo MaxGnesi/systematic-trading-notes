@@ -56,7 +56,7 @@ class Market:
 
     def __init__(self, seed=0, start=1_000_000, band=60):
         self.book = Book(); self.rng = np.random.default_rng(seed); self.t = 0; self.start = start; self.last = start; self.band = band
-        self.players = []; self.trades = []; self.snaps = []; self.nsnap = 100; self.fair = float(start)
+        self.players = []; self.trades = []; self.snaps = []; self.quotes = []; self.nsnap = 100; self.fair = float(start)
 
     def mid(self):
         b, a = self.book.best(1), self.book.best(-1)
@@ -71,8 +71,8 @@ class Market:
         return fills, left
 
     def snapshot(self, t):
-        """Size at each price within the band around the mid, by owner."""
-        m = self.mid()
+        """The best bid and ask, then the size at each price within the band around the mid, by owner."""
+        m = self.mid(); self.quotes.append((t, self.book.best(1), self.book.best(-1)))
         for side in (1, -1):
             for p, q in self.book.lev[side].items():
                 if abs(p - m) > self.band: continue
@@ -93,6 +93,11 @@ class Market:
 
     def public_trades(self):
         return pl.DataFrame(self.trades, schema=["t", "price", "size", "side", "taker", "maker"], orient="row") if self.trades else None
+
+    def public_mid(self, every=1000):
+        """The mid every `every` ms from the published best prices, the last quote in each interval."""
+        Q = pl.DataFrame(self.quotes, schema=["t", "bid", "ask"], orient="row").drop_nulls()
+        return Q.with_columns(((pl.col("t") - 1) // every * every + every).alias("t"), ((pl.col("bid") + pl.col("ask")) / 2).alias("mid")).group_by("t").agg(pl.col("mid").last()).sort("t")
 
     def public_book(self):
         return pl.DataFrame(self.snaps, schema=["t", "price", "side", "owner", "size"], orient="row")
@@ -157,16 +162,17 @@ class FairValue(Player):
 class MarketMaker(Player):
     """Quotes a ladder on both sides around its estimate of the value, which is the fair value as it stood at its last refresh, leaned against its position: `lean` ticks per BTC held. Every `refresh` ms it
     works out `levels` prices on each side, from `half` ticks off its centre, `size` BTC each. Orders already at a wanted price stay, keeping their place in the line; the rest are cancelled and the missing ones
-    sent. It never crosses: a price the other side has already reached is skipped."""
+    sent. It never crosses: a price the other side has already reached is skipped. With widen > 0 it quotes `widen` ticks further out from `before` ms before each whole `period` to `after` ms after
+    it, where it expects the bar-close traders."""
     name = "market maker"
 
-    def __init__(self, refresh=500, levels=5, half=1, size=0.5, lean=4.0):
-        self.refresh, self.levels, self.half, self.size, self.lean = refresh, levels, half, size, lean
+    def __init__(self, refresh=500, levels=5, half=1, size=0.5, lean=4.0, widen=0, period=60_000, before=2000, after=5000):
+        self.refresh, self.levels, self.half, self.size, self.lean = refresh, levels, half, size, lean; self.widen, self.period, self.before, self.after = widen, period, before, after
         self.mine = {}; self.pos = 0.0; self.cash = 0.0; self.next_time = refresh; self.path = []
 
     def act(self, m, t):
-        c = m.fair - self.lean * self.pos
-        want = {(1, int(np.floor(c) - self.half - k)) for k in range(self.levels)} | {(-1, int(np.ceil(c) + self.half + k)) for k in range(self.levels)}
+        c = m.fair - self.lean * self.pos; ph = t % self.period; h = self.half + (self.widen if self.widen and (ph >= self.period - self.before or ph < self.after) else 0)
+        want = {(1, int(np.floor(c) - h - k)) for k in range(self.levels)} | {(-1, int(np.ceil(c) + h + k)) for k in range(self.levels)}
         for oid, key in list(self.mine.items()):
             if key not in want: m.book.cancel(oid); del self.mine[oid]
         have = set(self.mine.values())
@@ -236,3 +242,25 @@ class Twap(Player):
             _, pid, side, z, k = heapq.heappop(self.live); m.market_order(side, z, self.name, t); self.slices.append((t, pid, side, z))
             if k > 1: heapq.heappush(self.live, (t + int(self.interval * (1 + self.jitter * m.rng.uniform(-1, 1))), pid, side, z, k - 1))
         self.next_time = min(self.arrival, self.live[0][0]) if self.live else self.arrival
+
+
+class TrendFollower(Player):
+    """Follows the trend of the published mid. With clock=0 it reads the mid every `look` ms; with clock > 0 it reads it once per bar, at each close of a bar of `clock` ms (whole minutes, five
+    minutes...), `lag` ms late at most (its computing time). When the average of the last `fast` readings is above the average of the last `slow` it wants to be long `size` BTC, when below short, and it
+    gets there with one market order, so a crossing is a flip of twice its size. fast=1 is the last reading itself, the rule of H11. Flat until `slow` readings exist."""
+    name = "trend"
+
+    def __init__(self, fast=1, slow=3000, size=0.5, look=1000, clock=0, lag=0):
+        self.fast, self.slow, self.size, self.look, self.clock, self.lag = fast, slow, size, look, clock, lag
+        self.seen = deque(maxlen=slow); self.sum_slow = 0.0; self.pos = 0.0; self.cash = 0.0; self.next_time = clock or look; self.flips = []
+
+    def act(self, m, t):
+        x = m.mid()
+        if len(self.seen) == self.slow: self.sum_slow -= self.seen[0]
+        self.seen.append(x); self.sum_slow += x
+        self.next_time = (t // self.clock + 1) * self.clock + (int(m.rng.integers(self.lag)) if self.lag else 0) if self.clock else t + self.look
+        if len(self.seen) < self.slow: return
+        f = sum(list(self.seen)[-self.fast:]) / self.fast if self.fast > 1 else x; want = self.size if f > self.sum_slow / self.slow else -self.size; d = want - self.pos
+        if abs(d) > 1e-12:
+            side = 1 if d > 0 else -1; fills, _ = m.market_order(side, abs(d), self.name, t); self.flips.append((t, side))
+            for p, z, _, _ in fills: self.pos += side * z; self.cash -= side * p * z
