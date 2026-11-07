@@ -50,3 +50,13 @@ for pid, (t0, side, q, n, z) in enumerate(tw.parents):
 O = pl.DataFrame({"t": [0, 30_000, 60_000, 90_000, 120_000, 500, 61_000], "side": [1] * 6 + [-1], "q": [0.2] * 5 + [0.3, 0.2]}).sort("t"); R, lab = St.runs(O, min_n=5)
 assert R.height == 1 and R["n"][0] == 5 and lab.tolist() == [0, -1, 0, 0, -1, 0, 0], "the run rule on a hand case: another size or side stays out"
 print("twap:", len(tw.parents), "parents,", len(tw.slices), "slices; run rule holds on a hand case")
+
+Q = pl.DataFrame({"t": list(range(0, 300_001, 100)), "bid": [100 + (t >= 180_000) * 10 for t in range(0, 300_001, 100)], "ask": [102 + (t >= 180_000) * 10 + 2 * (178_100 <= t <= 180_000) for t in range(0, 300_001, 100)]})
+O = pl.DataFrame({"t": [181_000, 181_500, 200_000], "side": [1, -1, 1], "q": [0.5, 0.2, 4.0]}); X = St.marks(O, Q, slow=3)
+r = X.filter(pl.col("t") == 180_000).row(0, named=True)
+assert r["trend"] == 1 and abs(r["w0"] - 0.3) < 1e-9 and abs(r["g0"] - 0.7) < 1e-9 and abs(r["wc"] - 4.0 * 3 / 40) < 1e-9, "the flow at a mark on a hand case"
+assert abs(r["sb"] - 4.0) < 1e-9 and abs(r["sc"] - 2.0) < 1e-9, "the spread before a mark on a hand case"
+print("marks: flow and spread hold on a hand case")
+X5 = St.marks(O, Q, slow=3, offset=5000); r5 = X5.filter(pl.col("t") == 185_000).row(0, named=True)
+assert abs(r5["w0"]) < 1e-9 and abs(r5["wc"] - r["wc"]) < 1e-9, "a fake mark keeps its minute's quiet seconds"
+print("fake marks: compared with their minute's quiet seconds")
