@@ -65,3 +65,15 @@ m = Sim.Market(seed=3); sc = Sim.Scalper(); m.players += [Sim.Noise(limit=12.0, 
 T = m.public_trades(); q = T.filter(pl.col("taker") == "scalper").select((pl.col("side") * pl.col("size")).sum()).item() - T.filter(pl.col("maker") == "scalper").select((pl.col("side") * pl.col("size")).sum()).item()
 assert abs(q - sc.pos) < 1e-9 and abs(sc.pos) <= sc.size + 1e-9, "the scalper's position does not match its fills or passed its size"
 print("scalper: position", round(sc.pos, 3), "matches its fills;", len(sc.trips), "round trips")
+
+import l22_hybrid as H
+flat = {tau: (0.0, 1.0) for tau in (100, 1_000, 10_000, 60_000, 300_000)}; none = (np.array([100.0, 60_000.0]), np.array([0.0, 0.0]))
+h = H.Hybrid(None, 0, 0, layers="A", resp=flat, refill=none, books=({99: 1.0}, {101: 1.0, 102: 1.0, 103: 2.0}))
+f, left = h.market_order(0, 1, 1.5); assert f == [(101, 1.0), (102, 0.5)] and left == 0, "a buy walks the asks from the best"
+f, left = h.market_order(1000, 1, 1.0); assert f == [(102, 0.5), (103, 0.5)], "what we took is gone for our next order (layer A)"
+h = H.Hybrid(None, 0, 0, layers="AB", resp=flat, refill=(np.array([100.0, 1000.0]), np.array([0.5, 1.0])), books=({99: 1.0}, {101: 1.0, 102: 1.0, 103: 2.0}))
+h.market_order(0, 1, 1.5); assert h.levels(100, -1)[:2] == [(101, 0.5), (102, 0.75)] and h.levels(1000, -1)[:2] == [(101, 1.0), (102, 1.0)], "it comes back along the refill curve (layer B)"
+h = H.Hybrid(None, 0, 0, layers="C", resp={tau: (10.0, 0.5) for tau in flat}, refill=none, books=({999_999: 10.0}, {1_000_001: 10.0}))
+h.market_order(0, 1, 4.0); assert abs(h.mid(500) - (1_000_000 + 20.0 * 1_000_000 / 1e4)) < 1e-6 and h.levels(500, -1)[0][0] == 1_000_001 + 2000, "the mid and the book move by R for our size (layer C)"
+h.market_order(600, -1, 4.0); assert abs(h.shift(700)) < 1e-6, "an opposite order of the same size cancels the shift"
+print("hybrid replay: walk, depletion, refill and shift hold on hand cases")
