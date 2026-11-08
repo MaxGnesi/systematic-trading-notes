@@ -22,16 +22,17 @@ def fit_response(path=L.RESULTS / "s3_response.json"):
 
 
 def fit_refill(path=L.RESULTS / "s3_refill.json"):
-    """The median share of the depth an order met that stands near the new best, at each probe time after it."""
-    v = json.loads(Path(path).read_text(encoding="utf-8"))["refill"]["all"]
-    return np.array(v["probe"], float), np.array(v["near_med"], float)
+    """The median share of the depth an order met that stands near the new best, at each probe time after it, by size class (1-5, 5-20, 20 BTC or more): larger orders refill more slowly.
+    Returns {lower bound of the class in BTC: (probe times, shares)}; orders below 1 BTC use the 1-5 curve."""
+    v = json.loads(Path(path).read_text(encoding="utf-8"))["refill"]
+    return {lo: (np.array(v[c]["probe"], float), np.array(v[c]["near_med"], float)) for lo, c in ((0.0, "1-5"), (5.0, "5-20"), (20.0, "20+"))}
 
 
 class Hybrid:
     """The book of one window, replayed with our orders. Start from the viewer's checkpoint before t_a, apply recorded updates; our market orders walk the book as it stands in the replay."""
 
     def __init__(self, day, t_a, t_b, layers="ABC", resp=None, refill=None, books=None):
-        self.layers = set(layers); self.resp = resp or fit_response(); self.rt, self.rs = refill or fit_refill(); self.ours = []   # (time, side, size, depletion by distance)
+        self.layers = set(layers); self.resp = resp or fit_response(); self.refill = refill if isinstance(refill, dict) else ({0.0: refill} if refill else fit_refill()); self.ours = []   # (time, side, size, depletion by distance)
         if books is not None:                                                         # a hand-made book for the checks: ({bids}, {asks}, updates [(t, 0, side, tick, size)])
             self.book = {1: dict(books[0]), -1: dict(books[1])}; self.u = np.array(books[2] if len(books) > 2 and books[2] else np.zeros((0, 5)), float); self.k = 0; self.t = t_a; return
         at = t_a // 60_000 * 60_000; cp = pl.read_parquet(VIEWER / f"{day}_checkpoints.parquet").filter(pl.col("at") == at)
@@ -70,9 +71,10 @@ class Hybrid:
         """Layers A and B: size still missing at distance k from the best on `book_side` (1 bids, -1 asks) at time t, from our earlier orders that took from that side."""
         if "A" not in self.layers: return 0.0
         out = 0.0
-        for t0, s, _, dep in self.ours:
+        for t0, s, S, dep in self.ours:
             if -s != book_side or t <= t0 or k >= len(dep): continue
-            back = float(np.interp(t - t0, self.rt, self.rs, left=0.0, right=self.rs[-1])) if "B" in self.layers else 0.0
+            rt, rs = self.refill[max(lo for lo in self.refill if lo <= S)]
+            back = float(np.interp(t - t0, rt, rs, left=0.0, right=rs[-1])) if "B" in self.layers else 0.0
             out += dep[k] * (1 - back)
         return out
 

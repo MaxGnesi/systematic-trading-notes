@@ -34,13 +34,14 @@ def compute():
         X = cell(X.with_columns(pl.lit(d).alias("day"), (pl.col("side") * pl.col("imb")).alias("simb"), (pl.col("side") * pl.col("move1")).alias("smove"), SHARE)).join(ctrl, on=["day", "side", "hour", "di", "tm", "ta", "ps"], how="inner")
         X = X.with_columns(*[(pl.col("side") * pl.col(m) - pl.col(f"c_{m}")).alias(f"n_{m}") for m in M], (pl.col("flow1000") - pl.col("c_flow1000")).alias("n_flow"),
                            pl.col("S").cut([c[0] for c in CLASSES[1:]], labels=[c[2] for c in CLASSES]).alias("cls"), pl.col("x").cut([b[0] for b in XB[1:]], labels=[b[2] for b in XB]).alias("xb"))
-        for by in ("cls", "xb"):
-            per_day.append(X.group_by(by).agg(pl.len().alias("n"), *[pl.col(f"n_{m}").sum().alias(f"s_{m}") for m in M], pl.col("n_flow").sum().alias("s_flow"), (pl.col("S").sum()).alias("s_S"))
+        X = X.with_columns(pl.when((pl.col("S") >= 4) & (pl.col("S") < 6)).then(pl.lit("4-6")).otherwise(None).alias("kb"))   # the key chart's size, about 5 BTC
+        for by in ("cls", "xb", "kb"):
+            per_day.append(X.filter(pl.col(by).is_not_null()).group_by(by).agg(pl.len().alias("n"), *[pl.col(f"n_{m}").sum().alias(f"s_{m}") for m in M], pl.col("n_flow").sum().alias("s_flow"), (pl.col("S").sum()).alias("s_S"))
                            .rename({by: "bin"}).with_columns(pl.lit(by).alias("by"), pl.lit(d).alias("day"), pl.col("bin").cast(pl.Utf8)))
         for c in CLASSES: costs[c[2]] += X.filter(pl.col("cls") == c[2])["cost_bp"].to_list()
         print(d, X.height, flush=True)
     P = pl.concat(per_day); rng = np.random.default_rng(0); R = dict(days=days, n_ctrl_median=float(ctrl["n_ctrl"].median()), curves={}, cost={})
-    for by, bins in (("cls", CLASSES), ("xb", XB)):
+    for by, bins in (("cls", CLASSES), ("xb", XB), ("kb", [(4, 6, "4-6")])):
         for b in bins:
             Q = P.filter((pl.col("by") == by) & (pl.col("bin") == b[2])).sort("day")
             if Q.is_empty(): continue
