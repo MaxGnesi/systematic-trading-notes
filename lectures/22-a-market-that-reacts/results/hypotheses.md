@@ -32,7 +32,7 @@ Notes with read status: session notes, `l22_literature_notes.md`; every number q
 Sample as Lectures 19 to 21: Bybit BTCUSDT perpetual, 20 Sep - 3 Nov 2025 (45 days). In sample: 20 Sep - 9 Oct, every curve and slope estimated here only. Out of sample: 11 Oct - 3 Nov. 10 Oct alone. Bootstrap over days (2,000 resamples), one-sided p-values, Benjamini-Hochberg at 5% over the primary p-values.
 
 - **A real order:** trades with the same millisecond and side (Lecture 19). Classes by size S: 0.01-0.1, 0.1-1, 1-5, 5-20, 20 BTC or more. **Relative size** x = S / size at the best on its side at the last update.
-- **Response** R(τ): the move of the mid from the last update before the order to τ later, signed for the order, in bp; τ in {0.1, 1, 10, 60, 300} s. **Net** of matched controls: random moments, one per 10 s, same side, hour, day, decile of the imbalance at the best and tercile of the mid's move over the last second, since takers tend to act just after a move (Lecture 21, H7).
+- **Response** R(τ): the move of the mid from the last update before the order to τ later, signed for the order, in bp; τ in {0.1, 1, 10, 60, 300} s. **Net** of matched controls: random moments, one per 10 s, same side, hour, day, decile of the imbalance at the best and tercile of the mid's move over the last second, since takers tend to act just after a move (Lecture 21, H7). *Clarified on 2026-11-08, before any out-of-sample data was used:* the mid does not move within a second in more than a third of moments, so its terciles are not defined; the three groups are the mid fell, did not move, rose.
 - **Costs** before fees, in bp of the mid at the decision, latency L = 50 ms as in Lecture 21.
 
 ## The hybrid replay
