@@ -55,22 +55,32 @@ if __name__ == "__main__":
             if key(*w) in R: continue
             R[key(*w)] = one_world(*w); OUT.write_text(json.dumps(R), encoding="utf-8"); v = R[key(*w)]["sizes"]
             print(key(*w), {z: (round(v[z]["resp"][2], 2), round(v[z]["cascade"], 2), [round(c, 1) for c in v[z]["cost_p"]]) for z in v}, flush=True)
-    fig = make_subplots(rows=1, cols=4, horizontal_spacing=0.07, subplot_titles=("The two ends: a 5 BTC sell", "Does the push fade? 5 BTC at 60 s", "How often does it cascade? 10 BTC", "What does 10 BTC cost? 90th percentile"))
-    for (w, nm, c) in (((0.0, 0.0, 0), "calm: unlimited capital, no stops, no kill switch", SERIES[0]), ((4.0, 0.2, 5), "fragile: 4 BTC of capital, stops, kill switch", SERIES[1])):
-        v = R[key(*w)]["sizes"]["5"]; fig.add_scatter(x=[0, 1, 10, 60], y=[0] + v["resp"], error_y=dict(type="data", array=[0] + v["resp_se"], color=c, thickness=1), mode="lines+markers",
-                                                      line=dict(color=c, width=2), marker=dict(color=c, size=7), name=nm, row=1, col=1)
+    M = [dict(mo, w=k) for k, v in R.items() for mo in v["moments"]]; gap = np.array([m["gap"] for m in M]); r5 = np.array([m["r5"] for m in M]); r10 = np.array([m["r10"] for m in M])
+    c10 = np.array([m["c10"] for m in M], float); out = np.array([m["maker_out"] for m in M]); dep = np.array([m["depth"] for m in M]); kill = np.array([k.endswith("|5") for k in (m["w"] for m in M)])
+    se = lambda x: x.std(ddof=1) / np.sqrt(len(x))
+    fig = make_subplots(rows=1, cols=4, horizontal_spacing=0.075, subplot_titles=("The two ends: a 5 BTC sell", "Does the push fade? By the gap to the value", "What does 10 BTC cost? Maker in or out",
+                                                                               "What does 10 BTC cost? By depth"))
+    for sel, nm, c in ((np.abs(gap) <= 1, "price within 1 tick of the value", SERIES[0]), (np.abs(gap) > 3, "price more than 3 ticks from the value", SERIES[1])):
+        x = r5[sel]; fig.add_scatter(x=[0, 1, 10, 60], y=[0] + x.mean(0).tolist(), error_y=dict(type="data", array=[0] + (x.std(0, ddof=1) / np.sqrt(len(x))).tolist(), color=c, thickness=1),
+                                     mode="lines+markers", line=dict(color=c, width=2), marker=dict(color=c, size=7), name=f"{nm} ({sel.sum()} moments)", row=1, col=1)
     fig.add_scatter(x=[0, 1, 10, 60], y=[0] * 4, mode="lines", line=dict(color=INK, width=1.5, dash="dot"), name="plain replay: the price ignores our order", row=1, col=1)
     fig.update_xaxes(title_text="seconds after our sell", type="category", row=1, col=1); fig.update_yaxes(title_text="mid with our sell less without, ticks", row=1, col=1)
-    for (dens, kill), c, d, nm in (((0.0, 0), MUTED, "solid", "no stops, no kill switch"), ((0.0, 5), SERIES[0], "dot", "kill switch only"), ((0.2, 0), SERIES[2], "dot", "stops only"), ((0.2, 5), SERIES[1], "solid", "stops and kill switch")):
-        ws = [R[key(cap, dens, kill)]["sizes"] for cap in CAPS]
-        fig.add_scatter(x=cap_lab, y=[w["5"]["resp"][2] for w in ws], error_y=dict(type="data", array=[w["5"]["resp_se"][2] for w in ws], color=c, thickness=1), mode="lines+markers",
-                        line=dict(color=c, width=2, dash=d), marker=dict(color=c, size=8), name=nm, row=1, col=2)
-        fig.add_scatter(x=cap_lab, y=[w["10"]["cascade"] for w in ws], mode="lines+markers", line=dict(color=c, width=2, dash=d), marker=dict(color=c, size=8), showlegend=False, row=1, col=3)
-        fig.add_scatter(x=cap_lab, y=[w["10"]["cost_p"][1] for w in ws], mode="lines+markers", line=dict(color=c, width=2, dash=d), marker=dict(color=c, size=8), showlegend=False, row=1, col=4)
-    for c in (2, 3, 4): fig.update_xaxes(title_text="value traders' capital", row=1, col=c)
+    bins = [(-99, -3, "below by >3"), (-3, -1, "below 1-3"), (-1, 1, "within 1"), (1, 3, "above 1-3"), (3, 99, "above by >3")]
+    for z, arr, c in (("5 BTC", r5, MUTED), ("10 BTC", r10, SERIES[1])):
+        ys = [arr[(gap > a) & (gap <= b), 2] for a, b, _ in bins]
+        fig.add_scatter(x=[b[2] for b in bins], y=[y.mean() for y in ys], error_y=dict(type="data", array=[se(y) for y in ys], color=c, thickness=1), mode="lines+markers", line=dict(color=c, width=2),
+                        marker=dict(color=c, size=8), name=f"our sell of {z}, left after 60 s", row=1, col=2)
     fig.add_hline(y=0, line=dict(color=INK, width=1, dash="dot"), row=1, col=2)
-    fig.update_yaxes(title_text="mid with our sell less without, ticks", row=1, col=2); fig.update_yaxes(title_text=f"share of moments below {CASCADE} ticks at 10 s", tickformat=".0%", rangemode="tozero", row=1, col=3)
-    fig.update_yaxes(title_text="average fill below the mid before, ticks", rangemode="tozero", row=1, col=4)
-    fig.update_layout(title="Step 8: the tipping side of the map<br><sup>Invented; 3 seeds x 20 moments per world, our market sell at copied moments. Stops: 0.2 BTC a tick from 3 to 30 ticks away; kill switch: out 5 s after a move of 5 ticks within 1 s. "
-                      "Bars: ± one standard error</sup>", height=540, width=1600, margin=dict(t=110, l=70, r=30, b=140), legend=dict(orientation="h", y=-0.25, x=0))
+    fig.update_xaxes(title_text="price against the value when we sell (ticks)", row=1, col=2); fig.update_yaxes(title_text="mid with our sell less without, ticks", row=1, col=2)
+    for q, sym, nm in ((50, "circle", "median cost"), (90, "diamond", "90th percentile of cost")):
+        sel = [kill & ~out, kill & out]
+        fig.add_scatter(x=["maker in", "maker out"], y=[np.nanpercentile(c10[s], q) for s in sel], mode="markers", marker=dict(color=SERIES[0], size=12, symbol=sym), name=nm, row=1, col=3)
+        qs = np.quantile(dep, [0.2, 0.4, 0.6, 0.8]); f = np.digitize(dep, qs)
+        fig.add_scatter(x=[f"{i + 1}" for i in range(5)], y=[np.nanpercentile(c10[f == i], q) for i in range(5)], mode="lines+markers", line=dict(color=SERIES[0], width=2, dash="solid" if q == 50 else "dot"),
+                        marker=dict(color=SERIES[0], size=10, symbol=sym), showlegend=False, row=1, col=4)
+    fig.update_xaxes(title_text=f"when we sell (kill-switch worlds; out: {int((kill & out).sum())} moments)", row=1, col=3)
+    fig.update_xaxes(title_text="fifth of depth within 10 ticks (1 = thinnest)", row=1, col=4)
+    for c in (3, 4): fig.update_yaxes(title_text="average fill below the mid before, ticks", rangemode="tozero", row=1, col=c)
+    fig.update_layout(title="Step 8: the tipping side of the map, read by the state when we sell<br><sup>Invented; 16 worlds (value traders' capital, stops, kill switch) x 3 seeds x 20 moments, our market sell at copied moments, "
+                      "pooled. Bars: ± one standard error</sup>", height=540, width=1600, margin=dict(t=110, l=70, r=30, b=150), legend=dict(orientation="h", y=-0.27, x=0))
     save_figure(fig, L.PREFIX + "22_sim_step8", L.FIG)
