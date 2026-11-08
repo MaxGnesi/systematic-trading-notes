@@ -163,16 +163,31 @@ class MarketMaker(Player):
     """Quotes a ladder on both sides around its estimate of the value, which is the fair value as it stood at its last refresh, leaned against its position: `lean` ticks per BTC held. Every `refresh` ms it
     works out `levels` prices on each side, from `half` ticks off its centre, `size` BTC each. Orders already at a wanted price stay, keeping their place in the line; the rest are cancelled and the missing ones
     sent. It never crosses: a price the other side has already reached is skipped. With widen > 0 it quotes `widen` ticks further out from `before` ms before each whole `period` to `after` ms after
-    it, where it expects the bar-close traders."""
+    it, where it expects the bar-close traders. Kill switch: if, while quoting, it sees the mid move `kill_move` ticks or more within a second, it cancels all its quotes and stays out for `kill_pause` ms;
+    `kills` keeps the times. Inventory limit: with a position of `kill_pos` BTC or more either way, it quotes only the side that reduces it."""
     name = "market maker"
 
-    def __init__(self, refresh=500, levels=5, half=1, size=0.5, lean=4.0, widen=0, period=60_000, before=2000, after=5000):
+    def __init__(self, refresh=500, levels=5, half=1, size=0.5, lean=4.0, widen=0, period=60_000, before=2000, after=5000, kill_move=0, kill_pos=0.0, kill_pause=5000):
         self.refresh, self.levels, self.half, self.size, self.lean = refresh, levels, half, size, lean; self.widen, self.period, self.before, self.after = widen, period, before, after
+        self.kill_move, self.kill_pos, self.kill_pause = kill_move, kill_pos, kill_pause; self.out_until = -1; self.recent = deque(); self.kills = []
         self.mine = {}; self.pos = 0.0; self.cash = 0.0; self.next_time = refresh; self.path = []
 
     def act(self, m, t):
+        if t < self.out_until:                                     # out: no quotes, and nothing seen while out counts against the return
+            self.recent.clear()
+            for oid in list(self.mine): m.book.cancel(oid)
+            self.mine.clear(); self.path.append((t, self.pos, self.cash + self.pos * m.fair)); self.next_time = t + self.refresh
+            return
+        x = m.mid(); self.recent.append((t, x))
+        while self.recent[0][0] < t - 1000: self.recent.popleft()
+        if self.kill_move and max(abs(x - y) for _, y in self.recent) >= self.kill_move:
+            self.kills.append(t); self.out_until = t + self.kill_pause
+            for oid in list(self.mine): m.book.cancel(oid)
+            self.mine.clear(); self.recent.clear(); self.path.append((t, self.pos, self.cash + self.pos * m.fair)); self.next_time = t + self.refresh
+            return
         c = m.fair - self.lean * self.pos; ph = t % self.period; h = self.half + (self.widen if self.widen and (ph >= self.period - self.before or ph < self.after) else 0)
         want = {(1, int(np.floor(c) - h - k)) for k in range(self.levels)} | {(-1, int(np.ceil(c) + h + k)) for k in range(self.levels)}
+        if self.kill_pos and abs(self.pos) >= self.kill_pos: want = {w for w in want if w[0] == (-1 if self.pos > 0 else 1)}
         for oid, key in list(self.mine.items()):
             if key not in want: m.book.cancel(oid); del self.mine[oid]
         have = set(self.mine.values())
@@ -188,15 +203,16 @@ class MarketMaker(Player):
 
 
 class Value(Player):
-    """Trades towards the hidden value: at rate `rate` per second it looks, and if the mid is more than `gap` ticks from the value it sends a market order towards it. This is what ties the price to the value."""
+    """Trades towards the hidden value: at rate `rate` per second it looks, and if the mid is more than `gap` ticks from the value it sends a market order towards it. This is what ties the price to the value.
+    With `max_pos` > 0 its capital is limited: it does not trade further once its position is `max_pos` BTC either way, and it unwinds only by trading back towards the value later."""
     name = "value"
 
-    def __init__(self, rate=5.0, gap=1.0, size=0.1):
-        self.rate, self.gap, self.size = rate, gap, size; self.next_time = 1; self.pos = 0.0
+    def __init__(self, rate=5.0, gap=1.0, size=0.1, max_pos=0.0):
+        self.rate, self.gap, self.size, self.max_pos = rate, gap, size, max_pos; self.next_time = 1; self.pos = 0.0
 
     def act(self, m, t):
         d = m.fair - m.mid()
-        if abs(d) > self.gap:
+        if abs(d) > self.gap and not (self.max_pos and (1 if d > 0 else -1) * self.pos >= self.max_pos):
             side = 1 if d > 0 else -1; fills, _ = m.market_order(side, self.size, self.name, t); self.pos += side * sum(z for _, z, _, _ in fills)
         self.next_time = t + max(1, int(m.rng.exponential(1000 / self.rate)))
 
@@ -311,3 +327,26 @@ class Scalper(Player):
         elif self.exit and oid == self.exit[0]:
             self.exit = (oid, abs(self.pos)) if oid in m.book.where else None
             self.done(t, "gain")
+
+
+class Stops(Player):
+    """Stop orders and forced liquidations, as a crowd: `density` BTC per tick rests on each side from `near` to `far` ticks from the mid, sell stops below and buy stops above. When the mid
+    reaches a stop it becomes a market order in the direction of the move: a fall sets off selling. Each tick's stock grows back towards `density` at `renew` per second, so a cascade uses up the
+    stops near the price and only a slow rebuild follows. Looks every `look` ms; `fired` keeps (time, side, size)."""
+    name = "stops"
+
+    def __init__(self, density=0.2, near=3, far=30, renew=0.01, look=100):
+        self.density, self.near, self.far, self.renew, self.look = density, near, far, renew, look
+        self.stock = {1: {}, -1: {}}; self.last = None; self.next_time = look; self.fired = []
+
+    def act(self, m, t):
+        x = m.mid(); dt = (t - self.last) / 1000 if self.last is not None else None; self.last = t; self.next_time = t + self.look
+        for side, sgn in ((-1, -1), (1, 1)):                       # sell stops below the mid, buy stops above
+            st = self.stock[side]; lo, hi = (int(np.ceil(x)) - self.far, int(np.floor(x)) - self.near) if side == -1 else (int(np.ceil(x)) + self.near, int(np.floor(x)) + self.far)
+            for p in range(lo, hi + 1):
+                if p not in st: st[p] = self.density if dt is None else 0.0
+                elif dt: st[p] += (self.density - st[p]) * min(1.0, self.renew * dt)
+            hit = [p for p in st if (p >= x if side == -1 else p <= x)]
+            z = sum(st.pop(p) for p in hit)
+            for p in [p for p in st if abs(p - x) > self.far + 5]: del st[p]
+            if z > 1e-9: m.market_order(side, round(z, 3), self.name, t); self.fired.append((t, side, z))

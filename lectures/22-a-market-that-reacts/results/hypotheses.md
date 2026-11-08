@@ -1,6 +1,6 @@
 # Lecture 22: hypotheses, fixed before the results
 
-H1-H15 fixed 2026-11-05, after review, before any of their results were computed.
+H1-H15 fixed 2026-11-05, after review, before any of their results were computed. H20 fixed 2026-11-08, before any of its results were computed.
 
 ## The plan of the lecture
 
@@ -53,7 +53,7 @@ Layers, each estimated in sample and added to the replay of Lecture 21:
 
 ## Hypotheses
 
-H1 to H9 test the hybrid replay; H10 to H15 are the styles. The correction runs over one p-value each for H1 to H7, H9 (actual over predicted), H10, H12 and H15, two for H11, and three each for H13 and H14. H8 is a condition on layer E and stands outside it.
+H1 to H9 test the hybrid replay; H10 to H15 are the styles. The correction runs over one p-value each for H1 to H7, H9 (actual over predicted), H10, H12 and H15, two for H11, three each for H13 and H14, and two for H20. H8 is a condition on layer E and stands outside it.
 
 - **H1 (refill at fixed prices).** After real orders of 1 BTC or more, depth is back more slowly at the prices taken than around the new mid: the share of orders with 90% of the depth back within 1 s, around the new mid (Lecture 18, §5.5) minus at the fixed prices, is above zero, out of sample.
 - **H2 (impact is concave in size).** The exponent δ in net R(10 s) = c S^δ, fitted over the classes out of sample, is below 1. Reported beside it: the local exponent between the two smallest classes, against the literature's near-linear small-size regime.
@@ -64,6 +64,12 @@ H1 to H9 test the hybrid replay; H10 to H15 are the styles. The correction runs 
 - **H7 (runs of orders).** For real runs of same-side orders adding up to 5 BTC or more within 10 s, with no large opposite order, out of sample: the hybrid replay's error in the average price of the run is smaller in absolute terms than the plain replay's walking of the book at the run's start. We have no trader identities, so a run stands in for one trader's sliced order; Maitrier et al. (2025, arXiv 2502.16246) report that synthetic metaorders obey the same impact law.
 - **H8 (no free profit, a condition on layer E).** With layer E on and at zero fee, a round trip that posts a resting bid of x = 100%, sells at the ask at minimum size and cancels the bid must not earn more than the same round trip without the bid. If it does, E is not a cause we can use: it is left out of the hybrid replay, and its effect on results is reported only as a band, E on against E off. We expect this to be a real risk: Lecture 21's H8 measured an association, net +0.25 bp after one second, not proof of cause.
 - **H9 (10 October).** In the cascade window, 20:50-22:50 UTC, actual over predicted response of orders of 1 BTC or more, with curves from the calm days, exceeds that of the same window on any other day (rank among the 45). In the model in x, the ratio is closer to 1 than in the model in S.
+
+- **H20 (fragility: does the map of cost turn steep in fragile states?)** The laboratory market (Section 2, step 8) shows two states that steepen it: market makers out of the book, which fattens the tail of an order's cost, and a price already far from the value, where arbitrageurs have stopped correcting it and any push lasts. On Bybit, measured just before each real order, fifths fixed in sample:
+  - *H20a, the cost tail after quote pulls.* For real orders of 1-5 BTC, out of sample, the 90th percentile of cost (average fill against the mid before) is higher when the share of book updates near the best that were quote pulls in the last 5 s (Lecture 18) is in the top fifth than in the bottom fifth. Reported: the median and the 99th percentile, and the same split by depth within 10 bp.
+  - *H20b, the push lasts when the anchor is loose.* For real orders of 1 BTC or more, out of sample, the share of the 1 s response still there at 60 s, net of controls, is higher when the absolute gap between Bybit's mid and Binance's last price at the order, in bp, is in the top fifth than in the bottom fifth. Reported: the split by direction (towards or away from Binance), open interest falling in the last 5 minutes and funding (both from Bybit's free public API).
+
+  Reported, no test: one-minute moves beyond five in-sample standard deviations, and the share of them that start from the top fifth of pulls, against 20% by chance; 10 October apart. Binance stands in for the value and is not it: a large gap may also be the two venues briefly disagreeing for other reasons. A success says the cost depends on the state as the laboratory's mechanism predicts, not that the mechanism is proven. In the laboratory, with our market sell at 960 copied moments: 10 BTC cost a median of 14.4 ticks and a 90th percentile of 29.0 with the maker out, against 7.3 and 12.7 with it in; 60 s after the sell, 7.3 to 7.9 ticks remained when the price was more than 3 ticks from the value on either side, against 1.8 to 2.3 within 3 ticks. A first draft predicted that direction mattered; the laboratory showed the size of the gap does.
 
 - **H10 (a sniper's footprint, and why it matters for our layers).** Orders sent within 100 ms after a move of Binance's price of 2 bp or more, in the same direction, have a larger net R(10 s) than other orders of the same size class, out of sample. Such orders are informed about a price that has already moved elsewhere, and ours would not be. If H10 holds, the impact layer is calibrated without them, and the difference is reported. Races themselves cannot be seen: the losers leave no trace.
 - **H11 (trend followers at the close of a bar, and makers who expect them).** A whole minute is a **mark**; the **trend** at a mark is the sign of the last minute's closing mid against the average of the last 50 closes. Two tests, out of sample:
