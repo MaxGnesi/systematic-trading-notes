@@ -84,6 +84,7 @@ H1 to H9 test the hybrid replay; H10 to H15 are the styles. The correction runs 
 
 **Reported, no test.**
 
+- **A round trip's echo (the scalper):** the share of prints followed within 1 s by an addition of the same size on the far side, d ticks behind the price hit, for d from 1 to 8, against the same with sizes shuffled within 5-minute blocks. No test, decided on 2026-11-07 before any data was used: in the teaching simulation (step 6) one scalper shows as a bump at exactly its gain (1, 2 or 3 ticks; about 55% of the echoes are its fills, 14 to 41% of its fills echo), but with no scalper a market maker that leans and quotes a fixed size produces echoes at 1 and 2 ticks too, and a mirror on the side hit is no clean control either. Only a bump at 3 ticks or more would point to a round-trip style.
 - **The market maker's footprint:** the share of updates with three or more levels near the best changing on both sides at once, against the same with one side shifted in time (at the best price alone the measure is too crude: in the simulation a market maker with 38% of traded size barely shows); the same size added on both sides; the clock of the changes; the refilling chains of Lecture 19. A one-hour look at 1 October (in sample) prompted the shifted comparison.
 
 - The waterfall of layers A to D for market orders of each size, at once and sliced, 10 slices over 1 s, 10 s and 60 s: does the footprint reverse a ranking that the plain replay reports?
