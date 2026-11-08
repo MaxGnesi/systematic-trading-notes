@@ -1,6 +1,8 @@
 """Lecture 22 §3, layer C on our data, in sample only (20 September - 9 October): how far the mid moves after a real order, net of matched controls, by size class and by size
 relative to the queue, and what the orders cost, as a distribution. Net: from each order's signed move, the mean signed move of the control moments in its cell is taken off; a cell is the
-same day, hour, decile of the imbalance at the best (fixed on the controls) and the mid's move over the last second, fell, unchanged or rose, both signed for the order's side.
+same day, hour, decile of the imbalance at the best (fixed on the controls) the mid's move over the last second, fell, unchanged or rose, both signed for the order's
+side, the third of the market's activity, taker orders in the 10 s before (thirds fixed on the controls), and the quarter of the share of the last 10 s of taker size that
+was on the order's side (a stream already running).
 Day by day, to spare memory; bands from 2,000 resamples of days. Output: results/s3_response.json and figures/22_s3_response.png. --run recomputes from L22_OUT."""
 import json, sys
 from pathlib import Path
@@ -11,6 +13,7 @@ from trading_models.plotting import INK, MUTED, SERIES, apply_theme, save_figure
 apply_theme(); OUT = L.RESULTS / "s3_response.json"
 CLASSES = [(0.01, 0.1, "0.01-0.1"), (0.1, 1, "0.1-1"), (1, 5, "1-5"), (5, 20, "5-20"), (20, 1e9, "20+")]; XB = [(0, 0.1, "<0.1"), (0.1, 0.5, "0.1-0.5"), (0.5, 1, "0.5-1"), (1, 3, "1-3"), (3, 1e9, "3+")]
 M = [f"m{t}" for t in L.TAUS]
+SHARE = (pl.when(pl.col("side") == 1).then("prior_buy").otherwise("prior_sell") / (pl.col("prior_buy") + pl.col("prior_sell"))).fill_nan(0.5).fill_null(0.5).alias("share")   # of the last 10 s, on our side
 
 
 def in_sample_days():
@@ -19,15 +22,16 @@ def in_sample_days():
 
 def compute():
     days = in_sample_days(); C = pl.concat([pl.read_parquet(L.OUT / "controls" / f"{d}.parquet").with_columns(pl.lit(d).alias("day")) for d in days])
-    sides = pl.concat([C.with_columns(pl.lit(s).alias("side")) for s in (1, -1)]).with_columns((pl.col("side") * pl.col("imb")).alias("simb"), (pl.col("side") * pl.col("move1")).alias("smove"))
-    qi = np.quantile(sides["simb"].drop_nans().to_numpy(), np.linspace(0.1, 0.9, 9))
-    cell = lambda D: D.with_columns((pl.col("ts") // 3_600_000 % 24).alias("hour"), pl.col("simb").cut(qi.tolist(), labels=[str(i) for i in range(10)]).alias("di"), pl.col("smove").sign().cast(pl.Int8).alias("tm"))
-    ctrl = cell(sides).group_by("day", "side", "hour", "di", "tm").agg(*[(pl.col("side") * pl.col(m)).mean().alias(f"c_{m}") for m in M],
+    sides = pl.concat([C.with_columns(pl.lit(s).alias("side")) for s in (1, -1)]).with_columns((pl.col("side") * pl.col("imb")).alias("simb"), (pl.col("side") * pl.col("move1")).alias("smove"), SHARE)
+    qi = np.quantile(sides["simb"].drop_nans().to_numpy(), np.linspace(0.1, 0.9, 9)); qa = np.quantile(C["act10"].to_numpy(), [1 / 3, 2 / 3])
+    cell = lambda D: D.with_columns((pl.col("ts") // 3_600_000 % 24).alias("hour"), pl.col("simb").cut(qi.tolist(), labels=[str(i) for i in range(10)]).alias("di"), pl.col("smove").sign().cast(pl.Int8).alias("tm"), pl.col("act10").cut(qa.tolist(), labels=["0", "1", "2"]).alias("ta"),
+                                     pl.col("share").cut([0.25, 0.5, 0.75], labels=["0", "1", "2", "3"]).alias("ps"))
+    ctrl = cell(sides).group_by("day", "side", "hour", "di", "tm", "ta", "ps").agg(*[(pl.col("side") * pl.col(m)).mean().alias(f"c_{m}") for m in M],
                                                                       pl.when(pl.col("side") == 1).then("flow_buy1000").otherwise("flow_sell1000").mean().alias("c_flow1000"), pl.len().alias("n_ctrl"))
     per_day = []; costs = {c[2]: [] for c in CLASSES}
     for d in days:
-        X = pl.read_parquet(L.OUT / "orders" / f"{d}.parquet", columns=["ts", "side", "S", "x", "cost_bp", "imb", "move1", "flow1000"] + M).filter(pl.col("S") >= 0.01)
-        X = cell(X.with_columns(pl.lit(d).alias("day"), (pl.col("side") * pl.col("imb")).alias("simb"), (pl.col("side") * pl.col("move1")).alias("smove"))).join(ctrl, on=["day", "side", "hour", "di", "tm"], how="inner")
+        X = pl.read_parquet(L.OUT / "orders" / f"{d}.parquet", columns=["ts", "side", "S", "x", "cost_bp", "imb", "move1", "act10", "prior_buy", "prior_sell", "flow1000"] + M).filter(pl.col("S") >= 0.01)
+        X = cell(X.with_columns(pl.lit(d).alias("day"), (pl.col("side") * pl.col("imb")).alias("simb"), (pl.col("side") * pl.col("move1")).alias("smove"), SHARE)).join(ctrl, on=["day", "side", "hour", "di", "tm", "ta", "ps"], how="inner")
         X = X.with_columns(*[(pl.col("side") * pl.col(m) - pl.col(f"c_{m}")).alias(f"n_{m}") for m in M], (pl.col("flow1000") - pl.col("c_flow1000")).alias("n_flow"),
                            pl.col("S").cut([c[0] for c in CLASSES[1:]], labels=[c[2] for c in CLASSES]).alias("cls"), pl.col("x").cut([b[0] for b in XB[1:]], labels=[b[2] for b in XB]).alias("xb"))
         for by in ("cls", "xb"):
@@ -71,5 +75,5 @@ if __name__ == "__main__":
                         marker=dict(color=SERIES[0], size=9, symbol=sym), name=f"cost: {nm}", row=1, col=3)
     fig.update_xaxes(title_text="order size, BTC", row=1, col=3); fig.update_yaxes(title_text="average fill against the mid before, bp", type="log", row=1, col=3)
     fig.update_layout(title=f"Section 3: the response to real orders on Bybit, in sample<br><sup>BTCUSDT perpetual, {R['days'][0]} to {R['days'][-1]} ({len(R['days'])} days); orders of 0.01 BTC or more, net of control moments in the same "
-                      "day, hour, imbalance decile and last-second move (fell, unchanged, rose). Bands: 95% over resampled days</sup>", height=540, width=1600, margin=dict(t=110, l=70, r=30, b=150), legend=dict(orientation="h", y=-0.25, x=0))
+                      "day, hour, imbalance decile, last-second move, activity and the share of the last 10 s on the order's side. Bands: 95% over resampled days</sup>", height=540, width=1600, margin=dict(t=110, l=70, r=30, b=150), legend=dict(orientation="h", y=-0.25, x=0))
     save_figure(fig, L.PREFIX + "22_s3_response", L.FIG)

@@ -49,5 +49,5 @@ if __name__ == "__main__":
     fig.add_scatter(x=cls, y=[v[k]["S"] for k in cls], mode="lines+markers", line=dict(color=MUTED, width=2, dash="dot"), marker=dict(size=7), name="the order's own size (average)", row=1, col=3)
     fig.update_xaxes(title_text="order size, BTC", row=1, col=3); fig.update_yaxes(title_text="BTC", type="log", row=1, col=3)
     fig.update_layout(title=f"Section 3: refill and triggered trading on Bybit, in sample<br><sup>BTCUSDT perpetual, {R['days'][0]} to {R['days'][-1]} ({len(R['days'])} days). Left and middle: real orders of 1 BTC or more, depth on the side "
-                      "they took. Right: orders of 0.01 BTC or more, net of control moments in the same day, hour, imbalance decile and last-second move; bars: 95% over resampled days</sup>", height=540, width=1600, margin=dict(t=110, l=70, r=30, b=170), legend=dict(orientation="h", y=-0.27, x=0))
+                      "they took. Right: orders of 0.01 BTC or more, net of control moments in the same day, hour, imbalance decile, last-second move, activity and recent same-side share; bars: 95% over resampled days</sup>", height=540, width=1600, margin=dict(t=110, l=70, r=30, b=170), legend=dict(orientation="h", y=-0.27, x=0))
     save_figure(fig, L.PREFIX + "22_s3_refill", L.FIG)

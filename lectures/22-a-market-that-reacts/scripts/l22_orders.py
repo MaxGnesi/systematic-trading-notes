@@ -1,7 +1,7 @@
 """Lecture 22 §3, step 1: the table of real orders of one day, and of control moments, with what the hybrid replay and H1-H9, H20 need. A real order: the trades with the same
 millisecond and side (Lecture 19). For each: size S, average price and cost against the mid before, the book state just before it (Lecture 19's state after every update, engine time),
 relative size x = S / size at the best on the side taken, imbalance at the best, the mid's move over the last second, the mid at each horizon after it, other takers' size on its side after it,
-quote pulls near the best in the last 5 s (Lecture 18's rule, from l22_book.py if it has run) and the gap to Binance's last price. Controls: one random moment in every 10 s, with the same state and mid path and no sign; they are
+how many taker orders came in the last 10 s and how much was bought and sold, quote pulls near the best in the last 5 s (Lecture 18's rule, from l22_book.py if it has run) and the gap to Binance's last price. Controls: one random moment in every 10 s, with the same state and mid path and no sign; they are
 signed for a side when matched. Nothing is estimated here. Output: L22_OUT/orders/DAY.parquet and L22_OUT/controls/DAY.parquet. Usage: python l22_orders.py YYYY-MM-DD"""
 import io, sys, time, zipfile
 from pathlib import Path
@@ -35,6 +35,9 @@ def features(t):
     f = dict(ok=ok, mid0=m0, qb=qb[i], qa=qa[i], q5=q5[i], spread=spread[i], imb=(qb[i] - qa[i]) / (qb[i] + qa[i]), move1=(m0 - mid[np.maximum(state_at(t - 1000)[0], 0)]) / m0 * 1e4)
     for tau in L.TAUS: f[f"m{tau}"] = (mid[np.maximum(state_at(t + tau)[1], 0)] - m0) / m0 * 1e4
     a, b = np.searchsorted(pt, t - 5000, "right"), np.searchsorted(pt, t, "right"); f["pulls5"] = np.where(b > a, (pc[b] - pc[a]) / np.maximum(b - a, 1), np.nan) if P is not None else np.full(len(t), np.nan); f["updates5"] = b - a
+    f["act10"] = np.searchsorted(ot, t, "left") - np.searchsorted(ot, t - 10_000, "left")      # taker orders in the 10 s before: how busy the market is
+    a10, b10 = np.searchsorted(ot, t - 10_000, "left"), np.searchsorted(ot, t, "left")       # taker size bought and sold in the 10 s before: a stream already running
+    f["prior_buy"], f["prior_sell"] = fc[1][b10] - fc[1][a10], fc[-1][b10] - fc[-1][a10]
     j = np.searchsorted(bt, t, "right") - 1; f["bn_gap"] = np.where(j >= 0, (m0 - bp[np.maximum(j, 0)]) / m0 * 1e4, np.nan); f["bn_age"] = np.where(j >= 0, t - bt[np.maximum(j, 0)], -1)
     return f
 
