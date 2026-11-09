@@ -21,7 +21,7 @@ The lecture runs as follows:
 | 2 | Four footprints | How is each style recognised, and how well, where the answer is known? |
 | 3 | What is at work on Bybit | Do snipers, clock traders and slicers leave their footprints here? (H10, H11, H12) |
 | 4 | When, and in what conditions | Do the styles come at regular times, and do volatile hours change the mix? (H13, H14) |
-| 5 | Runs as they start | Can a slicer be recognised by its third slice, and does the market expect the next? (H16, H17) |
+| 5 | What our quotes meet | Whom do the makers lose to, and can a quoter step aside in time? (H21, H22) |
 | 6 | What it means for our strategy | What a quoter should watch, and a checklist for reading a market |
 
 ## 2. Four footprints
@@ -138,9 +138,48 @@ Three footprints were tested on the 24 out-of-sample days, 11 October to 3 Novem
 
 **For a quoter.** The time of day says little; volatility says much. In a volatile hour almost one taker order in ten by size comes just behind a move on Binance, and since 10 October that share has been higher at every level of volatility. A quoting rule should therefore watch Binance and the hour's volatility, not the clock on the wall.
 
-## 5. Runs as they start
+## 5. What our quotes meet
 
-To follow: H16 and H17.
+Every taker order fills someone's resting order. This section turns §3 round and asks what each footprint costs the makers, and whether a quoter that sees Binance move can pull its quote before it is taken. The two tests replaced two others on runs as they start, which concern about 1% of taker size; the change was made and dated before any of their results ([results/hypotheses.md](results/hypotheses.md)).
+
+The makers' **adverse move** on a taker order is its size times the mid's move in its direction 10 s later, gross: what the resting orders it filled have lost by then. The makers' **result** per BTC is what the taker paid from the mid less that move. A **Binance move** is a Binance trade 2 bp or more from the last price at least 100 ms before it, the first in 1 s.
+
+![What our quotes meet: who the makers lose to, and how little time a quote has](figures/23_s5_quotes.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: footprint of the taker order (x), % of the total (y); grey: share of taker size, pink: share of the makers' adverse move after 10 s. Middle: footprint (x), the makers' result in bp per BTC filled (y), after 1, 10 and 60 s; below zero the makers lose. Right: delay after a Binance move in ms (x), share of moves followed by then by a Bybit taker order in the move's direction, % (y); pink: moves of 2 bp or more, orange: 5 bp or more, grey: random moments of the same hours with a random direction; dotted line: 50 ms. Out of sample, 11 October to 3 November 2025. Our calculation.</sub>
+
+**Whom do the makers lose to? (H21)** Mostly to the sniper. Sniper-like orders are 9% of taker size but carry 31% of the makers' adverse move after 10 s, 22 points more than their share of size (95% band 18 to 26). Per BTC filled, the makers lose 2.1 bp to them after 10 s: the taker pays 3.2 bp from the mid, and the mid moves 5.3 bp its way. Against other footprints the makers lose much less: 0.7 bp per BTC to the small orders of "other", 0.2 bp to large orders. The slicer is the only one the makers earn on, a tenth of a basis point after 10 s, which the price's drift in the slicer's direction takes back by 60 s (−0.5 bp). In sample the pattern was the same, with sniper-like orders 5% of size and 20% of the adverse move.
+
+**Can a quoter step aside in time? (H22)** Rarely. After a Binance move of 2 bp or more, a Bybit taker order in the same direction followed within 50 ms in 94% of the 22,305 moves, against 14% at random moments; after moves of 5 bp or more, in 99%. The typical delay is 30 ms, and the delays pile up between 25 and 35 ms, as if many traders sent their orders as soon as a fixed travel time from Binance allowed; where the two exchanges' servers stand is not in our data. More than a quarter of the moves were followed within 10 ms, where a few milliseconds of difference between the two exchanges' clocks matter, so that number is the least certain. A quoter that sees Binance move and needs 50 ms to cancel has usually been filled already.
+
+| Plain question | Measure | Out of sample | p (one-sided) | Verdict |
+|---|---|---|---|---|
+| Do sniper-like orders cost the makers more than their share of size? | Share of the adverse move less share of size | +22 points (18 to 26) | < 0.001 | Holds |
+| Is a quote taken within 50 ms after a Binance move more often than by chance? | Share within 50 ms, after moves less random moments | +80 points (79 to 83) | < 0.001 | Holds |
+
+<sub><b>How to read the table.</b> One row per hypothesis (H21, H22), fixed before their data were computed. Brackets: 95% bands from 2,000 resamples of days. Our calculation.</sub>
+
+### 5.1 All twelve tests, corrected
+
+| Test | Plain question | p | q | Verdict after correction |
+|---|---|---|---|---|
+| H10 | Do orders sent just after Binance moved move the price more? | < 0.001 | 0.001 | Holds |
+| H12 | Is there more slicing than chance gives? | < 0.001 | 0.001 | Holds |
+| H14 | More sniper-like orders in volatile hours? | < 0.001 | 0.001 | Holds |
+| H21 | Do sniper-like orders cost the makers more than their share? | < 0.001 | 0.001 | Holds |
+| H22 | Is a quote taken within 50 ms after a Binance move? | < 0.001 | 0.001 | Holds |
+| H13 | The clock-like burst at the same hours? | 0.09 | 0.16 | Fails |
+| H13 | Slicing at the same hours? | 0.10 | 0.16 | Fails |
+| H14 | Less slicing in volatile hours? | 0.19 | 0.28 | Fails |
+| H11a | Flow with the trend after a whole minute? | 0.34 | 0.45 | Fails |
+| H13 | Sniper-like orders at the same hours? | 0.70 | 0.84 | Fails |
+| H11b | Makers widen before a whole minute? | 1.00 | 1.00 | Fails |
+| H14 | More clock-like flow in volatile hours? | 1.00 | 1.00 | Fails |
+
+<sub><b>How to read the table.</b> All twelve p-values of Lecture 23, out of sample, sorted. q: the Benjamini-Hochberg adjusted p-value over the twelve; a test holds if q is below 0.05. A bootstrap p of zero is entered as 1/2,000. Our calculation.</sub>
+
+Five tests hold, and four of them are about one style: the trader who takes Bybit's quotes just after Binance has moved. It is found (H10), it gets more frequent when markets move (H14), it carries a third of what the makers lose (H21), and it is usually faster than a quote can be pulled (H22). The fifth is the slicer, the makers' best counterparty (H12). The clock and the time of day, which looked promising in the laboratory and in sample, did not hold.
+
+**For a quoter.** The single most important thing a quoter on Bybit must handle is the move on Binance. Watching Binance and pulling in time is not enough on its own, because in half the cases the first order in the move's direction arrives within 30 ms; what is left is to quote so that a stale fill costs less: wider or smaller when Binance is moving, and when the hour is volatile. Lecture 24 starts from here.
 
 ## 6. What it means for our strategy
 
