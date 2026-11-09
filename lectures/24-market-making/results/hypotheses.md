@@ -51,3 +51,12 @@ Found on one in-sample hour (1 October, 10:00 - 11:00 UTC) and in the units, bef
 - **The Binance gap drifts.** Binance's last price less Bybit's mid moves slowly between about −1.5 and +1.4 bp from hour to hour on 1 October (the two perpetuals' prices differ by a varying amount), so the raw gap mostly measures that difference, not a stale quote. H1's gap is therefore taken net of its average over the 60 whole seconds before the decision; a jump on Binance shows in full, the slow difference does not.
 - **H2's half-spread.** h = max(half a tick, c × σ), not one tick. *Corrected the same day, on the in-sample timing day (1 October):* even with κ = 0 and c = 0 the design is not the baseline, because the quotes are rounded away from the microprice: when the microprice leans towards one side, the other side's quote steps one tick back. The grid's corner κ = 0, c = 0 is therefore the baseline plus the microprice's lean, and the baseline stays the comparison.
 - **How the engine decides.** Every design, the baseline included, prices its orders with the book known at the decision, not at the arrival L later (Lecture 21's quoter took the best price standing at arrival); maker orders are post-only (rejected if they would trade on arrival); with the position limit, a side stops quoting at 10 lots. The baseline is run again in this engine, so all designs are compared on the same rules; its result will differ from Lecture 21's.
+
+## Changed on 2026-11-09, before any run beyond the timing day: shorter runs
+
+All 85 variants take about 28 minutes per day of data, so the whole sample would take about a day of computing. The runs are cut, fixed here before they start:
+
+- **Choice in sample** (H2's κ and c, H4's variant): all variants on 6 in-sample days, 21, 24, 27 and 30 September, 3 and 6 October, each in four one-hour windows, 02:00, 08:00, 14:00 and 20:00 UTC; each window starts flat. The choice is the highest result before the fee over these 24 hours.
+- **The tests out of sample** stay as fixed: the baseline, the guard at 2 bp, 1 tick behind, the chosen H2 and the chosen H4, on all 24 out-of-sample days, whole days.
+- **All variants out of sample** (the robustness charts): 6 out-of-sample days, 13, 17, 21, 25 and 29 October and 2 November, in the same four windows.
+- 1 October, run in full to time the engine, is not used for the choice.

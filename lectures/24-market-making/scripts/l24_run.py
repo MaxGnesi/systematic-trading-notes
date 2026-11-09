@@ -7,7 +7,9 @@ import polars as pl
 sys.path.insert(0, str(Path(__file__).resolve().parent)); import l24 as L
 import l24_engine as E, l24_designs as G
 FILLS = L.OUT / "fills"; DAYS = L.RESULTS / "days"
-for p in (FILLS, DAYS): p.mkdir(parents=True, exist_ok=True)
+SAMPLE_IN = ("2025-09-21", "2025-09-24", "2025-09-27", "2025-09-30", "2025-10-03", "2025-10-06")
+SAMPLE_OUT = ("2025-10-13", "2025-10-17", "2025-10-21", "2025-10-25", "2025-10-29", "2025-11-02")
+WINDOWS = (4, 5, 16, 17, 28, 29, 40, 41)                                                        # 02:00, 08:00, 14:00, 20:00 UTC, one hour each
 
 
 def designs():
@@ -15,11 +17,14 @@ def designs():
 
 
 if __name__ == "__main__":
-    days = [a for a in sys.argv[1:] if not a.startswith("--")] or sorted(p.stem for p in L.L21.STATE.glob("*.parquet"))
-    days = sorted(days, key=lambda d: (not (L.IN_SAMPLE[0] <= d <= L.IN_SAMPLE[1]), d))
+    sample = "--sample" in sys.argv; only = next((a.split("=", 1)[1].split(",") for a in sys.argv if a.startswith("--designs=")), None)
+    days = [a for a in sys.argv[1:] if not a.startswith("--")] or (list(SAMPLE_IN + SAMPLE_OUT) if sample else sorted(p.stem for p in L.L21.STATE.glob("*.parquet")))
+    out, fills = (L.RESULTS / "sample_days", L.OUT / "sample_fills") if sample else (DAYS, FILLS)
+    for p in (out, fills): p.mkdir(parents=True, exist_ok=True)
     for d in days:
-        if (DAYS / f"{d}.json").exists(): continue
-        t0 = time.time(); D = designs(); R, A = E.run_days(d, D)
-        pl.concat([f.with_columns(pl.lit(k).alias("design")) for k, f in R.items()]).write_parquet(FILLS / f"{d}.parquet")
-        (DAYS / f"{d}.json").write_text(json.dumps({k: E.score(f, A) for k, f in R.items()}), encoding="utf-8")
+        if (out / f"{d}.json").exists(): continue
+        D = [x for x in designs() if only is None or x.name in only]; t0 = time.time()
+        R, A = E.run_days(d, D, windows=WINDOWS if sample else None)
+        pl.concat([f.with_columns(pl.lit(k).alias("design")) for k, f in R.items()]).write_parquet(fills / f"{d}.parquet")
+        (out / f"{d}.json").write_text(json.dumps({k: E.score(f, A) for k, f in R.items()}), encoding="utf-8")
         print(d, f"{time.time() - t0:.0f} s", len(D), "designs", flush=True)
