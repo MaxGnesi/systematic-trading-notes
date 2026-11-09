@@ -129,6 +129,35 @@ Read by the state at the moment of the order, two results stand out.
 
 **On purpose.** Selling and buying back at the market loses on average in every world, by 1.4 to 20 ticks per BTC: paying the spread and the impact twice outweighs the overshoot. In fragile worlds 20 to 40% of round trips profit, a lottery with a negative mean. The kill switch hurts the pusher too: with makers out, up to 30% of a 10 BTC buy-back cannot be filled at once. Our pusher is naive; one that placed resting orders below the price before pushing, and collected the cascade as a maker, was not tested. Whether that version pays is an open question, so these results show only that the naive round trip does not.
 
+### 2.4 Who reacts to our order, and how
+
+**Key message.** An algorithm is engineered against other traders: each type sees a different part of our order, answers in its own way, and leaves its own mark on our cost.
+
+An order of ours is seen first by those who watch the book and the trades closely, and later by those who read prices on a clock. The laboratory lets each type be added alone and its reaction traced, and it lets us test, with the answer known, whether that type leaves a footprint that public data could reveal.
+
+| Trader | What it sees of our order | How it reacts | What that does to our cost | Can its footprint be seen in public data? (laboratory, answer known) |
+|---|---|---|---|---|
+| Market maker | Its fills and its position | Leans its quotes against the position; pulls everything after a fast move | Pushes the price further for about a second; when it pulls, the tail of our cost fattens (§2.2) | Quote pulls are visible in the book (Lecture 18); on Bybit they predict a fatter cost tail (H20a, §5) |
+| Value traders | The gap between price and value | Trade it back | Make our push fade; when their capital runs out, the push stays (§2.2) | Not directly; the gap to another venue stands in for it, and did not predict persistence on Bybit (H20b, §5) |
+| Sniper | Our resting quotes, once the value has moved | Takes them before we can update | A resting order of ours is filled exactly when it is stale | Not from the book: the losers of a race leave no trace (Aquilina, Budish and O'Neill, 2022) |
+| Slicer (TWAP) | Nothing: it follows its own clock | Does not react | Its slices are steady flow on one side, which we trade with or against | Yes: runs of eight or more equal orders at regular gaps; 93 to 96% of what the rule finds is TWAP, but it finds only about 40% |
+| Trend followers | Prices at each bar close | Buy after a rise, sell after a fall, all at the same clock marks | A push near a crossing can set them off; flow clusters in the seconds after each minute | Yes, through the clock: flow with the trend just after whole minutes is found from about 1% of taker size; a crossing rule on the mid finds nothing, because others take the flow back |
+| Scalper | The best price | Joins it and exits a few ticks better | Competes with our resting orders for the front of the queue | Only partly: an echo at its exit distance, but a market maker with a fixed order size leaves the same echo |
+| Stops and liquidations | The price crossing their levels | Turn into market orders in the direction of the move | Amplify a push through crowded levels; with the other two dials, they make cascades (§2.3) | Not in our data: Bybit publishes no history of liquidations; falling open interest stands in for them |
+
+<sub><b>How to read the table.</b> One row per trader type of the laboratory market. The last column reports what our measures recovered where the truth was known (<i>Invented</i> data); whether the same footprints appear on Bybit is tested in the lecture on trading styles that follows. Our own measures and settings, not validated against identified traders.</sub>
+
+Three lessons follow for anyone engineering an order. The traders who answer within a second, the maker and the sniper, decide the cost of a single order; those who answer on a clock or at a price level, trend followers and stops, decide what a push does over minutes. A footprint that others absorb is invisible: the trend followers' crossing flow vanished because value traders took it back. And the types that matter most for the tail of our cost, the maker who pulls and the stops that fire, are exactly those whose withdrawal or arrival is quickest.
+
+![Step 3: the sniper and the maker's refresh speed](figures/22_sim_step3.png)
+<sub><b>How to read the figure.</b> <i>Invented.</i> How a sniper that sees the value first feeds on stale quotes: its threshold against the band rule of Rabechini Amaral (2026), the gap it trades, and what it takes from the maker as the maker refreshes its quotes more slowly. With jumps in the value, the maker's margin per BTC falls from 1.15 to 0.36 ticks as its refresh slows from 0.1 s to 5 s with a sniper present, against 1.11 to 0.66 without.</sub>
+
+![Step 4: a TWAP, and the run rule tested with the answer known](figures/22_sim_step4.png)
+<sub><b>How to read the figure.</b> <i>Invented.</i> A slicer's orders hidden in the public trades, the runs our rule finds, how the found share follows a change in the slicer's rate, and why five slices were too few: chance runs among other orders matched them. Eight slices or more, gaps varying by less than a fifth.</sub>
+
+![Step 5: trend followers at the close of a bar](figures/22_sim_step5.png)
+<sub><b>How to read the figure.</b> <i>Invented.</i> Flow with the trend and the spread, by second around each whole minute; how strongly each measure finds crowds of trend followers of growing size; and a maker that widens before the minute, found by the spread just before it.</sub>
+
 ## 3. The reaction on our data
 
 Section 2 showed how a push fades or tips where every rule is known. This section measures, on Bybit, what the hybrid replay needs: how far the price moves after real orders, whether what they took comes back, and whether other traders follow. Everything here is estimated in sample, 20 September to 9 October 2025 (20 days); Section 4 tests it on the 24 days after 10 October.
