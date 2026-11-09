@@ -31,8 +31,8 @@ def fit_refill(path=L.RESULTS / "s3_refill.json"):
 class Hybrid:
     """The book of one window, replayed with our orders. Start from the viewer's checkpoint before t_a, apply recorded updates; our market orders walk the book as it stands in the replay."""
 
-    def __init__(self, day, t_a, t_b, layers="ABC", resp=None, refill=None, books=None):
-        self.layers = set(layers); self.resp = resp or fit_response(); self.refill = refill if isinstance(refill, dict) else ({0.0: refill} if refill else fit_refill()); self.ours = []   # (time, side, size, depletion by distance)
+    def __init__(self, day, t_a, t_b, layers="ABC", resp=None, refill=None, books=None, parent=False):
+        self.parent = parent; self.layers = set(layers); self.resp = resp or fit_response(); self.refill = refill if isinstance(refill, dict) else ({0.0: refill} if refill else fit_refill()); self.ours = []   # (time, side, size, depletion by distance)
         if books is not None:                                                         # a hand-made book for the checks: ({bids}, {asks}, updates [(t, 0, side, tick, size)])
             self.book = {1: dict(books[0]), -1: dict(books[1])}; self.u = np.array(books[2] if len(books) > 2 and books[2] else np.zeros((0, 5)), float); self.k = 0; self.t = t_a; return
         at = t_a // 60_000 * 60_000; cp = pl.read_parquet(VIEWER / f"{day}_checkpoints.parquet").filter(pl.col("at") == at)
@@ -58,13 +58,18 @@ class Hybrid:
     def shift(self, t):
         """Layer C: the mid's shift in ticks at time t, the sum over our orders of R(tau) for their size, held at 300 s."""
         if "C" not in self.layers: return 0.0
-        m = self.record_mid(); total = 0.0
+        m = self.record_mid(); total = 0.0; taus = np.array(L.TAUS, float); c = np.array([self.resp[x][0] for x in L.TAUS]); d = np.array([self.resp[x][1] for x in L.TAUS])
+        R = lambda S, tau: float(np.interp(np.log(max(tau, taus[0])), np.log(taus), c * S ** d))   # bp, flat before 0.1 s and after 300 s
+        if not self.parent:                                                           # each order its own impact, added up
+            for t0, side, S, _ in self.ours:
+                if t - t0 > 0: total += side * R(S, t - t0) * m / 1e4
+            return total
+        parents = []                                                                  # parent=True: same-side orders each within 10 s of the last are one parent order
         for t0, side, S, _ in self.ours:
-            tau = t - t0
-            if tau <= 0: continue
-            taus = np.array(L.TAUS, float); c = np.array([self.resp[x][0] for x in L.TAUS]); d = np.array([self.resp[x][1] for x in L.TAUS])
-            R = c * S ** d; r = float(np.interp(np.log(max(tau, taus[0])), np.log(taus), R))      # bp, flat before 0.1 s and after 300 s
-            total += side * r * m / 1e4
+            if t0 >= t: continue
+            if parents and parents[-1][1] == side and t0 - parents[-1][3] <= 10_000: parents[-1][2] += S; parents[-1][3] = t0
+            else: parents.append([t0, side, S, t0])
+        for t0, side, S, _ in parents: total += side * R(S, t - t0) * m / 1e4         # its impact: R of its size so far, from its first order
         return total
 
     def missing(self, t, book_side, k):

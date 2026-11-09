@@ -31,6 +31,10 @@ def runs(day):
 PER_DAY = 300
 
 
+PARENT = "--parent" in sys.argv                                                    # follow-up after H7: a run's impact from its cumulative size
+if PARENT: OUT = L.RESULTS / "s4_replay_parent.json"
+
+
 def one_day(day, resp, refill):
     """A fixed random sample of PER_DAY runs per day (seeded by the date): busy days hold thousands of runs, and every run needs two replays."""
     O, R = runs(day); res = []; n_all = len(R)
@@ -40,7 +44,7 @@ def one_day(day, resp, refill):
         actual = float((O["avg"].to_numpy()[idx] * sizes).sum() / sizes.sum()); mid0 = float(O["mid0"][idx[0]])
         pred = {}
         for name, layers in (("plain", ""), ("hybrid", "ABC")):
-            h = H.Hybrid(day, t0 - 1, t0 - 1, layers=layers, resp=resp, refill=refill); paid = 0.0; got = 0.0
+            h = H.Hybrid(day, t0 - 1, t0 - 1, layers=layers, resp=resp, refill=refill, parent=PARENT); paid = 0.0; got = 0.0
             for tt, z in zip(times, sizes):
                 if name == "plain": h.ours = []                                       # the plain replay keeps no memory of earlier orders
                 f, left = h.market_order(int(tt), side, float(z)); paid += sum(p * q for p, q in f); got += sum(q for _, q in f)

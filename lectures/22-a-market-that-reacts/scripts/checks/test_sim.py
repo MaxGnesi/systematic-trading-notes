@@ -77,3 +77,6 @@ h = H.Hybrid(None, 0, 0, layers="C", resp={tau: (10.0, 0.5) for tau in flat}, re
 h.market_order(0, 1, 4.0); assert abs(h.mid(500) - (1_000_000 + 20.0 * 1_000_000 / 1e4)) < 1e-6 and h.levels(500, -1)[0][0] == 1_000_001 + 2000, "the mid and the book move by R for our size (layer C)"
 h.market_order(600, -1, 4.0); assert abs(h.shift(700)) < 1e-6, "an opposite order of the same size cancels the shift"
 print("hybrid replay: walk, depletion, refill and shift hold on hand cases")
+h = H.Hybrid(None, 0, 0, layers="C", resp={tau: (10.0, 0.5) for tau in flat}, refill=none, books=({999_999: 100.0}, {1_000_001: 100.0}), parent=True)
+h.market_order(0, 1, 1.0); h.market_order(1000, 1, 3.0); assert abs(h.shift(1100) - 10.0 * 2.0 * 1_000_000 / 1e4) < 1e-6, "a parent order's impact is R of its cumulative size"
+print("hybrid replay: parent orders take the impact of their cumulative size")
