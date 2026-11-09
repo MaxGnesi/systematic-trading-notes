@@ -114,7 +114,29 @@ Three footprints were tested on the 24 out-of-sample days, 11 October to 3 Novem
 
 ## 4. When, and in what conditions
 
-To follow: H13 and H14.
+§3 asked whether the styles are there; this section asks when. Each taker order is counted once, as sliced if it belongs to a run, else sniper-like, else large (1 BTC or more), else other; the clock-like share is the extra taker size in the first 3 s after each whole minute, against seconds 10 to 49 of the same minute. All are shares of taker size, and shares of footprints, not of traders. An hour's volatility is the square root of the sum of squared 1-minute changes of the log mid; its thirds are fixed in sample, for each hour of the day separately, so that a volatile hour is volatile for its time of day.
+
+![When, and in what conditions: the style shares by hour, by volatility and by day](figures/23_s4_when.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Top row: hour of the day in UTC (x), share of taker size in that hour, % (y), for the sliced, sniper-like and clock-like footprints; grey: in sample, black: out of sample. Bottom left: third of the hour's volatility, out of sample (x), share of taker size, % (y), one bar per footprint. Bottom right: day (x), the day's share of taker size, % (y), one line per footprint; shaded: out of sample. The clock-like share is an excess over the quiet seconds and can be below zero. Our calculation, Bybit BTCUSDT perpetual.</sub>
+
+**Do the styles come at the same hours every month? (H13)** Not clearly. The sliced share has the most stable profile: in both samples it peaks at 21:00 UTC and is high in the first hours after midnight, and the rank correlation between the two profiles is 0.31, but with only 20 and 24 days behind each hour that is not enough (p = 0.10). The clock-like profile is noise around 1% (0.19, p = 0.09). The sniper-like profile is nearly flat, so its hours cannot be ranked (−0.17, p = 0.70): what changed is its level, not its timing. Three to four weeks per sample are too few to fix a profile of 24 hours; a quoter cannot plan on the hour of the day.
+
+**Do volatile hours change the mix? (H14)** For the sniper, strongly. Within the same hour of the day, the most volatile third of hours has a sniper-like share 4.6 points higher than the least volatile third (95% band 3.3 to 6.2); the shares are 5.1%, 6.5% and 9.4% from calm to volatile. This is close to built in: a footprint defined by a move on Binance is found more often when Binance moves more, which is why it was expected; what it adds is the size. The sliced share falls from 2.1% in calm hours to 1.0% in volatile ones, as expected, but the difference within the same hours is not clear (−0.7 points, p = 0.19). The clock-like share falls too, from 2.0% to 1.0%, the opposite of the hypothesis (p = 1.00): in a volatile hour so much else trades that the burst at the minute no longer stands out.
+
+**A change of style.** The sniper-like share was about 5% before 10 October, 17% on the day of the cascade, and about 9% on most days after it (bottom right). Part of this is volatility: 396 of the 576 out-of-sample hours fall into the most volatile third fixed in sample. But within each third the share is also about 2.5 to 3 points higher than in sample (2.6% against 5.2% in calm hours, 6.5% against 9.4% in volatile ones). After the cascade, more of Bybit's taker flow came just behind Binance. Lecture 22 (§5) found the market more reactive after the same date, a hysteresis after tipping; whether the two are linked was not tested, and is a research question.
+
+| Plain question | Measure | Out of sample | p (one-sided) | Verdict |
+|---|---|---|---|---|
+| Does slicing come at the same hours in both samples? | Spearman correlation, 24-hour profiles | 0.31 (−0.12 to 0.59) | 0.10 | Fails |
+| Do sniper-like orders come at the same hours? | Same | −0.17 (−0.46 to 0.27) | 0.70 | Fails |
+| Does the clock-like burst come at the same hours? | Same | 0.19 (−0.09 to 0.50) | 0.09 | Fails |
+| Is there less slicing in volatile hours? | Share, most less least volatile third, same hour of day | −0.7 points (−2.0 to 0.7) | 0.19 | Fails |
+| Are there more sniper-like orders in volatile hours? | Same | +4.6 points (3.3 to 6.2) | < 0.001 | Holds |
+| Is there more clock-like flow in volatile hours? | Same | −1.4 points (−2.6 to −0.6) | 1.00 | Fails (opposite sign) |
+
+<sub><b>How to read the table.</b> One row per p-value of H13 and H14, as fixed before the data were used. Brackets: 95% bands from 2,000 resamples of days (for H13, of the days of both samples). p-values before the correction over all twelve. Our calculation.</sub>
+
+**For a quoter.** The time of day says little; volatility says much. In a volatile hour almost one taker order in ten by size comes just behind a move on Binance, and since 10 October that share has been higher at every level of volatility. A quoting rule should therefore watch Binance and the hour's volatility, not the clock on the wall.
 
 ## 5. Runs as they start
 
