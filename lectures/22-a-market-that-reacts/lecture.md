@@ -49,14 +49,20 @@ The mechanisms behind the map cannot be seen in Bybit's data, because the data n
 
 **Why it is worth studying.** It gives four things real data cannot. The **counterfactual**: we copy the market at a moment and run it on with and without our order, which on real data is never possible. **Rare events on demand**: our 45 days hold one cascade, the laboratory thousands of near-tips. **Instruments checked before use**: a measure is first tried where the answer is known, as physicists inject fake signals into their own detectors. **Questions that transfer**: who supplies liquidity, how much capital is left to correct the price, where stops lie. What it does not give is numbers about Bybit. Every size, rate and threshold in it is invented, prices are in ticks of an invented market, and the size of any effect on Bybit is left to Sections 3 to 5. Every figure from it is marked *Invented*.
 
-| Trader | Rule | Stands for |
-|---|---|---|
-| Noise traders | Limit orders, market orders and cancellations at random | Everyone whose reasons we cannot model |
-| Value traders | Buy below a hidden value, sell above it, when the gap exceeds a threshold; capital limited or not | Arbitrageurs who tie the price to its value |
-| Market maker | Quotes a ladder around its estimate of the value, leaning against its position; may pull all quotes after a fast move (kill switch) | Liquidity providers |
-| Stops and liquidations | Rest at a density around the price; a move through them becomes a market order in the same direction | Stop-losses and forced closes of leveraged positions |
+**How the traders are built.** Each trader is a small object with a written rule, a wake-up time and a record of its orders; the exchange runs whichever wakes first, matches orders by price and then time, and publishes only what Bybit publishes: the book every 100 ms without owners, and the trades without names. Traders are added one at a time, and each is checked on cases computed by hand before it joins.
 
-<sub><b>How to read the table.</b> The traders of the laboratory market used in this lecture. The hidden value moves as a random walk. The code and checks are in `scripts/l22_sim.py` and `scripts/checks/test_sim.py`.</sub>
+| Trader | Rule | Stands for | Anchored in |
+|---|---|---|---|
+| Noise traders | Limit orders, market orders and cancellations at random rates | Everyone whose reasons we cannot model | Zero-intelligence traders of the simulation literature |
+| Value traders | Trade towards a hidden value when the gap exceeds a threshold; capital limited or not | Arbitrageurs who tie the price to its value | Limits of arbitrage (Shleifer and Vishny, 1997) |
+| Market maker | Quotes a ladder around its estimate of the value, leaning against its position; may pull all quotes after a fast move (kill switch) and quote one side beyond a position limit | Liquidity providers | Inventory models of market making |
+| Sniper | Sees the value first and trades when the mid is a set distance from it, holding until the other edge | A fast trader who picks off stale quotes | Stale-quote sniping (Budish, Cramton and Shim, draft); the band rule of Rabechini Amaral (2026) |
+| Slicer (TWAP) | Splits a parent order into equal market orders every 30 s | A trader working a large order over time | Bybit's TWAP tool, default interval 30 s |
+| Trend followers | At each bar close, compare a fast and a slow average of the mid and go long or short | Bar-based trend rules | Bursts of trading at clock marks (Kim and Hansen, 2026, preprint) |
+| Scalper | Joins the best price, exits a few ticks better or at a stop | A one-level market maker, the floor scalper | Silber (1984) |
+| Stops and liquidations | Rest at a density around the price; a move through them becomes a market order in the same direction | Stop-losses and forced closes of leveraged positions | |
+
+<sub><b>How to read the table.</b> The traders of the laboratory market. The hidden value moves as a random walk, with occasional jumps where a sniper is present. The code and its hand-case checks are in `scripts/l22_sim.py` and `scripts/checks/test_sim.py`. How each style can be recognised from public data alone, and how far our measures succeed where the answer is known, is the subject of the lecture on trading styles that follows this one.</sub>
 
 ### 2.1 The calm side: why a push fades
 
