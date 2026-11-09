@@ -45,7 +45,7 @@ The lecture runs as follows:
 
 ## 2. A laboratory market
 
-The mechanisms behind the map cannot be seen in Bybit's data, because the data never say who traded, who withdrew or whose capital ran out. This section builds them where they can be seen: a **laboratory market**, a small exchange in which a handful of traders follow written rules. It is a caricature on purpose. Physicists study magnets with a grid of arrows that no magnet resembles (the Ising model), because the grid shows how a sudden change arises from simple rules; Schelling (1978) showed with a board and two kinds of counters how mild individual preferences tip a whole neighbourhood. Our market is used in the same spirit.
+The mechanisms behind the map cannot be seen in Bybit's data, because the data never say who traded, who withdrew or whose capital ran out. This section builds them where they can be seen: a **laboratory market**, a small exchange in which a handful of traders follow written rules. It is a caricature on purpose. Physicists study magnets with a grid of arrows that no magnet resembles (the Ising model), because the grid shows how a sudden change arises from simple rules; Schelling (1971; 1978, ch. 4) showed with a board and two kinds of counters how mild individual preferences tip a whole neighbourhood. Our market is used in the same spirit.
 
 **From players to the collective.** The point of the laboratory is to see how individual rules add up. The same traders produce three regimes:
 
@@ -66,7 +66,7 @@ The mechanisms behind the map cannot be seen in Bybit's data, because the data n
 | Noise traders | Limit orders, market orders and cancellations at random rates | Everyone whose reasons we cannot model | Zero-intelligence traders of the simulation literature |
 | Value traders | Trade towards a hidden value when the gap exceeds a threshold; capital limited or not | Arbitrageurs who tie the price to its value | Limits of arbitrage (Shleifer and Vishny, 1997) |
 | Market maker | Quotes a ladder around its estimate of the value, leaning against its position; may pull all quotes after a fast move (kill switch) and quote one side beyond a position limit | Liquidity providers | Inventory models of market making |
-| Sniper | Sees the value first and trades when the mid is a set distance from it, holding until the other edge | A fast trader who picks off stale quotes | Stale-quote sniping (Budish, Cramton and Shim, draft); the band rule of Rabechini Amaral (2026) |
+| Sniper | Sees the value first and trades when the mid is a set distance from it, holding until the other edge | A fast trader who picks off stale quotes | Stale-quote sniping (Budish, Cramton and Shim, 2015, a model result); the band rule of Rabechini Amaral (2026) |
 | Slicer (TWAP) | Splits a parent order into equal market orders every 30 s | A trader working a large order over time | Bybit's TWAP tool, default interval 30 s |
 | Trend followers | At each bar close, compare a fast and a slow average of the mid and go long or short | Bar-based trend rules | Bursts of trading at clock marks (Kim and Hansen, 2026, preprint) |
 | Scalper | Joins the best price, exits a few ticks better or at a stop | A one-level market maker, the floor scalper | Silber (1984) |
@@ -120,17 +120,17 @@ Read by the state at the moment of the order, two results stand out.
 
 **A fat tail.** With the maker out of the book, the median cost of a 10 BTC sell doubles and its 90th percentile more than doubles. The tail, not the average, carries the risk, so this lecture reports costs as percentiles.
 
-**Physics: a chain reaction.** If each trade or quote withdrawal sets off on average n others, a push of size 1 has a total effect of about 1/(1 − n): it dies out while n stays below 1 and runs away as n reaches 1, as in a reactor going critical. The quantity is the branching ratio of a Hawkes process, which Lecture 20 measured on Bybit. Whether markets sit near n = 1 is disputed: Filimonov and Sornette (2012) found reflexivity rising towards it, Hardiman, Bercot and Bouchaud (2013) found it close to 1 throughout. Fosset, Bouchaud and Benzaquen (2020) built an order-book model in which liquidity that falls after volatility, and volatility that rises when liquidity falls, produce exactly such a threshold: stable for weak feedback, crises with certainty above it.
+**Physics: a chain reaction.** If each trade or quote withdrawal sets off on average n others, a push of size 1 has a total effect of about 1/(1 − n): it dies out while n stays below 1 and runs away as n reaches 1, as in a reactor going critical. The quantity is the branching ratio of a Hawkes process, which Lecture 20 measured on Bybit. Whether markets sit near n = 1 is disputed. On E-mini S&P 500 futures, Filimonov and Sornette (2012) found n rising from about 0.3 in 1998-2000 to 0.7-0.8 after 2007, and 0.95 in the flash crash of 6 May 2010; Hardiman, Bercot and Bouchaud (2013), fitting a kernel with a longer memory to the same market, found it close to 1 throughout. Fosset, Bouchaud and Benzaquen (2020) found that liquidity falls after volatility and price trends, and built an order-book model in which that feedback produces exactly such a threshold: stable for weak feedback, crises with certainty above it.
 
 **Physics: slowing down before the edge.** Near a tipping point a system recovers ever more slowly from small shocks (Scheffer et al., 2009). In a book, recovery is the refill of what an order took (§3.2); a refill that slows is the textbook early warning. The warning is not guaranteed: later work found cases where it does not appear or comes too late.
 
-**Game theory: a run on liquidity.** A kill switch is rational for each maker: when others pull, the one who stays is left alone against the flow. Each maker's best move depends on what the others do, so the market has two stable outcomes, all stay or all pull, as in a bank run (Diamond and Dybvig, 1983); which one occurs is the question of global games (Morris and Shin, 1998). The rule that protects each maker makes the market fragile for all.
+**Game theory: a run on liquidity.** A kill switch is rational for each maker: when others pull, the one who stays is left alone against the flow. Each maker's best move depends on what the others do, so the market has two stable outcomes, all stay or all pull, as in a bank run (Diamond and Dybvig, 1983). Morris and Shin (1998) showed that when each player has only a noisy private view of the fundamentals, the outcome becomes unique and the fundamentals decide it. The rule that protects each maker makes the market fragile for all.
 
 ### 2.3 Ignition, by itself and on purpose
 
 **Key message.** A large enough push into a fragile book sets off stops and withdrawals; nobody needs to intend it, and intending it does not pay in our laboratory.
 
-**Momentum ignition** is the name for trading aggressively to set off others' rules and then trading against the move. Regulators have described it as a concern of fast markets, and in many jurisdictions it is treated as manipulation; it is shown here as a risk to recognise, not a strategy. Brunnermeier and Pedersen (2005) give the game-theoretic version: traders who sell ahead of a distressed seller and buy back after.
+**Momentum ignition** is the name for trading aggressively to set off others' rules and then trading against the move. The US Securities and Exchange Commission described it in 2010 as initiating "a series of orders and trades ... in an attempt to ignite a rapid price move", for instance to "trigger standing stop loss orders", and its staff reviewed the evidence in 2014. Manipulation is illegal, and the practice raises that concern; it is shown here as a risk to recognise, not a strategy. Brunnermeier and Pedersen (2005) give the game-theoretic version: traders who sell ahead of a distressed seller and buy back after.
 
 ![Step 9: ignition, by itself and on purpose](figures/22_sim_step9.png)
 <sub><b>How to read the figure.</b> <b>Axes.</b> All panels: the value traders' capital (x). Left: 10 s windows with a move of 15 ticks or more, per hour (y). Middle: profit per BTC of selling 10 BTC and buying back at the market 60 s later, ticks (y). Right: share of such round trips with a profit (y). <i>Invented</i>; 3 seeds × 20 moments per world. Bars: ± one standard error.</sub>
@@ -218,7 +218,7 @@ At the prices an order took, the median share standing again is 0% from half a s
 
 **Key message.** Much more trading follows an order on its side than at control moments, but most of it is a stream already under way, not a reaction to the order.
 
-At first look, an order of 0.01 to 0.1 BTC was followed within a second by 1.9 BTC more than its controls on the same side, 50 times its size. Matching on the market's activity changed this little. What explained it was a stream already running. On 1 October, orders of 20 BTC or more were followed by 49 BTC on their side when more than three quarters of the last 10 s of taker size had been on that side, and by 6 BTC when less than a quarter had. This is the long memory of order signs: large orders are split into many pieces, and the pieces follow each other (Lillo and Farmer, 2004).
+At first look, an order of 0.01 to 0.1 BTC was followed within a second by 1.9 BTC more than its controls on the same side, 50 times its size. Matching on the market's activity changed this little. What explained it was a stream already running. On 1 October, orders of 20 BTC or more were followed by 49 BTC on their side when more than three quarters of the last 10 s of taker size had been on that side, and by 6 BTC when less than a quarter had. Order signs have long memory: a buy is followed by buys far longer than chance allows (Lillo and Farmer, 2004). The splitting of large orders into many pieces was proposed as its cause and formalised by Lillo, Mike and Farmer (2005).
 
 An order of ours has no stream behind it, so the controls now also match the share of the last 10 s on the order's side. The follow-on falls only modestly, to 28 BTC after orders of 20 BTC or more, because an order of a given size also tells that a large trader is active now. Without trader identities, public data cannot separate a reaction from the same trader's next slices. The hybrid replay therefore takes its triggered trading (layer D) from orders that came against the recent flow, the closest real cousins of an order with no stream, and reports the full-sample curve as an upper bound.
 
@@ -308,23 +308,26 @@ The calm-day replay holds near the calm end of the map. Near the other end, two 
 
 ### 6.3 Reading list
 
-The references of §2 to §5, each with what it is used for, are listed below.
+The references of §2 to §5, each with what it is used for.
 
-- Aquilina, M., Budish, E. and O'Neill, P. (2022). Quantifying the high-frequency trading "arms race". *Quarterly Journal of Economics*. — races leave no trace for the losers (§2.4).
-- Brunnermeier, M. K. and Pedersen, L. H. (2005). Predatory trading. *Journal of Finance*. — selling ahead of a distressed seller (§2.3).
-- Budish, E., Cramton, P. and Shim, J. (draft). Work on liquidity provision and sniping stale quotes. — the sniper as a role (§2.1).
-- Diamond, D. W. and Dybvig, P. H. (1983). Bank runs, deposit insurance, and liquidity. *Journal of Political Economy*. — two stable outcomes, all stay or all run (§2.2).
-- Donier, J. and Bonart, J. (2015). A million metaorder analysis of market impact on the Bitcoin. — square-root impact on bitcoin (§3.1).
-- Filimonov, V. and Sornette, D. (2012). Quantifying reflexivity in financial markets: towards a prediction of flash crashes. arXiv 1201.3572. — branching ratio as reflexivity (§2.2).
-- Fosset, A., Bouchaud, J.-P. and Benzaquen, M. (2020). Endogenous liquidity crises. *Journal of Statistical Mechanics*, arXiv 1912.00359. — a threshold between stable and crisis-prone books (§2.2).
-- Hardiman, S. J., Bercot, N. and Bouchaud, J.-P. (2013). Critical reflexivity in financial markets: a Hawkes process analysis. arXiv 1302.1405. — markets close to n = 1 (§2.2).
-- Kim, C. and Hansen, P. R. (2026). The Quarter-Hour Effect: periodic algorithmic trading and return predictability in cryptocurrency futures. arXiv 2607.09426, preprint. — bursts at clock marks (§2.1, §2.4).
-- Lillo, F. and Farmer, J. D. (2004). The long memory of the efficient market. — order signs follow each other because orders are split (§3.3).
-- Morris, S. and Shin, H. S. (1998). Unique equilibrium in a model of self-fulfilling currency attacks. *American Economic Review*. — global games (§2.2).
-- Rabechini Amaral (2026). arXiv 2608.00885, theoretical, preliminary draft. — the band rule of the sniper (§2.1, §2.4).
-- Scheffer, M. et al. (2009). Early-warning signals for critical transitions. *Nature* 461, 53-59. — slowing recovery before a tipping point (§2.2).
-- Schelling, T. C. (1978). *Micromotives and Macrobehavior*. — simple rules, sudden collective change (§2).
-- Silber, W. L. (1984). Marketmaker behavior in an auction market: an analysis of scalpers in futures markets. *Journal of Finance* 39(4), 937-953. — the floor scalper (§2.1).
-- Shleifer, A. and Vishny, R. W. (1997). The limits of arbitrage. *Journal of Finance*. — arbitrage capital runs out (§2.2).
+- Aquilina, M., Budish, E. and O'Neill, P. (2022). Quantifying the high-frequency trading "arms race". *Quarterly Journal of Economics* 137(1), 493-564. — in book data the losers of a race leave no trace (§2.4).
+- Brunnermeier, M. K. and Pedersen, L. H. (2005). Predatory trading. *Journal of Finance* 60(4), 1825-1863. — when one trader must sell, others sell first and buy back (§2.3).
+- Budish, E., Cramton, P. and Shim, J. (2015). The high-frequency trading arms race: frequent batch auctions as a market design response. *Quarterly Journal of Economics* 130(4), 1547-1621. — identical fast firms split into one liquidity provider and stale-quote snipers, indifferent between the roles (§2.1).
+- Diamond, D. W. and Dybvig, P. H. (1983). Bank runs, deposit insurance, and liquidity. *Journal of Political Economy* 91(3), 401-419. — two equilibria, all stay or all run (§2.2).
+- Donier, J. and Bonart, J. (2015). A million metaorder analysis of market impact on the Bitcoin. *Market Microstructure and Liquidity* 1(2), 1550008. — square-root impact of metaorders on bitcoin (§3.1).
+- Filimonov, V. and Sornette, D. (2012). Quantifying reflexivity in financial markets: toward a prediction of flash crashes. *Physical Review E* 85(5), 056108. — the branching ratio as a measure of reflexivity (§2.2).
+- Fosset, A., Bouchaud, J.-P. and Benzaquen, M. (2020). Endogenous liquidity crises. *Journal of Statistical Mechanics: Theory and Experiment*, 063401. — a threshold between a stable and a crisis-prone book (§2.2).
+- Hardiman, S. J., Bercot, N. and Bouchaud, J.-P. (2013). Critical reflexivity in financial markets: a Hawkes process analysis. *European Physical Journal B* 86(10). — the branching ratio close to 1 throughout (§2.2).
+- Kim, C. and Hansen, P. R. (2026). The quarter-hour effect: periodic algorithmic trading and return predictability in cryptocurrency futures. arXiv 2607.09426, preprint. — bursts in volatility and volume at minute, five-minute and quarter-hour marks (§2.1, §2.4).
+- Lillo, F. and Farmer, J. D. (2004). The long memory of the efficient market. *Studies in Nonlinear Dynamics & Econometrics* 8(3). — long memory of order signs (§3.3).
+- Lillo, F., Mike, S. and Farmer, J. D. (2005). Theory for long memory in supply and demand. *Physical Review E* 71, 066122. — order splitting as the cause of that memory (§3.3).
+- Morris, S. and Shin, H. S. (1998). Unique equilibrium in a model of self-fulfilling currency attacks. *American Economic Review* 88(3), 587-597. — noisy private information makes the outcome unique (§2.2).
+- Rabechini Amaral, L. (2026). Optimal trading of microstructure mean reversion. arXiv 2608.00885, preliminary. — the band rule of the sniper; proven optimal on a Gaussian surrogate (§2.1, §2.4).
+- Scheffer, M., Bascompte, J., Brock, W. A., Brovkin, V., Carpenter, S. R., Dakos, V., Held, H., van Nes, E. H., Rietkerk, M. and Sugihara, G. (2009). Early-warning signals for critical transitions. *Nature* 461, 53-59. — slower recovery before a tipping point (§2.2).
+- Schelling, T. C. (1971). Dynamic models of segregation. *Journal of Mathematical Sociology* 1(2), 143-186; and (1978). *Micromotives and Macrobehavior*, ch. 4. Norton. — simple rules, sudden collective change (§2).
+- Securities and Exchange Commission (2010). Concept release on equity market structure. Release No. 34-61358. — momentum ignition described (§2.3).
+- Securities and Exchange Commission, Division of Trading and Markets (2014). Equity market structure literature review, part II: high frequency trading. Staff paper, §III.B.3. — evidence on momentum ignition (§2.3).
+- Shleifer, A. and Vishny, R. W. (1997). The limits of arbitrage. *Journal of Finance* 52(1), 35-55. — arbitrage fails when prices are far from value and capital is withdrawn after losses (§2.2).
+- Silber, W. L. (1984). Marketmaker behavior in an auction market: an analysis of scalpers in futures markets. *Journal of Finance* 39(4), 937-953. — one floor scalper's records: scalpers as market makers holding for minutes (§2.1).
 
-*References are given from memory and should be checked against the originals before circulation.*
+*References were checked against their sources or standard bibliographic records on 9 November 2026; quotations from the originals.*
