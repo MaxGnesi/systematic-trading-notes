@@ -73,7 +73,7 @@ class PingPong:
             if self.exit == "a":
                 fn = (lambda a, b: A.bid[a:b]) if s == 1 else (lambda a, b: A.ask[a:b])
             else:
-                tgt = l["p"] + l["s"] * self.exit[1]; fn = lambda a, b, tgt=tgt: np.full(b - a, float(tgt))
+                tgt = float(l["p"] + l["s"] * self.exit[1]); fn = lambda a, b, tgt=tgt: np.full(b - a, tgt); fn.const = tgt   # a fixed price
             out[("c", l["id"])] = (s, fn, "close", l["id"])
         return out
 

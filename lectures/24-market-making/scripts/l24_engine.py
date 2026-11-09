@@ -13,6 +13,16 @@ L21 = L.L21; WIN = 1_800_000; INF = np.iinfo(np.int64).max
 
 
 class Win(MM.Window):
+    def __init__(self, day, a, b, side):
+        """As Lecture 21's window, with the levels split by sorting instead of a group-by (the same arrays, faster)."""
+        B, T, S = L21.window(day, a - MM.PRE, b + MM.POST, side=side); sg = side
+        tk, c, z = B["tick"].to_numpy() * sg, B["cts"].to_numpy(), B["size"].to_numpy(); o = np.lexsort((c, tk))   # stable: by price, then time
+        tk, c, z = tk[o], c[o], z[o]; u, i0 = np.unique(tk, return_index=True); e = np.r_[i0, len(tk)]
+        self.lev = {int(u[j]): (c[e[j]:e[j + 1]], z[e[j]:e[j + 1]]) for j in range(len(u))}
+        T = T.filter(pl.col("side") == -sg).with_columns(pl.col("tick") * sg).sort("ts")
+        self.tt, self.tk, self.tz = (T[x].to_numpy() for x in ("ts", "tick", "size"))
+        self.end = b + MM.POST
+
     def fill(self, p, ta, tend, rule="Q2", a=1.0):
         c, _ = self.lev.get(p, (None, None))
         if c is None or np.searchsorted(c, ta, side="right") - 1 < 0:                          # no message at this price yet: empty, we are first in line
@@ -74,6 +84,8 @@ class State:
 
 def next_change(fn, k, p, n):
     """The first index after k at which the path fn differs from p (NaN counts as different; for p = NaN, the first index with a price), or n."""
+    c = getattr(fn, "const", None)
+    if c is not None: return n if c == p else min(k + 1, n)                                    # a fixed price never changes
     a, step = k + 1, 256
     while a < n:
         b = min(a + step, n); x = fn(a, b); d = np.nonzero(~np.isnan(x) if np.isnan(p) else np.isnan(x) | (x != p))[0]
@@ -82,59 +94,75 @@ def next_change(fn, k, p, n):
     return n
 
 
+def run_window(design, st, F, W, A, w0, b, rule, a, lat):
+    """One design through one half-hour window; st (its open lots) and F (its fills) carry over to the next window."""
+    n = len(A.ts); live, dying = {}, []; r = w0
+    while r < b:
+        k = A.at(r); want = design.slots(st, A, k)
+        for key, o in list(live.items()):                                                     # cancel what is no longer wanted at its price
+            if key not in want or want[key][1](k, k + 1)[0] != o.p:
+                o.tend = r + lat; dying.append(o); del live[key]
+        idle = []                                                                             # wanted sides with no order: when to look again
+        for key, (s, fn, role, lot) in want.items():                                          # post what is wanted and not live
+            if key in live: continue
+            p = fn(k, k + 1)[0]
+            if np.isnan(p): idle.append(next_change(fn, k, np.nan, n)); continue
+            ta = r + lat; ka = A.at(ta); cross = (s == 1 and p >= A.ask[ka]) or (s == -1 and p <= A.bid[ka])
+            if cross and role == "close":                                                     # a closing order that trades on arrival: taker
+                F.append((ta, s, A.ask[ka] if s == 1 else A.bid[ka], role, True)); st.add(s, None, ta, role, lot); want = None; break
+            if cross: idle.append(min(ka + 1, n)); continue                                   # post-only: rejected, try at the next update
+            live[key] = Order(key, s, p, ta, role, lot)
+        if want is None: r = r + lat; continue
+        ev = []
+        for key, o in live.items():
+            fn = want[key][1]; kc = next_change(fn, k, o.p, n); rc = int(A.ts[kc]) if kc < n else INF; tend = min(rc + lat, b)
+            if o.cache[0] != tend: o.cache = (tend, W[o.s].fill(int(o.s * o.p), o.ta, tend, rule, a))
+            tf = o.cache[1]; ev.append((tf, 0, o) if tf is not None else (rc, 1, o))
+        for o in dying:
+            tf = W[o.s].fill(int(o.s * o.p), o.ta, o.tend, rule, a)
+            if tf is not None: ev.append((tf, 0, o))
+        dying = [o for o in dying if o.tend > r]
+        ev += [(int(A.ts[j]), 1, None) for j in idle if j < n]
+        stop = design.stop(st, A, k, r)
+        if stop: ev.append((stop[0], 2, stop[1]))
+        if not ev: break
+        t, kind, x = min(ev, key=lambda e: (e[0], e[1]))
+        if t >= b: break
+        if kind == 0:
+            F.append((t, x.s, x.p, x.role, False)); st.add(x.s, x.p, t, x.role, x.lot)
+            if x.key in live and live[x.key] is x: del live[x.key]
+            if x in dying: dying.remove(x)
+            for o in list(live.values()) + dying:                                             # the other order of a closed lot goes
+                if x.role == "close" and o.lot == x.lot and o is not x: live.pop(o.key, None)
+            r = max(t, r + 1)
+        elif kind == 1:
+            r = max(t, r + 1)
+        else:                                                                                 # a stop: close the lot as a taker
+            lot = x; ta = t + lat; ka = A.at(ta); s = -lot["s"]
+            for key in [kk for kk, o in live.items() if o.lot == lot["id"]]: del live[key]
+            F.append((ta, s, A.ask[ka] if s == 1 else A.bid[ka], "stop", True)); st.add(s, None, ta, "close", lot["id"]); r = ta
+
+
+def frame(F):
+    return pl.DataFrame(F, schema=["t", "s", "p", "role", "taker"], orient="row") if F else pl.DataFrame(schema={"t": pl.Int64, "s": pl.Int64, "p": pl.Float64, "role": pl.Utf8, "taker": pl.Boolean})
+
+
+def run_days(day, designs, rule="Q2", a=L.A, lat=L.LAT, A=None, windows=None):
+    """Several designs through one day, each book window built once. windows: the half-hour windows to run (0 to 47), for samples and tests; a design's
+    lots carry over between consecutive windows only, and it starts flat after a gap. Returns {name: fills} and the arrays."""
+    A = A or Arrays(day); d0 = L21.ms(day); ws = list(range(48)) if windows is None else list(windows)
+    st = {d.name: State() for d in designs}; F = {d.name: [] for d in designs}; prev = None
+    for w in ws:
+        if prev is not None and w != prev + 1: st = {d.name: State() for d in designs}
+        w0 = d0 + w * WIN; W = {1: Win(day, w0, w0 + WIN, 1), -1: Win(day, w0, w0 + WIN, -1)}
+        for d in designs: run_window(d, st[d.name], F[d.name], W, A, w0, w0 + WIN, rule, a, lat)
+        del W; prev = w
+    return {k: frame(v) for k, v in F.items()}, A
+
+
 def run_day(day, design, rule="Q2", a=L.A, lat=L.LAT, A=None, hours=None):
-    """One day of one design. Returns the fills (t, s, p in ticks, role, taker) and the arrays used. hours: (first, last) half-hour windows, for short tests."""
-    A = A or Arrays(day); n = len(A.ts); st = State(); F = []; d0 = L21.ms(day)
-    w_a, w_b = (0, 48) if hours is None else hours
-    for w0 in range(d0 + w_a * WIN, d0 + w_b * WIN, WIN):
-        W = {1: Win(day, w0, w0 + WIN, 1), -1: Win(day, w0, w0 + WIN, -1)}; b = w0 + WIN; live, dying = {}, []; r = w0
-        while r < b:
-            k = A.at(r); want = design.slots(st, A, k)
-            for key, o in list(live.items()):                                                     # cancel what is no longer wanted at its price
-                if key not in want or want[key][1](k, k + 1)[0] != o.p:
-                    o.tend = r + lat; dying.append(o); del live[key]
-            idle = []                                                                             # wanted sides with no order: when to look again
-            for key, (s, fn, role, lot) in want.items():                                          # post what is wanted and not live
-                if key in live: continue
-                p = fn(k, k + 1)[0]
-                if np.isnan(p): idle.append(next_change(fn, k, np.nan, n)); continue
-                ta = r + lat; ka = A.at(ta); cross = (s == 1 and p >= A.ask[ka]) or (s == -1 and p <= A.bid[ka])
-                if cross and role == "close":                                                     # a closing order that trades on arrival: taker
-                    F.append((ta, s, A.ask[ka] if s == 1 else A.bid[ka], role, True)); st.add(s, None, ta, role, lot); want = None; break
-                if cross: idle.append(min(ka + 1, n)); continue                                   # post-only: rejected, try at the next update
-                live[key] = Order(key, s, p, ta, role, lot)
-            if want is None: r = r + lat; continue
-            ev = []
-            for key, o in live.items():
-                fn = want[key][1]; kc = next_change(fn, k, o.p, n); rc = int(A.ts[kc]) if kc < n else INF; tend = min(rc + lat, b)
-                if o.cache[0] != tend: o.cache = (tend, W[o.s].fill(int(o.s * o.p), o.ta, tend, rule, a))
-                tf = o.cache[1]; ev.append((tf, 0, o) if tf is not None else (rc, 1, o))
-            for o in dying:
-                tf = W[o.s].fill(int(o.s * o.p), o.ta, o.tend, rule, a)
-                if tf is not None: ev.append((tf, 0, o))
-            dying = [o for o in dying if o.tend > r]
-            ev += [(int(A.ts[j]), 1, None) for j in idle if j < n]
-            stop = design.stop(st, A, k, r)
-            if stop: ev.append((stop[0], 2, stop[1]))
-            if not ev: break
-            t, kind, x = min(ev, key=lambda e: (e[0], e[1]))
-            if t >= b: break
-            if kind == 0:
-                F.append((t, x.s, x.p, x.role, False)); st.add(x.s, x.p, t, x.role, x.lot)
-                if x.key in live and live[x.key] is x: del live[x.key]
-                if x in dying: dying.remove(x)
-                for o in list(live.values()) + dying:                                             # the other order of a closed lot goes
-                    if x.role == "close" and o.lot == x.lot and o is not x: live.pop(o.key, None)
-                r = max(t, r + 1)
-            elif kind == 1:
-                r = max(t, r + 1)
-            else:                                                                                 # a stop: close the lot as a taker
-                lot = x; ta = t + lat; ka = A.at(ta); s = -lot["s"]
-                for key in [kk for kk, o in live.items() if o.lot == lot["id"]]: del live[key]
-                F.append((ta, s, A.ask[ka] if s == 1 else A.bid[ka], "stop", True)); st.add(s, None, ta, "close", lot["id"]); r = ta
-        del W
-    D = pl.DataFrame(F, schema=["t", "s", "p", "role", "taker"], orient="row") if F else pl.DataFrame(schema={"t": pl.Int64, "s": pl.Int64, "p": pl.Float64, "role": pl.Utf8, "taker": pl.Boolean})
-    return D, A
+    """One design (hours: (first, last) half-hour windows)."""
+    R, A = run_days(day, [design], rule, a, lat, A, None if hours is None else range(*hours)); return R[design.name], A
 
 
 def score(D, A, size=L.SIZE):
