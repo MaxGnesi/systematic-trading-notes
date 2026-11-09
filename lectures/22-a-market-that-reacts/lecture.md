@@ -41,7 +41,8 @@ The lecture runs as follows:
 | 3 | The reaction on our data | How far does the price move after real orders, does the book refill, and do others follow? |
 | 4 | Does the hybrid replay tell the truth? | H1 to H8, out of sample (to follow) |
 | 5 | Close to the tipping point | 10 October, H9 and H20 (to follow) |
-| 6 | Summary, exercises and reading | (to follow) |
+| 6 | What it means for an algorithm | Which signals to read at each stage, what to do, and how to test in calm and fast markets |
+| 7 | Summary, exercises and reading | |
 
 ## 2. A laboratory market
 
@@ -55,7 +56,7 @@ The mechanisms behind the map cannot be seen in Bybit's data, because the data n
 | Near the tipping point | Makers pull their quotes after fast moves; arbitrageurs near their capital limits stop correcting; stops sit close to the price | A push that stays, and a cost with a fat tail: the restoring forces weaken while the amplifying ones wait | Pulling is rational for each maker when others pull (a run on liquidity); capital is finite (limits of arbitrage) |
 | Cascade | Stops and forced closes fire into a thin book; trend followers and others join the move | A move that feeds on itself until the fuel near the price is used up: positive feedback | Each trade sets off more than one other, a chain reaction above its threshold; after it the book stays thin for a while (hysteresis) |
 
-<sub><b>How to read the table.</b> One row per regime of the laboratory market (§2.1 to §2.3); the same traders appear in every row, only their state and their incentives change. On Bybit, the calm row is what the hybrid replay measures (§3, §4); the second is tested by H20 and the third by 10 October (§5).</sub>
+<sub><b>How to read the table.</b> One row per regime of the laboratory market (§2.1 to §2.4); the same traders appear in every row, only their state and their incentives change. On Bybit, the calm row is what the hybrid replay measures (§3, §4); the second is tested by H20 and the third by 10 October (§5).</sub>
 
 **Why it is worth studying.** It gives four things real data cannot. The **counterfactual**: we copy the market at a moment and run it on with and without our order, which on real data is never possible. **Rare events on demand**: our 45 days hold one cascade, the laboratory thousands of near-tips. **Instruments checked before use**: a measure is first tried where the answer is known, as physicists inject fake signals into their own detectors. **Questions that transfer**: who supplies liquidity, how much capital is left to correct the price, where stops lie. What it does not give is numbers about Bybit. Every size, rate and threshold in it is invented, prices are in ticks of an invented market, and the size of any effect on Bybit is left to Sections 3 to 5. Every figure from it is marked *Invented*.
 
@@ -126,7 +127,28 @@ Read by the state at the moment of the order, two results stand out.
 
 **Game theory: a run on liquidity.** A kill switch is rational for each maker: when others pull, the one who stays is left alone against the flow. Each maker's best move depends on what the others do, so the market has two stable outcomes, all stay or all pull, as in a bank run (Diamond and Dybvig, 1983). Morris and Shin (1998) showed that when each player has only a noisy private view of the fundamentals, the outcome becomes unique and the fundamentals decide it. The rule that protects each maker makes the market fragile for all.
 
-### 2.3 Ignition, by itself and on purpose
+### 2.3 From calm to cascade, step by step
+
+**Key message.** A cascade does not come from nowhere: the restoring forces wear away first, quietly, and only then does a small push set off a chain reaction that runs until its fuel is spent.
+
+To see the passage slowly, one fragile world of §2.2 (value traders' capital 8 BTC, stops, a kill switch at 5 ticks) was run for an hour and recorded every 100 ms. Its largest move, 84 ticks within 10 seconds, is shown from three minutes before to two minutes after.
+
+![The anatomy of a cascade in the laboratory market](figures/22_sim_step10.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> All panels: seconds from the start of the largest 10 s move of the run (x). Top: mid and hidden value, ticks from the mid at 0 s (y). Second: the market maker quoting (1) or out (0), and the share of their limit the value traders have used on the side that would correct the move (1 = no capital left) (y). Third: stops within 15 ticks below the price, and stops fired since the window began, BTC (y). Bottom: bids and asks within 10 ticks of the mid, BTC (y). <i>Invented</i>; one hour of one fragile world, seed 23.</sub>
+
+| Stage | Seconds | What the players do | What it adds up to | What could be seen |
+|---|---|---|---|---|
+| 1. Loading | −180 to −90 | The price has drifted 17 ticks below the value; the value traders are at their limit and stop buying | The restoring force from capital is gone, invisibly: the price looks calm | Depth near the price falling (from 14 to about 12 BTC); a lasting gap to the value |
+| 2. Flickering | −90 to 0 | The maker's kill switch fires four times: out 22% of the time; stops fire in small bursts (2.5 BTC) | The second restoring force flickers; each small move meets less depth | Quote pulls in bursts; depth near the price down to 5 BTC; the spread widening |
+| 3. Trigger and chain reaction | 0 to 15 | A small push meets an empty bid side: 3.5 BTC of stops fire, the maker is out a third of the time | Each sale sets off more: the mid falls 14 ticks at the median and 84 at the worst moment, when the bid side is empty | Bids within 10 ticks at zero; trades at prices far through the book |
+| 4. Exhaustion | 15 to 40 | The stops near the price are used up (from 1.6 to 0.2 BTC); the maker returns more often | The chain stops for lack of fuel, not because anyone corrects the price | Stops firing slows; depth starts to return (0.4 to 0.7 BTC) |
+| 5. Aftermath | 40 to 130 | Depth rebuilds slowly; the value traders are still at their limit | The price stays 36 ticks lower and 59 below the value: nobody has the capital to pull it back | Depth at about 5 BTC against 14 before; a large lasting gap to the value |
+
+<sub><b>How to read the table.</b> <i>Invented.</i> One row per stage of the recorded episode; numbers are medians over the stage unless stated. The stages are our reading of one episode; other episodes of the same world differ in timing, not in order.</sub>
+
+Three features matter. First, the price is the last thing to show the danger: in stages 1 and 2 it barely moves while the forces that would hold it erode. Second, the withdrawal flickers before it breaks: the maker steps out and back in several times, the pattern that Scheffer et al. (2009) list among the signals of an approaching transition. Third, a cascade ends when its fuel is spent, not when someone corrects it; if the capital that would correct it is still exhausted, the price stays where the cascade left it, the hysteresis of §5.
+
+### 2.4 Ignition, by itself and on purpose
 
 **Key message.** A large enough push into a fragile book sets off stops and withdrawals; nobody needs to intend it, and intending it does not pay in our laboratory.
 
@@ -139,7 +161,7 @@ Read by the state at the moment of the order, two results stand out.
 
 **On purpose.** Selling and buying back at the market loses on average in every world, by 1.4 to 20 ticks per BTC: paying the spread and the impact twice outweighs the overshoot. In fragile worlds 20 to 40% of round trips profit, a lottery with a negative mean. The kill switch hurts the pusher too: with makers out, up to 30% of a 10 BTC buy-back cannot be filled at once. Our pusher is naive; one that placed resting orders below the price before pushing, and collected the cascade as a maker, was not tested. Whether that version pays is an open question, so these results show only that the naive round trip does not.
 
-### 2.4 Who reacts to our order, and how
+### 2.5 Who reacts to our order, and how
 
 **Key message.** An algorithm is engineered against other traders: each type changes the market on its own, and each meets our order differently depending on whether we take liquidity (a market order) or provide it (a resting order).
 
@@ -149,7 +171,7 @@ The laboratory lets each type be added alone, so its effect on the market and on
 |---|---|---|---|---|
 | Market maker | Supplies most of the depth near the best; leans its quotes against its position; may pull everything after a fast move | It fills us, then leans: the price moves further for about a second and our next slice pays more (§2.1). If it has pulled, we walk a thin book and land in the tail of the cost (§2.2) | It competes with us for the front of the queue. When it pulls in a fast move, our order is left at the front alone and filled just before the price runs through (adverse selection, Lecture 21) | Its pulls are visible in the book (Lecture 18); on Bybit they predict a fatter cost tail (H20a, §5) |
 | Value traders (arbitrageurs) | Tie the price to its value; with limited capital they stop, and mispricings linger | They take the other side after us and pull the price back: our push fades, and a later slice is cheaper. Out of capital, our push stays (§2.2) | They fill our resting order when the price has moved away from the value, so its fills tend to come when the price is about to return | Not directly; the gap to another venue stands in for it, and did not predict persistence on Bybit (H20b, §5) |
-| Sniper | Removes stale quotes the moment the value moves; makes slow quoting costly | Competes with us for the same price after news; if it is faster, we pay the moved price | Takes our quote the moment it is stale: our resting order is filled exactly when it is wrong (§2.4, step 3) | Not from the book: the losers of a race leave no trace (Aquilina, Budish and O'Neill, 2022) |
+| Sniper | Removes stale quotes the moment the value moves; makes slow quoting costly | Competes with us for the same price after news; if it is faster, we pay the moved price | Takes our quote the moment it is stale: our resting order is filled exactly when it is wrong (§2.5, step 3) | Not from the book: the losers of a race leave no trace (Aquilina, Budish and O'Neill, 2022) |
 | Slicer (TWAP) | Steady one-sided flow at regular intervals; adds pressure in one direction without reacting | Trading with its side adds to its pressure; against it, it is a predictable counterparty | Fills our resting orders on the other side steadily, with little information in the fills | Yes: runs of eight or more equal orders at regular gaps; 93 to 96% of what the rule finds is a TWAP, but it finds only about 40% |
 | Trend followers | Flow in the direction of recent moves, bunched just after each bar close | A push near a crossing can set them off and move the price further than our order alone; sending into the seconds after a minute meets their burst | In the seconds after a whole minute, their flow fills resting orders against the trend, at a moment when the price tends to continue | Yes, through the clock: flow with the trend just after whole minutes is found from about 1% of taker size; a crossing rule finds nothing, because others take the flow back |
 | Scalper | A thin layer of quotes at the best that comes and goes | Provides a little depth at the best, gone after one fill | Stands ahead of us in the queue and leaves quickly, so our place in line is less certain | Only partly: an echo at its exit distance, but a market maker with a fixed order size leaves the same echo |
@@ -281,52 +303,101 @@ The calm-day replay holds near the calm end of the map. Near the other end, two 
 
 **10 October (H9).** Between 20:50 and 22:50 UTC on 10 October, orders of 1 BTC or more moved the price 4.5 times as far as the calm-day replay predicted. Only one evening was further out of line: Sunday 26 October, with 1,807 orders against 20,756, where the same ratio reached 5.1. So 10 October ranks second of 45, and H9 does not survive the correction. The model relative to the queue was no closer to 1 on 10 October (5.3). The cascade evening was extreme in how far each order moved the price, but a thin Sunday evening can match that ratio on far fewer orders; what set 10 October apart was the size of the move and the number of orders, not the reaction per order.
 
+**10 October, stage by stage.** Our data cannot see capital or stops, but the timing of the book and the flow fits the same stages, with one difference: the trigger was news.
+
+| Stage | Laboratory (§2.3) | 10 October 2025, Bybit (UTC) |
+|---|---|---|
+| Loading | Capital at its limit, depth thinning, price calm | Not visible: no measure of Lectures 19 and 20 warned before the post (Lecture 20, §4.3) |
+| Trigger | A small push into a loaded book | The tariff post at 20:50:01.7: news, not a push |
+| Withdrawal | The maker flickers out | Quote pulls and refill chains flagged at 20:55; depth at 20:58 |
+| Chain reaction | Stops fire into an empty book | The branching ratio flagged at 21:04; at 21:14 the first minute larger than any calm-day minute, the mid down USD 977; 426 bp from the post to then |
+| Aftermath | The price stays down, depth rebuilds slowly | Orders moved the price 1.4 times as far as before for three weeks (below) |
+
+<sub><b>How to read the table.</b> Left: the stages of the laboratory episode. Right: the times measured on Bybit in Lecture 20, §4, and in this section. On 10 October the stages are inferred from the book and the flow; who withdrew and whose stops fired cannot be seen.</sub>
+
 **After the cascade.** The left panel shows something no test asked about. Before 10 October the evening ratio sat below 1 (median 0.86); after it, above 1 on three evenings in four (median 1.42). The market stayed more reactive for at least three weeks after the cascade, as the thinner book of Lecture 20 already suggested. In the language of §2, this is hysteresis: after tipping, the system does not return at once to where it was. It is also why a replay calibrated before an event understates what orders cost after it, by about a third here.
 
-## 6. Summary, exercises and reading
+## 6. What it means for an algorithm
 
-### 6.1 Takeaways
+The players and their stages are not only a description of the market; they are what an algorithm meets. This section draws the consequences: what to watch, what to do, and how to test it, in calm markets and in fast ones.
 
-1. **A market's reaction is made by its players.** Makers, arbitrageurs, snipers, slicers, trend followers and stops each see a different part of our order and answer by their own rule; what our order costs is the sum of their answers (§2.4).
+### 6.1 Signals and actions by stage
+
+| Stage | The signal an algorithm can read | What it should do |
+|---|---|---|
+| Calm | Depth at its usual level, few quote pulls, the gap to other venues small | Trade normally; size and expect cost from the hybrid replay, as a distribution (median and 90th percentile, §3.1) |
+| Loading | Depth falling against its usual level; a lasting gap to other venues; extreme funding or open interest | Cut the size of each order relative to depth; keep resting orders small; raise the cost assumption |
+| Flickering | Quote pulls in bursts (H20a: the tail of cost doubles in the top fifth); the spread widening | Stop sending large market orders; slice more slowly and wait for refills; pull resting orders from the side a fall would hit |
+| Chain reaction | Depth near zero on one side; trades far through the book; the branching ratio high | Do not chase and do not be the trigger; quote only if the strategy is built and capitalised to absorb the flow; let the algorithm's own kill rules act |
+| Exhaustion and aftermath | Depth returning; stops firing slowing; costs still above normal | Return gradually; recalibrate cost curves, which can stay higher for weeks (1.4 times after 10 October, §5) |
+
+<sub><b>How to read the table.</b> The signals in the middle column are measured on our data where a section is given (H20a, §5); the actions are our design suggestions, not tested results. The thresholds that turn a signal into an action belong to the strategy and must be tested as below.</sub>
+
+Two warnings go with the table. The signals arrive late: on 10 October they came five to eight minutes after the news, not before it, so they say "the book is fragile now", not "a crash is coming". And an algorithm can be the trigger: in a loaded book our own order is the small push of stage 3, so the size rules matter most when the market looks calm and is not.
+
+### 6.2 Testing in both regimes
+
+Fast markets are hard to backtest: they are rare, our data hold one, and in them our own orders matter most. No single test covers them, so the work is a set of tests, each answering a different question.
+
+| Test | What it tests | What it cannot test |
+|---|---|---|
+| Hybrid replay on calm days | Normal slippage and cost distribution, with a replay validated out of sample (H6) | Anything the calm days did not contain |
+| Hybrid replay through stressed windows | The algorithm on real fast paths: 10 October, the moments with the most quote pulls, the weeks after a cascade, with impact curves fitted there or scaled by the measured ratios (4.5 on the night, 1.4 after) | Its own effect when it becomes a large part of the market; the record does not react to it beyond the layers |
+| The laboratory market with the algorithm as a player | Whether it triggers a cascade, is caught in one, or survives one, over the three dials and many seeds | Numbers: every setting is invented; it tests rules, not profits |
+| Shocks of chosen size | A book thinned by a share, impact multiplied, a jump in value or a burst of liquidations injected into the replay, over a grid of severities, to find where the algorithm breaks | Which severity will come |
+| Limits that need no model | A maximum position, a maximum order size relative to depth, the algorithm's own kill rules, the worst loss if every resting order is filled at the worst price | Nothing about likelihood: they bound the damage when the models are wrong |
+| Live at small size | Its real cost and fills, logged with the state of the book, against the replay's prediction | Fast markets until one happens; never provoke one on purpose |
+
+<sub><b>How to read the table.</b> One row per kind of test, from the cheapest to the slowest. The first two use real data, the third invented data, the last three need no model of the market at all, or only the real market.</sub>
+
+**Things may happen differently.** Every test above assumes we know what can go wrong. A fast market can unfold in an order or a way no test contained: the trigger on 10 October was a post on social media, not a trade. The answer is not one more scenario but limits that hold whatever happens, and a **pre-mortem** before going live: imagine the algorithm has lost badly in a fast market, and write down how. Each answer becomes a limit, a test or a signal to watch.
+
+## 7. Summary, exercises and reading
+
+### 7.1 Takeaways
+
+1. **A market's reaction is made by its players.** Makers, arbitrageurs, snipers, slicers, trend followers and stops each see a different part of our order and answer by their own rule; what our order costs is the sum of their answers (§2.5).
 2. **In calm markets the answers cancel the push.** Makers lean and arbitrageurs trade the price back, so a push fades: on Bybit a 5 BTC order still leaves about 1 bp after a minute, and the depth it took re-forms around the new best rather than where it was (§1, §3).
 3. **Near a tipping point the restoring forces weaken first.** Makers pull and arbitrage capital runs out before anything visible happens to the price; the first sign is in the tail of the cost, not its average (§2.2, H20a).
-4. **A cascade is a chain reaction.** When stops and forced closes sit in a thin book, each trade sets off more than one other, and the move feeds on itself until the fuel near the price is used up; no single ingredient does it (§2.3).
+4. **A cascade is a chain reaction.** When stops and forced closes sit in a thin book, each trade sets off more than one other, and the move feeds on itself until the fuel near the price is used up; no single ingredient does it (§2.4).
 5. **Rational for each, fragile for all.** A kill switch protects each maker and leaves the market without liquidity when everyone uses it, the structure of a run (§2.2).
 6. **A replay must react, and react to the whole order.** A plain replay forgets our order at once; the hybrid replay is closer for single orders (H6), but adding up the impact of many small slices made runs too dear by 3 bp (H7); charged by their cumulative size, they come out close (§4).
-7. **After tipping, a market does not snap back.** For three weeks after 10 October the same orders moved the price about 1.4 times as far as before; a replay calibrated on calm days understates the cost after an event (§5).
+7. **A cascade has stages, and the price is the last to show them.** The restoring forces wear away first, then flicker; a small push or a piece of news then sets off a chain reaction that ends when its fuel is spent (§2.3, §5).
+8. **Test in both regimes, and bound what no test covers.** Calm days for normal slippage, stressed windows and the laboratory for fast markets, shocks of chosen size, and limits that need no model (§6).
+9. **After tipping, a market does not snap back.** For three weeks after 10 October the same orders moved the price about 1.4 times as far as before; a replay calibrated on calm days understates the cost after an event (§5).
 
-### 6.2 Exercises
+### 7.2 Exercises
 
 - [ ] **Why runs cannot be added up.** With $`R = c\,S^{\delta}`$, show that $`n`$ equal slices of a parent order of size $`S`$, each charged its own impact, add up to $`n^{1-\delta}`$ times the impact of the whole order. Compute the factor for $`\delta = 0.23`$ and $`n = 10`$, and compare it with the bias of H7 (§4).
 - [ ] **The key chart for a seller.** Reproduce the key chart (§1) for a market sell, and for orders of 1 and 20 BTC. Where does the hybrid replay leave the band of real orders?
 - [ ] **Move the kill switch.** In the laboratory market, set the market maker's kill switch at 3 and at 8 ticks instead of 5 and rerun step 8. Does the tail of the cost move with it, or does it depend on something else?
 - [ ] **Construct a free profit.** In the laboratory, give a trader who posts a large bid the power to cancel it a moment before it is hit. With layer E on, show that the round trip of H8 now earns the reaction every time. What does this say about using a measured reaction as a cause?
-- [ ] **A smarter pusher.** Let the pusher of §2.3 place resting buys below the price before it sells, so that it collects the cascade as a maker. Does ignition now pay, and in which of the 16 worlds?
+- [ ] **A smarter pusher.** Let the pusher of §2.4 place resting buys below the price before it sells, so that it collects the cascade as a maker. Does ignition now pay, and in which of the 16 worlds?
 - [ ] **Depth instead of pulls.** Repeat H20a with fifths of the depth at the best five levels instead of quote pulls. Which of the two reads the tail of the cost better?
 - [ ] **After the cascade, all day.** The post-cascade rise of §5 was measured between 20:50 and 22:50 UTC. Repeat it for every hour of the day. Does the market stay more reactive at every hour, or only in the evening?
 - [ ] **A chain reaction on real data.** Using Lecture 20's Hawkes branching ratio, compare the weeks before and after 10 October. Does the ratio rise with the post-cascade reactivity of §5?
 
-### 6.3 Reading list
+### 7.3 Reading list
 
 The references of §2 to §5, each with what it is used for.
 
-- Aquilina, M., Budish, E. and O'Neill, P. (2022). Quantifying the high-frequency trading "arms race". *Quarterly Journal of Economics* 137(1), 493-564. — in book data the losers of a race leave no trace (§2.4).
-- Brunnermeier, M. K. and Pedersen, L. H. (2005). Predatory trading. *Journal of Finance* 60(4), 1825-1863. — when one trader must sell, others sell first and buy back (§2.3).
+- Aquilina, M., Budish, E. and O'Neill, P. (2022). Quantifying the high-frequency trading "arms race". *Quarterly Journal of Economics* 137(1), 493-564. — in book data the losers of a race leave no trace (§2.5).
+- Brunnermeier, M. K. and Pedersen, L. H. (2005). Predatory trading. *Journal of Finance* 60(4), 1825-1863. — when one trader must sell, others sell first and buy back (§2.4).
 - Budish, E., Cramton, P. and Shim, J. (2015). The high-frequency trading arms race: frequent batch auctions as a market design response. *Quarterly Journal of Economics* 130(4), 1547-1621. — identical fast firms split into one liquidity provider and stale-quote snipers, indifferent between the roles (§2.1).
 - Diamond, D. W. and Dybvig, P. H. (1983). Bank runs, deposit insurance, and liquidity. *Journal of Political Economy* 91(3), 401-419. — two equilibria, all stay or all run (§2.2).
 - Donier, J. and Bonart, J. (2015). A million metaorder analysis of market impact on the Bitcoin. *Market Microstructure and Liquidity* 1(2), 1550008. — square-root impact of metaorders on bitcoin (§3.1).
 - Filimonov, V. and Sornette, D. (2012). Quantifying reflexivity in financial markets: toward a prediction of flash crashes. *Physical Review E* 85(5), 056108. — the branching ratio as a measure of reflexivity (§2.2).
 - Fosset, A., Bouchaud, J.-P. and Benzaquen, M. (2020). Endogenous liquidity crises. *Journal of Statistical Mechanics: Theory and Experiment*, 063401. — a threshold between a stable and a crisis-prone book (§2.2).
 - Hardiman, S. J., Bercot, N. and Bouchaud, J.-P. (2013). Critical reflexivity in financial markets: a Hawkes process analysis. *European Physical Journal B* 86(10). — the branching ratio close to 1 throughout (§2.2).
-- Kim, C. and Hansen, P. R. (2026). The quarter-hour effect: periodic algorithmic trading and return predictability in cryptocurrency futures. arXiv 2607.09426, preprint. — bursts in volatility and volume at minute, five-minute and quarter-hour marks (§2.1, §2.4).
+- Kim, C. and Hansen, P. R. (2026). The quarter-hour effect: periodic algorithmic trading and return predictability in cryptocurrency futures. arXiv 2607.09426, preprint. — bursts in volatility and volume at minute, five-minute and quarter-hour marks (§2.1, §2.5).
 - Lillo, F. and Farmer, J. D. (2004). The long memory of the efficient market. *Studies in Nonlinear Dynamics & Econometrics* 8(3). — long memory of order signs (§3.3).
 - Lillo, F., Mike, S. and Farmer, J. D. (2005). Theory for long memory in supply and demand. *Physical Review E* 71, 066122. — order splitting as the cause of that memory (§3.3).
 - Morris, S. and Shin, H. S. (1998). Unique equilibrium in a model of self-fulfilling currency attacks. *American Economic Review* 88(3), 587-597. — noisy private information makes the outcome unique (§2.2).
-- Rabechini Amaral, L. (2026). Optimal trading of microstructure mean reversion. arXiv 2608.00885, preliminary. — the band rule of the sniper; proven optimal on a Gaussian surrogate (§2.1, §2.4).
+- Rabechini Amaral, L. (2026). Optimal trading of microstructure mean reversion. arXiv 2608.00885, preliminary. — the band rule of the sniper; proven optimal on a Gaussian surrogate (§2.1, §2.5).
 - Scheffer, M., Bascompte, J., Brock, W. A., Brovkin, V., Carpenter, S. R., Dakos, V., Held, H., van Nes, E. H., Rietkerk, M. and Sugihara, G. (2009). Early-warning signals for critical transitions. *Nature* 461, 53-59. — slower recovery before a tipping point (§2.2).
 - Schelling, T. C. (1971). Dynamic models of segregation. *Journal of Mathematical Sociology* 1(2), 143-186; and (1978). *Micromotives and Macrobehavior*, ch. 4. Norton. — simple rules, sudden collective change (§2).
-- Securities and Exchange Commission (2010). Concept release on equity market structure. Release No. 34-61358. — momentum ignition described (§2.3).
-- Securities and Exchange Commission, Division of Trading and Markets (2014). Equity market structure literature review, part II: high frequency trading. Staff paper, §III.B.3. — evidence on momentum ignition (§2.3).
+- Securities and Exchange Commission (2010). Concept release on equity market structure. Release No. 34-61358. — momentum ignition described (§2.4).
+- Securities and Exchange Commission, Division of Trading and Markets (2014). Equity market structure literature review, part II: high frequency trading. Staff paper, §III.B.3. — evidence on momentum ignition (§2.4).
 - Shleifer, A. and Vishny, R. W. (1997). The limits of arbitrage. *Journal of Finance* 52(1), 35-55. — arbitrage fails when prices are far from value and capital is withdrawn after losses (§2.2).
 - Silber, W. L. (1984). Marketmaker behavior in an auction market: an analysis of scalpers in futures markets. *Journal of Finance* 39(4), 937-953. — one floor scalper's records: scalpers as market makers holding for minutes (§2.1).
 
