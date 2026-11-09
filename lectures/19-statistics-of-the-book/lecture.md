@@ -9,7 +9,7 @@ Lecture 18 rebuilt Bybit's BTCUSDT book and measured how deep and how tight it i
 Part IV moves from describing the order book to trading on it, one step per lecture:
 
 ![Part IV in one line: Lecture 19 measures the book as it stands](figures/19_01_part_iv.png)
-<sub><b>How to read the figure.</b> Each box is one lecture of Part IV, each building on the one before; this lecture is outlined, Lecture 18 is done. Above the boxes, the four stages: describing the book, measuring it, simulating our own orders in it, and trading strategies on it.</sub>
+<sub><b>How to read the figure.</b> Each box is one lecture of Part IV, each building on the one before; this lecture is outlined, Lecture 18 is done. Above the boxes, the five stages: describing the book, measuring it, simulating our own orders in it, reading the other players, and trading strategies on it.</sub>
 
 The plot behind these lectures, and what each one settles: [Part IV roadmap](../PART_IV_ROADMAP.md).
 
