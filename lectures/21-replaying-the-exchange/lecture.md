@@ -9,7 +9,7 @@ Lectures 18 to 20 described Bybit's BTCUSDT book, measured its state and measure
 Part IV moves from describing the order book to trading on it, one step per lecture:
 
 ![Part IV in one line: Lecture 21 puts our own orders into the recorded market](figures/21_01_part_iv.png)
-<sub><b>How to read the figure.</b> Each box is one lecture of Part IV, each building on the one before; this lecture is outlined, Lectures 18 to 20 are done. Above the boxes, the four stages: describing the book, measuring it, simulating our own orders in it, and trading strategies on it.</sub>
+<sub><b>How to read the figure.</b> Each box is one lecture of Part IV, each building on the one before; this lecture is outlined, Lectures 18 to 20 are done. Above the boxes, the five stages: describing the book, measuring it, simulating our own orders in it, reading the other players, and trading strategies on it.</sub>
 
 The plot behind these lectures, and what each one settles: [Part IV roadmap](../PART_IV_ROADMAP.md).
 

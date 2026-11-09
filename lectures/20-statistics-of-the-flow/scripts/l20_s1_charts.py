@@ -19,8 +19,8 @@ LEVEL_C, OFI_C, TI_C = MUTED, "#2a78d6", "#eb6834"
 
 # 20_01: the chain of Part IV
 steps = [("18", "The order book", "what is there"), ("19", "Levels", "the state now"), ("20", "Deltas", "what changed"),
-         ("21", "Replay", "our own orders"), ("22", "A market that reacts", "simulated agents"), ("23", "Market making", "one venue"),
-         ("24", "Cross-exchange", "quote here, hedge there")]
+         ("21", "Replay", "our own orders"), ("22", "A market that reacts", "the market answers"), ("23", "Trading styles", "who else trades"),
+         ("24", "Market making", "one venue"), ("25", "Cross-exchange", "quote here, hedge there")]
 CUR = 2
 fig = go.Figure()
 for i, (n, a, b) in enumerate(steps):
@@ -33,12 +33,12 @@ for i, (n, a, b) in enumerate(steps):
     if i < len(steps) - 1:
         fig.add_annotation(x=x0 + 1.43, y=0.5, ax=x0 + 1.22, ay=0.5, xref="x", yref="y", axref="x", ayref="y", showarrow=True, arrowhead=2,
                            arrowcolor=MUTED, text="")
-for x0, x1, lab in ((0, 1.2, "describe"), (1.45, 4.1, "measure"), (4.35, 7.0, "simulate"), (7.25, 9.9, "trade")):
+for x0, x1, lab in ((0, 1.2, "describe"), (1.45, 4.1, "measure"), (4.35, 7.0, "simulate"), (7.25, 8.45, "read the players"), (8.7, 11.35, "trade")):
     fig.add_annotation(x=(x0 + x1) / 2, y=1.27, text=lab, showarrow=False, font=dict(size=11, color=MUTED))
     fig.add_shape(type="line", x0=x0, x1=x1, y0=1.13, y1=1.13, line=dict(color=GRID, width=2))
-fig.update_xaxes(visible=False, range=[-0.1, 10]); fig.update_yaxes(visible=False, range=[-0.15, 1.42])
+fig.update_xaxes(visible=False, range=[-0.1, 11.45]); fig.update_yaxes(visible=False, range=[-0.15, 1.42])
 fig.update_layout(title="Part IV in one line: Lecture 20 measures what changes in the book<br><sup>Each lecture builds on the one before; "
-                        "the current one is outlined, done ones are ticked</sup>", height=270, width=1250, margin=dict(t=80, l=20, r=20, b=10), showlegend=False)
+                        "the current one is outlined, done ones are ticked</sup>", height=270, width=1400, margin=dict(t=80, l=20, r=20, b=10), showlegend=False)
 save_figure(fig, L20.PREFIX + "20_01_part_iv", FIG)
 
 
