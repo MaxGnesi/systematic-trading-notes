@@ -285,7 +285,7 @@ The calm-day replay holds near the calm end of the map. Near the other end, two 
 
 ## 6. Summary, exercises and reading
 
-### 6.1 Takeaways (draft)
+### 6.1 Takeaways
 
 1. **A market's reaction is made by its players.** Makers, arbitrageurs, snipers, slicers, trend followers and stops each see a different part of our order and answer by their own rule; what our order costs is the sum of their answers (§2.4).
 2. **In calm markets the answers cancel the push.** Makers lean and arbitrageurs trade the price back, so a push fades: on Bybit a 5 BTC order still leaves about 1 bp after a minute, and the depth it took re-forms around the new best rather than where it was (§1, §3).
@@ -295,9 +295,20 @@ The calm-day replay holds near the calm end of the map. Near the other end, two 
 6. **A replay must react, and react to the whole order.** A plain replay forgets our order at once; the hybrid replay is closer for single orders (H6), but adding up the impact of many small slices made runs too dear by 3 bp (H7); charged by their cumulative size, they come out close (§4).
 7. **After tipping, a market does not snap back.** For three weeks after 10 October the same orders moved the price about 1.4 times as far as before; a replay calibrated on calm days understates the cost after an event (§5).
 
-(Exercises and reading to follow.)
+### 6.2 Exercises
 
-### Reading list (draft)
+- [ ] **Why runs cannot be added up.** With $`R = c\,S^{\delta}`$, show that $`n`$ equal slices of a parent order of size $`S`$, each charged its own impact, add up to $`n^{1-\delta}`$ times the impact of the whole order. Compute the factor for $`\delta = 0.23`$ and $`n = 10`$, and compare it with the bias of H7 (§4).
+- [ ] **The key chart for a seller.** Reproduce the key chart (§1) for a market sell, and for orders of 1 and 20 BTC. Where does the hybrid replay leave the band of real orders?
+- [ ] **Move the kill switch.** In the laboratory market, set the market maker's kill switch at 3 and at 8 ticks instead of 5 and rerun step 8. Does the tail of the cost move with it, or does it depend on something else?
+- [ ] **Construct a free profit.** In the laboratory, give a trader who posts a large bid the power to cancel it a moment before it is hit. With layer E on, show that the round trip of H8 now earns the reaction every time. What does this say about using a measured reaction as a cause?
+- [ ] **A smarter pusher.** Let the pusher of §2.3 place resting buys below the price before it sells, so that it collects the cascade as a maker. Does ignition now pay, and in which of the 16 worlds?
+- [ ] **Depth instead of pulls.** Repeat H20a with fifths of the depth at the best five levels instead of quote pulls. Which of the two reads the tail of the cost better?
+- [ ] **After the cascade, all day.** The post-cascade rise of §5 was measured between 20:50 and 22:50 UTC. Repeat it for every hour of the day. Does the market stay more reactive at every hour, or only in the evening?
+- [ ] **A chain reaction on real data.** Using Lecture 20's Hawkes branching ratio, compare the weeks before and after 10 October. Does the ratio rise with the post-cascade reactivity of §5?
+
+### 6.3 Reading list
+
+The references of §2 to §5, each with what it is used for, are listed below.
 
 - Aquilina, M., Budish, E. and O'Neill, P. (2022). Quantifying the high-frequency trading "arms race". *Quarterly Journal of Economics*. — races leave no trace for the losers (§2.4).
 - Brunnermeier, M. K. and Pedersen, L. H. (2005). Predatory trading. *Journal of Finance*. — selling ahead of a distressed seller (§2.3).
