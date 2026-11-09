@@ -258,7 +258,7 @@ A systematic rule can be replayed over history. This is what distinguishes it fr
 |---|---|
 | The best of many rules looks good by chance | White's (2000) reality check tests whether the best rule truly beats a benchmark, given everything that was tried; Sullivan, Timmermann and White (1999) applied it to thousands of technical rules |
 | The usual significance bar is too low | After decades of searching, a new factor needs a t-statistic above 3, not 2 (Harvey, Liu and Zhu, 2016); 65% of 452 published anomalies fail even the ordinary bar, and 82% fail a bar adjusted for multiple testing (Hou, Xue and Zhang, 2020) |
-| A backtest's Sharpe ratio overstates | The deflated Sharpe ratio corrects the best backtest for the number of trials and for returns that are not normally distributed (Bailey and López de Prado, 2014) |
+| A backtest's Sharpe ratio overstates | The deflated Sharpe ratio corrects the best backtest for the number of trials and for returns that are not normally distributed (Bailey and López de Prado, 2014) Lecture 7 (§5.2) shows it on these 16 ETFs: the best of 1,000 strategies with no edge matches the best trend system. |
 
 The same caution applies to this lecture. Tables 3.3 and 3.4 are a few of the many ways the data could have been cut; each is one view, not a verdict. Part V returns to testing in full.
 
