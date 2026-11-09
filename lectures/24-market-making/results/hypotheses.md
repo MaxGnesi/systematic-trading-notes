@@ -29,3 +29,14 @@ Fixed on 2026-11-09, before any result of the designs below was computed. Every 
 - **10 October.** Every design through 20:50 - 22:50 UTC, with and without a kill switch (no quotes for 30 s after the mid moves 10 bp or more within 1 s), as in Lecture 21 (§5).
 - **What it takes.** For each design, the break-even maker fee, and the result after the fee for the fee tiers of Bybit's published table.
 - **Tactical hours** (quote only in hours that paid before, walk-forward): an exercise, since Lecture 23 found that the hour of the day says little out of sample.
+
+## Changed on 2026-11-09, before any result: ping-pong as a family (H4)
+
+**Why.** Ping-pong is a family of rules, not one rule; a single version would test our choice of implementation rather than the idea. H4 is restructured as a grid fixed here, one variant chosen in sample, one test out of sample.
+
+- **Entry**, when a side is on: at the best price, or 1 tick behind it.
+- **Exit**, one closing order per fill: (a) at the best price on its side, re-posted at every book update; (b) a target 1 tick from the entry price, left resting; (b') the same at 11 ticks (about 1 bp); (c) a target at 11 ticks with a stop: closed as a taker when the price is 11 ticks against the entry, or after 60 s. A closing order whose price can trade at once on arrival is filled there as a taker.
+- **Switch-off**, how many fills on one side before that side stops quoting: n in {1, 2, 3, 5} open lots on that side. n = 1 is pure ping-pong; larger n is Lecture 17's paired grid at the best price. The side quotes again as soon as fewer than n of its lots are open.
+- **Re-arm** at once (main); a cooldown of 1 s after each fill is reported for the chosen variant.
+
+That is 2 × 4 × 4 = 32 variants. **The chosen variant** is the one with the highest result before the fee on the in-sample days (20 September - 9 October), L = 50 ms, Q2 with a = 1. **H4 (replaces the hypothesis above):** the chosen variant's result before the fee is higher than the baseline's, out of sample; one p-value, in the same correction as H1 to H3. **Reported:** all 32 variants out of sample, so that a result holding only at one implementation shows; the guard of H1 on entry only and on entry and exit, for the chosen variant; round trips an hour, gain per round trip, time held, worst move while held, positions open at the end of each day. The earlier main variant, entry at the best, exit (a), n = 1, is one of the 32.
