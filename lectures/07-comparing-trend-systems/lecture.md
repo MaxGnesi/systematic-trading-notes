@@ -230,7 +230,29 @@ Strategy returns are noisy, fat-tailed and serially dependent. Before reading a 
 
 **Key message.** A strategy with no edge at all can produce a backtest as good as the best trend system. What luck cannot fake is a profit that persists over time and across markets, and that appears exactly where its mechanism says it should and vanishes where the mechanism says it must.
 
-**The experiment.** We built 1,000 strategies that have no edge by construction and are otherwise identical to the 31 trend systems: the same 16 ETFs, daily, 2000-2026, the same volatility target, the same cost of 5 bp. Each holds a random long or short position in every asset and flips it at random times, with an average holding period drawn from the trend systems' own (median 24 days), so the random strategies trade at the same speeds. Every test below was fixed before any result was computed, and the trend systems are the 31 of this lecture, unchanged.
+**The experiment.** We built 1,000 strategies that have no edge by construction and are otherwise identical to the 31 trend systems: the same 16 ETFs, daily, 2000-2026, the same volatility target, the same cost of 5 bp. Every test below was fixed before any result was computed, and the trend systems are the 31 of this lecture, unchanged. One zero-edge strategy is built in seven steps:
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1. Pick a speed | Draw one of the 31 trend systems' average holding periods, $`m`$ days (median 24) | The strategy trades as often as a real trend rule, so it pays the same costs |
+| 2. Start each asset | A fair coin: long (+1) or short (−1) | No view on direction |
+| 3. Flip at random | Each day, independently in each asset, flip the sign with probability $`1/m`$; the time between flips is then geometric with mean $`m`$ days | Positions change at random times, never because of prices |
+| 4. Size the position | The sign × the 10% volatility target ÷ the asset's volatility, as for the trend systems | The same risk in every asset |
+| 5. Daily profit | Yesterday's position × today's return − 5 bp × the change in position | The same accounting and costs |
+| 6. Score it | Average over the 16 ETFs, then the Sharpe ratio | The same scoring |
+| 7. Repeat | 1,000 times, each with its own random draws (a fixed seed, so the run can be repeated) | 1,000 coin-flip traders at realistic speeds |
+
+<sub><b>How to read the table.</b> Steps 1 to 3 replace the trend rule; steps 4 to 6 are exactly those of the 31 systems (§2). The code is in the notebook, §5.2.</sub>
+
+**Example.** With $`m = 24`$ days, a position flips with probability 1/24, about 4.2% a day, so about ten times a year in each asset. SPY might start long, turn short on day 17 and long again on day 52; none of these decisions looks at a price. Steps 2 and 3 take three lines:
+
+```python
+flips = rng.random((days, assets)) < 1 / m                      # flip today? probability 1/m, independently per asset
+start = np.where(rng.random(assets) < 0.5, 1, -1)               # a fair coin per asset: long or short
+sign  = start * np.where(np.cumsum(flips, axis=0) % 2 == 0, 1, -1)   # an even number of flips so far keeps the starting side
+```
+
+**Why it has no edge.** At every moment a long and a short are equally likely, whatever the market is about to do, so the expected profit before costs is zero. Every Sharpe ratio above zero is luck. **The best of 31**: draw 31 of the 1,000 at random, keep the best, and repeat 5,000 times; this is how good the winner of a search over 31 strategies, as many as this lecture tried, looks by luck alone.
 
 ![Luck or an edge? Zero-edge strategies built like the trend systems](figures/07_13_luck_cloud.png)
 <sub><b>How to read the figure.</b> <b>Axes.</b> Left: Sharpe ratio before costs, 2000-2026 (x), number of strategies (y). Middle: the best Sharpe ratio among 31 zero-edge strategies drawn at random, 5,000 draws (x), number of draws (y). Right: average holding period in days, log scale (x), Sharpe ratio after 5 bp (y). Grey: the zero-edge strategies; ticks and lines: the 31 trend systems, coloured by family; dotted line: the best trend system before costs.</sub>
