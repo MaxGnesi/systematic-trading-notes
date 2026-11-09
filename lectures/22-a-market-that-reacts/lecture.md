@@ -4,7 +4,7 @@
 
 > **Draft.** Sections 1 to 3 are written on results already computed in sample (20 September to 9 October 2025). Sections 4 to 6 wait for the out-of-sample tests, which have not been run. The hypotheses were fixed before any of their results were computed ([results/hypotheses.md](results/hypotheses.md)); every change to them is dated there.
 
-Lecture 21 replayed the recorded Bybit book as if our orders were invisible: nobody answered them, and what they took came straight back. This lecture lets the market react. It asks two things of a market order: what it costs in normal conditions, and when the market is close to a point where the same order sets off far more than its own size. The first is answered by a **hybrid replay** on Bybit's BTCUSDT perpetual, 20 September to 3 November 2025; the second by a laboratory market, a small simulated exchange in which every trader's rule is known. Companion notebook: to follow.
+Lecture 21 replayed the recorded Bybit book as if our orders were invisible: nobody answered them, and what they took came straight back. This lecture lets the market react, and its central idea is that the reaction is made by people with rules: market makers, arbitrageurs, snipers, slicers, trend followers, stops. How each of them behaves, and what their behaviour adds up to together, decides whether a market absorbs our order calmly or tips into a move that feeds on itself, and the lecture asks why. A laboratory market, a small simulated exchange in which every trader's rule is known, shows the mechanisms; a **hybrid replay** on Bybit's BTCUSDT perpetual, 20 September to 3 November 2025, measures what our order costs in normal conditions and which states of the book come close to the tipping point. Companion notebook: to follow.
 
 ## 1. One order, two replays
 
@@ -23,7 +23,7 @@ A plain replay forgets our order at once. The hybrid replay keeps the recorded b
 
 The plain replay is wrong in both panels. The price does not forget a 5 BTC buy: a minute later real orders of that size still leave the mid about 1 bp higher, and the hybrid replay, built from them, does the same. Nor does the book give back what was taken: a minute later about 1.5 BTC of the 5 is still missing near the best. A second order sent soon after meets a dearer book. In a test run on 1 October at 14:30 UTC, a second 5 BTC buy 2 s after the first cost 0.004 bp in the plain replay and 1.08 bp in the hybrid one.
 
-The chart shows the calm end of a wider picture. The cost of a market order depends on two things: its size, and the state of the market when it arrives. Think of it as **one map**, cost against size and state. Where the book is deep and the traders who supply liquidity stay, the map is smooth and a push fades, as in the chart. Where they withdraw, the same order can tip the market into a move that feeds on itself, and the map turns steep. The lecture has two aims, one for each end:
+The chart shows the calm end of a wider picture, and the players are what move us along it. The cost of a market order depends on two things: its size, and the state of the market when it arrives. Think of it as **one map**, cost against size and state. Where the book is deep and the traders who supply liquidity stay, the map is smooth and a push fades, as in the chart: others take the other side of it at a profit. Where they withdraw, or run out of capital, and others add to the move instead, the same order can tip the market into a move that feeds on itself, and the map turns steep. Which end we are at is decided by how the players behave, one by one and together. The lecture has two aims, one for each end:
 
 | Aim | The question | Where |
 |---|---|---|
@@ -46,6 +46,16 @@ The lecture runs as follows:
 ## 2. A laboratory market
 
 The mechanisms behind the map cannot be seen in Bybit's data, because the data never say who traded, who withdrew or whose capital ran out. This section builds them where they can be seen: a **laboratory market**, a small exchange in which a handful of traders follow written rules. It is a caricature on purpose. Physicists study magnets with a grid of arrows that no magnet resembles (the Ising model), because the grid shows how a sudden change arises from simple rules; Schelling (1978) showed with a board and two kinds of counters how mild individual preferences tip a whole neighbourhood. Our market is used in the same spirit.
+
+**From players to the collective.** The point of the laboratory is to see how individual rules add up. The same traders produce three regimes:
+
+| Regime | What the players do | What it adds up to | Why |
+|---|---|---|---|
+| Calm | Makers fill our order and lean their quotes; arbitrageurs trade the price back to its value | A push that fades within a minute: negative feedback | Each earns by taking the other side of our push, and has the capital and the quotes to do it |
+| Near the tipping point | Makers pull their quotes after fast moves; arbitrageurs near their capital limits stop correcting; stops sit close to the price | A push that stays, and a cost with a fat tail: the restoring forces weaken while the amplifying ones wait | Pulling is rational for each maker when others pull (a run on liquidity); capital is finite (limits of arbitrage) |
+| Cascade | Stops and forced closes fire into a thin book; trend followers and others join the move | A move that feeds on itself until the fuel near the price is used up: positive feedback | Each trade sets off more than one other, a chain reaction above its threshold; after it the book stays thin for a while (hysteresis) |
+
+<sub><b>How to read the table.</b> One row per regime of the laboratory market (§2.1 to §2.3); the same traders appear in every row, only their state and their incentives change. On Bybit, the calm row is what the hybrid replay measures (§3, §4); the second is tested by H20 and the third by 10 October (§5).</sub>
 
 **Why it is worth studying.** It gives four things real data cannot. The **counterfactual**: we copy the market at a moment and run it on with and without our order, which on real data is never possible. **Rare events on demand**: our 45 days hold one cascade, the laboratory thousands of near-tips. **Instruments checked before use**: a measure is first tried where the answer is known, as physicists inject fake signals into their own detectors. **Questions that transfer**: who supplies liquidity, how much capital is left to correct the price, where stops lie. What it does not give is numbers about Bybit. Every size, rate and threshold in it is invented, prices are in ticks of an invented market, and the size of any effect on Bybit is left to Sections 3 to 5. Every figure from it is marked *Invented*.
 
@@ -238,7 +248,16 @@ To follow: 10 October 2025, H9 and H20.
 
 ## 6. Summary, exercises and reading
 
-To follow.
+### 6.1 Takeaways (draft)
+
+1. **A market's reaction is made by its players.** Makers, arbitrageurs, snipers, slicers, trend followers and stops each see a different part of our order and answer by their own rule; what our order costs is the sum of their answers (§2.4).
+2. **In calm markets the answers cancel the push.** Makers lean and arbitrageurs trade the price back, so a push fades: on Bybit a 5 BTC order still leaves about 1 bp after a minute, and the depth it took re-forms around the new best rather than where it was (§1, §3).
+3. **Near a tipping point the restoring forces weaken first.** Makers pull and arbitrage capital runs out before anything visible happens to the price; the first sign is in the tail of the cost, not its average (§2.2, H20a).
+4. **A cascade is a chain reaction.** When stops and forced closes sit in a thin book, each trade sets off more than one other, and the move feeds on itself until the fuel near the price is used up; no single ingredient does it (§2.3).
+5. **Rational for each, fragile for all.** A kill switch protects each maker and leaves the market without liquidity when everyone uses it, the structure of a run (§2.2).
+6. **A replay must react, and react to the whole order.** A plain replay forgets our order at once; the hybrid replay is closer for single orders, but adding up the impact of many small slices overstates what a run costs (§4).
+
+(Exercises and reading to follow.)
 
 ### Reading list (draft)
 
