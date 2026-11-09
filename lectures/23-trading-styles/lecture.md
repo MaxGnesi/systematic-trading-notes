@@ -34,7 +34,7 @@ Each style gets the same short card: the footprint, the rule that measures it, w
 | 2.2 | Clock trader | A burst of flow with the trend just after whole minutes | Step 5; H11 |
 | 2.3 | Sniper | Orders sent just after a move elsewhere, in its direction | Step 3; H10 |
 | 2.4 | Maker pulling | Quotes cancelled near the best, in bursts | Lectures 18 and 22; Lecture 22, H20a |
-| 2.5 | Scalper | An echo at its exit distance; not recognisable | Step 6 |
+| – | Scalper | None of its own: its echo at the exit distance is also left by a maker posting a fixed size, so public data cannot tell them apart (a one-level market maker, Silber, 1984) | Step 6; not tested |
 
 ### 2.1 The slicer
 
@@ -84,10 +84,6 @@ Each style gets the same short card: the footprint, the rule that measures it, w
 
 **For a quoter.** A maker that pulls is a competitor stepping aside, which is both a risk and a chance: the queue empties, but the fills that come are the ones the others refused.
 
-### 2.5 The scalper: a footprint that cannot be told apart
-
-A scalper joins the best price and exits a few ticks better. In the laboratory its round trips leave an echo, the same size added on the far side at its exit distance, and with one scalper the echo peaks at exactly its gain. But a market maker that leans its quotes and posts a fixed size leaves the same echo at one and two ticks, with no scalper at all. The scalper is a one-level market maker (Silber, 1984), and public data cannot separate the two. It is not tested on Bybit.
-
 ## 3. What is at work on Bybit
 
 Three footprints were tested on the 24 out-of-sample days, 11 October to 3 November 2025, with the rules of §2 fixed in sample. Two are clearly there; the third shows a clock, but not the trend crowd it was meant to find.
@@ -97,7 +93,7 @@ Three footprints were tested on the 24 out-of-sample days, 11 October to 3 Novem
 
 **Do orders sent just after a move on Binance move the price more? (H10)** Yes, in every size class. Ten seconds after a sniper-like order the mid has moved 3.0 to 6.5 bp its way, net of matched controls, against 0.4 to 1.8 bp after other orders of the same size; weighted over the classes the difference is 2.7 bp (95% band 2.4 to 3.0). The difference is there already after 1 s (2.7 bp) and still after 60 s (2.2 bp): Bybit catches up with a price that has already moved, and does not give it back. Such orders are 3.4% of taker orders and 9% of taker size. They pay for their speed: 2.3 to 2.5 bp from the mid against 0.2 to 0.8 bp for other orders up to 20 BTC, because they arrive while the book is still moving; the move that follows them is larger still.
 
-**Is there a clock, and does it follow the trend? (H11)** There is a clock, but the trend crowd it was meant to find did not appear. In the first 3 s after a whole minute, taker flow on the side of the trend is no larger than at fake marks (H11a, t = 0.4), and makers do not widen before the minute: quotes wider than one tick are, if anything, slightly rarer in the 2 s before it (H11b, t = −5.5 in the opposite direction). What the clock does bring is volume on both sides: 0.7 BTC more taker size in the first 3 s than at fake marks (t = 6.4), 1.7 BTC at 5-minute marks, 2.7 at quarter-hours and 5.2 at hours, against an average of 2.9 BTC in any 3 s; and the spread widens *after* the mark (t = 4.4), not before. In sample, flow did lean with the trend at 5-minute and 15-minute marks (t = 2.4 and 3.6); out of sample it did not, so it is no finding. The funding minutes (00:00, 08:00, 16:00 UTC) were left out of the tests; with three a day they are too few to say anything on their own.
+**Is there a clock, and does it follow the trend? (H11)** There is a clock, but no trend crowd. In the first 3 s after a whole minute, taker flow on the trend's side is no larger than at fake marks (H11a, t = 0.4), and makers do not widen before the minute (H11b; if anything, wide quotes are slightly rarer then). What the minute brings is volume on both sides: 0.7 BTC more taker size in the first 3 s than at fake marks (t = 6.4), rising to 5.2 BTC at whole hours, against an average of 2.9 BTC in any 3 s; and the spread widens *after* the mark (t = 4.4).
 
 **Are there more runs of equal orders than chance gives? (H12)** Many more. Out of sample 1.2% of taker size is in runs, against 0.03% with the sizes shuffled within 5 minutes, about forty times as much, and more than five times as much on every one of the 45 days. The share varies from 0.1% to 5.2% a day: a few large slicers make a day. Of the 3,215 runs found out of sample, a third have gaps within 1 s of 30.22 s, and they carry 61% of the size in runs; this fits Bybit's own TWAP tool, which slices every 30 s by default, but cannot prove it. With 40% of a known slicer found in the laboratory (§2.1), the true share is higher.
 
@@ -123,7 +119,7 @@ Three footprints were tested on the 24 out-of-sample days, 11 October to 3 Novem
 
 **Do volatile hours change the mix? (H14)** For the sniper, strongly. Within the same hour of the day, the most volatile third of hours has a sniper-like share 4.6 points higher than the least volatile third (95% band 3.3 to 6.2); the shares are 5.1%, 6.5% and 9.4% from calm to volatile. This is close to built in: a footprint defined by a move on Binance is found more often when Binance moves more, which is why it was expected; what it adds is the size. The sliced share falls from 2.1% in calm hours to 1.0% in volatile ones, as expected, but the difference within the same hours is not clear (−0.7 points, p = 0.19). The clock-like share falls too, from 2.0% to 1.0%, the opposite of the hypothesis (p = 1.00): in a volatile hour so much else trades that the burst at the minute no longer stands out.
 
-**A change of style.** The sniper-like share was about 5% before 10 October, 17% on the day of the cascade, and about 9% on most days after it (bottom right). Part of this is volatility: 396 of the 576 out-of-sample hours fall into the most volatile third fixed in sample. But within each third the share is also about 2.5 to 3 points higher than in sample (2.6% against 5.2% in calm hours, 6.5% against 9.4% in volatile ones). After the cascade, more of Bybit's taker flow came just behind Binance. Lecture 22 (§5) found the market more reactive after the same date, a hysteresis after tipping; whether the two are linked was not tested, and is a research question.
+**A change of style, noted.** The sniper-like share rose from about 5% of taker size before 10 October to about 9% after it, and was 2.5 to 3 points higher than in sample within each third of volatility (bottom right); whether this is linked to the market staying more reactive after the cascade (Lecture 22, §5) is an open question.
 
 | Plain question | Measure | Out of sample | p (one-sided) | Verdict |
 |---|---|---|---|---|
@@ -183,4 +179,67 @@ Five tests hold, and four of them are about one style: the trader who takes Bybi
 
 ## 6. What it means for our strategy
 
-To follow.
+Lecture 24 builds a market maker on Bybit's BTCUSDT perpetual. This lecture has said who its quotes will meet; this section turns that into what its quoting rule must handle, and into a short routine for reading a market before quoting in it.
+
+### 6.1 From footprints to a quoting rule
+
+| What we found | Evidence | What the quoting rule must do | How Lecture 24 can check it |
+|---|---|---|---|
+| The makers' losses come mostly from orders sent just behind Binance | 9% of taker size, 31% of the makers' adverse move; −2.1 bp per BTC filled (H10, H21) | Treat a move on Binance as the main risk to every resting quote | Markouts of its own fills, split by whether Binance had just moved |
+| A stale quote is rarely pulled in time | 94% of 2 bp moves followed within 50 ms by a Bybit order their way; half within 30 ms (H22) | Do not rely on cancelling: make a stale fill cheaper beforehand, with a wider or smaller quote when the price gap to Binance is open or Binance is moving | The same quoting rule at 10, 50 and 100 ms of latency (Lecture 21) |
+| Volatile hours bring more of them | Sniper-like share 5% in calm hours, 9% in volatile ones (H14) | Set spread and size by the hour's volatility, measured as it goes | Results by third of volatility |
+| Slicers are the best counterparty, but push the price their way | Earn +0.1 bp per BTC after 10 s, lose 0.5 by 60 s (H12, H21) | Lean the quotes against a run under way; do not hold its inventory for long | Inventory and result during runs |
+| The whole minute brings volume, not direction | +0.7 BTC in 3 s, no trend lean, spread wider after (H11) | Expect more fills just after the minute; nothing to predict | Fill rates by second of the minute |
+| Makers pulling fattens the tail of cost | 90th percentile of cost 1.62 against 0.72 bp (Lecture 22, H20a) | Pull with the others, or quote wide, when pulls surge; the fills that come then are the ones the others refused | Results after the most pulls |
+
+<sub><b>How to read the table.</b> One row per result of this lecture or Lecture 22, out of sample on Bybit. The last column is a check the capstone can run on its own fills; none of it is a result yet. Our calculation.</sub>
+
+The ordering matters. The first two rows are the core of market making on this venue: almost every losing fill is a quote that Binance has already made stale, and speed alone does not save it. Glosten and Milgrom (1985) put the same thing in theory: a market maker sets its spread to pay for the trades it loses to the informed. Here the informed are, for the most part, simply the faster readers of another exchange (Budish, Cramton and Shim, 2015).
+
+### 6.2 Reading a market before quoting in it
+
+The same six questions apply to any market with a public book and trades. Each is answered with a measure from Part IV, using only what was known at the moment.
+
+| Step | Question | What to look at | From |
+|---|---|---|---|
+| 1. The state | Is there anything to trade against, and which way does it lean? | Spread, depth, imbalance at the best | Lectures 18, 19 |
+| 2. The flow | Who is pushing, and how hard? | Taker size and its imbalance, and how much it moves the price | Lecture 20 |
+| 3. The other venue | Has the leading market just moved? | The price gap to the leading venue, the age of its last trade | §5 (H22) |
+| 4. The styles | What is at work now? | Sniper-like orders, a run under way, the burst after the minute | §3 |
+| 5. The circumstances | Is this an ordinary hour? | Volatility and quote pulls against their usual values | §4, Lecture 22 (§5) |
+| 6. The read | What do we expect, and what would prove us wrong? | One sentence, written before looking ahead, then checked | |
+
+<sub><b>How to read the table.</b> A routine, not a test: whether a read predicts anything was not tested here. Step 3 is new in this lecture and comes before the styles, because on Bybit it decides most of what a quote loses.</sub>
+
+## 7. Summary, exercises and reading
+
+### 7.1 Takeaways
+
+1. **Styles leave footprints, partial and noisy.** A run of equal orders, an order just after a move elsewhere, a burst after the minute; each catches part of a style, and its quality can only be judged where the answer is known (§1, §2).
+2. **Snipers and slicers are there; the trend crowd at the clock is not.** Orders sent just after Binance moved move Bybit's price 2.7 bp more than others of their size, and runs of equal orders are forty times what chance gives; flow after the minute does not lean with the trend (§3).
+3. **Volatility, not the time of day, sets the mix.** The sniper-like share rises from 5% in calm hours to 9% in volatile ones; hourly profiles did not repeat out of sample (§4).
+4. **The makers lose mostly to the sniper.** A tenth of taker size carries a third of the makers' adverse move (§5).
+5. **A quote is rarely pulled in time.** After a move on Binance, a Bybit order its way usually follows within 30 ms; a quoter has to price the risk in advance rather than outrun it (§5).
+6. **For the capstone: price the stale quote.** Watch Binance and the hour's volatility, lean against runs, and expect volume, not direction, after the minute (§6).
+
+### 7.2 Exercises
+
+- [ ] **Does one style set off another?** (H15, not tested here.) Fit Lecture 20's Hawkes process with one type per footprint and compare the cross-effects with labels shuffled within 5-minute blocks. Does a sniper-like order set off others, or do both answer the same move?
+- [ ] **A run as it starts.** (H16, H17, not tested here.) First in the laboratory with the slicer known, then on Bybit: recognise a run at its third slice and predict the next. How often does it come within 100 ms of the prediction, and does the price move less on a slice that could be expected?
+- [ ] **Round numbers.** Is there more depth at prices that are multiples of 1,000 USDT than 3 to 10 ticks either side (Lecture 18 saw walls at 111,000)? Does the price stop there more often?
+- [ ] **Who leads?** Repeat H22 the other way round: after a 2 bp move on Bybit, how often does a Binance order follow within 50 ms? What does the asymmetry say about where prices are formed?
+- [ ] **Another threshold.** Repeat H10 and H21 with moves of 1 and 5 bp on Binance and look-backs of 50 and 200 ms. Is the share of the makers' loss stable, or a product of the 2 bp choice?
+- [ ] **Your own market.** Apply the six steps of §6.2 to an hour of ETHUSDT on Bybit, write the read before looking ahead, and check it.
+
+### 7.3 Reading list
+
+The references of §2 to §6, each with what it is used for.
+
+- Aquilina, M., Budish, E. and O'Neill, P. (2022). Quantifying the high-frequency trading "arms race". *Quarterly Journal of Economics* 137(1), 493-564. — in book data the losers of a race leave no trace (§2.3).
+- Avellaneda, M. and Stoikov, S. (2008). High-frequency trading in a limit order book. *Quantitative Finance* 8(3), 217-224. — the quoting rule Lecture 24 starts from (§6).
+- Budish, E., Cramton, P. and Shim, J. (2015). The high-frequency trading arms race: frequent batch auctions as a market design response. *Quarterly Journal of Economics* 130(4), 1547-1621. — stale quotes picked off after a public move (§2.3, §6.1).
+- Glosten, L. R. and Milgrom, P. R. (1985). Bid, ask and transaction prices in a specialist market with heterogeneously informed traders. *Journal of Financial Economics* 14(1), 71-100. — the spread as the price of trading with the informed (§6.1).
+- Kim, C. and Hansen, P. R. (2026). The quarter-hour effect: periodic algorithmic trading and return predictability in cryptocurrency futures. arXiv 2607.09426, preprint. — bursts at minute, five-minute and quarter-hour marks (§2.2, §3).
+- Silber, W. L. (1984). Marketmaker behavior in an auction market: an analysis of scalpers in futures markets. *Journal of Finance* 39(4), 937-953. — scalpers as one-level market makers (§2).
+
+*References as checked for Lectures 21 and 22, on 9 November 2026.*
