@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · draft, Nov 8, 2026 · Max Gnesi*
 
-> **Draft.** Sections 1 to 3 are written on results already computed in sample (20 September to 9 October 2025). Sections 4 to 6 wait for the out-of-sample tests, which have not been run. The hypotheses were fixed before any of their results were computed ([results/hypotheses.md](results/hypotheses.md)); every change to them is dated there.
+> **Draft.** Sections 1 to 5 are written; the exercises, the reading list and the companion notebook are still to come. The hypotheses were fixed before any of their results were computed ([results/hypotheses.md](results/hypotheses.md)); every change to them is dated there.
 
 Lecture 21 replayed the recorded Bybit book as if our orders were invisible: nobody answered them, and what they took came straight back. This lecture lets the market react, and its central idea is that the reaction is made by people with rules: market makers, arbitrageurs, snipers, slicers, trend followers, stops. How each of them behaves, and what their behaviour adds up to together, decides whether a market absorbs our order calmly or tips into a move that feeds on itself, and the lecture asks why. A laboratory market, a small simulated exchange in which every trader's rule is known, shows the mechanisms; a **hybrid replay** on Bybit's BTCUSDT perpetual, 20 September to 3 November 2025, measures what our order costs in normal conditions and which states of the book come close to the tipping point. Companion notebook: to follow.
 
@@ -240,11 +240,48 @@ The pieces add up to a replay that keeps the recorded book as its background:
 
 ## 4. Does the hybrid replay tell the truth?
 
-To follow: H1 to H8, out of sample, 11 October to 3 November 2025.
+The hybrid replay predicts single orders better than the plain one, but as fixed it overstates what a run of orders costs. Every curve, fit and boundary comes from the in-sample days; the tests use the 24 days from 11 October to 3 November 2025, with one-sided p-values from 2,000 resamples of days and Benjamini-Hochberg at 5% over the ten primary tests (H1 to H7, H9, H20a, H20b).
+
+| Question | Hypothesis | Result | p | Corrected | Verdict |
+|---|---|---|---|---|---|
+| Does depth return faster around the new best than at the prices taken? | H1 | 28 percentage points more orders with 90% back within 1 s | < 0.001 | 0.001 | Holds |
+| Does the move grow less than in proportion to size? | H2 | δ = 0.23 (95% 0.22 to 0.25) | < 0.001 | 0.001 | Holds |
+| Does the move of orders of 5 BTC or more fade from 60 s to 300 s? | H3 | 0.38 bp (−0.03 to 0.84) | 0.038 | 0.063 | Fails after correction |
+| Do large orders draw more trading on their side? | H4 | 10.0 BTC more after 5-20 BTC than after 0.1-1 BTC | < 0.001 | 0.001 | Holds |
+| Is size relative to the queue the better scale? | H5 | No: the model in BTC has the lower error | 1.00 | 1.00 | Fails |
+| Does the hybrid replay predict single orders better than the plain one? | H6 | Lower error at 10 s, by 1.37 bp² | < 0.001 | 0.001 | Holds |
+| Does it predict runs of orders better? | H7 | No: average error 3.5 bp against 1.3 | 1.00 | 1.00 | Fails |
+| Was 10 October's reaction the most out of line? | H9 | Second of 45 days | 0.044 | 0.064 | Fails after correction |
+| Is the tail of the cost fatter after quote pulls? | H20a | 90th percentile 1.62 bp against 0.72 | < 0.001 | 0.001 | Holds |
+| Does a push last longer when Bybit is far from Binance? | H20b | 0.93 of the 1 s move left at 60 s against 0.89 | 0.33 | 0.42 | Fails |
+
+<sub><b>How to read the table.</b> One row per test, in the plain question it answers; the wording of each hypothesis is in [results/hypotheses.md](results/hypotheses.md). p: one-sided, from resampled days ("< 0.001": none of the 2,000 resamples on the wrong side). Corrected: Benjamini-Hochberg over the ten tests. Our measurement for these notes.</sub>
+
+![Does the hybrid replay tell the truth? Out of sample](figures/22_s4_replay.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: order size (x), mid move at 10 s in the order's direction, net of controls, bp (y). Right: one row per replay (y), predicted average price of a run less its actual average price, bp (x); above 0 the replay makes the run too dear. BTCUSDT, 11 October to 3 November 2025. Left: real orders (black), the hybrid replay's prediction fitted in sample (blue) and the plain replay's (orange, zero). Right: 7,200 runs of same-side orders adding up to 5 BTC or more within 10 s, 300 sampled a day; boxes: quartiles; whiskers: 1.5 times the box.</sub>
+
+**Single orders.** The plain replay predicts no move; real orders move the price, so the hybrid replay is closer at every size (H6). It is too low by about a quarter: out of sample, real moves were 1.33 times its prediction. The days after 10 October had a thinner book than the days it was fitted on (§5), and the same order moved the price further. Size in BTC predicted better than size relative to the queue (H5), against our expectation; the halving of the queue after 10 October did not make relative size the better scale. The move grows with an exponent of about 0.23, already between the two smallest classes (0.22), so we see no near-linear regime for small orders.
+
+**Runs of orders.** As fixed, the hybrid replay charged each slice of a run its own impact and added them up. With an exponent of 0.23, a small order carries a large impact per BTC, so ten slices of 0.5 BTC add up to several times the impact of one order of 5 BTC: the replay made runs too dear by 3.0 bp on average, and was closer than the plain replay in only 15% of them (H7 fails). A follow-up, run after the result and not a test, charges a run the impact of its cumulative size, as impact laws for split orders are stated: the bias falls to 0.13 bp and the average error to 1.23 bp, slightly below the plain replay's 1.29 (difference 0.05 bp, 95% 0.03 to 0.07). Impact that grows more slowly than size cannot be added slice by slice.
+
+**Refill and follow-on trading.** Out of sample, depth again re-formed around the new best rather than at the prices taken (H1), and larger orders were followed by more trading on their side (H4), with the caveat of §3.3 that much of it is a stream already under way. Whether the move of large orders fades from one to five minutes is not settled: the difference has the expected sign but does not survive the correction (H3).
+
+**A condition on layer E (H8).** Lecture 21 measured that the price moves away from large size added at the best: 0.25 bp after a second for additions as large as the queue. Built into a replay, that reaction offers a seller a gift: post a bid as large as the queue, sell 0.001 BTC at the ask a second later, cancel the bid. At zero fee, in 89% of 7,200 such round trips the version with the bid ended ahead by exactly that 0.25 bp. On average it lost (−0.60 USDT per round trip, 95% −1.13 to −0.16), because in the other cases the large bid was hit and bought several BTC just before the price fell; with fills only when the price went through the bid, the loss was larger (−1.81 USDT). So the condition holds and layer E is kept, reported as a band, E on against E off. The caveat is plain: a trader who could cancel just before being filled would collect the reaction every time, which is why that behaviour is banned as spoofing.
 
 ## 5. Close to the tipping point
 
-To follow: 10 October 2025, H9 and H20.
+The calm-day replay holds near the calm end of the map. Near the other end, two results stand out: the tail of the cost fattens after quote pulls, as the laboratory predicted, and after the cascade of 10 October the market stayed more reactive for weeks.
+
+![Close to the tipping point, out of sample](figures/22_s5_fragile.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: day (x), real net move at 10 s over the move predicted from the calm days (y), orders of 1 BTC or more between 20:50 and 22:50 UTC. Right: three points of the cost distribution (x), cost of orders of 1 to 5 BTC, bp, log scale (y). Left: 10 October in orange, Sunday 26 October in pink, the dotted line where real equals predicted. Right: orders in the fifth of moments with the most quote pulls in the last 5 s (orange) and the fewest (blue), fifths fixed in sample; 11 October to 3 November 2025.</sub>
+
+**The cost tail after quote pulls (H20a).** In the fifth of moments with the most quote pulls in the 5 s before, orders of 1 to 5 BTC had a 90th percentile of cost of 1.62 bp, against 0.72 bp in the fifth with the fewest; the 99th percentile was 6.6 against 3.5 bp. The median barely moved, 0.015 against 0.005 bp. This is the laboratory's mechanism seen on real data: when makers withdraw, most orders still fill at the best, and a few walk a thin book. Pulls are measured before our order is sent, so they can be read in time.
+
+**A loose anchor (H20b).** The laboratory found that a push stays when the price is already far from its value. With the gap between Bybit and Binance standing in for that distance, the difference is small and not significant (0.93 against 0.89 of the 1 s move left after a minute). Two venues of the same contract are rarely far apart for long, and the gap may measure their disagreement rather than a lost anchor; at this resolution the laboratory's result does not carry over.
+
+**10 October (H9).** Between 20:50 and 22:50 UTC on 10 October, orders of 1 BTC or more moved the price 4.5 times as far as the calm-day replay predicted. Only one evening was further out of line: Sunday 26 October, with 1,807 orders against 20,756, where the same ratio reached 5.1. So 10 October ranks second of 45, and H9 does not survive the correction. The model relative to the queue was no closer to 1 on 10 October (5.3). The cascade evening was extreme in how far each order moved the price, but a thin Sunday evening can match that ratio on far fewer orders; what set 10 October apart was the size of the move and the number of orders, not the reaction per order.
+
+**After the cascade.** The left panel shows something no test asked about. Before 10 October the evening ratio sat below 1 (median 0.86); after it, above 1 on three evenings in four (median 1.42). The market stayed more reactive for at least three weeks after the cascade, as the thinner book of Lecture 20 already suggested. In the language of §2, this is hysteresis: after tipping, the system does not return at once to where it was. It is also why a replay calibrated before an event understates what orders cost after it, by about a third here.
 
 ## 6. Summary, exercises and reading
 
@@ -255,7 +292,8 @@ To follow: 10 October 2025, H9 and H20.
 3. **Near a tipping point the restoring forces weaken first.** Makers pull and arbitrage capital runs out before anything visible happens to the price; the first sign is in the tail of the cost, not its average (§2.2, H20a).
 4. **A cascade is a chain reaction.** When stops and forced closes sit in a thin book, each trade sets off more than one other, and the move feeds on itself until the fuel near the price is used up; no single ingredient does it (§2.3).
 5. **Rational for each, fragile for all.** A kill switch protects each maker and leaves the market without liquidity when everyone uses it, the structure of a run (§2.2).
-6. **A replay must react, and react to the whole order.** A plain replay forgets our order at once; the hybrid replay is closer for single orders, but adding up the impact of many small slices overstates what a run costs (§4).
+6. **A replay must react, and react to the whole order.** A plain replay forgets our order at once; the hybrid replay is closer for single orders (H6), but adding up the impact of many small slices made runs too dear by 3 bp (H7); charged by their cumulative size, they come out close (§4).
+7. **After tipping, a market does not snap back.** For three weeks after 10 October the same orders moved the price about 1.4 times as far as before; a replay calibrated on calm days understates the cost after an event (§5).
 
 (Exercises and reading to follow.)
 
