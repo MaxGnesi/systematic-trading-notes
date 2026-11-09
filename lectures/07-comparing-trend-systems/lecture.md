@@ -206,7 +206,9 @@ At matched speed and equal volatility of 10% a year ([chart F.8](#f8-drawdowns-a
 
 ## 5. Is the difference real?
 
-Strategy returns are noisy, fat-tailed and serially dependent. Before reading a gap between two curves as a difference between two ideas, test it.
+Strategy returns are noisy, fat-tailed and serially dependent. Before reading a gap between two curves as a difference between two ideas, test it (§5.1); and before reading a good backtest as an edge, ask how good luck alone could make it look (§5.2).
+
+### 5.1 Testing a difference
 
 | Method | Idea | What it answers |
 |---|---|---|
@@ -223,6 +225,47 @@ Strategy returns are noisy, fat-tailed and serially dependent. Before reading a 
 - **No pair of families at equal speed differs significantly.** The bootstrap tests of the Sharpe-ratio difference give p-values from 0.14 (EWMAC against Donchian) to 0.77 (Donchian against chandelier).
 - **Choosing a slow rule is not luck; choosing among slow rules is.** The probability of backtest overfitting is low, 0 to 0.15 within each family and 0.07 across all 31 systems, because the slow end is better in almost every sub-period. The best system in sample still earns less out of sample: a median Sharpe ratio of 0.37 against 0.53.
 - **The ranking of speeds carries over to other markets** ([chart F.10](#f10-asset-split-5)). Chosen on half of the ETFs and tested on the other half over the same period, the ranks of the parameters correlate 0.83 to 1.00 within four families and 0.87 across all systems; within the chandelier, whose speed hardly varies, only 0.20. In every family the best parameter on one half is also the best on the other.
+
+### 5.2 Luck or an edge?
+
+**Key message.** A strategy with no edge at all can produce a backtest as good as the best trend system. What luck cannot fake is a profit that persists over time and across markets, and that appears exactly where its mechanism says it should and vanishes where the mechanism says it must.
+
+**The experiment.** We built 1,000 strategies that have no edge by construction and are otherwise identical to the 31 trend systems: the same 16 ETFs, daily, 2000-2026, the same volatility target, the same cost of 5 bp. Each holds a random long or short position in every asset and flips it at random times, with an average holding period drawn from the trend systems' own (median 24 days), so the random strategies trade at the same speeds. Every test below was fixed before any result was computed, and the trend systems are the 31 of this lecture, unchanged.
+
+![Luck or an edge? Zero-edge strategies built like the trend systems](figures/07_13_luck_cloud.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: Sharpe ratio before costs, 2000-2026 (x), number of strategies (y). Middle: the best Sharpe ratio among 31 zero-edge strategies drawn at random, 5,000 draws (x), number of draws (y). Right: average holding period in days, log scale (x), Sharpe ratio after 5 bp (y). Grey: the zero-edge strategies; ticks and lines: the 31 trend systems, coloured by family; dotted line: the best trend system before costs.</sub>
+
+**How far luck goes.** Before costs, the zero-edge strategies have a median Sharpe ratio of 0.00 and a spread of 0.19, the standard error of a Sharpe ratio over 26 years (§5.1). The best of the 1,000 reaches 0.57, the same as the best trend system (0.56). The best of 31, as many as this lecture tried, is typically 0.38, and in one group of 31 in thirty it beats the best trend system. The expected maximum of $`N`$ independent draws from a normal distribution predicts this well: about 2.0 spreads above the median for 31 draws and 3.2 for 1,000, that is 0.39 and 0.62; for large $`N`$ it grows like $`\sqrt{2\ln N}`$ (Bailey, Borwein, López de Prado and Zhu, 2014). A peak Sharpe ratio alone cannot separate trend from luck; Chordia, Goyal and Saretto (2020) make the same point with two million trading signals built mechanically from accounting data.
+
+After costs (right panel) the random strategies lose, most of all the fast ones, because a flip costs the same whether or not it is right. At every speed from ten days up, the trend systems sit above the random cloud: their median before costs is 0.20 to 0.46, the random strategies' about zero.
+
+![Luck does not persist; an edge does](figures/07_14_luck_persistence.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: Sharpe ratio before costs in 2000-2012 (x) and in 2013-2026 (y). Right: Sharpe ratio before costs on half A of the ETFs (x) and on half B (y), over the whole period. Grey: zero-edge strategies; orange: the 31 with the best Sharpe ratio in 2000-2012, the same 31 in both panels; diamonds: the 31 trend systems by family. Before costs, so that slower strategies, which pay less, do not look persistent for that reason alone.</sub>
+
+| Test | Trend systems | Zero-edge strategies |
+|---|---|---|
+| The whole curve: median Sharpe ratio before costs | 0.20 | 0.00 |
+| Over time: correlation of Sharpe ratios in 2000-2012 and 2013-2026 | 0.62 | 0.02 |
+| The best in 2000-2012, then 2013-2026 | 0.47 → 0.56 (best 5) | 0.60 → −0.01 (best 31) |
+| Across markets: rank correlation between the two halves of the ETFs | 0.77 | 0.01 |
+| Breadth: share of the 16 ETFs with a positive Sharpe ratio | 0.89 (systems above 0.4) | 0.72 (best 31) |
+
+<sub><b>How to read the table.</b> All before costs. Rank correlation: Spearman, across the 31 trend systems or the 1,000 zero-edge strategies. Our calculation for these notes.</sub>
+
+**Luck does not persist.** The strategies that looked best in the first half fall straight back to zero in the second, and success on one half of the ETFs says nothing about the other. The trend systems' ranking holds in both directions, which §5.1 already found with the asset split. Breadth separates less than expected: the luckiest strategies are positive on most ETFs too, because the best of 1,000 are by definition the ones that happened to be right in many places.
+
+![What drives trend's edge, what kills it, and when it works](figures/07_15_luck_mechanism.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: the asset's move in a month, in its own volatility, absolute (x), profit annualised in units of 10% risk (y). Middle: asset-years in thirds of the efficiency ratio, the net move over the year divided by the length of the path, choppiest first (x), same profit (y). Right: months by regime (x), Sharpe ratio after 5 bp (y). Blue: the 7 trend systems with a Sharpe ratio above 0.3; orange: the 31 zero-edge strategies with the best Sharpe ratio; grey: all 1,000. After costs. Regimes are fixed in advance and known at the start of each month: zero rates (about December 2008 to 2015 and March 2020 to February 2022, Lecture 5, §3.5), SPY above or below its 200-day average, SPY's volatility in thirds.</sub>
+
+**The mechanism, tested.** Lectures 5 and 6 say what trend following captures: moves that persist for weeks to months, and large moves above all. They also say what kills it: markets that reverse before a position pays. Both statements make predictions that luck cannot meet:
+
+- **What drives it: large moves.** The slow trend systems' profit rises steadily with the size of the month's move, from −0.35 in quiet months to 3.97 in months that move more than three times their volatility: the smile of Lecture 5 (Table 3.1). The luckiest zero-edge strategies show a faint version of it, because they were selected for having been right in big moves, and the average zero-edge strategy none.
+- **What kills it: choppy markets.** In the choppiest third of asset-years the slow trend systems lose (−0.55), in the most trending third they earn (1.19). The luckiest zero-edge strategies earn about the same everywhere (0.03 to 0.08).
+- **When it works: regimes.** The slow trend systems earned in low and middle volatility (0.68, 0.59) and much less in high volatility (0.13), and about as much in zero-rate months as in the others (0.42 against 0.49). The luckiest zero-edge strategies show no pattern that any mechanism would predict.
+
+**Two predictions failed, and they are reported.** Persistence at a one-month horizon, measured by the variance ratio within each asset-year, did not line up with trend profits; if anything they were higher where one-month returns reversed. The edge lives at the horizons of months, and a year with a large directional move can be choppy within each month. And in months that began with SPY below its 200-day average, the slow trend systems earned nothing (−0.04, against 0.64 when SPY was above it). This contradicts the simple story of trend as protection in crises at this definition: such months include the sharp rebounds after a fall, which a slow rule meets with a short position; Lecture 5 (§2.4) found that a large fall tends to be followed by a small rebound.
+
+**What to take from it.** Luck can produce a backtest as good as any trend system's. An edge is something else: a profit with a mechanism that says where and when it should work and fail, and those statements hold up across markets, across regimes and over time. The procedure of §7 adds this as a step.
 
 ## 6. Will it last? Robustness instead of the best point
 
@@ -255,28 +298,31 @@ The best point on a curve combines skill with luck, and the luck does not repeat
 2. **Judge each family by its whole curve**, its median across parameters, not its peak (§6).
 3. **Look at the trades and the sides**: concentration of profits, long against short, time in the market (§4).
 4. **Decide by marginal contribution**, measured in what is scarce, cash or risk (§4.4).
-5. **Put bootstrap bands on the curves** before reading any gap as real (§5).
+5. **Put bootstrap bands on the curves** before reading any gap as real (§5.1), and **compare with luck**: zero-edge strategies at the same speed and cost (§5.2).
 6. **Compute the breakeven cost** of each family across its parameters (§3).
 7. **Ask what each family adds** to the others at equal speed, with correlations and spanning regressions (§3).
-8. **Only then test formally**, pairwise with Ledoit and Wolf, and across the grid with Romano and Wolf or the probability of backtest overfitting (§5).
+8. **Only then test formally**, pairwise with Ledoit and Wolf, and across the grid with Romano and Wolf or the probability of backtest overfitting (§5.1).
+9. **Test the mechanism**: state what drives the edge and what kills it, and check both across markets, regimes and time (§5.2).
 
 **Watch out for** declaring a winner from a single backtest. Speed, noise and selection each produce differences between systems that are not differences between ideas; the procedure above removes them one at a time.
 
 ## 8. Summary, exercises and reading
 
-### 8.1 Five takeaways
+### 8.1 Six takeaways
 
 1. **Measure speed by what a rule looks at.** On the trend-signature axis the five families nearly collapse onto one curve; most differences between families are differences of speed.
 2. **Ask what a system adds, not how good it is.** At equal speed, no family adds a return that the others do not already have.
 3. **Look inside the return series.** Trend systems win rarely and win big; the best tenth of trades earns more than all the profit, and the long and short sides earn in different conditions.
 4. **Treat every gap as noise until shown otherwise.** Bands of ±0.3 around each Sharpe ratio swallow the differences between families; tests that allow fat tails and dependence find none significant.
-5. **Judge the whole curve, then drop what fails and blend the rest.** The peak overstates what a family offers, the median of a grid that includes failing rules understates it.
+5. **A good backtest can be luck.** The best of 1,000 strategies with no edge matches the best trend system; what separates an edge is persistence over time and across markets, and profits where its mechanism says they should be (§5.2).
+6. **Judge the whole curve, then drop what fails and blend the rest.** The peak overstates what a family offers, the median of a grid that includes failing rules understates it.
 
 ### 8.2 Exercises
 
 - [ ] Redraw chart F.1 with costs of 10 bp. Which speeds stop working, and does the ordering of families change? (notebook §2)
 - [ ] Match the families on the signature axis instead of the holding period and recompute the correlations of §3. Do the near copies stay near copies? (notebook §3)
 - [ ] Remove the best tenth of trades of each family. What is left of the Sharpe ratio? (notebook §4)
+- [ ] Rerun the zero-edge experiment of §5.2 with 10,000 strategies. How high does the best one go, and does the expected maximum still predict it? Then define one more regime of your own, before looking, and test the trend systems in it. (notebook §5.2)
 - [ ] Drop every system with a holding period below 20 days, blend the rest with equal weights, and compare the blend with the walk-forward choice of §6. (notebook §6)
 
 ### 8.3 Reading
@@ -339,6 +385,24 @@ The shaded bands overlap almost everywhere at equal speed.
 
 Each point is one system; labels give its parameter. Points along the diagonal rank the same on both halves.
 
+### F.13 Luck or an edge? (§5.2)
+
+![Zero-edge strategies built like the trend systems: the luck cloud, the best of 31, and the net Sharpe ratio against speed](figures/07_13_luck_cloud.png)
+
+The best of 1,000 strategies with no edge reaches the best trend system; at every speed from ten days up the trend systems sit above the random cloud.
+
+### F.14 Persistence over time and across markets (§5.2)
+
+![First half against second half, and one half of the ETFs against the other, for zero-edge strategies and trend systems](figures/07_14_luck_persistence.png)
+
+The luckiest zero-edge strategies (orange) fall back to zero; the trend systems keep their ranking.
+
+### F.15 The mechanism (§5.2)
+
+![Profit against the size of the move, by choppiness and by regime, for slow trend systems and the luckiest zero-edge strategies](figures/07_15_luck_mechanism.png)
+
+Slow trend systems earn in large and sustained moves and lose in choppy markets; the luckiest zero-edge strategies show no such pattern.
+
 ### F.11 Median against peak (§6)
 
 ![Peak and median Sharpe ratio across parameters, per family](figures/07_11_median_peak.png)
@@ -351,7 +415,9 @@ Large outlined markers: no other system is better on Sharpe ratio, skewness and 
 
 ## References
 
+- Bailey, D., Borwein, J., López de Prado, M. and Zhu, Q. (2014). Pseudo-mathematics and financial charlatanism: the effects of backtest overfitting on out-of-sample performance. *Notices of the American Mathematical Society* 61(5), 458–471. — how good the best of many backtests looks by chance (§5.2).
 - Bailey, D., Borwein, J., López de Prado, M. and Zhu, Q. (2017). The probability of backtest overfitting. *Journal of Computational Finance* 20(4). — how much selecting the best backtest overfits (§5).
+- Chordia, T., Goyal, A. and Saretto, A. (2020). Anomalies and false rejections. *Review of Financial Studies* 33(5), 2134–2179. — two million trading signals built from accounting data, and how few survive multiple testing (§5.2).
 - Hansen, P.R. (2005). A test for superior predictive ability. *Journal of Business and Economic Statistics* 23, 365–380. — testing the best of many models (§5).
 - Huberman, G. and Kandel, S. (1987). Mean-variance spanning. *Journal of Finance* 42(4), 873–888. — whether one set of assets adds to another (§3).
 - Jobson, J.D. and Korkie, B. (1981). Performance hypothesis testing with the Sharpe and Treynor measures. *Journal of Finance* 36(4), 889–908. — the classical test of a Sharpe-ratio difference (§5).
