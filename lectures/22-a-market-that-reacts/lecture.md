@@ -242,16 +242,21 @@ To follow.
 
 ### Reading list (draft)
 
+- Aquilina, M., Budish, E. and O'Neill, P. (2022). Quantifying the high-frequency trading "arms race". *Quarterly Journal of Economics*. — races leave no trace for the losers (§2.4).
 - Brunnermeier, M. K. and Pedersen, L. H. (2005). Predatory trading. *Journal of Finance*. — selling ahead of a distressed seller (§2.3).
+- Budish, E., Cramton, P. and Shim, J. (draft). Work on liquidity provision and sniping stale quotes. — the sniper as a role (§2.1).
 - Diamond, D. W. and Dybvig, P. H. (1983). Bank runs, deposit insurance, and liquidity. *Journal of Political Economy*. — two stable outcomes, all stay or all run (§2.2).
 - Donier, J. and Bonart, J. (2015). A million metaorder analysis of market impact on the Bitcoin. — square-root impact on bitcoin (§3.1).
 - Filimonov, V. and Sornette, D. (2012). Quantifying reflexivity in financial markets: towards a prediction of flash crashes. arXiv 1201.3572. — branching ratio as reflexivity (§2.2).
 - Fosset, A., Bouchaud, J.-P. and Benzaquen, M. (2020). Endogenous liquidity crises. *Journal of Statistical Mechanics*, arXiv 1912.00359. — a threshold between stable and crisis-prone books (§2.2).
 - Hardiman, S. J., Bercot, N. and Bouchaud, J.-P. (2013). Critical reflexivity in financial markets: a Hawkes process analysis. arXiv 1302.1405. — markets close to n = 1 (§2.2).
+- Kim, C. and Hansen, P. R. (2026). The Quarter-Hour Effect: periodic algorithmic trading and return predictability in cryptocurrency futures. arXiv 2607.09426, preprint. — bursts at clock marks (§2.1, §2.4).
 - Lillo, F. and Farmer, J. D. (2004). The long memory of the efficient market. — order signs follow each other because orders are split (§3.3).
 - Morris, S. and Shin, H. S. (1998). Unique equilibrium in a model of self-fulfilling currency attacks. *American Economic Review*. — global games (§2.2).
+- Rabechini Amaral (2026). arXiv 2608.00885, theoretical, preliminary draft. — the band rule of the sniper (§2.1, §2.4).
 - Scheffer, M. et al. (2009). Early-warning signals for critical transitions. *Nature* 461, 53-59. — slowing recovery before a tipping point (§2.2).
 - Schelling, T. C. (1978). *Micromotives and Macrobehavior*. — simple rules, sudden collective change (§2).
+- Silber, W. L. (1984). Marketmaker behavior in an auction market: an analysis of scalpers in futures markets. *Journal of Finance* 39(4), 937-953. — the floor scalper (§2.1).
 - Shleifer, A. and Vishny, R. W. (1997). The limits of arbitrage. *Journal of Finance*. — arbitrage capital runs out (§2.2).
 
 *References are given from memory and should be checked against the originals before circulation.*
