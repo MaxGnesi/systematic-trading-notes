@@ -90,7 +90,27 @@ A scalper joins the best price and exits a few ticks better. In the laboratory i
 
 ## 3. What is at work on Bybit
 
-To follow: H10, H11 and H12 out of sample.
+Three footprints were tested on the 24 out-of-sample days, 11 October to 3 November 2025, with the rules of §2 fixed in sample. Two are clearly there; the third shows a clock, but not the trend crowd it was meant to find.
+
+![What is at work on Bybit: three footprints, out of sample](figures/23_s3_styles.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: order size class in BTC (x), net move of the mid in the order's direction 10 s later, after matched controls, in bp (y); pink: orders sent within 100 ms after Binance's price moved 2 bp or more their way, grey: all other orders. Middle: kind of whole mark (x), the mean over the first 3 s after the mark less the same at fake marks 10 to 50 s after it, in BTC (y); blue: taker flow on the trend's side (H11a), orange: extra taker size on either side. Right: day (x), share of taker size in runs of eight or more equal orders at regular gaps, % on a log scale (y); green: as traded, grey: the same day with sizes shuffled within 5 minutes; shaded: out of sample. Whiskers: 95% bands from 2,000 resamples of the out-of-sample days. Our calculation, Bybit BTCUSDT perpetual.</sub>
+
+**Do orders sent just after a move on Binance move the price more? (H10)** Yes, in every size class. Ten seconds after a sniper-like order the mid has moved 3.0 to 6.5 bp its way, net of matched controls, against 0.4 to 1.8 bp after other orders of the same size; weighted over the classes the difference is 2.7 bp (95% band 2.4 to 3.0). The difference is there already after 1 s (2.7 bp) and still after 60 s (2.2 bp): Bybit catches up with a price that has already moved, and does not give it back. Such orders are 3.4% of taker orders and 9% of taker size. They pay for their speed: 2.3 to 2.5 bp from the mid against 0.2 to 0.8 bp for other orders up to 20 BTC, because they arrive while the book is still moving; the move that follows them is larger still.
+
+**Is there a clock, and does it follow the trend? (H11)** There is a clock, but the trend crowd it was meant to find did not appear. In the first 3 s after a whole minute, taker flow on the side of the trend is no larger than at fake marks (H11a, t = 0.4), and makers do not widen before the minute: quotes wider than one tick are, if anything, slightly rarer in the 2 s before it (H11b, t = −5.5 in the opposite direction). What the clock does bring is volume on both sides: 0.7 BTC more taker size in the first 3 s than at fake marks (t = 6.4), 1.7 BTC at 5-minute marks, 2.7 at quarter-hours and 5.2 at hours, against an average of 2.9 BTC in any 3 s; and the spread widens *after* the mark (t = 4.4), not before. In sample, flow did lean with the trend at 5-minute and 15-minute marks (t = 2.4 and 3.6); out of sample it did not, so it is no finding. The funding minutes (00:00, 08:00, 16:00 UTC) were left out of the tests; with three a day they are too few to say anything on their own.
+
+**Are there more runs of equal orders than chance gives? (H12)** Many more. Out of sample 1.2% of taker size is in runs, against 0.03% with the sizes shuffled within 5 minutes, about forty times as much, and more than five times as much on every one of the 45 days. The share varies from 0.1% to 5.2% a day: a few large slicers make a day. Of the 3,215 runs found out of sample, a third have gaps within 1 s of 30.22 s, and they carry 61% of the size in runs; this fits Bybit's own TWAP tool, which slices every 30 s by default, but cannot prove it. With 40% of a known slicer found in the laboratory (§2.1), the true share is higher.
+
+| Plain question | Measure | Out of sample | p (one-sided) | Verdict |
+|---|---|---|---|---|
+| Do orders sent just after Binance moved, their way, move the price more? | Net R(10 s), sniper-like less other, same size class | +2.7 bp (2.4 to 3.0) | < 0.001 | Holds |
+| Does flow lean with the trend just after a whole minute? | Flow with the trend, first 3 s, real less fake marks | +0.03 BTC, t = 0.4 | 0.34 | Fails |
+| Do makers widen before a whole minute? | Share of quotes wider than a tick, 2 s before, real less fake | −0.04 points, t = −5.5 | 1.00 | Fails (opposite sign) |
+| Is there more slicing than chance gives? | Share of taker size in runs, real less shuffled | +1.2 points (0.8 to 1.6) | < 0.001 | Holds |
+
+<sub><b>How to read the table.</b> Each row is one hypothesis fixed before the data were used (H10, H11a, H11b, H12). Brackets: 95% bands from 2,000 resamples of days. H10 and H12: bootstrap over days; H11: one-sided t over the 24 days, as fixed. p-values before the correction over all twelve, which comes with §5. Our calculation.</sub>
+
+**For a quoter.** The three footprints say different things about the fills a resting order will get. A fill from a sniper-like order is the worst there is: the price goes on 3 to 6 bp against the quote, and it comes just after Binance moved, which a quoter can see as well. A slicer's fills are the best: small, regular and uninformed about the next minute, but all on one side for as long as the run lasts. The clock does not bring a crowd that knows the trend, it brings volume: a quote standing at the whole minute is filled more often, and the spread opens after the burst, not before it. Lecture 24 starts from these three facts.
 
 ## 4. When, and in what conditions
 
