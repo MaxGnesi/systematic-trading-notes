@@ -1,10 +1,10 @@
 # Lecture 22: A Market That Reacts: Our Order's Footprint, Normal Slippage and the Tipping Point
 
-*Systematic Trading: Lecture Notes (MSc) · draft, Nov 8, 2026 · Max Gnesi*
+*Systematic Trading: Lecture Notes (MSc) · Nov 9, 2026 · Max Gnesi*
 
-> **Draft.** Sections 1 to 5 are written; the exercises, the reading list and the companion notebook are still to come. The hypotheses were fixed before any of their results were computed ([results/hypotheses.md](results/hypotheses.md)); every change to them is dated there.
+The hypotheses were fixed before any of their results were computed ([results/hypotheses.md](results/hypotheses.md)); every change to them is dated there.
 
-Lecture 21 replayed the recorded Bybit book as if our orders were invisible: nobody answered them, and what they took came straight back. This lecture lets the market react, and its central idea is that the reaction is made by people with rules: market makers, arbitrageurs, snipers, slicers, trend followers, stops. How each of them behaves, and what their behaviour adds up to together, decides whether a market absorbs our order calmly or tips into a move that feeds on itself, and the lecture asks why. A laboratory market, a small simulated exchange in which every trader's rule is known, shows the mechanisms; a **hybrid replay** on Bybit's BTCUSDT perpetual, 20 September to 3 November 2025, measures what our order costs in normal conditions and which states of the book come close to the tipping point. Companion notebook: to follow.
+Lecture 21 replayed the recorded Bybit book as if our orders were invisible: nobody answered them, and what they took came straight back. This lecture lets the market react, and its central idea is that the reaction is made by people with rules: market makers, arbitrageurs, snipers, slicers, trend followers, stops. How each of them behaves, and what their behaviour adds up to together, decides whether a market absorbs our order calmly or tips into a move that feeds on itself, and the lecture asks why. A laboratory market, a small simulated exchange in which every trader's rule is known, shows the mechanisms; a **hybrid replay** on Bybit's BTCUSDT perpetual, 20 September to 3 November 2025, measures what our order costs in normal conditions and which states of the book come close to the tipping point. Companion notebook: [22_a_market_that_reacts.ipynb](22_a_market_that_reacts.ipynb).
 
 ## 1. One order, two replays
 
@@ -113,9 +113,9 @@ Read by the state at the moment of the order, two results stand out.
 | Price within 3 ticks of the value | 425 | −1.8 to −2.3 ticks | | |
 | Price more than 3 ticks from the value, either side | 535 | −7.3 to −7.9 ticks | | |
 | Market maker in the book | 465 | | 7.3 ticks | 12.7 ticks |
-| Market maker out (kill switch) | 15 | | 14.4 ticks | 29.0 ticks |
+| Market maker out (kill switch) | 15 | | 14.4 ticks | 26.0 ticks |
 
-<sub><b>How to read the table.</b> <i>Invented.</i> The 960 moments of the figure. The upper rows split by the gap between price and value; the lower rows use the worlds with a kill switch.</sub>
+<sub><b>How to read the table.</b> <i>Invented.</i> The 960 moments of the figure. The upper rows split by the gap between price and value; the lower rows use the worlds with a kill switch. The maker was out in only 15 of those moments, so its percentiles are rough.</sub>
 
 **A loose anchor.** When the price is already far from the value, in either direction, the arbitrageurs have stopped correcting it, and any push stays. Moved towards the value, it stays because we did their work; moved further away, because nobody is left to push back. A first draft of hypothesis H20 expected the direction to matter; the laboratory showed it is the size of the gap.
 

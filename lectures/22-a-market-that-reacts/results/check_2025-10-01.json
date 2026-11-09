@@ -1,0 +1,7 @@
+{
+ "orders": 400860,
+ "orders of 1 BTC or more": 15591,
+ "share of book messages that were quote pulls": 0.1263866106925408,
+ "share of orders of 1 BTC or more with 90% of the depth back near the new best within 1 s": 0.4546891102713844,
+ "mean move at 10 s after orders of 1 BTC or more, in their direction, bp (not net)": 0.9100415726243971
+}
