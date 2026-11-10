@@ -1,6 +1,6 @@
 """Lecture 24: every design of results/hypotheses.md through whole days, all designs in one pass over each book window. Output per day: L24_OUT/fills/DAY.parquet
 (the fills of every design, with a column design) and L24_RESULTS/days/DAY.json (each design's measures, l24_engine.score). A day already done is skipped.
-Usage: python l24_run.py [DAY ...] (default: every day with a book state, in-sample days first)."""
+Usage: python l24_run.py [--sample] [--designs=a,b] [--tag=x] [DAY ...] (default: every day with a book state, in-sample days first)."""
 import json, sys, time
 from pathlib import Path
 import polars as pl
@@ -20,6 +20,8 @@ if __name__ == "__main__":
     sample = "--sample" in sys.argv; only = next((a.split("=", 1)[1].split(",") for a in sys.argv if a.startswith("--designs=")), None)
     days = [a for a in sys.argv[1:] if not a.startswith("--")] or (list(SAMPLE_IN + SAMPLE_OUT) if sample else sorted(p.stem for p in L.L21.STATE.glob("*.parquet")))
     out, fills = (L.RESULTS / "sample_days", L.OUT / "sample_fills") if sample else (DAYS, FILLS)
+    tag = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--tag=")), "")                 # a separate output, e.g. for designs added later
+    if tag: out, fills = out.with_name(out.name + "_" + tag), fills.with_name(fills.name + "_" + tag)
     for p in (out, fills): p.mkdir(parents=True, exist_ok=True)
     for d in days:
         if (out / f"{d}.json").exists(): continue

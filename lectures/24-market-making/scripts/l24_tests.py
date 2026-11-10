@@ -5,15 +5,16 @@ import json, sys
 from pathlib import Path
 import numpy as np, polars as pl
 sys.path.insert(0, str(Path(__file__).resolve().parent)); import l24 as L
-TESTS = {"H1": "guard_2", "H2": "as_5_1", "H3": "behind_1", "H4": "pp_e0_c110_n2"}
+TESTS = {"H1": "guard_2", "H2": "as_5_2", "H3": "behind_1", "H4": "pp_e0_c110_n1"}                   # the choice corrected on 2026-11-10 (hypotheses.md)
+BEFORE = {"H2": "as_5_1", "H4": "pp_e0_c110_n2"}                                                   # the choice made under the scoring error, reported
 MAKER, TAKER = 2.0, 5.5                                                                            # bp, Bybit's standard tier (checked at source before quoting)
 
 
 def load():
     rows = []
-    for f in sorted((L.RESULTS / "days").glob("*.json")):
+    for f in sorted((L.RESULTS / "days").glob("*.json")) + sorted((L.RESULTS / "days_corr").glob("*.json")):
         d = f.stem; S = json.loads(f.read_text(encoding="utf-8"))
-        F = pl.read_parquet(L.OUT / "fills" / f"{d}.parquet").with_columns((pl.col("p") * 0.1 * L.SIZE).alias("v"))   # ticks -> USDT, 0.001 BTC
+        F = pl.read_parquet(L.OUT / f.parent.name.replace("days", "fills") / f"{d}.parquet").with_columns((pl.col("p") * 0.1 * L.SIZE).alias("v"))   # ticks -> USDT, 0.001 BTC
         tv = dict(F.filter(pl.col("taker")).group_by("design").agg(pl.col("v").sum()).iter_rows())
         for k, s in S.items():
             rows.append({"day": d, "design": k, "res": s["result_usdt"], "val": s["value_usdt"], "taker_val": tv.get(k, 0.0), "fills": s["fills"],
@@ -37,7 +38,7 @@ if __name__ == "__main__":
                              "value_usdt_day": float(v.sum() / n), "days_above_baseline": None,
                              "per_day_bp": dict(zip(days, (1e4 * r / v).tolist()))}
     rb, vb = arr("baseline", "res"), arr("baseline", "val")
-    for h, k in TESTS.items():
+    for h, k in list(TESTS.items()) + [(h + " before correction", k) for h, k in BEFORE.items()]:
         r, v = arr(k, "res"), arr(k, "val")
         diff = 1e4 * r.sum() / v.sum() - 1e4 * rb.sum() / vb.sum()
         boot = (1e4 * r[B].sum(1) / v[B].sum(1)) - (1e4 * rb[B].sum(1) / vb[B].sum(1))
@@ -45,12 +46,13 @@ if __name__ == "__main__":
         out["tests"][h] = {"design": k, "diff_bp": float(diff), "ci90": np.percentile(boot, [5, 95]).tolist(), "p": p,
                            "days_above": int((1e4 * r / v > 1e4 * rb / vb).sum())}
         out["designs"][k]["days_above_baseline"] = out["tests"][h]["days_above"]
-    ps = sorted((t["p"], h) for h, t in out["tests"].items()); m = len(ps); ok = 0
+    ps = sorted((t["p"], h) for h, t in out["tests"].items() if h in TESTS); m = len(ps); ok = 0
     for i, (p, h) in enumerate(ps, 1):
         if p <= 0.05 * i / m: ok = i
     for i, (p, h) in enumerate(ps, 1): out["tests"][h]["bh_holds"] = i <= ok
+    for h in out["tests"]: out["tests"][h].setdefault("bh_holds", None)
     (L.RESULTS / "tests.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
     for k, s in out["designs"].items():
         print(f"{k:16s} {s['result_bp']:+.3f} bp  {s['after_fee_usdt_day']:+9.0f} USDT/day  {s['fills_hour']:6.0f} fills/h  taker {s['taker_share']:.0%}")
     for h, t in out["tests"].items():
-        print(h, t["design"], f"{t['diff_bp']:+.3f}", [round(x, 3) for x in t["ci90"]], f"p={t['p']:.4f}", t["days_above"], "/", n, "BH" if t["bh_holds"] else "-")
+        print(h, t["design"], f"{t['diff_bp']:+.3f}", [round(x, 3) for x in t["ci90"]], f"p={t['p']:.4f}", t["days_above"], "/", n, {True: "BH", False: "-", None: "(not in BH)"}[t["bh_holds"]])
