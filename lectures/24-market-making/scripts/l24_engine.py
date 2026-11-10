@@ -165,14 +165,29 @@ def run_day(day, design, rule="Q2", a=L.A, lat=L.LAT, A=None, hours=None):
     R, A = run_days(day, [design], rule, a, lat, A, None if hours is None else range(*hours)); return R[design.name], A
 
 
-def score(D, A, size=L.SIZE):
-    """The day's measures from its fills: markouts, the result before the fee in bp of the value traded (the break-even maker fee), the part from the position."""
+def blocks(day, windows=None):
+    """The runs of consecutive half-hour windows, as (start, end) in ms; the whole day when windows is None."""
+    d0 = L21.ms(day); ws = list(range(48)) if windows is None else sorted(windows); out = []
+    for w in ws:
+        if out and out[-1][1] == d0 + w * WIN: out[-1][1] += WIN
+        else: out.append([d0 + w * WIN, d0 + (w + 1) * WIN])
+    return [tuple(b) for b in out]
+
+
+def score(D, A, size=L.SIZE, B=None):
+    """The day's measures from its fills: markouts, the result before the fee in bp of the value traded (the break-even maker fee), the part from the position.
+    B: the blocks of windows run (blocks()); the engine starts each block flat, so the position open at a block's end is valued at the mid there."""
     if D.height == 0: return dict(fills=0)
     t, s, p = D["t"].to_numpy(), D["s"].to_numpy(), D["p"].to_numpy(); mk = {}
     for h in (1_000, 10_000, 60_000): mk[h] = s * (A.mid[np.searchsorted(A.ts, t + h, side="right") - 1] - p)
-    pos = np.cumsum(s); end = A.mid[-1]; cash = -np.sum(s * p); value = np.sum(p)
-    total = cash + pos[-1] * end; spread10 = mk[10_000].sum()
+    B = B or [(int(t[0]), int(A.ts[-1]) + 1)]; total = 0.0; maxp = 0; endp = 0
+    for b0, b1 in B:
+        m = (t >= b0) & (t < b1)
+        if not m.any(): continue
+        pos = np.cumsum(s[m]); end = A.mid[max(int(np.searchsorted(A.ts, b1, side="left")) - 1, 0)]
+        total += -np.sum(s[m] * p[m]) + pos[-1] * end; maxp = max(maxp, int(np.abs(pos).max())); endp = int(pos[-1])
+    value = np.sum(p); spread10 = mk[10_000].sum()
     bp = lambda x: float(x / value * 1e4)
     return dict(fills=int(D.height), taker=int(D["taker"].sum()), mk1=float(mk[1_000].mean() / A.bp), mk10=float(mk[10_000].mean() / A.bp), mk60=float(mk[60_000].mean() / A.bp),
                 result_bp=bp(total), position_bp=bp(total - spread10), value_usdt=float(value * L21.TICK * size), result_usdt=float(total * L21.TICK * size),
-                max_pos=int(np.abs(pos).max()), end_pos=int(pos[-1]))
+                max_pos=maxp, end_pos=endp)

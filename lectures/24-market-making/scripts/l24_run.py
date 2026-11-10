@@ -26,5 +26,5 @@ if __name__ == "__main__":
         D = [x for x in designs() if only is None or x.name in only]; t0 = time.time()
         R, A = E.run_days(d, D, windows=WINDOWS if sample else None)
         pl.concat([f.with_columns(pl.lit(k).alias("design")) for k, f in R.items()]).write_parquet(fills / f"{d}.parquet")
-        (out / f"{d}.json").write_text(json.dumps({k: E.score(f, A) for k, f in R.items()}), encoding="utf-8")
+        (out / f"{d}.json").write_text(json.dumps({k: E.score(f, A, B=E.blocks(d, WINDOWS if sample else None)) for k, f in R.items()}), encoding="utf-8")
         print(d, f"{time.time() - t0:.0f} s", len(D), "designs", flush=True)

@@ -64,3 +64,13 @@ All 85 variants take about 28 minutes per day of data, so the whole sample would
 ## The choice in sample, made on 2026-11-10, before any out-of-sample run
 
 On the 24 sampled in-sample hours (results/choice.json): **H2** κ = 5, c = 1 (−0.80 bp of the value traded before the fee, against −0.82 for the baseline; the grid spans −0.80 to −1.0); **H4** entry at the best, a target 1 bp from the entry with a stop 1 bp against or after 60 s, switch-off after 2 fills on a side (−0.33 bp, 37% of its fills taker exits; the 56 variants span −0.33 to −2.6, median −0.90). These two, with the baseline, the guard at 2 bp and 1 tick behind, are the five designs run on the 24 out-of-sample days.
+
+## Corrected on 2026-11-10, after the out-of-sample tests: the scoring of the sampled hours
+
+**The error.** The engine starts each block of sampled windows flat, but the score valued the position left open at the end of a block at the last mid of the day, as if it had been held until midnight. Whole days (the out-of-sample tests) are one block and are not affected; the sampled hours, and so the choice in sample, are. Found after the five designs had been run on the 24 out-of-sample days and all variants on the 6 sampled out-of-sample days, when a few designs with few fills showed largest positions of up to 40 lots against a limit of 10.
+
+**The fix.** The position open at the end of each block is valued at the mid at that block's end (l24_engine.score, l24_engine.blocks). The saved fills were scored again; nothing was replayed. A whole day scored again gives the same numbers to the last digit.
+
+**The choice under the fixed rule** (highest result before the fee over the 24 sampled in-sample hours; results/choice.json): **H2** κ = 5, c = 2 (−0.750 bp, against −0.799 for κ = 5, c = 1 and −0.812 for the baseline); **H4** entry at the best, target 1 bp with a stop 1 bp against or after 60 s, switch-off after **1** fill on a side (−0.3482 bp, against −0.3485 for 2 fills: a tie in practice). The rule is applied as written, although the sampled out-of-sample hours had been seen.
+
+**What is tested.** The rule decides the variants, so H2 and H4 are tested on the corrected choices, run on the 24 out-of-sample days as the other three designs were. The tests already run on κ = 5, c = 1 and on the 2-fill switch-off are kept and reported as the choice made under the error.
