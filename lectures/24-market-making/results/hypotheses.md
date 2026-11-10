@@ -60,3 +60,7 @@ All 85 variants take about 28 minutes per day of data, so the whole sample would
 - **The tests out of sample** stay as fixed: the baseline, the guard at 2 bp, 1 tick behind, the chosen H2 and the chosen H4, on all 24 out-of-sample days, whole days.
 - **All variants out of sample** (the robustness charts): 6 out-of-sample days, 13, 17, 21, 25 and 29 October and 2 November, in the same four windows.
 - 1 October, run in full to time the engine, is not used for the choice.
+
+## The choice in sample, made on 2026-11-10, before any out-of-sample run
+
+On the 24 sampled in-sample hours (results/choice.json): **H2** κ = 5, c = 1 (−0.80 bp of the value traded before the fee, against −0.82 for the baseline; the grid spans −0.80 to −1.0); **H4** entry at the best, a target 1 bp from the entry with a stop 1 bp against or after 60 s, switch-off after 2 fills on a side (−0.33 bp, 37% of its fills taker exits; the 56 variants span −0.33 to −2.6, median −0.90). These two, with the baseline, the guard at 2 bp and 1 tick behind, are the five designs run on the 24 out-of-sample days.
