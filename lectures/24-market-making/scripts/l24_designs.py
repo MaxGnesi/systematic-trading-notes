@@ -108,7 +108,8 @@ class Kill:
     closing orders keep working. Uses only moves known at the decision."""
 
     def __init__(self, inner, x=10, ms=1_000, off=30_000):
-        self.inner, self.x, self.ms, self.off = inner, x, ms, off; self.name = inner.name + "_kill"; self.mask = None
+        self.inner, self.x, self.ms, self.off = inner, x, ms, off; self.mask = None
+        self.name = inner.name + "_kill" + ("" if (x, off) == (10, 30_000) else f"_{x:g}_{off // 1000}")
 
     def killed(self, A):
         if self.mask is None or self.mask[0] is not A:

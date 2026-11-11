@@ -84,3 +84,23 @@ On the 24 sampled in-sample hours (results/choice.json): **H2** κ = 5, c = 1 (�
 **What is redone, in the order fixed on 2026-11-09.** The 56 ping-pong variants on the 24 sampled in-sample hours, and the choice by the same rule; the chosen variant on the 24 out-of-sample days (the H4 test, in the same Benjamini-Hochberg correction); the 56 variants on the sampled out-of-sample hours; the chosen variant on 10 October with and without the kill switch. Every H4 number computed before this date is void.
 
 **The H4 choice under the fixed ledger, made on 2026-11-11 before the out-of-sample rerun** (results/sample_days_ledger): entry at the best, target 1 bp with a stop 1 bp against or after 60 s, switch-off after **2** fills on a side, pp_e0_c110_n2 (−0.348 bp before the fee over the 24 sampled in-sample hours, 37% of fills taker exits; switch-off after 1 fill −0.350, a tie in practice). The 56 variants span −1.06 to −0.35 bp, median −0.80; the target-plus-stop exit is best at both entries.
+
+## Added on 2026-11-11, before the run: 10 October as a case study
+
+10 October is one stretch of one day: a case study, described, not tested (no p-values, no correction). The question: which market-making design does better through the crash, and where does each lose its money? Window and engine as for the tested designs (20:30 - 23:00 UTC, the half-hour windows holding 20:50 - 22:50, flat at 20:30; L = 50 ms, Q2 with a = 1; the fixed ledger).
+
+**Designs** (beyond the ten already run: the five tested designs with and without the kill switch):
+- Kill switch on the baseline: trigger x in {5, 10, 20} bp within 1 s, off for {10, 30, 60} s (the 10 bp / 30 s setting already run): 8 more.
+- Binance guard θ in {1, 5} bp (2 bp already run).
+- Avellaneda-Stoikov κ = 5, c in {0, 1} (c = 2 already run): with and without the spread widening with σ.
+- Ping-pong: exit at the best (a), switch-off after 2 fills; target 1 bp without a stop, after 2 fills; the chosen exit with switch-off after 1 fill.
+
+**Expectations, written before the run:**
+1. The kill switch reduces the baseline's loss at every setting; longer off-times help more, since the crash came in waves.
+2. The guard helps more in the crash than on normal days, and more at θ = 1 than at 5 bp, since Binance led the moves.
+3. Widening with σ helps Avellaneda-Stoikov, but less than the kill switch, since σ over the last 60 s lags the fall.
+4. Ping-pong's stops keep its position small, but turn part of its loss into taker fees and stop slippage; the exit without a stop loses most, by holding positions into the fall.
+
+**Reported for each design:** the result before and after fees; the split of the result into the part picked off (markout after 10 s), the part from positions held beyond 10 s, and fees; the same by phase of the crash. Phases from the mid alone, fixed before any design's result is looked at: before (20:30 to the first move of 10 bp within 1 s), the fall (to the low), the bottom (5 minutes around the low), the rebound (to the last new high before 5 minutes without one), after (to 23:00).
+
+**What the replay cannot show:** delays and rate limits of the exchange's interface, auto-deleveraging, and makers withdrawing in ways the book does not reveal; the replay assumes our orders and data arrived as on a normal day.
