@@ -32,5 +32,5 @@ In bp: standard maker 2 bp, taker 5.5 bp; the best public maker rate is a rebate
 
 ## Literature
 
-- Avellaneda, M. and Stoikov, S. (2008). High-frequency trading in a limit order book. *Quantitative Finance* 8(3), 217-224. doi:10.1080/14697680701381228. (The publisher's page refused automated access; volume, issue, pages and DOI as listed by the journal's citation records.)
+- Avellaneda, M. and Stoikov, S. (2008). High-frequency trading in a limit order book. *Quantitative Finance* 8(3), 217-224. doi:10.1080/14697680701381228. Volume, issue and pages confirmed on RePEc (RePEc:taf:quantf:v:8:y:2008:i:3:p:217-224) and on the authors' copy (math.nyu.edu/~avellane/HighFrequencyTrading.pdf, header Quantitative Finance 8(3), April 2008); the publisher's page refused automated access.
 - Guéant, O., Lehalle, C.-A. and Fernandez-Tapia, J. (2013). Dealing with the inventory risk: a solution to the market making problem. *Mathematics and Financial Economics* 7(4), 477-507. doi:10.1007/s11579-012-0087-0. arXiv:1105.3115 (HAL: hal-01393110). Checked at source (arXiv abstract): a stochastic control problem "similar to the one introduced by Ho and Stoll and formalized mathematically by Avellaneda and Stoikov", solved "under inventory constraints", with "closed-form approximations based on a spectral characterization of the optimal quotes".
