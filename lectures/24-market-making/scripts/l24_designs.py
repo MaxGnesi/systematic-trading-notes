@@ -186,3 +186,8 @@ def grid_stop_all():
     """The stop on three designs: fixed 5, 10, 20 bp or 2, 3 times the hour's 1-minute volatility; on a touch or held 5 s."""
     inner = [Quoter, lambda: AS(5, 2), lambda: PingPong(0, "a", ("n", 2))]
     return [Stop(f(), m=m, k=k, hold=h) for f in inner for (m, k) in ((5, None), (10, None), (20, None), (None, 2), (None, 3)) for h in (0, 5_000)]
+
+
+def grid_depth(bp_ticks=110):
+    """The baseline quoting k bp behind the best on each side, k in {1, 2, 3, 5, 10} (hypotheses.md, 2026-11-11)."""
+    return [Quoter(k=k * bp_ticks) for k in (1, 2, 3, 5, 10)]

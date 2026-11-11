@@ -13,7 +13,8 @@ WINDOWS = (4, 5, 16, 17, 28, 29, 40, 41)                                        
 
 
 def designs():
-    return ([G.Quoter()] + [G.Quoter(theta=t) for t in (1, 2, 3, 5)] + [G.Quoter(k=k) for k in (1, 2, 5, 110)] + G.grid_as() + G.grid_pingpong() + G.grid_stop_all())
+    D = ([G.Quoter()] + [G.Quoter(theta=t) for t in (1, 2, 3, 5)] + [G.Quoter(k=k) for k in (1, 2, 5, 110)] + G.grid_as() + G.grid_pingpong() + G.grid_stop_all() + G.grid_depth())
+    return list({d.name: d for d in D}.values())                                                 # one design per name
 
 
 if __name__ == "__main__":
