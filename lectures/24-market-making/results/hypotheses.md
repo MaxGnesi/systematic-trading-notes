@@ -104,3 +104,13 @@ On the 24 sampled in-sample hours (results/choice.json): **H2** κ = 5, c = 1 (�
 **Reported for each design:** the result before and after fees; the split of the result into the part picked off (markout after 10 s), the part from positions held beyond 10 s, and fees; the same by phase of the crash. Phases from the mid alone, fixed before any design's result is looked at: before (20:30 to the first move of 10 bp within 1 s), the fall (to the low), the bottom (5 minutes around the low), the rebound (to the last new high before 5 minutes without one), after (to 23:00).
 
 **What the replay cannot show:** delays and rate limits of the exchange's interface, auto-deleveraging, and makers withdrawing in ways the book does not reveal; the replay assumes our orders and data arrived as on a normal day.
+
+## Added on 2026-11-11, before any hourly result was computed: the hour of the day (described, not tested)
+
+The question (asked after the tests): does a market maker do better at some hours of the day, and if so, is it the hour or the volatility of the hour? Lecture 23 (§4, H13) found that hourly profiles of the taker styles did not repeat out of sample, and that volatility, not the time of day, sets the mix; the expectation here is the same. Our in-sample runs cover only four sampled hours a day, so no profile can be fixed in sample; this is a description on the 24 out-of-sample days, outside the Benjamini-Hochberg family.
+
+- **Data.** The saved fills of the five tested designs on the 24 out-of-sample days (no new replay).
+- **Measure, per design, day and hour (UTC).** The result before the fee: cash from the hour's fills plus the position valued at the mid at the hour's end, less the position at its start valued at the mid then, in bp of the value traded in the hour; the value traded; the hour's volatility, the square root of the sum of squared 1-minute changes of the log mid (as Lecture 23).
+- **Does the profile repeat?** The rank correlation between the baseline's 24-hour profile on the first 12 days and on the last 12 days.
+- **Hour or volatility?** The result by third of the hour's volatility, and within each hour of the day the difference between the most and least volatile third of its days.
+- **Expectation.** The profile does not repeat (rank correlation not clearly above zero); volatile hours lose more per value traded than calm ones, at every hour of the day.
