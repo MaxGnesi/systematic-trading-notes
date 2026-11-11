@@ -101,3 +101,28 @@ def grid_pingpong(bp_ticks=110):
 
 def grid_as():
     return [AS(k, c) for k in (0, 0.5, 1, 2, 5) for c in (0, 0.5, 1, 2)]
+
+
+class Kill:
+    """A design with the kill switch of results/hypotheses.md (10 October): no entry quotes for 30 s after the mid has moved x bp or more within 1 s;
+    closing orders keep working. Uses only moves known at the decision."""
+
+    def __init__(self, inner, x=10, ms=1_000, off=30_000):
+        self.inner, self.x, self.ms, self.off = inner, x, ms, off; self.name = inner.name + "_kill"; self.mask = None
+
+    def killed(self, A):
+        if self.mask is None or self.mask[0] is not A:
+            j = np.searchsorted(A.ts, A.ts - self.ms, side="right") - 1; j = np.maximum(j, 0)
+            trig = np.abs(A.mid - A.mid[j]) >= self.x * A.bp; tt = A.ts[trig]
+            k = np.searchsorted(tt, A.ts, side="right") - 1
+            self.mask = (A, (k >= 0) & (A.ts - tt[np.maximum(k, 0)] < self.off))
+        return self.mask[1]
+
+    def slots(self, st, A, i):
+        out = self.inner.slots(st, A, i); m = self.killed(A)
+        for key, (s, fn, role, lot) in list(out.items()):
+            if role == "entry": out[key] = (s, lambda a, b, fn=fn: np.where(m[a:b], np.nan, fn(a, b)), role, lot)
+        return out
+
+    def stop(self, st, A, i, r):
+        return self.inner.stop(st, A, i, r)

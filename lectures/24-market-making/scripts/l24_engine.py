@@ -74,8 +74,9 @@ class State:
         return sum(l["s"] for l in self.lots)
 
     def add(self, s, p, t, role, lot):
-        """A fill on side s: closes lot `lot` (a closing order), else the oldest opposite lot (netting), else opens a lot."""
-        if role == "close":
+        """A fill on side s: closes lot `lot` (a closing order), else the oldest opposite lot (netting), else opens a lot. A closing order filled after its
+        lot was closed (a stop, then the cancelled maker order filled within the latency) is an ordinary fill, so the lots always add up to the fills."""
+        if role == "close" and any(l["id"] == lot for l in self.lots):
             self.lots = [l for l in self.lots if l["id"] != lot]; return
         opp = [l for l in self.lots if l["s"] == -s]
         if opp: self.lots.remove(opp[0]); return
@@ -109,7 +110,7 @@ def run_window(design, st, F, W, A, w0, b, rule, a, lat):
             if np.isnan(p): idle.append(next_change(fn, k, np.nan, n)); continue
             ta = r + lat; ka = A.at(ta); cross = (s == 1 and p >= A.ask[ka]) or (s == -1 and p <= A.bid[ka])
             if cross and role == "close":                                                     # a closing order that trades on arrival: taker
-                F.append((ta, s, A.ask[ka] if s == 1 else A.bid[ka], role, True)); st.add(s, None, ta, role, lot); want = None; break
+                px = A.ask[ka] if s == 1 else A.bid[ka]; F.append((ta, s, px, role, True)); st.add(s, px, ta, role, lot); want = None; break
             if cross: idle.append(min(ka + 1, n)); continue                                   # post-only: rejected, try at the next update
             live[key] = Order(key, s, p, ta, role, lot)
         if want is None: r = r + lat; continue
@@ -140,7 +141,7 @@ def run_window(design, st, F, W, A, w0, b, rule, a, lat):
         else:                                                                                 # a stop: close the lot as a taker
             lot = x; ta = t + lat; ka = A.at(ta); s = -lot["s"]
             for key in [kk for kk, o in live.items() if o.lot == lot["id"]]: del live[key]
-            F.append((ta, s, A.ask[ka] if s == 1 else A.bid[ka], "stop", True)); st.add(s, None, ta, "close", lot["id"]); r = ta
+            px = A.ask[ka] if s == 1 else A.bid[ka]; F.append((ta, s, px, "stop", True)); st.add(s, px, ta, "close", lot["id"]); r = ta
 
 
 def frame(F):
