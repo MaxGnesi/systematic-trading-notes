@@ -8,11 +8,12 @@ from trading_models.plotting import INK, MUTED, SERIES, apply_theme, save_figure
 
 NAMES = {"baseline": "baseline: at the best", "guard_2": "Binance guard, 2 bp", "as_5_2": "Avellaneda-Stoikov", "behind_1": "1 tick behind the best",
          "pp_e0_c110_n2": "ping-pong, target and stop"}
-PARTS = (("spread_bp", "spread earned at the fill", SERIES[2]), ("move_1s_bp", "move against us in the first second", SERIES[1]),
+PARTS = (("fill_1s_bp", "at the fill and in the first second: spread earned less the move against us", SERIES[1]),
          ("move_10s_bp", "move against us from 1 to 10 s", SERIES[4]), ("positions_bp", "positions held beyond 10 s", SERIES[0]),
          ("fees_bp", "fees (2 bp maker, 5.5 bp taker)", MUTED))
 
 apply_theme(); K = json.loads((L.RESULTS / "key.json").read_text(encoding="utf-8"))
+for k in K.values(): k["fill_1s_bp"] = k["spread_bp"] + k["move_1s_bp"]                  # the two cannot be told apart at the millisecond of a fill at the best
 D = sorted(NAMES, key=lambda d: K[d]["after_fee_bp"]); y = [NAMES[d] for d in D]
 fig = make_subplots(rows=1, cols=1)
 for key, name, c in PARTS:
