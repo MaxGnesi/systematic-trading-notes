@@ -5,18 +5,19 @@ import json, sys
 from pathlib import Path
 import numpy as np, polars as pl
 sys.path.insert(0, str(Path(__file__).resolve().parent)); import l24 as L
-TESTS = {"H1": "guard_2", "H2": "as_5_2", "H3": "behind_1", "H4": "pp_e0_c110_n1"}                   # the choice corrected on 2026-11-10 (hypotheses.md)
-BEFORE = {"H2": "as_5_1", "H4": "pp_e0_c110_n2"}                                                   # the choice made under the scoring error, reported
+TESTS = {"H1": "guard_2", "H2": "as_5_2", "H3": "behind_1", "H4": "pp_e0_c110_n2"}                   # H2 corrected on 2026-11-10, H4 on 2026-11-11 (hypotheses.md)
+BEFORE = {"H2": "as_5_1"}                                                                          # H2 chosen under the scoring error, reported; earlier H4 runs are void
 MAKER, TAKER = 2.0, 5.5                                                                            # bp, Bybit's standard tier (checked at source before quoting)
 
 
 def load():
     rows = []
-    for f in sorted((L.RESULTS / "days").glob("*.json")) + sorted((L.RESULTS / "days_corr").glob("*.json")):
+    for f in sorted((L.RESULTS / "days").glob("*.json")) + sorted((L.RESULTS / "days_corr").glob("*.json")) + sorted((L.RESULTS / "days_ledger").glob("*.json")):
         d = f.stem; S = json.loads(f.read_text(encoding="utf-8"))
         F = pl.read_parquet(L.OUT / f.parent.name.replace("days", "fills") / f"{d}.parquet").with_columns((pl.col("p") * 0.1 * L.SIZE).alias("v"))   # ticks -> USDT, 0.001 BTC
         tv = dict(F.filter(pl.col("taker")).group_by("design").agg(pl.col("v").sum()).iter_rows())
         for k, s in S.items():
+            if k.startswith("pp_") and f.parent.name != "days_ledger": continue                    # ping-pong before the ledger fix: void
             rows.append({"day": d, "design": k, "res": s["result_usdt"], "val": s["value_usdt"], "taker_val": tv.get(k, 0.0), "fills": s["fills"],
                          "taker": s["taker"], "mk10": s["mk10"], "max_pos": s["max_pos"]})
     return pl.DataFrame(rows)
