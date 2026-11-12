@@ -107,6 +107,20 @@ Four designs were fixed as tests on 9 November, before any result: the settings 
 
 Three of the four tests hold, and none of them changes the picture of §1. The guard holds on every day by four thousandths of a basis point: real, and of no use. Avellaneda-Stoikov holds by a tenth of a basis point, with 8 days of 24 worse than the baseline; most of its advantage after fees comes from trading a tenth as much, so it loses 182 USDT a day where the baseline loses 2,093. One tick behind fails on every day. Ping-pong holds before fees by almost half a basis point on every day, and after fees loses more than the baseline, because 37% of its value is closed at the taker fee. A test before fees answers the question it was asked; for a design that pays taker fees, it is the wrong question.
 
+**What drove the differences.** Per resting fill, no design loses much less than the baseline in the first second; the differences come from which fills a design gets, and from what it trades instead (results/drivers.json, 24 out-of-sample days):
+
+| Design | Follow-up fills: within 1 s of the last fill on the same side | Move after 1 s: first fills | Move after 1 s: follow-up fills | Stops at market: share of fills, move after 1 s |
+|---|---|---|---|---|
+| Baseline | 58% | −0.63 bp | −0.87 bp | — |
+| Binance guard | 58% | −0.63 bp | −0.87 bp | — |
+| Avellaneda-Stoikov | 25% | −0.60 bp | −0.92 bp | — |
+| One tick behind | 59% | −0.90 bp | −0.96 bp | — |
+| Ping-pong | 55% | −0.63 bp | −0.87 bp | 37%, +0.26 bp |
+
+<sub><b>How to read the table.</b> Each fill's move of the mid one second after it, from the fill price, signed for our side, in bp; below zero the price moved against us. A follow-up fill comes within one second of the design's previous fill on the same side, usually in the same sweep. The middle columns are resting fills only; the last column is ping-pong's stops, sent at market.</sub>
+
+Avellaneda-Stoikov's gain is fewer follow-up fills: it widens when the market moves, so a quarter of its fills are follow-ups against 58% for the baseline, the mechanism the pause of §3 uses directly. One tick behind loses on its first fills too, because a quote behind the best is reached only when the price is already going through it. Ping-pong's resting fills lose exactly what the baseline's do; its gain before fees comes from its stops, which are market orders sent while the price is moving and so gain about a quarter of a basis point in the next second, on 37% of its fills. Before fees that averages out as an improvement; after fees each stop pays 5.5 bp instead of 2 bp, and the improvement is gone several times over.
+
 **Break-even.** A design that only rests breaks even at a maker fee equal to its result before fees with the sign turned: the baseline at a rebate of 0.86 bp, Avellaneda-Stoikov at 0.75 bp, one tick behind at 1.02 bp. Ping-pong at the taker fee of 5.5 bp would need a maker rebate of 3.8 bp. §6 sets these against what Bybit pays.
 
 **Robustness.** The ranking of the settings on the sampled in-sample hours carries over to the sampled out-of-sample hours: across all 85 variants the rank correlation is 0.63. The chosen ping-pong is second of its 56 variants out of sample, and every variant with a target and a stop lies within 0.06 bp of it; Avellaneda-Stoikov's 20 settings span −0.80 to −1.18 bp out of sample, so its gain depends on the setting more than the others'. The designs added after the tests (§3) are not part of this correction, and their results are descriptions of our sample.
