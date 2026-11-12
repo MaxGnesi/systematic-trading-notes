@@ -168,7 +168,7 @@ The right panel ranks the advantages. Everything a quoting rule can change on ou
 | A low or negative maker fee | Up to 2.4 on Bybit's public schedule (2 bp to −0.4 bp); private terms unknown | From the fee schedule |
 | An early place in the queue | About 1 (literature, Binance 2024) | No: our replay joins at the back; the true queue is not in public data (Lecture 21) |
 | A faster view of the market | Unknown | No: our book arrives every 100 ms; Bybit's live feed sends the best price every 10 ms (Lecture 18) |
-| Hedging on another venue | Unknown | Lecture 25 |
+| Hedging on another venue | Unknown | No: it needs the other venue's book at the moment of the hedge, which the free archives do not hold for our period |
 | A forecast of the next second | Below 0.04 from Binance's trades | Partly: Binance's book, not only its trades, may lead by more |
 | A rule that trades less when it is dangerous | About 0.1 | Yes: §3 and §4 |
 
@@ -182,7 +182,7 @@ The catch is that a resting order is not always filled, and the fills it misses 
 
 Lecture 17's grid reached the same place from the other end. Resting its orders 25 to 100 bp apart and holding inventory for hours, it would have needed a rebate of 1.4 to 3.9 bp per dollar filled to break even (Lecture 17, §7); quoting at the best and holding for seconds, the designs here would need 0.75 to 0.86 bp. The two are not measured alike, five years of Binance trades with fills only when the price traded through, against six weeks of Bybit's book with a queue, but both fall short of the best public rebate of 0.4 bp, and in both the machinery is worth more than the strategy.
 
-Two directions follow, and the course takes them up next. A maker can lean on another market that moves first, quoting on one venue and hedging or pulling on another: Lecture 25, across exchanges. And a trend rule can run through a maker, quoting while the market stays in its range and switching to market orders when it breaks out; with only six weeks of order-book data that cannot be judged here, and it is left for the capstone.
+Two directions follow, and both are left open. A maker can lean on another market that moves first, quoting on one venue and hedging or pulling on another; answering whether that pays needs both venues' books at the same moments, which the free archives do not hold for our period, and which a reader can record from the venues' free public feeds. And a trend rule can run through a maker, quoting while the market stays in its range and switching to market orders when it breaks out; with only six weeks of order-book data that cannot be judged here, and it is left for the capstone.
 
 ## 8. Summary, exercises and reading
 
