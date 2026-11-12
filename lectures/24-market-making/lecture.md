@@ -151,3 +151,33 @@ Three things stand out. First, the loss before fees came from the fills, not fro
 <sub><b>How to read the table.</b> Each expectation was written before the run; the result is in USDT after fees over 20:30 to 23:00, at 0.001 BTC an order.</sub>
 
 **What the replay cannot show.** The replay assumes that our orders and our data arrived as on a normal day. On the evening itself, the exchange's interface may have been slow, rate-limited or refusing orders; positions may have been closed by auto-deleveraging; and makers may have withdrawn in ways the book does not reveal (Lecture 21, §5). A rule that wins here by stepping aside would also have needed its cancels to get through.
+
+## 6. What it takes to break even
+
+The baseline loses 0.86 bp of the value it trades before fees, and every design of §3 and §4 changes that by about a tenth of a basis point. The left panel puts the tested designs at each of Bybit's public fee levels; the right panel sets what each advantage is worth against the gap.
+
+![What it takes to break even](figures/24_s6_breakeven.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: Bybit's public fee level for USDT perpetuals, from the standard tier (VIP 0) to the best level of its market-maker programme (MM 3) (x); the design's result after fees on the 24 out-of-sample days, bp of the value traded (y); above the black line the design makes money. One line per tested design; ping-pong pays the taker fee on its stops, taken at 3 bp, the best public taker fee, for the market-maker levels. Right: what each advantage is worth, in bp of the value traded (x). <b>Grey:</b> from Bybit's fee schedule; <b>orange:</b> from the literature, the difference in the move after one second between resting orders at the front of a short queue and at the back of long queues, on Binance's BTCUSDT perpetual in 2024 (Albers et al., arXiv 2502.18625); <b>blue:</b> from our replay, against the baseline before fees. <b>Dashed:</b> the baseline's loss before fees, the gap a maker paying no fee would have to close. Fee levels from Bybit's help centre, read on 11 November 2026 ([results/sources.md](results/sources.md)).</sub>
+
+No design breaks even at any public fee level. At the best one, a rebate of 0.4 bp for makers with 1% of all maker volume on the contract, the baseline still loses 0.46 bp and Avellaneda-Stoikov 0.35 bp; ping-pong, paying taker fees on its stops, loses 1.26 bp. The programme also requires orders of at least ten times the minimum size, which our 0.001 BTC orders are not.
+
+The right panel ranks the advantages. Everything a quoting rule can change on our data, the blue bars, is worth a tenth of a basis point or less, and faster orders alone are worth less than nothing. Two things are worth more than the gap: the fee level, which is a matter of volume and negotiation, not of the rule; and the place in the queue, which the literature puts at about a basis point between the front of a short line and the back of long ones. A maker who joins a price level early, when it first forms, is filled first and mostly by ordinary flow; one who joins late, as our replay does at every new best price, is filled when the level is being swept. A maker who makes money on a venue like this one therefore has some of these, and our replay has none:
+
+| What a profitable maker may have | Worth, bp of value traded | Can we measure it? |
+|---|---|---|
+| A low or negative maker fee | Up to 2.4 on Bybit's public schedule (2 bp to −0.4 bp); private terms unknown | From the fee schedule |
+| An early place in the queue | About 1 (literature, Binance 2024) | No: our replay joins at the back; the true queue is not in public data (Lecture 21) |
+| A faster view of the market | Unknown | No: our book arrives every 100 ms; Bybit's live feed sends the best price every 10 ms (Lecture 18) |
+| Hedging on another venue | Unknown | Lecture 25 |
+| A forecast of the next second | Below 0.04 from Binance's trades | Partly: Binance's book, not only its trades, may lead by more |
+| A rule that trades less when it is dangerous | About 0.1 | Yes: §3 and §4 |
+
+**What we cannot see.** Beyond the advantages above, the replay leaves out how other traders react to our quotes, which Lecture 22 showed they do; stop hunting, if a rule's stops are predictable; interface delays and rate limits, especially in a crash (§5); and the exchange's private arrangements with designated market makers. Each of these could change the results above, in either direction, and each is a question that the public record cannot settle.
+
+## 7. Where market making pays
+
+A maker in our seat does not break even. Yet resting orders stand on the other side of every trade on the venue, and not everyone who posts them is a market maker: a trader who wants a position has a reason to rest an order even if it loses against the mid, because a resting order is the cheaper way in. On our data the arithmetic is simple. A resting order that is filled costs the maker fee, 2 bp, plus the move against it in the first second, about 0.8 bp for the baseline: about 2.8 bp. A market order of the same small size costs the taker fee, 5.5 bp, plus half a spread of one tick and a slippage of thousandths of a basis point (Lecture 21, §3.2): about 5.5 bp. For a trader who wants the position anyway, the resting order saves about 2.7 bp per trade, more than three times the loss that makes market making unprofitable on its own.
+
+The catch is that a resting order is not always filled, and the fills it misses are the ones a trader with a view wanted most: when the price runs away in the direction of the trade, the order is left behind and has to be chased. Lecture 16 (§5) measured this for a trend rule on BTCUSDT: an order worked patiently over a minute, re-posted every few seconds and chased if not filled, cut the rule's trading costs by about 40%. That is market making in the service of a strategy with its own edge, and it is where the machinery of this lecture, the quotes, the pause after a fill, stepping aside when the market moves, earns its place.
+
+Two directions follow, and the course takes them up next. A maker can lean on another market that moves first, quoting on one venue and hedging or pulling on another: Lecture 25, across exchanges. And a trend rule can run through a maker, quoting while the market stays in its range and switching to market orders when it breaks out; with only six weeks of order-book data that cannot be judged here, and it is left for the capstone.
