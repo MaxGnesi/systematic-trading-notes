@@ -199,7 +199,7 @@ Two directions follow, and the course takes them up next. A maker can lean on an
 
 - [ ] **Levels and size.** The one choice of §2 not tested: quote three levels a side, 1, 2 and 3 bp deep, with Lecture 17's paired re-arming. Does a ladder do better than the single quote at 1 bp, after fees, in both samples?
 - [ ] **Two levers together.** Add the pause of 0.5 s to Avellaneda-Stoikov with c = 1 and c = 2. Are the two gains additive, or do they remove the same follow-up fills?
-- [ ] **Binance's book, not its trades.** §6 found that Binance's last trade warns of less than 0.04 bp. Binance publishes its best bid and ask; repeat the diagnostic of §3 with Binance's mid instead of its last trade. Does the book lead by more?
+- [ ] **Binance's book, not its trades.** §6 found that Binance's last trade warns of less than 0.04 bp. Binance's free archive of its best bid and ask for the perpetual ends in March 2024, so it does not cover our sample: record Binance's best bid and ask live for a few days (its public websocket feed is free), together with Bybit's, and repeat the diagnostic of §3 with Binance's mid instead of its last trade. Does the book lead by more?
 - [ ] **Your fee level.** Take the fee level you could reach, and the 24-day results of §4. Which design does best there, and at what taker fee would ping-pong's stops start to pay?
 - [ ] **A second crash.** Find another fast fall in Bybit's archive and repeat §5 with the same designs and the same rule for the phases. Do the four expectations hold again?
 - [ ] **Your own market.** Run the baseline and Avellaneda-Stoikov on ETHUSDT for one week. Is the loss in the first second the same size relative to the tick, and does widening help there too?
