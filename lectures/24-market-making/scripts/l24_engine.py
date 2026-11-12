@@ -67,7 +67,7 @@ class Order:
 
 class State:
     def __init__(self):
-        self.lots = []; self.nid = 0                                                               # open lots: dict(id, s, p, t)
+        self.lots = []; self.nid = 0; self.last = {1: -1, -1: -1}                                 # open lots: dict(id, s, p, t); the last fill time on each side
 
     @property
     def pos(self):
@@ -76,6 +76,7 @@ class State:
     def add(self, s, p, t, role, lot):
         """A fill on side s: closes lot `lot` (a closing order), else the oldest opposite lot (netting), else opens a lot. A closing order filled after its
         lot was closed (a stop, then the cancelled maker order filled within the latency) is an ordinary fill, so the lots always add up to the fills."""
+        self.last[s] = t
         if role == "close" and any(l["id"] == lot for l in self.lots):
             self.lots = [l for l in self.lots if l["id"] != lot]; return
         opp = [l for l in self.lots if l["s"] == -s]

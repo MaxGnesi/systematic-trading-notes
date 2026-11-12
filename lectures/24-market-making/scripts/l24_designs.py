@@ -191,3 +191,26 @@ def grid_stop_all():
 def grid_depth(bp_ticks=110):
     """The baseline quoting k bp behind the best on each side, k in {1, 2, 3, 5, 10} (hypotheses.md, 2026-11-11)."""
     return [Quoter(k=k * bp_ticks) for k in (1, 2, 3, 5, 10)]
+
+
+class Pause:
+    """A design that, after a fill on one side, posts no new entry quote on that side for `ms` (hypotheses.md, 2026-11-12); the other side and closing
+    orders are unchanged. Uses only fills known at the decision."""
+
+    def __init__(self, inner, ms):
+        self.inner, self.ms = inner, ms; self.name = inner.name + f"_pause{ms / 1000:g}"
+
+    def slots(self, st, A, i):
+        out = self.inner.slots(st, A, i)
+        for key, (s, fn, role, lot) in list(out.items()):
+            if role == "entry" and st.last[s] >= 0:
+                until = st.last[s] + self.ms
+                out[key] = (s, lambda a, b, fn=fn, until=until: np.where(A.ts[a:b] < until, np.nan, fn(a, b)), role, lot)
+        return out
+
+    def stop(self, st, A, i, r):
+        return self.inner.stop(st, A, i, r)
+
+
+def grid_pause():
+    return [Pause(f(), ms) for f in (Quoter, lambda: AS(5, 2)) for ms in (200, 500, 1_000, 2_000, 5_000)]
