@@ -20,8 +20,13 @@ def label(d):
     elif d.startswith("as_"): b = f"Avellaneda-Stoikov, c = {d.split('_')[2]}"
     else: b = {"pp_e0_c110_n2": "ping-pong (chosen)", "pp_e0_c110_n1": "ping-pong, off after 1 fill", "pp_e0_a_n2": "ping-pong, exit at the best", "pp_e0_b110_n2": "ping-pong, target without stop"}[d]
     return b + kill
-apply_theme(); O = json.loads((L.RESULTS / "oct10_phases.json").read_text(encoding="utf-8")); P = pl.read_parquet(L.OUT / "oct10_paths.parquet")
-F = pl.concat([pl.read_parquet(L.OUT / "oct10_fills.parquet").filter(~pl.col("design").str.starts_with("pp_"))] + [pl.read_parquet(L.OUT / f) for f in ("oct10_pp_fills.parquet", "oct10_case_quoters_fills.parquet")])
+apply_theme(); O = json.loads((L.RESULTS / "oct10_phases.json").read_text(encoding="utf-8"))
+if not (L.RESULTS / "oct10_minutes.parquet").exists():                                            # small copies, so that the figures redraw without the fills
+    pl.read_parquet(L.OUT / "oct10_paths.parquet").write_parquet(L.RESULTS / "oct10_paths.parquet")
+    F = pl.concat([pl.read_parquet(L.OUT / "oct10_fills.parquet").filter(~pl.col("design").str.starts_with("pp_"))] + [pl.read_parquet(L.OUT / f) for f in ("oct10_pp_fills.parquet", "oct10_case_quoters_fills.parquet")])
+    t0 = int(pl.read_parquet(L.RESULTS / "oct10_paths.parquet")["t"][0])
+    F.with_columns(((pl.col("t") - t0) // 60_000).alias("m")).group_by("design", "m").len().sort("design", "m").write_parquet(L.RESULTS / "oct10_minutes.parquet")
+P = pl.read_parquet(L.RESULTS / "oct10_paths.parquet"); M = pl.read_parquet(L.RESULTS / "oct10_minutes.parquet")
 ts = lambda x: datetime.fromtimestamp(x / 1000, tz=timezone.utc).replace(tzinfo=None)
 x = [ts(v) for v in P["t"].to_list()][::5]                                                         # every 5 s
 SHOW = [("baseline", "baseline", SERIES[0]), ("baseline_kill", "baseline + kill switch", SERIES[1]), ("guard_1", "Binance guard, 1 bp", SERIES[2]),
@@ -36,7 +41,7 @@ for k, (n, a, b) in enumerate(O["phases"]):
 fig.add_annotation(x=ts(O["phases"][2][1]), y=0.04, yref="y domain", text="bottom, rebound", showarrow=False, xanchor="left", xshift=8, yanchor="bottom", font=dict(size=11, color=INK), row=1, col=1)
 for d, name, c in SHOW:
     fig.add_scatter(x=x, y=P[d].to_numpy()[::5], mode="lines", line=dict(color=c, width=2), name=name, legendgroup=d, row=2, col=1)
-    n = F.filter(pl.col("design") == d).with_columns(((pl.col("t") - P["t"][0]) // 60_000).alias("m")).group_by("m").len().sort("m")
+    n = M.filter(pl.col("design") == d)
     cnt = np.zeros(150); cnt[n["m"].to_numpy()] = n["len"].to_numpy()                               # minutes without a fill count 0
     xm = [ts(P["t"][0] + 60_000 * m + 30_000) for m in range(150)]
     fig.add_scatter(x=xm, y=cnt, mode="lines", line=dict(color=c, width=1.5), name=name, legendgroup=d, showlegend=False, row=3, col=1)
