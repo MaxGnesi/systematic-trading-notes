@@ -11,7 +11,7 @@ The lecture's result fits in one chart: five ways of quoting, and where each one
 ![Where a market maker's money goes](figures/24_key.png)
 <sub><b>How to read the figure.</b> <b>Axes.</b> Result in bp of the value traded (x), one bar per quoting rule (y), over the 24 out-of-sample days (11 October to 3 November 2025). Each bar is split into the parts of the result: <b>orange</b>, at the fill and in the first second after it, the spread earned less the move of the mid against us; <b>yellow</b>, the move against us from 1 to 10 s; <b>blue</b>, the gain or loss on positions held beyond 10 s; <b>grey</b>, fees, 2 bp of the value for a resting order and 5.5 bp for a market order (Bybit's standard tier). <b>Diamond:</b> the result after fees. The rules are described in §3. Our calculation, Bybit BTCUSDT perpetual, 0.001 BTC orders.</sub>
 
-Every rule loses, and almost all of the loss before fees comes in the first second. A quote at the best price earns half the spread, but on bitcoin the spread is one tick, 0.1 USDT, about 0.005 bp per fill; what decides the result is that the orders which reach our quote are, on average, followed by a move against us of 0.4 to 0.9 bp within the second. The positions the rules carry beyond ten seconds cost nothing on average, which is why stops do not help (§3). Fees then add 2 bp on every unit of value for a rule that only rests, and more for one that closes with market orders: ping-pong halves the loss before fees, but 37% of what it trades goes through its stops at the taker fee, and after fees it does worst.
+Every rule loses, and almost all of the loss before fees comes in the first second. A quote at the best price earns half the spread, but on bitcoin the spread is one tick, 0.1 USDT, about 0.005 bp per fill; what decides the result is that the orders which reach our quote are, on average, followed by a move against us of 0.4 to 0.9 bp within the second: the price a maker pays for trading with those who know more (Glosten and Milgrom, 1985). The positions the rules carry beyond ten seconds cost nothing on average, which is why stops do not help (§3). Fees then add 2 bp on every unit of value for a rule that only rests, and more for one that closes with market orders: ping-pong halves the loss before fees, but 37% of what it trades goes through its stops at the taker fee, and after fees it does worst.
 
 Seen this way, a rule changes the result by a tenth of a basis point here and there, and the gap to break even is about 0.9 bp before fees, plus whatever fee is paid. The rest of the lecture asks where that gap could be closed:
 
@@ -181,3 +181,35 @@ A maker in our seat does not break even. Yet resting orders stand on the other s
 The catch is that a resting order is not always filled, and the fills it misses are the ones a trader with a view wanted most: when the price runs away in the direction of the trade, the order is left behind and has to be chased. Lecture 16 (§5) measured this for a trend rule on BTCUSDT: an order worked patiently over a minute, re-posted every few seconds and chased if not filled, cut the rule's trading costs by about 40%. That is market making in the service of a strategy with its own edge, and it is where the machinery of this lecture, the quotes, the pause after a fill, stepping aside when the market moves, earns its place.
 
 Two directions follow, and the course takes them up next. A maker can lean on another market that moves first, quoting on one venue and hedging or pulling on another: Lecture 25, across exchanges. And a trend rule can run through a maker, quoting while the market stays in its range and switching to market orders when it breaks out; with only six weeks of order-book data that cannot be judged here, and it is left for the capstone.
+
+## 8. Summary, exercises and reading
+
+### 8.1 Takeaways
+
+1. **The loss comes in the first second.** At the best price on bitcoin the spread is one tick, about 0.005 bp; the orders that reach our quote are followed by a move against us of about 0.8 bp within the second, and positions held longer cost almost nothing (§1).
+2. **A quoting rule is a family of choices, and each choice moves the result by about a tenth of a basis point.** Widening with volatility, a short pause after a fill and quoting 1 bp deep help a little; a guard on Binance, stops, quoting a few ticks behind, faster orders and the time of day do not (§2, §3).
+3. **Judge after fees.** Ping-pong with a stop halves the loss before fees and is the worst design after them, because its stops are market orders: a stop pays only where the taker fee is less than about 1.2 bp above the maker fee (§3, §4).
+4. **What helps is trading less when it is dangerous.** Avellaneda-Stoikov's gain, and the pause's, come from fewer follow-up fills in a sweep; through the crash of 10 October, the rules that stepped aside lost least (§4, §5).
+5. **No public fee level makes our designs break even.** The gap is about 0.9 bp before fees; the advantages larger than that are a low or negative fee and an early place in the queue, neither of which a quoting rule provides (§6).
+6. **Resting orders pay as the execution of a strategy with an edge.** For a trader who wants the position, a resting order costs about 2.8 bp against 5.5 bp for a market order; the next lectures use quotes that way (§7).
+
+### 8.2 Exercises
+
+- [ ] **Levels and size.** The one choice of §2 not tested: quote three levels a side, 1, 2 and 3 bp deep, with Lecture 17's paired re-arming. Does a ladder do better than the single quote at 1 bp, after fees, in both samples?
+- [ ] **Two levers together.** Add the pause of 0.5 s to Avellaneda-Stoikov with c = 1 and c = 2. Are the two gains additive, or do they remove the same follow-up fills?
+- [ ] **Binance's book, not its trades.** §6 found that Binance's last trade warns of less than 0.04 bp. Binance publishes its best bid and ask; repeat the diagnostic of §3 with Binance's mid instead of its last trade. Does the book lead by more?
+- [ ] **Your fee level.** Take the fee level you could reach, and the 24-day results of §4. Which design does best there, and at what taker fee would ping-pong's stops start to pay?
+- [ ] **A second crash.** Find another fast fall in Bybit's archive and repeat §5 with the same designs and the same rule for the phases. Do the four expectations hold again?
+- [ ] **Your own market.** Run the baseline and Avellaneda-Stoikov on ETHUSDT for one week. Is the loss in the first second the same size relative to the tick, and does widening help there too?
+
+### 8.3 Reading list
+
+The references of §1 to §7, each with what it is used for.
+
+- Albers, J., Cucuringu, M., Howison, S. and Shestopaloff, A. Y. (2025). The market maker's dilemma: navigating the fill probability vs. post-fill returns trade-off. arXiv 2502.18625. — live resting orders on Binance; the value of the place in the queue (§6).
+- Avellaneda, M. and Stoikov, S. (2008). High-frequency trading in a limit order book. *Quantitative Finance* 8(3), 217-224. — the quoting rule of H2 (§3).
+- Bybit (2026). Trading Fee Structure; Introduction to the Market Maker Incentive Program. Bybit help centre, read on 11 November 2026. — the fee levels of §6 ([results/sources.md](results/sources.md)).
+- Glosten, L. R. and Milgrom, P. R. (1985). Bid, ask and transaction prices in a specialist market with heterogeneously informed traders. *Journal of Financial Economics* 14(1), 71-100. — why the orders that reach a quote are followed by a move against it (§1).
+- Guéant, O., Lehalle, C.-A. and Fernandez-Tapia, J. (2013). Dealing with the inventory risk: a solution to the market making problem. *Mathematics and Financial Economics* 7(4), 477-507. — Avellaneda and Stoikov's problem with a limit on the position, solved in closed form; the next step for H2.
+
+*References checked at source for Lectures 21, 23 and 24, on 9 and 11 November 2026.*
