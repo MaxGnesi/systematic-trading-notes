@@ -32,6 +32,7 @@ WIN, MINW = 156, 104  # estimation window and minimum common weeks
 PHASE = 26            # trend phase: sign of the trailing 26-week return (about 126 days, as in Lecture 3, section 8.4)
 DUP_R, DUP_C = 0.9, 0.85
 CEIL = 30             # at most WIN / 5 markets
+MIN_PER_CLASS = 2     # added 2026-11-13 after results: below it a class rests on one ETF; filled from below the floor if need be (flagged)
 REVIEWS = [pd.Timestamp(f"{y}-12-31") for y in range(2009, 2026)]
 SEED = 20261113
 

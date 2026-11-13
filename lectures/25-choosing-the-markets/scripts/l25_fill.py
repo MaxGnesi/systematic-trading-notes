@@ -1,6 +1,7 @@
 """Lecture 25, class-first selection (designed after the first run, 2026-11-13; results/hypotheses.md, addenda). Slots per class = factors above the
 Marchenko-Pastur edge in that class (at least 1; ceiling 30 in all); duplicates = |rho| >= 0.9 and trend-phase concordance >= 0.85; the floor; members
-leave if redundant, below the floor or over the cap at two reviews in a row, or when their data end. Ways to fill the slots:
+leave if redundant, below the floor or over the cap at two reviews in a row, or when their data end; at least 2 per class (added after results;
+from below the floor if need be, flagged). Ways to fill the slots:
   dr  greedy diversification ratio on |rho|, from the most liquid market
   pc  one market per factor: for each factor in turn, the liquid market with the largest |loading|
   ev  explained variance, step by step
@@ -52,6 +53,7 @@ if __name__ == "__main__":
         for meth in METHODS:
             log = []; S = Cp if meth == "pos_nocap" else C0
             for k, cap in caps.items():
+                if meth not in NOCAP: cap = max(cap, L.MIN_PER_CLASS)
                 mem = [m for m in members[meth][k] if m in C.index and recent.get(m, False)]
                 log += [f"{m} out (data end)" for m in members[meth][k] if m not in mem]
                 cand = sorted([x for x in byc[k] if liq.get(x, 0) >= L.FLOOR], key=lambda x: -liq.get(x, 0))
@@ -59,7 +61,7 @@ if __name__ == "__main__":
                 if meth not in NOCAP:
                     flag = {}
                     for m in mem:
-                        if liq.get(m, 0) < L.FLOOR: flag[m] = "below floor"
+                        if liq.get(m, 0) < L.FLOOR and len(mem) > L.MIN_PER_CLASS: flag[m] = "below floor"
                         elif any(dup(m, o) and liq.get(o, 0) > liq.get(m, 0) for o in mem if o != m): flag[m] = "redundant"
                     if len(mem) > cap: flag.setdefault(weakest(meth, C, mem, byc[k]), "over cap")
                     for m in list(mem):
@@ -75,6 +77,10 @@ if __name__ == "__main__":
                     if meth in GREEDY and len(mem) > 1 and L.dr_abs(S, mem + [b]) <= L.dr_abs(S, mem): break
                     if meth in NOCAP and len(mem) > 1 and L.dr_abs(S, mem + [b]) / L.dr_abs(S, mem) - 1 < 0.01: break
                     mem.append(b); log.append(f"{b} in")
+                while meth not in NOCAP and len(mem) < L.MIN_PER_CLASS:                 # the minimum per class, from below the floor if need be
+                    thin = sorted([x for x in byc[k] if x not in mem and not any(dup(x, y) for y in mem)], key=lambda x: -liq.get(x, 0))
+                    if not thin: break
+                    mem.append(thin[0]); log.append(f"{thin[0]} in (minimum per class" + (", below the floor)" if liq.get(thin[0], 0) < L.FLOOR else ")"))
                 members[meth][k] = mem
                 if meth == "dr":                                                        # knee: the full greedy curve in this class, no cap
                     seq, curve = cand[:1], [1.0]
