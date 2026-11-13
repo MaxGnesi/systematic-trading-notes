@@ -70,3 +70,20 @@ Fixed on 2026-11-13 with the user's approval, before any result was computed. Ev
 Lens B of addendum 1 is replaced, before any result. **Lens B, random halves:** at each review, within the in-sample period, 500 splits each take a random half of the 3-month segments of history **and** a random half of the class's markets. On the half taken, the class's core is found (without the time check); on the half left out (the other segments and the other markets), every stream is ranked by its Sharpe ratio after costs. A speed is supported if it is in the core in at least half of the splits and ranks in the upper half out of sample in at least half of the splits; its weight in the mix is the share of splits in which it was both. This is stability selection on halves (Meinshausen and Bühlmann, 2010; to be checked at source), with a test set nested in every split. C6 becomes this lens alone.
 **Expectation, written before the run:** 14. Lens B on halves supports fewer speeds than the backtest core alone, and its speeds change less from one review to the next.
 **Variant reported alongside (2026-11-13, before any result; the user's question):** lens B-all, random halves of the segments with all of the class's markets in every split, otherwise as lens B. It shows whether halving the markets changes the speeds supported; the main rule keeps lens B.
+
+## Addendum 4, 2026-11-13, before any result: the plan simplified (the user: "too much")
+
+Everything above that is not listed here is dropped before any result (even spread, least-correlated pair, the three-lens mix, the bootstrap, lens B-all, the default speed C3, the prime-against-round comparison C5, the market and condition splits of C10). The prime grid of twelve speeds, the rules, positions, costs and the walk-forward stay as defined.
+
+**The rule.** Per class, at each review, 500 splits take a random half of the in-sample 3-month segments and a random half of the class's markets. On the half taken, the class's core is found: streams within one standard error of the market's best in at least 75% of the markets, whose neighbouring speeds in the same rule also qualify. On the half left out, every stream is ranked by its Sharpe ratio after costs. A stream is **kept** if it is in the core in at least half of the splits and ranks in the upper half out of sample in at least half of the splits; kept streams are held with risk in proportion to the share of splits in which they were both. If none is kept, the class uses the shared set (below).
+**The alternative using no profit.** Per class, the horizons where returns persist most: the variance ratio of h-day returns, averaged over the class's markets, in the upper half of the twelve horizons; all three rules at those horizons, equal risk.
+**Rivals, out of sample 2013-2026 (walk-forward).** (1) One shared set: the rule applied to all markets of all classes together. (2) All 36 streams with equal risk. (3) 500 random sets from the core, of the same size as the rule's.
+**Honesty check.** The probability of backtest overfitting (12 segments, 924 splits; Bailey, Borwein, López de Prado and Zhu, 2017) for the rule and for the single best stream in sample.
+**Measures and tests.** Sharpe ratio after costs, worst drawdown; differences by block bootstrap over months, Benjamini-Hochberg at 5% over the five classes for rival (1).
+
+**Expectations (replacing 1-14 above):**
+1. The regions are wide, and the 11- and 17-day speeds fail after costs of 10 bp in most classes.
+2. Government bonds keep slower speeds than commodities (mechanism: policy cycles against supply shocks).
+3. Per-class speeds beat the shared set by less than the noise: no class passes the correction.
+4. The persistence speeds, chosen without any strategy profit, do about as well as the rule.
+5. The rule's probability of overfitting is clearly below 50% in every class; the single best stream's is close to 50%.
