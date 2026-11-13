@@ -62,4 +62,7 @@ Differences against the rule: block bootstrap over calendar months (2,000 resamp
 
 ## Changes after results
 
-None yet.
+- **2026-11-13, exploratory ideas after seeing the results (the user), labelled as such.** Position-aware risk levered up in 2023-2025 because offsetting positions read as a hedge, while they were a sign of choppy markets. Three ideas follow; each is first checked descriptively (no portfolio profit and loss), and only an idea whose mechanism shows up earns a grid test, ideally confirmed on the capstone futures 2000-2022:
+  1. **Trend strength**: scale up when the speeds agree within markets (sign-free). Check: its correlation with the position-aware scale; strongly negative would mean it is mostly that rival turned upside down.
+  2. **Two kinds of low volatility** (the user): low volatility with chop (compression) is not low volatility with a smooth trend (drift, carry: crowded and vulnerable). Check: per market and month, low or high volatility (against its three-year median) by low or high efficiency ratio (six months); what follows over three months (volatility jump, trend return per unit of risk).
+  3. **Calm and stacked in risk assets** (the user): when the risk assets (equity, credit, commodities) are mostly held long and their volatility is low, cut the risk of those positions only; bonds and currencies untouched; never lever up. Check: list the episodes 2013-2026 and what followed each.
