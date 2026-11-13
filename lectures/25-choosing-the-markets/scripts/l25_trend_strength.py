@@ -66,4 +66,4 @@ if __name__ == "__main__":
     fig.update_layout(title="Trend strength across markets<br><sup>Efficiency ratio over 26 weeks on weekly closes, 2007-2026 (Lecture 3, §6.1); left: every pair of ETFs; right: "
                             "the average over the ETFs of each class, smoothed over 4 weeks</sup>", height=640, width=1250, margin=dict(t=110, l=70, r=20, b=60),
                       legend=dict(orientation="h", y=-0.14, x=0))
-    save_figure(fig, "25_trend_strength", L.FIG)
+    save_figure(fig, L.PREFIX + "25_trend_strength", L.FIG)

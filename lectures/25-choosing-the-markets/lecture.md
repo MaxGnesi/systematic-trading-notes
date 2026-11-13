@@ -13,23 +13,23 @@ The lecture's result fits in one chart: the 116 ETFs move together far more than
 
 The equity block is one large red square: 87 ETFs of countries, sectors and themes that mostly rise and fall together. Bonds sit pale or blue against it, and the dollar (the thin blue line inside FX) moves against almost everything. On the right, one factor carries half of all the variance, and only 16 of 116 stand out from noise.
 
-Counting bets makes the same point. The **effective number of bets** (Meucci, 2009; defined in §3.6) asks how many independent sources of risk a portfolio holds. With equal risk in each of the 116 ETFs it holds about one: the equity block drowns everything else. Spread the risk equally across classes instead, and the count rises, but only as far as the classes allow:
+Counting bets makes the same point. With risk spread equally over a set of markets, the **number of bets** it holds is the number of unrelated markets that would give the same diversification (defined in §3.6): 1 if everything moves as one, the number of markets if nothing is related. We count it in two views. A long-only holder gains from markets that move against each other, which hedge; a trend follower, who may be short either one, holds a mirror image as the same bet, so for that view the sign of each correlation is ignored.
 
-**Table 1.1. Effective number of bets, 2007-2026**
+**Table 1.1. Number of bets, 2007-2026**
 
-| Universe, risk spread equally | Effective bets |
-|---|---|
-| Each of the 116 ETFs | 1.07 |
-| The 87 equity ETFs alone | 1.00 |
-| Equity and government bonds, equal risk per class | 2.91 |
-| … and commodities | 3.37 |
-| … and currencies | 2.47 |
-| … and credit (all five classes) | 2.51 |
-| One ETF per class (SPY, IEF, HYG, DBC, UUP) | 2.82 |
+| Universe, risk spread equally | Long-only view | Trend follower's view (sign ignored) |
+|---|---|---|
+| Each of the 116 ETFs | 2.32 | 2.18 |
+| The 87 equity ETFs alone | 1.71 | 1.71 |
+| Equity and government bonds, equal risk per class | 2.97 | 2.48 |
+| … and commodities | 3.80 | 3.11 |
+| … and currencies | 4.14 | 3.03 |
+| … and credit (all five classes) | 3.70 | 2.98 |
+| One ETF per class (SPY, IEF, HYG, DBC, UUP) | 5.12 | 2.28 |
 
-<sub><b>How to read the table.</b> Each row is a set of ETFs with risk spread equally (first two rows: per ETF; others: per class, then equally within it). The effective number of bets runs from 1 (everything is one bet) to the number of markets (all independent). Weekly log returns, January 2007 to November 2026; our calculation.</sub>
+<sub><b>How to read the table.</b> Each row is a set of ETFs with risk spread equally (first two rows: per ETF; others: per class, then equally within it). The number of bets is the squared diversification ratio of §3.6. It can exceed the number of markets in the long-only view, when markets hedge each other. Weekly log returns, January 2007 to November 2026; our calculation.</sub>
 
-Within a class, more ETFs add almost nothing: 87 equity ETFs make one bet. What adds bets is a new class: bonds and commodities lift the count, while currencies as a block lower it, because most currency ETFs are long a currency against the dollar and so move with equity when markets are calm. Five ETFs, one per class, hold about as many bets as all 116. The rest of the lecture turns this into a rule for choosing the markets:
+Within a class, more ETFs add little: 87 equity ETFs make fewer than two bets. What adds bets is a new class: government bonds and commodities lift the count in both views. The two views part on the hedges. Currencies add a bet for a long-only holder, because the dollar moves against equity, and almost nothing for a trend follower; five ETFs, one per class, hold five bets long-only, since bonds and the dollar hedge equity, but barely two for a trader who may be short any of them, since high-yield credit moves with equity and the dollar against it. In every view, all 116 funds hold fewer than five bets. The rest of the lecture turns this into a rule for choosing the markets:
 
 | § | Step | Question |
 |---|---|---|
@@ -187,16 +187,29 @@ The lesson for choosing markets is that the choice must be revisited: the univer
 
 ### 3.6 Counting bets
 
-The effective number of bets of §1 turns the factors into one number for a given portfolio (Meucci, 2009). With weights $`w`$ on the correlation matrix, which is the same as inverse-volatility weights on the markets:
+The number of bets of §1 asks how many unrelated markets would give the same diversification as a given set. With weights $`w`$ on the correlation matrix $`C`$, which is the same as inverse-volatility weights on the markets, so that $`w_i`$ is market $`i`$'s share of risk before diversification:
 
 | Step | Calculation | Meaning |
 |---|---|---|
-| Exposure to factor $`k`$ | $`e_k^{\top} w`$ | How much of factor $`k`$ the portfolio holds |
-| Risk from factor $`k`$ | $`(e_k^{\top} w)^2 \lambda_k`$ | Exposure squared times the factor's size |
-| Risk share $`p_k`$ | risk from factor $`k`$ over the sum over all factors | Which factors the portfolio's risk comes from |
-| Effective bets | $`\exp\left(-\sum_k p_k \ln p_k\right)`$ | 1 if all risk comes from one factor; $`N`$ if it is spread evenly over $`N`$ |
+| Risk if nothing diversified | $`\sum_i w_i`$ | Each market's risk added up, as if all moved together |
+| Risk actually held | $`\sqrt{w^{	op} C w}`$ | The portfolio's risk, with the correlations |
+| Diversification ratio | $`\sum_i w_i / \sqrt{w^{	op} C w}`$ | How much the correlations cut the risk (Choueifaty and Coignard, 2008) |
+| Number of bets | the diversification ratio squared | 1 if all markets move as one; $`N`$ for $`N`$ unrelated markets with equal risk |
+| Trend follower's view | the same with every correlation replaced by its absolute value | A mirror image counts as the same bet, not as a hedge |
 
-The measure takes a long-only view: two markets that move opposite each other hedge one another and raise the count. A trend follower, who can be short either one, holds the same bet in both, which is why §4 and §7 also measure overlap with the sign ignored.
+**Example: three nearly unrelated markets.** In 2023-2025 SPY, TLT and GLD had pairwise correlations of 0.12, 0.05 and 0.13. With equal risk, the number of bets is 2.51, close to the three markets.
+
+A better-known measure gives a very different answer here. Meucci's **effective number of bets** (Meucci, 2009) splits the portfolio's risk across the principal factors of §3.2 and takes the exponential of the entropy of those shares:
+
+| Step | Calculation | Meaning |
+|---|---|---|
+| Exposure to factor $`k`$ | $`e_k^{	op} w`$ | How much of factor $`k`$ the portfolio holds |
+| Risk from factor $`k`$ | $`(e_k^{	op} w)^2 \lambda_k`$ | Exposure squared times the factor's size |
+| Risk share $`p_k`$ | risk from factor $`k`$ over the sum over all factors | Which factors the portfolio's risk comes from |
+| Effective bets | $`\exp\left(-\sum_k p_k \ln p_k
+ight)`$ | 1 if all risk comes from one factor; $`N`$ if it is spread evenly over $`N`$ |
+
+For SPY, TLT and GLD it gives 1.04: one bet. That is its blind spot. The principal factors are cut from the data, and an equal-weight portfolio lies almost exactly along one of them whenever the correlations are similar to each other: all high, as within equity, or all near zero, as here, where the eigenvalues are 0.85, 0.95 and 1.20 and one factor takes 99% of the portfolio's risk. The measure then reports about one bet whether the markets move as one or not at all; for all 116 ETFs with equal risk it gives 1.07, against 2.32 on the diversification ratio. It describes how a portfolio's risk lines up with the principal factors, not how many independent bets it holds. This lecture counts bets with the diversification ratio; the hand check of both is in the notebook.
 
 ## 4. The same market?
 
@@ -261,7 +274,7 @@ The literature offers many ways to choose markets from a correlation matrix. We 
 | **Graphical lasso** (Friedman, Hastie and Tibshirani, 2008) | Which markets carry information no other has? | No stable answer: SPY is a portfolio of the sector funds, so partial correlations are nearly undefined; no market became isolated at any penalty |
 | **Minimum spanning tree** (Mantegna, 1999) | Which markets are central, which peripheral? | Regional funds are the hubs (EEM and VGK with 11 links each, MDY 10, EFA 9); 64 of 116 markets are leaves, and 8 of the 10 markets greedy diversification held in 2025 are leaves, as Onnela et al. (2003) found for optimised portfolios |
 | **Downside correlation** (Longin and Solnik, 2001) | Do markets move together more in falls? | Yes, far more than chance (§5.1) |
-| **Effective number of bets** (Meucci, 2009) and the portfolio diversification index (Rudin and Morgan, 2006) | How many independent bets? | 1.07 bets with equal risk per ETF, 2.5 with equal risk per class; the index gives 17.7, close to the 16 factors above noise (§1, §3) |
+| **Effective number of bets** (Meucci, 2009) and the portfolio diversification index (Rudin and Morgan, 2006) | How many independent bets? | Meucci's measure reads near-independence as one bet (§3.6) and was replaced by the squared diversification ratio: 2.3 bets with equal risk per ETF, 3 to 4 with equal risk per class (§1). The index, which counts factors rather than a portfolio's bets, gives 17.7, close to the 16 factors above noise |
 
 <sub><b>How to read the table.</b> One row per method fixed before the run; "What it showed here" is our result on the 116 ETFs, 2007-2026. A majority vote of the first three methods, also fixed in advance, kept almost everything (28 markets at the first review, 80 by 2025) and was dropped.</sub>
 
@@ -393,7 +406,7 @@ The next step for a growing account is therefore to change the instrument where 
 
 ### 9.1 Takeaways
 
-1. **Bets come from classes, not from the number of funds.** 87 equity ETFs make one bet; one ETF per class holds about as many bets as all 116 (§1).
+1. **Bets come from classes, not from the number of funds.** 87 equity ETFs make fewer than two bets, all 116 fewer than five; a new class adds more than many funds of one class (§1). Count bets with the diversification ratio: Meucci's effective number of bets reads near-independence as one bet (§3.6).
 2. **Few factors are real.** 16 of 116 lie above the noise band of random-matrix theory; the first is risk on or off and carries half the variance (§3).
 3. **Co-movement changes.** Factor 1's share jumps in crises and the bond hedge flipped in 2022, so the universe is reviewed every year on recent data (§3.5).
 4. **Correlation misses the drift.** Two markets are the same trend bet only if they also share their trend phases; mirror images with different interest income can trend the same way. Trend strength is far less shared than returns, and nearly unrelated across classes (§4).
@@ -405,6 +418,7 @@ The next step for a growing account is therefore to change the instrument where 
 ### 9.2 Exercises
 
 - [ ] Recompute Table 1.1 with equal risk per group of Table 2.1 (eleven groups) instead of per class. How many bets do the themes add?
+- [ ] For three markets with pairwise correlation ρ and equal risk, compute the number of bets and Meucci's effective number of bets as ρ goes from 0 to 0.9. Where does Meucci's measure go wrong, and why?
 - [ ] Show that the eigenvalues of a correlation matrix sum to $`N`$, and that the loading $`e_{ik}\sqrt{\lambda_k}`$ is the correlation of market $`i`$ with factor $`k`$.
 - [ ] Simulate 116 independent weekly series of 1,037 weeks and plot their eigenvalues against the Marchenko-Pastur band. How many exceed its top by chance? Repeat with 156 weeks.
 - [ ] Construct two price series with a weekly correlation of −0.95 whose 26-week trend phases agree, as mirrors, less than 60% of the time. What has to be true of their drifts? Compare with FXE and UUP in 2023-2025 (§4.1).

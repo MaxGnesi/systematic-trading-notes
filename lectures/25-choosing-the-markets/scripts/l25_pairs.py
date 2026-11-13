@@ -1,6 +1,6 @@
 """Lecture 25, what "the same market" means (after the first run, 2026-11-13): for every pair since 2007, the correlation of weekly returns, the
 concordance of 26-week trend phases (sign ignored), its value for independent markets, and the drift a beta hedge leaves (Lecture 3, section 8.4).
-Also the effective number of bets with risk spread equally per class, as classes are added. Output: results/pairs.parquet, results/class_bets.json."""
+Also the number of bets (squared diversification ratio, signed and sign ignored; Meucci's measure alongside) as classes are added. Output: results/pairs.parquet, results/class_bets.json."""
 import json, sys, warnings; warnings.filterwarnings("ignore")
 from pathlib import Path
 import numpy as np, pandas as pd
@@ -22,10 +22,13 @@ if __name__ == "__main__":
         g = P[(P.rho.abs() >= lo) & (P.rho.abs() < hi)]
         print(f"|rho| {lo}-{hi}: {len(g)} pairs, concordance median {g.conc.median():.2f}, min {g.conc.min():.2f}, below 0.80 {(g.conc < 0.8).mean():.0%}")
 
-    F = R.loc[:, R.notna().sum() >= L.WIN]; C = L.corr(F, L.MINW); allv = list(C.index); out = {"n": len(allv), "per_etf": L.enb(C), "per_class": L.enb(C, allv, "class")}
+    F = R.loc[:, R.notna().sum() >= L.WIN]; C = L.corr(F, L.MINW); allv = list(C.index)
+    m3 = lambda nm, w=None: dict(enb=L.enb(C, nm, w), bets=L.bets(C, nm, w), bets_abs=L.bets(C, nm, w, absval=True))   # Meucci; bets signed; sign ignored
+    out = {"n": len(allv), "per_etf": m3(allv), "per_class": m3(allv, "class")}
     order = list(L.CLASSES[:1]) + ["Rates", "Commodities", "FX", "Credit"]; out["adding"] = []
     for i in range(1, 6):
-        nm = [n for n in allv if L.CLASS[n] in order[:i]]; out["adding"].append(dict(classes=order[:i], enb=L.enb(C, nm, "class")))
-    out["within"] = {k: L.enb(C, [n for n in allv if L.CLASS[n] == k]) for k in L.CLASSES}
-    out["one_each"] = L.enb(C, ["SPY", "IEF", "HYG", "DBC", "UUP"])
+        nm = [n for n in allv if L.CLASS[n] in order[:i]]; out["adding"].append(dict(classes=order[:i], **m3(nm, "class")))
+    out["within"] = {k: m3([n for n in allv if L.CLASS[n] == k]) for k in L.CLASSES}
+    out["one_each"] = m3(["SPY", "IEF", "HYG", "DBC", "UUP"])
+    X3 = R.loc["2023":"2025", ["SPY", "TLT", "GLD"]].corr(); out["spy_tlt_gld_2023_2025"] = dict(enb=L.enb(X3), bets=L.bets(X3), bets_abs=L.bets(X3, absval=True))
     (L.RESULTS / "class_bets.json").write_text(json.dumps(out, indent=1), encoding="utf-8"); print(json.dumps(out, indent=1))

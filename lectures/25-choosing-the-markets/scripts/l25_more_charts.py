@@ -35,7 +35,7 @@ if __name__ == "__main__":
     fig.update_layout(title=f"Correlation and trend phases: the same bet, or not?<br><sup>{len(P):,} pairs of ETFs, weekly log returns 2007-2026 (pairs with at least "
                             "three years in common); a trend phase is the sign of the past 26 weeks' return; mirror images (negative correlation) count as the same bet</sup>",
                       height=700, width=1250, margin=dict(t=110, l=80, r=30, b=60), legend=dict(orientation="h", y=-0.1, x=0))
-    save_figure(fig, "25_concordance", L.FIG)
+    save_figure(fig, L.PREFIX + "25_concordance", L.FIG)
 
     # downside correlation
     S = json.loads((L.RESULTS / "screen.json").read_text(encoding="utf-8")); D = pd.DataFrame(S["downside_pairs"])
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     fig.update_layout(title="In joint falls, markets move together far more than a normal distribution allows<br><sup>Pairs of ETFs, weekly log returns 2007-2026, pairs with at least "
                             "20 weeks of joint falls; the black line: the same selection applied to a normal distribution with the pair's correlation (selecting tail weeks lowers "
                             "correlation by itself)</sup>", height=720, width=1250, margin=dict(t=110, l=80, r=30, b=60), legend=dict(orientation="h", y=-0.1, x=0))
-    save_figure(fig, "25_downside", L.FIG)
+    save_figure(fig, L.PREFIX + "25_downside", L.FIG)
 
     # trade-off between the ways to fill the slots
     F = pd.DataFrame(json.loads((L.RESULTS / "fill.json").read_text(encoding="utf-8"))["oos"])
@@ -82,5 +82,5 @@ if __name__ == "__main__":
     fig.update_layout(title="Filling the slots: representing a class against overlapping less<br><sup>Out of sample 2010-2026 (17 yearly reviews, each judged on the following year); "
                             "markers: medians over the years, bars: interquartile range; the slots per class are the same for every method</sup>",
                       height=680, width=1250, margin=dict(t=110, l=80, r=30, b=60), showlegend=False)
-    save_figure(fig, "25_tradeoff", L.FIG)
+    save_figure(fig, L.PREFIX + "25_tradeoff", L.FIG)
     print(med.round(2).to_string()); print({m: (round(F[f'{m}_abs'].median(), 3), round(F[f'{m}_ev'].median(), 3)) for m in NAMES}, round(rx.median(), 3), round(ry.median(), 3))

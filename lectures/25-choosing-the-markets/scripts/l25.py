@@ -1,5 +1,5 @@
 """Settings and helpers shared by the Lecture 25 scripts. PORTFOLIO_DATA: folder with etf_daily.csv (written by l25_fetch.py; default data/portfolio
-in the repository, which is not committed); L25_RESULTS: where results are written (default results/ next to this folder)."""
+in the repository, which is not committed); L25_RESULTS: where results are written (default results/ next to this folder); L25_PREFIX: put before figure names."""
 import os
 from pathlib import Path
 import numpy as np, pandas as pd
@@ -7,6 +7,7 @@ import numpy as np, pandas as pd
 LECTURE = Path(__file__).resolve().parents[1]; REPO = LECTURE.parents[1]
 DATA = Path(os.environ.get("PORTFOLIO_DATA", REPO / "data" / "portfolio")); RAW = DATA / "etf_daily.csv"
 RESULTS = Path(os.environ.get("L25_RESULTS", LECTURE / "results")); FIG = LECTURE / "figures"; RESULTS.mkdir(parents=True, exist_ok=True)
+PREFIX = os.environ.get("L25_PREFIX", "")                                   # put before figure names (the notebook draws nb_*)
 
 UNIVERSE = {
     "US equity": ["SPY", "QQQ", "MDY", "IWM"],
@@ -76,13 +77,26 @@ def rmt_clean(C, T):
 
 
 def enb(C, names=None, w=None):
-    """Effective number of bets (Meucci, 2009): exp of the entropy of the principal components' risk shares. w on the correlation matrix =
+    """Effective number of bets (Meucci, 2009): exp of the entropy of the principal components' risk shares. Blind spot: with nearly uncorrelated
+    markets the principal directions are arbitrary and equal weights load on one of them, so it reads about 1 (Lecture 25, section 3.6); bets() is used. w on the correlation matrix =
     inverse-volatility weights; default equal; 'class' = equal risk per class, equal within."""
     names = list(C.index) if names is None else names
     if isinstance(w, str):
         cls = pd.Series({n: CLASS[n] for n in names}); k = cls.nunique(); w = np.array([1 / k / (cls == cls[n]).sum() for n in names])
     w = np.ones(len(names)) / len(names) if w is None else np.asarray(w)
     v, E = np.linalg.eigh(C.loc[names, names].values); p = (E.T @ w) ** 2 * v; p = p[p > 1e-12] / p.sum(); return float(np.exp(-(p * np.log(p)).sum()))
+
+
+def bets(C, names=None, w=None, absval=False):
+    """Number of independent bets held with risk weights w (on the correlation matrix, i.e. inverse-volatility weights): the squared diversification
+    ratio (sum w)^2 / w'Cw. N for N uncorrelated markets, 1 for perfectly correlated ones. absval: sign ignored (a long/short trader's view, where a
+    mirror image is the same bet). w: None = equal, 'class' = equal per class, equal within."""
+    names = list(C.index) if names is None else list(names)
+    if isinstance(w, str):
+        cls = pd.Series({n: CLASS[n] for n in names}); k = cls.nunique(); w = np.array([1 / k / (cls == cls[n]).sum() for n in names])
+    w = np.ones(len(names)) / len(names) if w is None else np.asarray(w)
+    S = C.loc[names, names].values; S = np.abs(S) if absval else S
+    return float(w.sum() ** 2 / (w @ S @ w))
 
 
 def pdi(C):

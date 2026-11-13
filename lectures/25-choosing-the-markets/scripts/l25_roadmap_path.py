@@ -44,5 +44,5 @@ if __name__ == "__main__":
     fig.update_layout(title="The roadmap as a path: new bets first, then capacity<br><sup>End-2025 review, weekly log returns 2023-2025; dotted line: the 85% target of stage 2; "
                             "stage 3 adds the most liquid near-duplicates first, each sharing the risk budget of its twin</sup>",
                       height=820, width=1250, margin=dict(t=110, l=80, r=30, b=60), legend=dict(orientation="h", y=1.07, x=0))
-    save_figure(fig, "25_roadmap_path", L.FIG)
+    save_figure(fig, L.PREFIX + "25_roadmap_path", L.FIG)
     print([(p["added"], round(p["explained"], 3)) for p in path1])

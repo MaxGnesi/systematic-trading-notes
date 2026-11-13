@@ -67,7 +67,7 @@ if __name__ == "__main__":
     fig.update_xaxes(title_text="factor, largest first", row=1, col=2)
     fig.update_layout(title="116 ETFs, a few bets<br><sup>Weekly log returns, January 2007 - October 2026 (shorter for younger ETFs; pairwise correlations); blue bars: factors "
                             "larger than pure noise would give</sup>", height=760, width=1250, margin=dict(t=110, l=150, r=30, b=130))
-    save_figure(fig, "25_key", L.FIG)
+    save_figure(fig, L.PREFIX + "25_key", L.FIG)
 
     # factor loadings
     order = [x for k in L.CLASSES for x in load.sort_values(1, ascending=False).index if L.CLASS[x] == k]
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     fig.update_layout(title="What the first four factors are<br><sup>Each bar: one ETF's correlation with the factor (its loading), weekly log returns 2007-2026; ETFs grouped by class, "
                             "sorted by their loading on factor 1; the sign of a factor is arbitrary (set so that SPY, or else IEF, is positive)</sup>",
                       height=1150, width=1250, barmode="overlay", margin=dict(t=130, l=70, r=20, b=80), legend=dict(orientation="h", y=1.06, x=0))
-    save_figure(fig, "25_factors", L.FIG)
+    save_figure(fig, L.PREFIX + "25_factors", L.FIG)
 
     # co-movement over time: the ETFs with data since March 2007, rolling 52 weeks
     G = F["2007-03-09":]; G = G.loc[:, G.notna().all()]   # from 9 March 2007, the first weekly return of UUP (the dollar)
@@ -111,7 +111,7 @@ if __name__ == "__main__":
     fig.update_yaxes(title_text="share of variance", tickformat=".0%", row=1, col=1); fig.update_yaxes(title_text="average correlation", range=[-1, 1], row=2, col=1)
     fig.update_layout(title=f"Co-movement is not constant<br><sup>Rolling 52-week windows of weekly log returns, the {G.shape[1]} ETFs with data since March 2007; a point is dated at the "
                             "end of its window</sup>", height=780, width=1250, margin=dict(t=110, l=70, r=20, b=60), legend=dict(orientation="h", y=-0.08, x=0))
-    save_figure(fig, "25_comovement", L.FIG)
+    save_figure(fig, L.PREFIX + "25_comovement", L.FIG)
     (L.RESULTS / "pca.json").write_text(json.dumps(out, indent=1, default=str), encoding="utf-8")
     print("eig top", np.round(v[:6], 2), "edge", round(edge, 2), "above", nsig)
     print(Q.describe().round(2).to_string()); print(Q.resample("YE").last().round(2).to_string())

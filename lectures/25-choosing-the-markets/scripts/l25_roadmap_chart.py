@@ -40,4 +40,4 @@ if __name__ == "__main__":
                             "dollar volume</sup>", height=760, width=1250, barmode="overlay", margin=dict(t=110, l=70, r=20, b=60),
                       legend=dict(orientation="h", y=-0.1, x=0))
     fig.layout.annotations[1].update(x=0.81)
-    save_figure(fig, "25_roadmap", L.FIG)
+    save_figure(fig, L.PREFIX + "25_roadmap", L.FIG)
