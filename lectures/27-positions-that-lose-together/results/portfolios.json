@@ -4,6 +4,10 @@
    "sharpe": 0.4861690932239661,
    "vol": 0.10702187688421183
   },
+  "equal_capital": {
+   "sharpe": 0.44176020637699004,
+   "vol": 0.10533722764899357
+  },
   "vol_daily": {
    "sharpe": 0.4582293537500059,
    "vol": 0.16242620072627123
@@ -91,6 +95,36 @@
      "FXE"
     ]
    },
+   "equal_capital": {
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "XLF",
+     "OIH",
+     "EWT"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXC"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY"
+    ]
+   },
    "lw_intensity": 0.05144504294047708
   },
   "2013": {
@@ -150,6 +184,35 @@
     ],
     "G5": [
      "UNG"
+    ]
+   },
+   "equal_capital": {
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXA"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
     ]
    },
    "lw_intensity": 0.0845449192520125
@@ -213,6 +276,35 @@
      "FXA"
     ]
    },
+   "equal_capital": {
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXA"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ]
+   },
    "lw_intensity": 0.11574238842226672
   },
   "2015": {
@@ -270,6 +362,34 @@
      "USO",
      "UNG",
      "FXE"
+    ]
+   },
+   "equal_capital": {
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
     ]
    },
    "lw_intensity": 0.09763847976301117
@@ -333,6 +453,35 @@
      "HYG"
     ]
    },
+   "equal_capital": {
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ]
+   },
    "lw_intensity": 0.07726017912223394
   },
   "2017": {
@@ -392,6 +541,35 @@
     ],
     "G5": [
      "FXE"
+    ]
+   },
+   "equal_capital": {
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
     ]
    },
    "lw_intensity": 0.08257830863209367
@@ -455,6 +633,35 @@
      "UNG"
     ]
    },
+   "equal_capital": {
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ]
+   },
    "lw_intensity": 0.0882629163035672
   },
   "2019": {
@@ -514,6 +721,35 @@
     ],
     "G5": [
      "USO"
+    ]
+   },
+   "equal_capital": {
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
     ]
    },
    "lw_intensity": 0.08523113334865733
@@ -581,6 +817,37 @@
      "USO"
     ]
    },
+   "equal_capital": {
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "PPLT"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU",
+     "EWZ"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ]
+   },
    "lw_intensity": 0.21440836522916104
   },
   "2021": {
@@ -646,6 +913,37 @@
      "PPLT"
     ]
    },
+   "equal_capital": {
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "PPLT"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU",
+     "EWZ"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ]
+   },
    "lw_intensity": 0.22426260513149962
   },
   "2022": {
@@ -709,6 +1007,37 @@
      "EWZ",
      "USO",
      "DBA"
+    ]
+   },
+   "equal_capital": {
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "DBA"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU",
+     "EWZ"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
     ]
    },
    "lw_intensity": 0.1660014785776203
@@ -780,6 +1109,39 @@
      "UUP"
     ]
    },
+   "equal_capital": {
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "DBA"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU",
+     "EWZ"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "UUP"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP",
+     "BNDX"
+    ]
+   },
    "lw_intensity": 0.07789739289218539
   },
   "2024": {
@@ -847,6 +1209,38 @@
      "UUP"
     ]
    },
+   "equal_capital": {
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU",
+     "EWZ"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "UUP"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP",
+     "BNDX"
+    ]
+   },
    "lw_intensity": 0.06478158778975894
   },
   "2025": {
@@ -912,6 +1306,38 @@
     ],
     "G5": [
      "EWZ"
+    ]
+   },
+   "equal_capital": {
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU",
+     "EWZ"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "UUP"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP",
+     "BNDX"
     ]
    },
    "lw_intensity": 0.08597620757797358

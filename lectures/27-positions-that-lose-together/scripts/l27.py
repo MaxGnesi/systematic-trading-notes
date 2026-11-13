@@ -66,8 +66,10 @@ if __name__ == "__main__":
         uni = UNI[str(y)]["sc_div"]; mk = [t for k in uni for t in uni[k]]
         R = pd.DataFrame({t: (N[t][w.index] * w).sum(axis=1) for t in mk}); E = pd.DataFrame({t: (P[t][w.index] * w).sum(axis=1) for t in mk})
         a = 1 / R.loc[hist].std()                                                                  # each market at equal risk (past three years)
+        a_cap = 1 / E.loc[hist].abs().mean()                                                       # equal capital inside a class (the user): same average gross per market
         out = {}
-        for name, grp in (("rule", {t: k for k in uni for t in uni[k]}), ("groups", groups_by_phase(PH, mk, end)), ("ward", groups_by_phase(PH, mk, end, "ward"))):
+        for name, grp in (("rule", {t: k for k in uni for t in uni[k]}), ("groups", groups_by_phase(PH, mk, end)), ("ward", groups_by_phase(PH, mk, end, "ward")), ("equal_capital", {t: k for k in uni for t in uni[k]})):
+            a = a_cap if name == "equal_capital" else 1 / R.loc[hist].std()
             G = sorted(set(grp.values())); ret, ex = {}, {}
             for g in G:
                 m = [t for t in mk if grp[t] == g]; full = R[m].mul(a[m]).mean(axis=1); c = (TARGET / np.sqrt(252)) / full.loc[hist].std()
@@ -82,7 +84,7 @@ if __name__ == "__main__":
         q = out["rule_exp"][mk]; D = VOL[mk]                                                       # same column order as the correlations
         fc = np.sqrt(252 * np.einsum("ti,ij,tj->t", (q * D).values, C.values, (q * D).values)); fc = pd.Series(fc, q.index)
         fd = pd.Series(np.sqrt(252 * ((q * D) ** 2).sum(axis=1)).values, q.index)                    # the same forecast ignoring correlations
-        df = pd.DataFrame({"rule": out["rule"], "groups": out["groups"], "ward": out["ward"], "U": out["rule_U"], "forecast_U": fc, "forecast_diag": fd, "gross_U": q.abs().sum(axis=1), "ctot": (TARGET / np.sqrt(252)) / out["rule_U"].loc[hist].std()})
+        df = pd.DataFrame({"rule": out["rule"], "groups": out["groups"], "ward": out["ward"], "equal_capital": out["equal_capital"], "gross_eqcap": out["equal_capital_exp"].abs().sum(axis=1) * (TARGET / np.sqrt(252)) / out["equal_capital_U"].loc[hist].std(), "U": out["rule_U"], "forecast_U": fc, "forecast_diag": fd, "gross_U": q.abs().sum(axis=1), "ctot": (TARGET / np.sqrt(252)) / out["rule_U"].loc[hist].std()})
         df["gross_target"] = float((q.abs().sum(axis=1) * df.ctot.iloc[0]).loc[hist].median())         # constant leverage: the rule's median gross, past three years
         for k in L26.CLASSES:                                                                       # each class's contribution to the rule and its gross exposure
             m = [t for t in mk if t in uni.get(k, [])]
@@ -105,6 +107,6 @@ if __name__ == "__main__":
     D["constant_overlay"] = run(smooth((D.gross_target / D.gross_U * D.forecast_diag / D.forecast_U).to_numpy()))   # 2x2: constant leverage with the overlay
     D["scale"] = s; D["aware"] = D.scale.shift(1).fillna(s[0]) * D.U - COST_BP / 1e4 * D.scale.diff().abs().fillna(0) * D.gross_U   # first day: starts at its target
     D.to_parquet(OUT / "l27_daily.parquet")
-    summ = {v: {"sharpe": L26.sharpe(D[v]), "vol": float(D[v].std() * np.sqrt(252))} for v in ("rule", "vol_daily", "aware", "constant_leverage", "constant_overlay", "groups", "ward")}
+    summ = {v: {"sharpe": L26.sharpe(D[v]), "vol": float(D[v].std() * np.sqrt(252))} for v in ("rule", "equal_capital", "vol_daily", "aware", "constant_leverage", "constant_overlay", "groups", "ward")}
     (RESULTS / "portfolios.json").write_text(json.dumps({"summary": summ, "reviews": info}, indent=1), encoding="utf-8")
     print(pd.DataFrame(summ).round(3).to_string())
