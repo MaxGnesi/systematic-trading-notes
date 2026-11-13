@@ -55,3 +55,12 @@ Fixed on 2026-11-13 with the user's approval, before any result was computed. Ev
 8. The mix does at least as well as the best single lens out of sample, and its chosen speeds change less from one year to the next (measured as the share of speeds kept from the previous review).
 9. Lens C alone, which uses no strategy profit, does about as well as lens A; if so, choosing speeds needs no backtest.
 10. Lenses A and C agree most for government bonds and commodities and least for equity.
+
+## Addendum 2, 2026-11-13, before any result: random segments of history and splits by condition (the user's question)
+
+- **C9, probability of backtest overfitting (Bailey, Borwein, López de Prado and Zhu, 2017; Lecture 7, §5).** For each class, 2007-2026 is cut into 12 consecutive segments of equal length; for each of the 924 ways to take 6 of them as the choosing half, each selection method chooses its speeds on that half and the result of its choice is ranked, out of sample on the other half, among all 36 streams (Sharpe ratio after costs). The probability of overfitting is the share of splits in which the choice ranks below the median. Methods compared: the single best stream in sample (the foil), the even spread, lens B, lens C, the mix, and all core speeds. A method that takes several speeds is ranked by the result of holding them with its weights.
+- **C10, splits that hold the regime fixed or name it.** (a) Markets: each class's markets split at random into two halves (200 splits), speeds chosen on one half and judged on the other over the same years (Lecture 7, §5). (b) Conditions: speeds chosen on 2007-2021 and judged on 2022-2026 (before and after rates rose), and the reverse; and chosen on calm months and judged on turbulent ones and the reverse, turbulent meaning the third of months with SPY's highest realised volatility.
+- **Expectations, written before the run:**
+  11. The single best stream has a probability of overfitting close to 50% in most classes; the core-based methods and the mix stay clearly below it.
+  12. Speeds chosen on half the markets hold on the other half better than speeds chosen on half the years hold on the other years.
+  13. The speeds chosen before and after 2022 differ most for government bonds.
