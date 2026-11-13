@@ -106,3 +106,18 @@ This replaces the rule, rivals, checks and expectations of addendum 4; the speed
 The rule of addendum 5 is applied first to **all markets together**: 500 times, split the in-sample years and all liquid markets at random into two halves; keep the streams that work on one half and pass on the other in at least half of the splits; equal risk. This one set is the main rule, since it rests on the most evidence and makes the fewest choices. **Challenger:** the same rule within each asset class; it must beat the shared set out of sample to earn its extra choices. **Baseline:** all 36 streams with equal risk.
 **Framing:** the lecture separates dependence on the sample we happened to see (measured in advance by the random halves) from a future unlike the past (not measurable in advance; addressed by mechanism, yearly review and the walk-forward, and named as an open risk).
 **Expectations (replacing 2 of addendum 5; 1 and 3 stay):** 2. The per-class challenger beats the shared set by less than the noise in every class.
+
+## Implementation, 2026-11-13, before any result
+
+The three rules at horizon h, all as the sign of the trend (+1 long, -1 short), so no forecast scaling or capping arises:
+- **EWMA crossover:** sign of the exponential average of log price with span h/4 minus that with span h.
+- **Breakout:** the Turtle-style channel of `trading_models.momentum.donchian_state`, entering on a new h-day high or low and leaving on a new h/2-day low or high (flat in between).
+- **Past return:** sign of the h-day return (`trading_models.momentum.past_return`).
+**Position:** sign times 10% divided by the market's yearly volatility, from an exponential average of squared daily returns with a span of 36 days (Lecture 11), using data up to the previous close; partial trading, each day closing a tenth of the gap to the target (Lecture 9). **Return** of a stream: the position held over the day times the market's daily return, less 10 bp of the value traded. Daily adjusted prices from Yahoo (Lecture 25's download, which includes highs and lows).
+
+## Addendum 7, 2026-11-13, before any result: blending by pass share (the user's question on markets that disagree)
+
+**The rule (replacing the hard cut):** hold each stream in proportion to how often it passes on the other half of the 500 random splits (a weighted union): streams that pass in most splits carry most of the risk, streams that never pass carry none. Where markets and periods agree, this concentrates on the shared speeds (like an intersection); where they disagree, it holds both regions, each in proportion to how broadly it works (like a union).
+**Reported alongside, in one table:** the intersection (streams passing in at least 90% of the splits, equal risk; may be empty) and the plain union (every stream passing at least once, equal risk).
+**In the lecture:** one or two worked examples showing that the blend diversifies, e.g. two markets of a class that trend at different speeds.
+**Expectation:** 4. The weighted union does at least as well as the intersection and the plain union out of sample, with a smaller worst drawdown than the plain union's best and worst cases; where a class's markets disagree, its weights spread over more speeds.
