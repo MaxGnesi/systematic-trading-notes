@@ -1,0 +1,55 @@
+{
+ "n": 116,
+ "per_etf": 1.0736680949804527,
+ "per_class": 2.508263285613551,
+ "adding": [
+  {
+   "classes": [
+    "Equity"
+   ],
+   "enb": 1.0045703407088775
+  },
+  {
+   "classes": [
+    "Equity",
+    "Rates"
+   ],
+   "enb": 2.907371021071288
+  },
+  {
+   "classes": [
+    "Equity",
+    "Rates",
+    "Commodities"
+   ],
+   "enb": 3.3742060964345972
+  },
+  {
+   "classes": [
+    "Equity",
+    "Rates",
+    "Commodities",
+    "FX"
+   ],
+   "enb": 2.4690126532139307
+  },
+  {
+   "classes": [
+    "Equity",
+    "Rates",
+    "Commodities",
+    "FX",
+    "Credit"
+   ],
+   "enb": 2.508263285613551
+  }
+ ],
+ "within": {
+  "Equity": 1.0045703407088775,
+  "Rates": 1.012548233138529,
+  "Credit": 1.0360674747285898,
+  "Commodities": 1.104097136070417,
+  "FX": 1.2023525827412445
+ },
+ "one_each": 2.819195862164843
+}
