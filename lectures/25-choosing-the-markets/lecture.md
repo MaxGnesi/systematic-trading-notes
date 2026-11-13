@@ -51,7 +51,12 @@ This lecture is the first of three steps that the whole part keeps in the same o
 
 <sub><b>How to read the table.</b> Each step may use only the information in its "Uses" column. Choosing markets or weights by past strategy profits would pick the markets where the strategy was lucky (Lecture 7, "is it real?"); Lecture 9's rule that sizing uses only risk and cost information extends here to the whole portfolio.</sub>
 
-Strategy profits enter only at step 3, to judge the result. If the evaluation leads to a change in step 1 or 2, the change is dated and judged again on later data.
+Why each step uses what it uses:
+
+- **Markets without profits.** If we chose the markets where trend following made the most, we would choose the markets where it was luckiest, and the backtest of the portfolio would inherit that luck. Markets are chosen on their own properties: whether they can be traded, how they move with each other, how often their trends agree. None of these says whether a strategy earned money on them.
+- **Weights from risk, not from averages.** A strategy's average return is the least precise number in a backtest: a Sharpe ratio measured over 26 years has a standard error of about 0.2 (Lecture 7, §5; Lo, 2002), as large as most gaps between trend systems, and DeMiguel, Garlappi and Uppal (2009) estimate that for 25 assets about 3,000 months of data would be needed before weights built on estimated means beat equal weights. Volatilities and correlations are measured far more precisely, so the weights use only them.
+- **But the risk is the strategy's, not the market's.** A trend portfolio does not hold the markets; it holds positioned returns, the position times the market's return, and their risk differs from the markets' own. Two markets with a correlation of 0.8 whose trend positions often disagree give strategy streams that are much less correlated; two markets that move in opposite directions, held long one and short the other, can give streams that move together. The volatility and correlation of positioned returns come from positions and prices alone and say nothing about whether the strategy earned money, so step 2 may use them. Section 4 measures this overlap.
+- **Profits judge, they do not choose.** Strategy profit and loss enters only at step 3, out of sample and against baselines such as equal weights. If the evaluation leads to a change in step 1 or 2, the change is dated and judged again on later data, as in this lecture's [hypotheses log](results/hypotheses.md).
 
 ## 2. The data
 
