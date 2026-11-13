@@ -17,7 +17,8 @@ CLASS, CLASSES, FLOOR = L25.CLASS, L25.CLASSES, L25.FLOOR
 SPEEDS = (11, 17, 23, 31, 43, 61, 89, 127, 179, 251, 359, 503)              # trading days, primes about sqrt(2) apart (hypotheses.md)
 RULES = ("ewma", "breakout", "return")
 STREAMS = [f"{r}_{h}" for r in RULES for h in SPEEDS]                     # 36 streams per market
-VOL_TARGET, VOL_SPAN, LAMBDA, COST_BP = 0.10, 36, 0.10, 5.0                 # cost per unit of value traded, bp (10 and 20 reported)
+VOL_TARGET, LAMBDA, COST_BP = 0.10, 0.10, 5.0                              # cost per unit of value traded, bp (10 and 20 reported)
+VOL_SPAN = int(os.environ.get("L26_VOL_SPAN", 126)) or None             # six months (the rule); 0: each stream's own speed; 36: the first version
 START = "2007-01-01"
 RATE = L25.DATA / "DTB3.csv"                                                # 3-month bill rate, FRED (l26_fetch_rate.py)
 
@@ -49,13 +50,14 @@ def signals(close, high, low, h):
 
 def stream_returns(close, high, low):
     """Call with excess-return prices (excess()), so that signals and profits are both over cash."""
-    """Daily gross returns (g_*) and value traded (t_*) of the 36 streams for one market (Series inputs): position = sign x 10% / volatility,
+    """Daily gross returns (g_*) and value traded (t_*) of the 36 streams for one market (Series inputs): position = sign x 10% / six-month volatility,
     partial trading lambda = 0.1, traded at the close; the position held over day t+1 earns that day's return; net() charges the cost."""
     c, hi, lo = close.to_frame("x"), high.to_frame("x"), low.to_frame("x")
     r = close.pct_change()
-    vol = np.sqrt((r ** 2).ewm(span=VOL_SPAN, min_periods=VOL_SPAN).mean() * 252)
     out = {}
     for h in SPEEDS:
+        span = VOL_SPAN if VOL_SPAN else h                                     # risk measured over the stream's own speed (VOL_SPAN = None)
+        vol = np.sqrt((r ** 2).ewm(span=span, min_periods=min(span, 60)).mean() * 252)
         sig = signals(c, hi, lo, h)
         for name, s in sig.items():
             target = (s["x"] * VOL_TARGET / vol).fillna(0.0).to_numpy()
