@@ -1,5 +1,5 @@
 """Lecture 25, a roadmap for growing capital (results/hypotheses.md, addendum 3, fixed 2026-11-13 before the run). At the end-2025 review:
-stage 1 = the chosen universe; stage 2 = more bets (greedy diversification beyond the cap, above the floor, until the gain is < 1%); stage 3 = every
+stage 1 = the chosen universe; stage 2 = more bets (step by step, the market that explains most of all 116, above the floor, not a duplicate, until 85% is explained; changed after results); stage 3 = every
 other market above the floor, grouped with its most correlated stage 1-2 member. Capacity per market under a placeholder risk-only weighting and
 Lecture 9's heaviest trading day. Output: results/roadmap.json."""
 import json, sys, warnings; warnings.filterwarnings("ignore")
@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np, pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parent)); import l25 as L
 
-END = pd.Timestamp("2025-12-31"); VOL_TARGET = 0.10; PARTICIPATION = 0.01; DAY_TRADE = 0.20   # 2 x lambda (0.1): a full reversal, Lecture 9
+END = pd.Timestamp("2025-12-31"); TARGET = 0.85; VOL_TARGET = 0.10; PARTICIPATION = 0.01; DAY_TRADE = 0.20   # 2 x lambda (0.1): a full reversal, Lecture 9
 
 
 def weights(C, vol, units):
@@ -25,18 +25,13 @@ if __name__ == "__main__":
     vol = X.std() * np.sqrt(52)
     s1 = json.loads((L.RESULTS / "fill.json").read_text(encoding="utf-8"))["reviews"]["2025"]["hy"]
     def dup(x, y): return abs(C.loc[x, y]) >= L.DUP_R and L.concordance(P, x, y) >= L.DUP_C
-    s2 = {}
-    for k, mem in s1.items():
-        mem = list(mem); add = []
-        cand = [x for x in C.index if L.CLASS[x] == k and liq.get(x, 0) >= L.FLOOR and x not in mem]
-        while True:
-            opts = [x for x in cand if x not in mem and not any(dup(x, y) for y in mem)]
-            if not opts: break
-            b = max(opts, key=lambda x: L.dr_abs(C, mem + [x]))
-            if L.dr_abs(C, mem + [b]) / L.dr_abs(C, mem) - 1 < 0.01: break
-            mem.append(b); add.append(b)
-        s2[k] = add
-    core = [x for v in s1.values() for x in v]; more = [x for v in s2.values() for x in v]; base = core + more
+    core = [x for v in s1.values() for x in v]; mem = list(core); more = []; path = [dict(n=len(mem), explained=L.explained(C, mem, list(C.index)))]
+    while path[-1]["explained"] < TARGET:                                   # stage 2: explained variance of all 116, step by step, to the target
+        opts = [x for x in C.index if x not in mem and liq.get(x, 0) >= L.FLOOR and not any(dup(x, y) for y in mem)]
+        if not opts: break
+        b = max(opts, key=lambda x: L.explained(C, mem + [x], list(C.index))); mem.append(b); more.append(b)
+        path.append(dict(n=len(mem), added=b, explained=L.explained(C, mem, list(C.index))))
+    s2 = {k: [x for x in more if L.CLASS[x] == k] for k in L.CLASSES}; base = core + more
     rest = [x for x in C.index if x not in base and liq.get(x, 0) >= L.FLOOR]
     twin = {x: max(base, key=lambda m: abs(C.loc[x, m])) for x in rest}
     def capacity(units):
@@ -55,10 +50,10 @@ if __name__ == "__main__":
         stages[name] = dict(n=len(members), members=members, capacity_usd=float(min(cap.values())), binding=min(cap, key=cap.get),
                             explained_all=L.explained(C, members, list(C.index)), mean_abs=L.mean_abs(C, members),
                             per_unit={u: float(c) for u, c in sorted(cap.items(), key=lambda z: z[1])}, weights=w.round(4).to_dict())
-    out = dict(review=str(END.date()), stage1=s1, stage2=s2, stage3={x: twin[x] for x in rest}, liquidity={x: liq.get(x, 0) for x in C.index},
+    out = dict(review=str(END.date()), stage1=s1, stage2=s2, stage2_path=path, stage3={x: twin[x] for x in rest}, liquidity={x: liq.get(x, 0) for x in C.index},
                vol=vol.round(4).to_dict(), stages=stages, assumptions=dict(vol_target=VOL_TARGET, participation=PARTICIPATION, day_trade=DAY_TRADE))
     (L.RESULTS / "roadmap.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
-    print("stage 2 adds:", s2)
+    print("stage 2 adds:", s2); print("path:", [(p.get("added"), round(p["explained"], 3)) for p in path])
     print("stage 3 adds:", len(rest), "markets; twins:", pd.Series(twin).value_counts().head(8).to_dict())
     for k, s in stages.items():
         print(f"stage {k}: {s['n']} markets, explains {s['explained_all']:.1%} of all 116, mean |corr| {s['mean_abs']:.2f}, capacity USD {s['capacity_usd'] / 1e6:,.0f} m, bound by {s['binding']}")
