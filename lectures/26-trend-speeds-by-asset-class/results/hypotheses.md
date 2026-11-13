@@ -121,3 +121,11 @@ The three rules at horizon h, all as the sign of the trend (+1 long, -1 short), 
 **Reported alongside, in one table:** the intersection (streams passing in at least 90% of the splits, equal risk; may be empty) and the plain union (every stream passing at least once, equal risk).
 **In the lecture:** one or two worked examples showing that the blend diversifies, e.g. two markets of a class that trend at different speeds.
 **Expectation:** 4. The weighted union does at least as well as the intersection and the plain union out of sample, with a smaller worst drawdown than the plain union's best and worst cases; where a class's markets disagree, its weights spread over more speeds.
+
+## Change, 2026-11-13, after a first in-sample look (Sharpe ratio by speed at 10 bp), before the selection rule ran: costs 5 bp
+
+The user set the main cost to 5 bp of the value traded (per trade, both directions): liquid ETFs trade at spreads of a fraction of a basis point and near-zero commissions, and 5 bp allows for the thinner funds and some impact. 10 bp and 20 bp are reported. The streams now store their gross returns and their trades, so any cost is applied afterwards.
+
+## Correction, 2026-11-13, before the selection rule ran: excess returns over cash
+
+The ETF prices are total returns: interest, coupons and dividends reinvested. With volatility-scaled (often levered) positions and shorts, total returns credit carry earned on unpaid-for leverage and treat shorts inconsistently; the trend signals also carry the income drift (Lecture 25, §4.1). Signals and profits now use each ETF's **excess return over the 3-month Treasury bill rate** (FRED DTB3, free), as a futures position earns and as in Lecture 11. The in-sample tables seen before this correction (total returns, 10 bp and 5 bp) are superseded.
