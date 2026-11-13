@@ -81,7 +81,8 @@ if __name__ == "__main__":
         C, delta = shrunk_corr(W.loc[:end, mk].iloc[-L25.WIN:].dropna()); info[str(y)]["lw_intensity"] = delta
         q = out["rule_exp"][mk]; D = VOL[mk]                                                       # same column order as the correlations
         fc = np.sqrt(252 * np.einsum("ti,ij,tj->t", (q * D).values, C.values, (q * D).values)); fc = pd.Series(fc, q.index)
-        df = pd.DataFrame({"rule": out["rule"], "groups": out["groups"], "ward": out["ward"], "U": out["rule_U"], "forecast_U": fc, "gross_U": q.abs().sum(axis=1), "ctot": (TARGET / np.sqrt(252)) / out["rule_U"].loc[hist].std()})
+        fd = pd.Series(np.sqrt(252 * ((q * D) ** 2).sum(axis=1)).values, q.index)                    # the same forecast ignoring correlations
+        df = pd.DataFrame({"rule": out["rule"], "groups": out["groups"], "ward": out["ward"], "U": out["rule_U"], "forecast_U": fc, "forecast_diag": fd, "gross_U": q.abs().sum(axis=1), "ctot": (TARGET / np.sqrt(252)) / out["rule_U"].loc[hist].std()})
         df["gross_target"] = float((q.abs().sum(axis=1) * df.ctot.iloc[0]).loc[hist].median())         # constant leverage: the rule's median gross, past three years
         for k in L26.CLASSES:                                                                       # each class's contribution to the rule and its gross exposure
             m = [t for t in mk if t in uni.get(k, [])]
@@ -95,8 +96,15 @@ if __name__ == "__main__":
     c = np.zeros(len(D)); tg = (D.gross_target / D.gross_U).to_numpy(); c[0] = tg[0]                   # constant leverage, reached a tenth of the way each day
     for i in range(1, len(D)): c[i] = c[i - 1] + LAMBDA * (tg[i] - c[i - 1])
     D["lev_scale"] = c; D["constant_leverage"] = D.lev_scale.shift(1).fillna(c[0]) * D.U - COST_BP / 1e4 * D.lev_scale.diff().abs().fillna(0) * D.gross_U
+    def smooth(tg):
+        z = np.zeros(len(tg)); z[0] = tg[0]
+        for i in range(1, len(tg)): z[i] = z[i - 1] + LAMBDA * (tg[i] - z[i - 1])
+        return z
+    def run(z): z = pd.Series(z, D.index); return z.shift(1).fillna(z.iloc[0]) * D.U - COST_BP / 1e4 * z.diff().abs().fillna(0) * D.gross_U
+    D["vol_daily"] = run(smooth((TARGET / D.forecast_diag).to_numpy()))                                        # 2x2: volatility target, no correlations
+    D["constant_overlay"] = run(smooth((D.gross_target / D.gross_U * D.forecast_diag / D.forecast_U).to_numpy()))   # 2x2: constant leverage with the overlay
     D["scale"] = s; D["aware"] = D.scale.shift(1).fillna(s[0]) * D.U - COST_BP / 1e4 * D.scale.diff().abs().fillna(0) * D.gross_U   # first day: starts at its target
     D.to_parquet(OUT / "l27_daily.parquet")
-    summ = {v: {"sharpe": L26.sharpe(D[v]), "vol": float(D[v].std() * np.sqrt(252))} for v in ("rule", "aware", "groups", "ward", "constant_leverage")}
+    summ = {v: {"sharpe": L26.sharpe(D[v]), "vol": float(D[v].std() * np.sqrt(252))} for v in ("rule", "vol_daily", "aware", "constant_leverage", "constant_overlay", "groups", "ward")}
     (RESULTS / "portfolios.json").write_text(json.dumps({"summary": summ, "reviews": info}, indent=1), encoding="utf-8")
     print(pd.DataFrame(summ).round(3).to_string())
