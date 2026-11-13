@@ -100,3 +100,9 @@ This replaces the rule, rivals, checks and expectations of addendum 4; the speed
 1. The 11- and 17-day speeds do not pass after costs of 10 bp.
 2. Per-class speeds beat one set for all classes by less than the noise.
 3. The kept speeds beat all 36 streams only slightly: the gain is in avoiding the speeds that fail, not in finding the best.
+
+## Addendum 6, 2026-11-13, before any result: one set for all markets is the rule, per class is the challenger (the user)
+
+The rule of addendum 5 is applied first to **all markets together**: 500 times, split the in-sample years and all liquid markets at random into two halves; keep the streams that work on one half and pass on the other in at least half of the splits; equal risk. This one set is the main rule, since it rests on the most evidence and makes the fewest choices. **Challenger:** the same rule within each asset class; it must beat the shared set out of sample to earn its extra choices. **Baseline:** all 36 streams with equal risk.
+**Framing:** the lecture separates dependence on the sample we happened to see (measured in advance by the random halves) from a future unlike the past (not measurable in advance; addressed by mechanism, yearly review and the walk-forward, and named as an open risk).
+**Expectations (replacing 2 of addendum 5; 1 and 3 stay):** 2. The per-class challenger beats the shared set by less than the noise in every class.
