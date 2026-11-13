@@ -142,3 +142,7 @@ Per-class speeds did not beat one shared set out of sample, so the rule becomes 
 
 "Union 20%": every stream whose pass share (one set, same vote per class) is at least 0.2, held with equal risk. More forward-looking: it keeps a stake in speeds only a minority of markets and periods favour today. Reported next to the weighted union, the intersection (0.9) and the plain union (> 0).
 **Variant, 2026-11-13, after results (the user):** "one set, square-root votes": as the rule, but within each class a market's vote is proportional to the square root of its dollar volume instead of its log (a much stronger tilt to large markets: SPY against Belgium about 330 to 1 instead of 2 to 1). Reported as a comparison.
+
+## Choice, 2026-11-13, after the results above: the rule is the 20% union (the user)
+
+**The rule:** one set of speeds for all markets, each asset class with the same vote (log size within a class); 500 random halves of years and markets; **hold, with equal risk, every stream that passes in at least 20% of the halves.** It matched the weighted union out of sample (Sharpe 0.474 against 0.470) with a simpler rule and keeps a stake in speeds only a minority of markets and periods favour. The weighted union, the intersection, the plain union, square-root votes, per-class speeds, the market-count vote and all 36 streams are the comparisons.

@@ -11,10 +11,10 @@ if __name__ == "__main__":
     V = {v: g.drop(columns="variant") for v, g in O.groupby("variant")}
     dd = lambda x: float(((1 + x).cumprod() / (1 + x).cumprod().cummax() - 1).min())
     out = {"sharpe": {v: {c: L.sharpe(V[v][c]) for c in cols} for v in V}, "drawdown": {v: {c: dd(V[v][c]) for c in cols} for v in V}, "tests": {}}
-    months = V["one_set"].index.to_period("M"); um = months.unique()
-    for v in ("class", "shared", "all36", "intersection", "union"):
+    months = V["union20"].index.to_period("M"); um = months.unique()
+    for v in ("one_set", "class", "shared", "all36", "intersection", "union", "one_set_sqrt"):
         for c in cols:
-            a, b = V["one_set"][c], V[v][c]; d0 = L.sharpe(a) - L.sharpe(b); boots = []
+            a, b = V["union20"][c], V[v][c]; d0 = L.sharpe(a) - L.sharpe(b); boots = []
             for _ in range(2000):
                 pick = rng.choice(len(um), len(um)); idx = np.concatenate([np.where(months == um[i])[0] for i in pick])
                 boots.append(L.sharpe(a.iloc[idx]) - L.sharpe(b.iloc[idx]))

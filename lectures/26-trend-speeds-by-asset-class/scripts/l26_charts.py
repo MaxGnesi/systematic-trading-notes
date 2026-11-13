@@ -10,7 +10,7 @@ from plotly.subplots import make_subplots
 sys.path.insert(0, str(Path(__file__).resolve().parent)); import l26 as L
 from trading_models.plotting import INK, MUTED, SERIES, apply_theme, save_figure
 
-GROUPS = ("shared",) + tuple(L.CLASSES); TITLE = {"shared": "All markets (shared)", "Rates": "Government bonds", "FX": "Currencies"}
+GROUPS = ("one_set",) + tuple(L.CLASSES); TITLE = {"one_set": "All markets, same vote per class", "Rates": "Government bonds", "FX": "Currencies"}
 SCALE = [[0, "#fcfcfb"], [1, SERIES[0]]]
 
 if __name__ == "__main__":
@@ -39,14 +39,14 @@ if __name__ == "__main__":
                             "end-2025 review, excess returns, 5 bp</sup>", height=760, width=1250, margin=dict(t=110, l=70, r=60, b=60))
     save_figure(fig, L.PREFIX + "26_halves", L.FIG)
 
-    years = sorted(S); fig = make_subplots(rows=2, cols=3, horizontal_spacing=0.06, vertical_spacing=0.12, subplot_titles=[TITLE.get(g, g) for g in GROUPS])
+    years = sorted(S); fig = make_subplots(rows=2, cols=3, horizontal_spacing=0.06, vertical_spacing=0.18, subplot_titles=[TITLE.get(g, g) for g in GROUPS])
     for i, g in enumerate(GROUPS):
         r, c = divmod(i, 3)
         Z = np.array([[np.mean([S[y]["weights"][g][f"{rule}_{h}"] for rule in L.RULES]) for h in L.SPEEDS] for y in years])
         fig.add_heatmap(z=Z, x=[str(h) for h in L.SPEEDS], y=years, colorscale=SCALE, zmin=0, zmax=1, showscale=(i == 0),
                         colorbar=dict(title=dict(text="pass share", side="right"), x=1.01, thickness=10), hovertemplate="%{y}, %{x} days: %{z:.2f}<extra></extra>",
                         row=r + 1, col=c + 1)
-        fig.update_xaxes(type="category", title_text="speed, days", tickfont=dict(size=9), row=r + 1, col=c + 1); fig.update_yaxes(type="category", autorange="reversed", tickfont=dict(size=9), row=r + 1, col=c + 1)
+        fig.update_xaxes(type="category", title_text="speed, days" if r == 1 else None, tickfont=dict(size=9), row=r + 1, col=c + 1); fig.update_yaxes(type="category", autorange="reversed", tickfont=dict(size=9), row=r + 1, col=c + 1)
     fig.update_layout(title="Does the area stay? Pass share by speed at each yearly review<br><sup>Average over the three rules; each row is one review, on all data "
                             "up to its year end; 500 random halves of quarters and markets</sup>", height=760, width=1250, margin=dict(t=110, l=60, r=60, b=60))
     save_figure(fig, L.PREFIX + "26_areas", L.FIG)

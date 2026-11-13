@@ -17,14 +17,16 @@ if __name__ == "__main__":
         fig.add_scatter(x=x, y=[w[f"{rule}_{h}"] for h in L.SPEEDS], mode="lines+markers", line=dict(color=SERIES[i], width=2), name=name, legendgroup="r", row=1, col=1)
     i0, i1 = L.SPEEDS.index(61), L.SPEEDS.index(179); fig.add_vrect(x0=i0 - 0.5, x1=i1 + 0.5, fillcolor=SERIES[0], opacity=0.07, line_width=0, row=1, col=1)
     fig.update_xaxes(type="category", title_text="speed, trading days (two weeks to two years)", row=1, col=1)
+    fig.add_hline(y=0.2, line=dict(color=INK, width=1, dash="dot"), row=1, col=1)
+    fig.add_annotation(x=len(L.SPEEDS) - 1, y=0.2, text="held: pass share of at least 20%", showarrow=False, xanchor="right", yanchor="bottom", font=dict(size=11), row=1, col=1)
     fig.update_yaxes(title_text="share of 500 random halves passed", range=[0, 1], row=1, col=1)
     sh = T["sharpe"]; rows = ["Equity", "Rates", "Credit", "Commodities", "FX", "total"]; lab = ["Equity", "Govt bonds", "Credit", "Commodities", "Currencies", "<b>Total</b>"]
-    for name, v, c, sym in (("the rule: one set, same vote per class", "one_set", INK, "diamond"), ("speeds chosen per class", "class", SERIES[1], "circle"),
+    for name, v, c, sym in (("the rule: every speed passing in 20% of halves", "union20", INK, "diamond"), ("speeds chosen per class", "class", SERIES[1], "circle"),
                             ("all 36 streams, equal risk", "all36", MUTED, "square")):
-        fig.add_scatter(x=[sh[v][r] for r in rows], y=lab, mode="markers", marker=dict(color=c, size=12 if v == "one_set" else 10, symbol=sym), name=name, legendgroup="v", row=1, col=2)
+        fig.add_scatter(x=[sh[v][r] for r in rows], y=lab, mode="markers", marker=dict(color=c, size=12 if v == "union20" else 10, symbol=sym), name=name, legendgroup="v", row=1, col=2)
     fig.add_vline(x=0, line=dict(color=MUTED, width=1), row=1, col=2)
     fig.update_yaxes(autorange="reversed", row=1, col=2); fig.update_xaxes(title_text="Sharpe ratio after 5 bp, excess returns", row=1, col=2)
     fig.update_layout(title="Trend speeds across the board<br><sup>116 ETFs, three trend rules at twelve speeds; left: share of 500 random halves of years and markets in "
-                            "which each speed works on both halves (shaded: 61-179 days)<br>right: speeds chosen each year on past data only, traded the next year on "
+                            "which each speed works on both halves (shaded: 61-179 days; dotted: the 20% bar)<br>right: speeds chosen each year on past data only, traded the next year on "
                             "Lecture 25's markets, classes at equal risk</sup>", height=640, width=1250, margin=dict(t=125, l=70, r=30, b=110), legend=dict(orientation="h", y=-0.2, x=0))
     save_figure(fig, L.PREFIX + "26_key", L.FIG)
