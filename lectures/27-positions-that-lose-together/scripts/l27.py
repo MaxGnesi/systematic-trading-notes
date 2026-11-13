@@ -73,6 +73,7 @@ if __name__ == "__main__":
                 m = [t for t in mk if grp[t] == g]; full = R[m].mul(a[m]).mean(axis=1); c = (TARGET / np.sqrt(252)) / full.loc[hist].std()
                 ret[g] = full * c; ex.update({t: E[t] * a[t] / len(m) * c for t in m})
             U = pd.DataFrame(ret).mean(axis=1); ctot = (TARGET / np.sqrt(252)) / U.loc[hist].std()
+            if name == "rule": out["rule_parts"] = ret
             out[name] = U * ctot; out[name + "_U"] = U; out[name + "_exp"] = pd.DataFrame(ex) / len(G)            # exposures before the total scale
             if name == "rule": info[str(y)] = {}
             else: info[str(y)][name] = {g: [t for t in mk if grp[t] == g] for g in G}
@@ -81,13 +82,21 @@ if __name__ == "__main__":
         q = out["rule_exp"][mk]; D = VOL[mk]                                                       # same column order as the correlations
         fc = np.sqrt(252 * np.einsum("ti,ij,tj->t", (q * D).values, C.values, (q * D).values)); fc = pd.Series(fc, q.index)
         df = pd.DataFrame({"rule": out["rule"], "groups": out["groups"], "ward": out["ward"], "U": out["rule_U"], "forecast_U": fc, "gross_U": q.abs().sum(axis=1), "ctot": (TARGET / np.sqrt(252)) / out["rule_U"].loc[hist].std()})
+        df["gross_target"] = float((q.abs().sum(axis=1) * df.ctot.iloc[0]).loc[hist].median())         # constant leverage: the rule's median gross, past three years
+        for k in L26.CLASSES:                                                                       # each class's contribution to the rule and its gross exposure
+            m = [t for t in mk if t in uni.get(k, [])]
+            df[f"ret_{k}"] = out[f"rule_parts"][k] * df.ctot.iloc[0] / len(uni) if m else 0.0
+            df[f"gross_{k}"] = q[m].abs().sum(axis=1) * df.ctot.iloc[0] if m else 0.0
         days.append(df.loc[nxt].assign(review=y))
         print(y, f"{len(mk)} markets; LW intensity {delta:.2f}; Ward groups:", " | ".join(" ".join(v) for v in info[str(y)]["ward"].values()), flush=True)
     D = pd.concat(days)
     s = np.zeros(len(D)); tgt = (TARGET / D.forecast_U).to_numpy(); s[0] = tgt[0]
     for i in range(1, len(D)): s[i] = s[i - 1] + LAMBDA * (tgt[i] - s[i - 1])
+    c = np.zeros(len(D)); tg = (D.gross_target / D.gross_U).to_numpy(); c[0] = tg[0]                   # constant leverage, reached a tenth of the way each day
+    for i in range(1, len(D)): c[i] = c[i - 1] + LAMBDA * (tg[i] - c[i - 1])
+    D["lev_scale"] = c; D["constant_leverage"] = D.lev_scale.shift(1).fillna(c[0]) * D.U - COST_BP / 1e4 * D.lev_scale.diff().abs().fillna(0) * D.gross_U
     D["scale"] = s; D["aware"] = D.scale.shift(1).fillna(s[0]) * D.U - COST_BP / 1e4 * D.scale.diff().abs().fillna(0) * D.gross_U   # first day: starts at its target
     D.to_parquet(OUT / "l27_daily.parquet")
-    summ = {v: {"sharpe": L26.sharpe(D[v]), "vol": float(D[v].std() * np.sqrt(252))} for v in ("rule", "aware", "groups", "ward")}
+    summ = {v: {"sharpe": L26.sharpe(D[v]), "vol": float(D[v].std() * np.sqrt(252))} for v in ("rule", "aware", "groups", "ward", "constant_leverage")}
     (RESULTS / "portfolios.json").write_text(json.dumps({"summary": summ, "reviews": info}, indent=1), encoding="utf-8")
     print(pd.DataFrame(summ).round(3).to_string())
