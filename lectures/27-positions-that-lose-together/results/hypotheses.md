@@ -24,7 +24,7 @@ Fixed details, so that each rival is finite by construction rather than capped:
 - **Correlations.** Weekly returns of the markets (not of the trend streams, which flip sign and give unstable estimates) over the past three years, shrunk towards the identity with the Ledoit-Wolf intensity. Shrinkage keeps the smallest eigenvalue away from zero, so a forecast never collapses to zero and the scale stays finite.
 - **Positions.** Each market's signed risk position today: its trend position from Lecture 26's rule times its volatility over six months (Lecture 26 §3).
 - **Trading.** The new scale is reached a tenth of the way each day (as positions in Lecture 26), and every change of position costs 5 bp.
-- **Groups.** Average-linkage clustering on 1 − concordance of the markets' positions over the past three years, cut into five groups; recomputed at each year end.
+- **Groups.** Average-linkage clustering on 1 − concordance of the markets' trend phases (Lecture 25 §4: sign of the 26-week return, weekly; sign ignored, since a market that always trends the opposite way is the same bet for a trader who can be long or short) over the past three years, cut into five groups; recomputed at each year end.
 - **Out of sample.** Reviews at each year end 2012-2025, traded the following year, 2013-2026, on Lecture 25's markets and Lecture 26's speeds chosen at the same review.
 
 ## Measures (the same for all three)
@@ -51,6 +51,14 @@ Differences against the rule: block bootstrap over calendar months (2,000 resamp
 - DeMiguel, V., Garlappi, L. and Uppal, R. (2009). Optimal versus naive diversification. *Review of Financial Studies*.
 - Ledoit, O. and Wolf, M. (2004). A well-conditioned estimator for large-dimensional covariance matrices. *Journal of Multivariate Analysis*.
 - López de Prado, M. (2016). Building diversified portfolios that outperform out of sample. *Journal of Portfolio Management* (hierarchical risk parity, the idea behind grouping).
+
+## Clarifications before results
+
+- 2026-11-13: the groups use Lecture 25's trend-phase concordance with the sign ignored (wording above made precise). The user agreed that a standalone covariance lecture is too much: covariance is one way of measuring dependence, and maybe not the smartest for trend positions; this lecture asks the narrower question of when positions lose together.
+
+## Changes before the full run
+
+- 2026-11-13, after a design check on two reviews (2024-2025), before any full result: average linkage left one group of 14 markets and three single markets (XLV, TLT, EWZ in 2025), so equal risk per group would give one fund a fifth of the risk. **Ward linkage**, which forms groups of similar size, is now rival 2 (agreed with the user); average linkage stays reported as first fixed. The same check found a bug in the risk forecast (exposures and correlations in different column orders), fixed before any result.
 
 ## Changes after results
 
