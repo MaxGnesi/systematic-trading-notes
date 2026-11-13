@@ -60,17 +60,18 @@ if __name__ == "__main__":
 
     # trade-off between the ways to fill the slots
     F = pd.DataFrame(json.loads((L.RESULTS / "fill.json").read_text(encoding="utf-8"))["oos"])
-    NAMES = {"dr": "greedy diversification", "pc": "one market per factor", "ev": "explained variance, step by step", "hy": "key market + diversify (chosen)"}
+    NAMES = {"dr": "greedy diversification", "pc": "one market per factor", "ev": "explained variance, step by step", "hy": "key market + diversify",
+             "sc_div": "score (chosen)"}
     fig = make_subplots(rows=1, cols=1)
     rx = pd.concat([F[f"{m}_abs_rand"] for m in NAMES]); ry = pd.concat([F[f"{m}_ev_rand"] for m in NAMES])
     fig.add_scatter(x=[rx.median()], y=[ry.median()], mode="markers+text", marker=dict(size=14, color=MUTED, symbol="square"), text=["random markets, same slots"],
                     textposition="bottom center", name="random markets in the same slots (median of the medians)",
                     error_x=dict(type="data", symmetric=False, array=[rx.quantile(.75) - rx.median()], arrayminus=[rx.median() - rx.quantile(.25)], color=MUTED),
                     error_y=dict(type="data", symmetric=False, array=[ry.quantile(.75) - ry.median()], arrayminus=[ry.median() - ry.quantile(.25)], color=MUTED))
-    pos = {"dr": "middle left", "pc": "top center", "ev": "top center", "hy": "bottom center"}
+    pos = {"dr": "middle left", "pc": "top center", "ev": "top center", "hy": "middle right", "sc_div": "bottom center"}
     for i, (m, name) in enumerate(NAMES.items()):
-        x, y = F[f"{m}_abs"], F[f"{m}_ev"]; c = INK if m == "hy" else SERIES[i]
-        fig.add_scatter(x=[x.median()], y=[y.median()], mode="markers+text", marker=dict(size=14 if m == "hy" else 11, color=c, symbol="diamond" if m == "hy" else "circle"),
+        x, y = F[f"{m}_abs"], F[f"{m}_ev"]; c = INK if m == "sc_div" else SERIES[i]
+        fig.add_scatter(x=[x.median()], y=[y.median()], mode="markers+text", marker=dict(size=14 if m == "sc_div" else 11, color=c, symbol="diamond" if m == "sc_div" else "circle"),
                         text=[name], textposition=pos[m], textfont=dict(color=c, size=12), name=name,
                         error_x=dict(type="data", symmetric=False, array=[x.quantile(.75) - x.median()], arrayminus=[x.median() - x.quantile(.25)], color=c, thickness=1),
                         error_y=dict(type="data", symmetric=False, array=[y.quantile(.75) - y.median()], arrayminus=[y.median() - y.quantile(.25)], color=c, thickness=1))

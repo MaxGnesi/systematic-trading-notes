@@ -23,7 +23,7 @@ def weights(C, vol, units):
 if __name__ == "__main__":
     close, dv, R, PH, POS = L.load(); X = L.window(R, END); C = L.corr(X, L.MINW); P = PH.loc[X.index]; liq = L.liquidity(dv, END)
     vol = X.std() * np.sqrt(52)
-    s1 = json.loads((L.RESULTS / "fill.json").read_text(encoding="utf-8"))["reviews"]["2025"]["hy"]
+    s1 = json.loads((L.RESULTS / "fill.json").read_text(encoding="utf-8"))["reviews"]["2025"]["sc_div"]
     def dup(x, y): return abs(C.loc[x, y]) >= L.DUP_R and L.concordance(P, x, y) >= L.DUP_C
     core = [x for v in s1.values() for x in v]; mem = list(core); more = []; path = [dict(n=len(mem), explained=L.explained(C, mem, list(C.index)))]
     while path[-1]["explained"] < TARGET:                                   # stage 2: explained variance of all 116, step by step, to the target

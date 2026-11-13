@@ -1,0 +1,3522 @@
+{
+ "reviews": {
+  "2009": {
+   "caps": {
+    "Equity": 7,
+    "Rates": 3,
+    "Credit": 2,
+    "Commodities": 3,
+    "FX": 2
+   },
+   "n_eligible": 77,
+   "sc_div": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "XLF",
+     "OIH"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_div_log": [
+    "SPY in",
+    "GDX in",
+    "SMH in",
+    "XLV in",
+    "FXI in",
+    "XLF in",
+    "OIH in",
+    "TLT in",
+    "TIP in",
+    "SHY in",
+    "LQD in",
+    "HYG in",
+    "USO in",
+    "GLD in",
+    "UNG in",
+    "FXE in",
+    "FXY in"
+   ],
+   "sc_d60": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "SMH",
+     "OIH",
+     "XLF"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d60_log": [
+    "SPY in",
+    "GDX in",
+    "XLV in",
+    "EWT in",
+    "SMH in",
+    "OIH in",
+    "XLF in",
+    "TLT in",
+    "TIP in",
+    "SHY in",
+    "LQD in",
+    "HYG in",
+    "USO in",
+    "GLD in",
+    "UNG in",
+    "FXE in",
+    "FXY in"
+   ],
+   "sc_d70": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "VNQ",
+     "SMH",
+     "OIH"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d70_log": [
+    "SPY in",
+    "GDX in",
+    "XLV in",
+    "EWT in",
+    "VNQ in",
+    "SMH in",
+    "OIH in",
+    "TLT in",
+    "TIP in",
+    "SHY in",
+    "LQD in",
+    "HYG in",
+    "USO in",
+    "GLD in",
+    "UNG in",
+    "FXE in",
+    "FXY in"
+   ],
+   "sc_d50l30": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLF",
+     "FXI",
+     "SMH",
+     "OIH",
+     "XLV"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d50l30_log": [
+    "SPY in",
+    "GDX in",
+    "XLF in",
+    "FXI in",
+    "SMH in",
+    "OIH in",
+    "XLV in",
+    "TLT in",
+    "TIP in",
+    "SHY in",
+    "LQD in",
+    "HYG in",
+    "USO in",
+    "GLD in",
+    "UNG in",
+    "FXE in",
+    "FXY in"
+   ]
+  },
+  "2010": {
+   "caps": {
+    "Equity": 8,
+    "Rates": 3,
+    "Credit": 2,
+    "Commodities": 3,
+    "FX": 2
+   },
+   "n_eligible": 85,
+   "sc_div": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "XLF",
+     "OIH",
+     "EWT"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_div_log": [
+    "EWT in"
+   ],
+   "sc_d60": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "SMH",
+     "OIH",
+     "XLF",
+     "FXI"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d60_log": [
+    "FXI in"
+   ],
+   "sc_d70": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "VNQ",
+     "SMH",
+     "OIH",
+     "FXI"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d70_log": [
+    "FXI in"
+   ],
+   "sc_d50l30": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLF",
+     "FXI",
+     "SMH",
+     "OIH",
+     "XLV",
+     "EWT"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d50l30_log": [
+    "EWT in"
+   ]
+  },
+  "2011": {
+   "caps": {
+    "Equity": 7,
+    "Rates": 2,
+    "Credit": 2,
+    "Commodities": 3,
+    "FX": 3
+   },
+   "n_eligible": 86,
+   "sc_div": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "XLF",
+     "OIH",
+     "EWT"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXC"
+    ]
+   },
+   "sc_div_log": [
+    "FXC in"
+   ],
+   "sc_d60": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "SMH",
+     "OIH",
+     "XLF",
+     "FXI"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXC"
+    ]
+   },
+   "sc_d60_log": [
+    "FXC in"
+   ],
+   "sc_d70": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "VNQ",
+     "SMH",
+     "OIH",
+     "FXI"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXC"
+    ]
+   },
+   "sc_d70_log": [
+    "FXC in"
+   ],
+   "sc_d50l30": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLF",
+     "FXI",
+     "SMH",
+     "OIH",
+     "XLV",
+     "EWT"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXC"
+    ]
+   },
+   "sc_d50l30_log": [
+    "FXC in"
+   ]
+  },
+  "2012": {
+   "caps": {
+    "Equity": 7,
+    "Rates": 2,
+    "Credit": 2,
+    "Commodities": 3,
+    "FX": 3
+   },
+   "n_eligible": 93,
+   "sc_div": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "XLF",
+     "OIH",
+     "EWT"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXC"
+    ]
+   },
+   "sc_div_log": [
+    "TIP out (over cap)"
+   ],
+   "sc_d60": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "SMH",
+     "OIH",
+     "XLF",
+     "FXI"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXC"
+    ]
+   },
+   "sc_d60_log": [],
+   "sc_d70": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "VNQ",
+     "SMH",
+     "OIH",
+     "FXI"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXC"
+    ]
+   },
+   "sc_d70_log": [],
+   "sc_d50l30": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLF",
+     "FXI",
+     "SMH",
+     "OIH",
+     "XLV",
+     "EWT"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXC"
+    ]
+   },
+   "sc_d50l30_log": [
+    "TIP out (over cap)"
+   ]
+  },
+  "2013": {
+   "caps": {
+    "Equity": 6,
+    "Rates": 3,
+    "Credit": 2,
+    "Commodities": 3,
+    "FX": 3
+   },
+   "n_eligible": 96,
+   "sc_div": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXA"
+    ]
+   },
+   "sc_div_log": [
+    "XLF out (redundant)",
+    "OIH out (over cap)",
+    "TIP in",
+    "FXC out (below floor)",
+    "FXA in"
+   ],
+   "sc_d60": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "SMH",
+     "FXI"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXA"
+    ]
+   },
+   "sc_d60_log": [
+    "OIH out (over cap)",
+    "XLF out (redundant)",
+    "FXC out (below floor)",
+    "FXA in"
+   ],
+   "sc_d70": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "VNQ",
+     "SMH",
+     "FXI"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXA"
+    ]
+   },
+   "sc_d70_log": [
+    "OIH out (over cap)",
+    "FXC out (below floor)",
+    "FXA in"
+   ],
+   "sc_d50l30": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "FXI",
+     "SMH",
+     "XLV",
+     "EWT"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXA"
+    ]
+   },
+   "sc_d50l30_log": [
+    "XLF out (redundant)",
+    "OIH out (over cap)",
+    "TIP in",
+    "FXC out (below floor)",
+    "FXA in"
+   ]
+  },
+  "2014": {
+   "caps": {
+    "Equity": 6,
+    "Rates": 3,
+    "Credit": 2,
+    "Commodities": 3,
+    "FX": 3
+   },
+   "n_eligible": 97,
+   "sc_div": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXA"
+    ]
+   },
+   "sc_div_log": [],
+   "sc_d60": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "SMH",
+     "FXI"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXA"
+    ]
+   },
+   "sc_d60_log": [],
+   "sc_d70": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "VNQ",
+     "SMH",
+     "FXI"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXA"
+    ]
+   },
+   "sc_d70_log": [],
+   "sc_d50l30": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "FXI",
+     "SMH",
+     "XLV",
+     "EWT"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "FXA"
+    ]
+   },
+   "sc_d50l30_log": []
+  },
+  "2015": {
+   "caps": {
+    "Equity": 6,
+    "Rates": 3,
+    "Credit": 2,
+    "Commodities": 3,
+    "FX": 4
+   },
+   "n_eligible": 100,
+   "sc_div": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_div_log": [
+    "FXA out (below floor)"
+   ],
+   "sc_d60": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "SMH",
+     "FXI"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d60_log": [
+    "FXA out (below floor)"
+   ],
+   "sc_d70": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "VNQ",
+     "FXI"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d70_log": [
+    "SMH out (over cap)",
+    "FXA out (below floor)"
+   ],
+   "sc_d50l30": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "FXI",
+     "SMH",
+     "XLV",
+     "EWT"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d50l30_log": [
+    "FXA out (below floor)"
+   ]
+  },
+  "2016": {
+   "caps": {
+    "Equity": 7,
+    "Rates": 3,
+    "Credit": 2,
+    "Commodities": 3,
+    "FX": 3
+   },
+   "n_eligible": 103,
+   "sc_div": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_div_log": [
+    "XLU in"
+   ],
+   "sc_d60": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "SMH",
+     "FXI",
+     "XLU"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d60_log": [
+    "XLU in"
+   ],
+   "sc_d70": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "VNQ",
+     "FXI",
+     "XBI"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d70_log": [
+    "XBI in"
+   ],
+   "sc_d50l30": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "FXI",
+     "SMH",
+     "XLV",
+     "EWT",
+     "XLU"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d50l30_log": [
+    "XLU in"
+   ]
+  },
+  "2017": {
+   "caps": {
+    "Equity": 7,
+    "Rates": 3,
+    "Credit": 2,
+    "Commodities": 3,
+    "FX": 3
+   },
+   "n_eligible": 106,
+   "sc_div": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_div_log": [],
+   "sc_d60": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "SMH",
+     "FXI",
+     "XLU"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d60_log": [],
+   "sc_d70": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "VNQ",
+     "FXI",
+     "XBI"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d70_log": [],
+   "sc_d50l30": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "FXI",
+     "SMH",
+     "XLV",
+     "EWT",
+     "XLU"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d50l30_log": []
+  },
+  "2018": {
+   "caps": {
+    "Equity": 6,
+    "Rates": 3,
+    "Credit": 2,
+    "Commodities": 3,
+    "FX": 3
+   },
+   "n_eligible": 108,
+   "sc_div": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_div_log": [],
+   "sc_d60": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "SMH",
+     "FXI",
+     "XLU"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d60_log": [],
+   "sc_d70": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "VNQ",
+     "FXI",
+     "XBI"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d70_log": [],
+   "sc_d50l30": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "FXI",
+     "SMH",
+     "XLV",
+     "EWT",
+     "XLU"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d50l30_log": []
+  },
+  "2019": {
+   "caps": {
+    "Equity": 6,
+    "Rates": 3,
+    "Credit": 2,
+    "Commodities": 3,
+    "FX": 3
+   },
+   "n_eligible": 109,
+   "sc_div": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_div_log": [],
+   "sc_d60": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "SMH",
+     "FXI",
+     "XLU"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d60_log": [],
+   "sc_d70": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "EWT",
+     "VNQ",
+     "FXI",
+     "XBI"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d70_log": [
+    "XLV out (over cap)"
+   ],
+   "sc_d50l30": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "FXI",
+     "SMH",
+     "XLV",
+     "EWT",
+     "XLU"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d50l30_log": []
+  },
+  "2020": {
+   "caps": {
+    "Equity": 8,
+    "Rates": 2,
+    "Credit": 2,
+    "Commodities": 4,
+    "FX": 3
+   },
+   "n_eligible": 114,
+   "sc_div": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU",
+     "EWZ"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "PPLT"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_div_log": [
+    "EWZ in",
+    "PPLT in"
+   ],
+   "sc_d60": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "SMH",
+     "FXI",
+     "XLU",
+     "EWZ"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "PPLT"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d60_log": [
+    "EWZ in",
+    "PPLT in"
+   ],
+   "sc_d70": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "EWT",
+     "VNQ",
+     "FXI",
+     "XBI",
+     "EWZ",
+     "OIH"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "PPLT"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d70_log": [
+    "EWZ in",
+    "OIH in",
+    "PPLT in"
+   ],
+   "sc_d50l30": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "FXI",
+     "SMH",
+     "XLV",
+     "EWT",
+     "XLU",
+     "EWZ"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "PPLT"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d50l30_log": [
+    "EWZ in",
+    "PPLT in"
+   ]
+  },
+  "2021": {
+   "caps": {
+    "Equity": 8,
+    "Rates": 3,
+    "Credit": 2,
+    "Commodities": 3,
+    "FX": 2
+   },
+   "n_eligible": 116,
+   "sc_div": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU",
+     "EWZ"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "PPLT"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_div_log": [],
+   "sc_d60": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "SMH",
+     "FXI",
+     "XLU",
+     "EWZ"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "PPLT"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d60_log": [],
+   "sc_d70": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "EWT",
+     "VNQ",
+     "FXI",
+     "XBI",
+     "EWZ",
+     "OIH"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "PPLT"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d70_log": [],
+   "sc_d50l30": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "FXI",
+     "SMH",
+     "XLV",
+     "EWT",
+     "XLU",
+     "EWZ"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "PPLT"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d50l30_log": []
+  },
+  "2022": {
+   "caps": {
+    "Equity": 8,
+    "Rates": 3,
+    "Credit": 2,
+    "Commodities": 4,
+    "FX": 3
+   },
+   "n_eligible": 116,
+   "sc_div": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU",
+     "EWZ"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "DBA"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_div_log": [
+    "PPLT out (below floor)",
+    "DBA in"
+   ],
+   "sc_d60": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "SMH",
+     "FXI",
+     "XLU",
+     "EWZ"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "DBA"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d60_log": [
+    "PPLT out (below floor)",
+    "DBA in"
+   ],
+   "sc_d70": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "EWT",
+     "VNQ",
+     "FXI",
+     "XBI",
+     "EWZ",
+     "OIH"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "DBA"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d70_log": [
+    "PPLT out (below floor)",
+    "DBA in"
+   ],
+   "sc_d50l30": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "FXI",
+     "SMH",
+     "XLV",
+     "EWT",
+     "XLU",
+     "EWZ"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "DBA"
+    ],
+    "FX": [
+     "FXE",
+     "FXY"
+    ]
+   },
+   "sc_d50l30_log": [
+    "PPLT out (below floor)",
+    "DBA in"
+   ]
+  },
+  "2023": {
+   "caps": {
+    "Equity": 7,
+    "Rates": 4,
+    "Credit": 2,
+    "Commodities": 3,
+    "FX": 3
+   },
+   "n_eligible": 116,
+   "sc_div": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU",
+     "EWZ"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP",
+     "BNDX"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "DBA"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "UUP"
+    ]
+   },
+   "sc_div_log": [
+    "BNDX in",
+    "UUP in"
+   ],
+   "sc_d60": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "SMH",
+     "FXI",
+     "XLU",
+     "EWZ"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY",
+     "BNDX"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "DBA"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "UUP"
+    ]
+   },
+   "sc_d60_log": [
+    "BNDX in",
+    "UUP in"
+   ],
+   "sc_d70": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "EWT",
+     "VNQ",
+     "FXI",
+     "XBI",
+     "EWZ",
+     "OIH"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY",
+     "BNDX"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "DBA"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "UUP"
+    ]
+   },
+   "sc_d70_log": [
+    "BNDX in",
+    "UUP in"
+   ],
+   "sc_d50l30": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "FXI",
+     "SMH",
+     "XLV",
+     "EWT",
+     "XLU",
+     "EWZ"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP",
+     "BNDX"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG",
+     "DBA"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "UUP"
+    ]
+   },
+   "sc_d50l30_log": [
+    "BNDX in",
+    "UUP in"
+   ]
+  },
+  "2024": {
+   "caps": {
+    "Equity": 8,
+    "Rates": 4,
+    "Credit": 2,
+    "Commodities": 3,
+    "FX": 3
+   },
+   "n_eligible": 116,
+   "sc_div": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU",
+     "EWZ"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP",
+     "BNDX"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "UUP"
+    ]
+   },
+   "sc_div_log": [
+    "DBA out (below floor)"
+   ],
+   "sc_d60": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "SMH",
+     "FXI",
+     "XLU",
+     "EWZ"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY",
+     "BNDX"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "UUP"
+    ]
+   },
+   "sc_d60_log": [
+    "DBA out (below floor)"
+   ],
+   "sc_d70": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "EWT",
+     "VNQ",
+     "FXI",
+     "XBI",
+     "EWZ",
+     "OIH"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY",
+     "BNDX"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "GLD",
+     "UNG",
+     "USO"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "UUP"
+    ]
+   },
+   "sc_d70_log": [
+    "USO out (over cap)",
+    "DBA out (below floor)",
+    "USO in"
+   ],
+   "sc_d50l30": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "FXI",
+     "SMH",
+     "XLV",
+     "EWT",
+     "XLU",
+     "EWZ"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP",
+     "BNDX"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "UUP"
+    ]
+   },
+   "sc_d50l30_log": [
+    "DBA out (below floor)"
+   ]
+  },
+  "2025": {
+   "caps": {
+    "Equity": 8,
+    "Rates": 3,
+    "Credit": 2,
+    "Commodities": 3,
+    "FX": 3
+   },
+   "n_eligible": 116,
+   "sc_div": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "XLU",
+     "EWZ"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP",
+     "BNDX"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "UUP"
+    ]
+   },
+   "sc_div_log": [],
+   "sc_d60": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "XLV",
+     "EWT",
+     "SMH",
+     "FXI",
+     "XLU",
+     "EWZ"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY",
+     "BNDX"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "UUP"
+    ]
+   },
+   "sc_d60_log": [],
+   "sc_d70": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "EWT",
+     "VNQ",
+     "FXI",
+     "XBI",
+     "EWZ",
+     "OIH"
+    ],
+    "Rates": [
+     "TLT",
+     "TIP",
+     "SHY",
+     "BNDX"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "GLD",
+     "UNG",
+     "USO"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "UUP"
+    ]
+   },
+   "sc_d70_log": [],
+   "sc_d50l30": {
+    "Equity": [
+     "SPY",
+     "GDX",
+     "FXI",
+     "SMH",
+     "XLV",
+     "EWT",
+     "XLU",
+     "EWZ"
+    ],
+    "Rates": [
+     "TLT",
+     "SHY",
+     "TIP",
+     "BNDX"
+    ],
+    "Credit": [
+     "LQD",
+     "HYG"
+    ],
+    "Commodities": [
+     "USO",
+     "GLD",
+     "UNG"
+    ],
+    "FX": [
+     "FXE",
+     "FXY",
+     "UUP"
+    ]
+   },
+   "sc_d50l30_log": []
+  }
+ },
+ "oos": [
+  {
+   "year": 2010,
+   "sc_div_ev": 0.7501788143156565,
+   "sc_div_ev_rand": 0.7320004919857293,
+   "sc_div_ev_beats": 0.77,
+   "sc_div_abs": 0.36809300484572016,
+   "sc_div_abs_rand": 0.44095039599906516,
+   "sc_div_abs_beats": 0.98,
+   "sc_div_pos": 0.18704709909945613,
+   "sc_div_pos_rand": 0.254107322999686,
+   "sc_div_pos_beats": 1.0,
+   "sc_div_enb3": 2.477510664383905,
+   "sc_div_enb3_rand": 2.3199837282281037,
+   "sc_div_enb3_beats": 0.6466666666666666,
+   "sc_div_liq": 8.394195228991123,
+   "sc_div_liq_rand": 7.845145365257406,
+   "sc_div_liq_beats": 1.0,
+   "sc_d60_ev": 0.7483190805774008,
+   "sc_d60_ev_rand": 0.7317273416753638,
+   "sc_d60_ev_beats": 0.7133333333333334,
+   "sc_d60_abs": 0.37493924705761655,
+   "sc_d60_abs_rand": 0.44106007977474293,
+   "sc_d60_abs_beats": 0.9866666666666667,
+   "sc_d60_pos": 0.2037576174532015,
+   "sc_d60_pos_rand": 0.255995144327272,
+   "sc_d60_pos_beats": 1.0,
+   "sc_d60_enb3": 2.4625754357624747,
+   "sc_d60_enb3_rand": 2.3146092371202984,
+   "sc_d60_enb3_beats": 0.6166666666666667,
+   "sc_d60_liq": 8.270196376203225,
+   "sc_d60_liq_rand": 7.845145365257406,
+   "sc_d60_liq_beats": 0.9933333333333333,
+   "sc_d70_ev": 0.7480925408010709,
+   "sc_d70_ev_rand": 0.7315529850863981,
+   "sc_d70_ev_beats": 0.73,
+   "sc_d70_abs": 0.36889979719006916,
+   "sc_d70_abs_rand": 0.4455586778364701,
+   "sc_d70_abs_beats": 0.9866666666666667,
+   "sc_d70_pos": 0.20604058765096256,
+   "sc_d70_pos_rand": 0.2554883243118052,
+   "sc_d70_pos_beats": 0.9933333333333333,
+   "sc_d70_enb3": 2.4554426938445633,
+   "sc_d70_enb3_rand": 2.2984297119692965,
+   "sc_d70_enb3_beats": 0.6533333333333333,
+   "sc_d70_liq": 8.047937347044831,
+   "sc_d70_liq_rand": 7.845145365257406,
+   "sc_d70_liq_beats": 0.89,
+   "sc_d50l30_ev": 0.7501788143156565,
+   "sc_d50l30_ev_rand": 0.7326448556792005,
+   "sc_d50l30_ev_beats": 0.7733333333333333,
+   "sc_d50l30_abs": 0.3680930048457202,
+   "sc_d50l30_abs_rand": 0.4427614124429641,
+   "sc_d50l30_abs_beats": 0.9733333333333334,
+   "sc_d50l30_pos": 0.18704709909945613,
+   "sc_d50l30_pos_rand": 0.2573089153909898,
+   "sc_d50l30_pos_beats": 1.0,
+   "sc_d50l30_enb3": 2.4775106643839058,
+   "sc_d50l30_enb3_rand": 2.2823930032556454,
+   "sc_d50l30_enb3_beats": 0.68,
+   "sc_d50l30_liq": 8.394195228991123,
+   "sc_d50l30_liq_rand": 7.845145365257406,
+   "sc_d50l30_liq_beats": 1.0
+  },
+  {
+   "year": 2011,
+   "sc_div_ev": 0.7666738081002575,
+   "sc_div_ev_rand": 0.7467121775902416,
+   "sc_div_ev_beats": 0.92,
+   "sc_div_abs": 0.40068141285838593,
+   "sc_div_abs_rand": 0.48462228289173886,
+   "sc_div_abs_beats": 0.99,
+   "sc_div_pos": 0.2663005512477934,
+   "sc_div_pos_rand": 0.3223197373254693,
+   "sc_div_pos_beats": 0.97,
+   "sc_div_enb3": 2.25547520879904,
+   "sc_div_enb3_rand": 2.3792818670647593,
+   "sc_div_enb3_beats": 0.21666666666666667,
+   "sc_div_liq": 8.368331114464091,
+   "sc_div_liq_rand": 7.898081271835704,
+   "sc_div_liq_beats": 0.9866666666666667,
+   "sc_d60_ev": 0.7666738081002575,
+   "sc_d60_ev_rand": 0.7482250957837948,
+   "sc_d60_ev_beats": 0.8933333333333333,
+   "sc_d60_abs": 0.40068141285838593,
+   "sc_d60_abs_rand": 0.4788413261535836,
+   "sc_d60_abs_beats": 0.99,
+   "sc_d60_pos": 0.26630055124779345,
+   "sc_d60_pos_rand": 0.3215484852049223,
+   "sc_d60_pos_beats": 0.9633333333333334,
+   "sc_d60_enb3": 2.2554752087990386,
+   "sc_d60_enb3_rand": 2.3982760063388784,
+   "sc_d60_enb3_beats": 0.26,
+   "sc_d60_liq": 8.368331114464091,
+   "sc_d60_liq_rand": 7.898081271835704,
+   "sc_d60_liq_beats": 0.99,
+   "sc_d70_ev": 0.7665950747235721,
+   "sc_d70_ev_rand": 0.747295859818766,
+   "sc_d70_ev_beats": 0.91,
+   "sc_d70_abs": 0.39595264324441304,
+   "sc_d70_abs_rand": 0.48502415584344694,
+   "sc_d70_abs_beats": 0.9933333333333333,
+   "sc_d70_pos": 0.25648972704947853,
+   "sc_d70_pos_rand": 0.3231867653361862,
+   "sc_d70_pos_beats": 0.9866666666666667,
+   "sc_d70_enb3": 2.3080028331167894,
+   "sc_d70_enb3_rand": 2.390255864040581,
+   "sc_d70_enb3_beats": 0.37,
+   "sc_d70_liq": 8.210987299206117,
+   "sc_d70_liq_rand": 7.891429528904615,
+   "sc_d70_liq_beats": 0.9533333333333334,
+   "sc_d50l30_ev": 0.7666738081002575,
+   "sc_d50l30_ev_rand": 0.7487184516509751,
+   "sc_d50l30_ev_beats": 0.8933333333333333,
+   "sc_d50l30_abs": 0.40068141285838593,
+   "sc_d50l30_abs_rand": 0.47622545440690867,
+   "sc_d50l30_abs_beats": 0.99,
+   "sc_d50l30_pos": 0.26630055124779345,
+   "sc_d50l30_pos_rand": 0.3186378501117183,
+   "sc_d50l30_pos_beats": 0.97,
+   "sc_d50l30_enb3": 2.25547520879904,
+   "sc_d50l30_enb3_rand": 2.4040021865078196,
+   "sc_d50l30_enb3_beats": 0.21333333333333335,
+   "sc_d50l30_liq": 8.368331114464091,
+   "sc_d50l30_liq_rand": 7.898081271835704,
+   "sc_d50l30_liq_beats": 0.9966666666666667
+  },
+  {
+   "year": 2012,
+   "sc_div_ev": 0.7563935125462412,
+   "sc_div_ev_rand": 0.7202964902947084,
+   "sc_div_ev_beats": 0.9966666666666667,
+   "sc_div_abs": 0.3236883864198106,
+   "sc_div_abs_rand": 0.3718474370728203,
+   "sc_div_abs_beats": 0.9233333333333333,
+   "sc_div_pos": 0.19456131481376623,
+   "sc_div_pos_rand": 0.2100457359933018,
+   "sc_div_pos_beats": 0.8166666666666667,
+   "sc_div_enb3": 1.4814334281730408,
+   "sc_div_enb3_rand": 2.2211625072875227,
+   "sc_div_enb3_beats": 0.1,
+   "sc_div_liq": 8.340907119812403,
+   "sc_div_liq_rand": 7.843050892087992,
+   "sc_div_liq_beats": 0.9933333333333333,
+   "sc_d60_ev": 0.7563935125462412,
+   "sc_d60_ev_rand": 0.7186421146792232,
+   "sc_d60_ev_beats": 0.97,
+   "sc_d60_abs": 0.3236883864198106,
+   "sc_d60_abs_rand": 0.3775220361519831,
+   "sc_d60_abs_beats": 0.95,
+   "sc_d60_pos": 0.19456131481376623,
+   "sc_d60_pos_rand": 0.21070096600851757,
+   "sc_d60_pos_beats": 0.7933333333333333,
+   "sc_d60_enb3": 1.4814334281730406,
+   "sc_d60_enb3_rand": 2.2414852340410945,
+   "sc_d60_enb3_beats": 0.09,
+   "sc_d60_liq": 8.340907119812403,
+   "sc_d60_liq_rand": 7.843050892087992,
+   "sc_d60_liq_beats": 0.9966666666666667,
+   "sc_d70_ev": 0.7581346363775429,
+   "sc_d70_ev_rand": 0.7212460929266327,
+   "sc_d70_ev_beats": 0.9866666666666667,
+   "sc_d70_abs": 0.31370349189089175,
+   "sc_d70_abs_rand": 0.37333252613790036,
+   "sc_d70_abs_beats": 0.9633333333333334,
+   "sc_d70_pos": 0.19091716200880196,
+   "sc_d70_pos_rand": 0.2109930742123782,
+   "sc_d70_pos_beats": 0.8366666666666667,
+   "sc_d70_enb3": 1.5952581462502373,
+   "sc_d70_enb3_rand": 2.1843104536977,
+   "sc_d70_enb3_beats": 0.15333333333333332,
+   "sc_d70_liq": 8.294151041609663,
+   "sc_d70_liq_rand": 7.843050892087992,
+   "sc_d70_liq_beats": 0.9833333333333333,
+   "sc_d50l30_ev": 0.7563935125462412,
+   "sc_d50l30_ev_rand": 0.7150894040296332,
+   "sc_d50l30_ev_beats": 0.9633333333333334,
+   "sc_d50l30_abs": 0.3236883864198106,
+   "sc_d50l30_abs_rand": 0.36878899927039543,
+   "sc_d50l30_abs_beats": 0.9466666666666667,
+   "sc_d50l30_pos": 0.19456131481376623,
+   "sc_d50l30_pos_rand": 0.2099719893565855,
+   "sc_d50l30_pos_beats": 0.8133333333333334,
+   "sc_d50l30_enb3": 1.481433428173041,
+   "sc_d50l30_enb3_rand": 2.2071677781387216,
+   "sc_d50l30_enb3_beats": 0.11,
+   "sc_d50l30_liq": 8.340907119812403,
+   "sc_d50l30_liq_rand": 7.844115675003151,
+   "sc_d50l30_liq_beats": 0.99
+  },
+  {
+   "year": 2013,
+   "sc_div_ev": 0.7538397067259238,
+   "sc_div_ev_rand": 0.7402620059307512,
+   "sc_div_ev_beats": 0.83,
+   "sc_div_abs": 0.26944144087912125,
+   "sc_div_abs_rand": 0.29896155216432385,
+   "sc_div_abs_beats": 0.9533333333333334,
+   "sc_div_pos": 0.19079315663700117,
+   "sc_div_pos_rand": 0.20166635812196834,
+   "sc_div_pos_beats": 0.7166666666666667,
+   "sc_div_enb3": 1.4572227251516494,
+   "sc_div_enb3_rand": 2.4852553852520876,
+   "sc_div_enb3_beats": 0.04,
+   "sc_div_liq": 8.158736058119299,
+   "sc_div_liq_rand": 7.907649383208409,
+   "sc_div_liq_beats": 0.9766666666666667,
+   "sc_d60_ev": 0.761454472279562,
+   "sc_d60_ev_rand": 0.7470760624958017,
+   "sc_d60_ev_beats": 0.83,
+   "sc_d60_abs": 0.2711109492860457,
+   "sc_d60_abs_rand": 0.3000557129000237,
+   "sc_d60_abs_beats": 0.9566666666666667,
+   "sc_d60_pos": 0.19720267030734934,
+   "sc_d60_pos_rand": 0.2083742950439877,
+   "sc_d60_pos_beats": 0.7133333333333334,
+   "sc_d60_enb3": 1.3470483607959756,
+   "sc_d60_enb3_rand": 2.0685890747901383,
+   "sc_d60_enb3_beats": 0.04666666666666667,
+   "sc_d60_liq": 8.115774102927451,
+   "sc_d60_liq_rand": 7.86427366417532,
+   "sc_d60_liq_beats": 0.9866666666666667,
+   "sc_d70_ev": 0.7660686894796637,
+   "sc_d70_ev_rand": 0.7477198078276258,
+   "sc_d70_ev_beats": 0.92,
+   "sc_d70_abs": 0.2725873737846722,
+   "sc_d70_abs_rand": 0.3004620416857421,
+   "sc_d70_abs_beats": 0.9433333333333334,
+   "sc_d70_pos": 0.19168521446917944,
+   "sc_d70_pos_rand": 0.20679048060778654,
+   "sc_d70_pos_beats": 0.7933333333333333,
+   "sc_d70_enb3": 1.5711471177706122,
+   "sc_d70_enb3_rand": 2.0352846132719407,
+   "sc_d70_enb3_beats": 0.21666666666666667,
+   "sc_d70_liq": 8.10979507986506,
+   "sc_d70_liq_rand": 7.86427366417532,
+   "sc_d70_liq_beats": 0.9466666666666667,
+   "sc_d50l30_ev": 0.7538397067259238,
+   "sc_d50l30_ev_rand": 0.7377687657177454,
+   "sc_d50l30_ev_beats": 0.86,
+   "sc_d50l30_abs": 0.26944144087912125,
+   "sc_d50l30_abs_rand": 0.2955987532375669,
+   "sc_d50l30_abs_beats": 0.9066666666666666,
+   "sc_d50l30_pos": 0.19079315663700117,
+   "sc_d50l30_pos_rand": 0.20286015669361482,
+   "sc_d50l30_pos_beats": 0.71,
+   "sc_d50l30_enb3": 1.4572227251516494,
+   "sc_d50l30_enb3_rand": 2.472203223631145,
+   "sc_d50l30_enb3_beats": 0.02666666666666667,
+   "sc_d50l30_liq": 8.158736058119299,
+   "sc_d50l30_liq_rand": 7.937783404595479,
+   "sc_d50l30_liq_beats": 0.9266666666666666
+  },
+  {
+   "year": 2014,
+   "sc_div_ev": 0.7197521131317831,
+   "sc_div_ev_rand": 0.6927752919106871,
+   "sc_div_ev_beats": 0.9,
+   "sc_div_abs": 0.3031955636490273,
+   "sc_div_abs_rand": 0.3168919648724223,
+   "sc_div_abs_beats": 0.6733333333333333,
+   "sc_div_pos": 0.2166648222652284,
+   "sc_div_pos_rand": 0.20416333750193402,
+   "sc_div_pos_beats": 0.31333333333333335,
+   "sc_div_enb3": 1.6331707850527992,
+   "sc_div_enb3_rand": 2.0403455840118707,
+   "sc_div_enb3_beats": 0.24666666666666667,
+   "sc_div_liq": 8.137795171125676,
+   "sc_div_liq_rand": 7.750571739313385,
+   "sc_div_liq_beats": 0.9866666666666667,
+   "sc_d60_ev": 0.7197521131317833,
+   "sc_d60_ev_rand": 0.6947253489172094,
+   "sc_d60_ev_beats": 0.8533333333333334,
+   "sc_d60_abs": 0.3031955636490273,
+   "sc_d60_abs_rand": 0.3107702755224224,
+   "sc_d60_abs_beats": 0.62,
+   "sc_d60_pos": 0.21666482226522846,
+   "sc_d60_pos_rand": 0.20626011907775516,
+   "sc_d60_pos_beats": 0.2633333333333333,
+   "sc_d60_enb3": 1.6331707850528006,
+   "sc_d60_enb3_rand": 2.0739361591749814,
+   "sc_d60_enb3_beats": 0.21666666666666667,
+   "sc_d60_liq": 8.137795171125676,
+   "sc_d60_liq_rand": 7.750571739313385,
+   "sc_d60_liq_beats": 0.9933333333333333,
+   "sc_d70_ev": 0.7257353389482845,
+   "sc_d70_ev_rand": 0.699821872189953,
+   "sc_d70_ev_beats": 0.8633333333333333,
+   "sc_d70_abs": 0.29301279351314224,
+   "sc_d70_abs_rand": 0.31567891382813684,
+   "sc_d70_abs_beats": 0.7866666666666666,
+   "sc_d70_pos": 0.2142002846354754,
+   "sc_d70_pos_rand": 0.2007597588638192,
+   "sc_d70_pos_beats": 0.27666666666666667,
+   "sc_d70_enb3": 1.675206099390941,
+   "sc_d70_enb3_rand": 2.106510278198935,
+   "sc_d70_enb3_beats": 0.22333333333333333,
+   "sc_d70_liq": 8.092256649818253,
+   "sc_d70_liq_rand": 7.75157828207551,
+   "sc_d70_liq_beats": 0.98,
+   "sc_d50l30_ev": 0.7197521131317833,
+   "sc_d50l30_ev_rand": 0.6958126010116821,
+   "sc_d50l30_ev_beats": 0.8766666666666667,
+   "sc_d50l30_abs": 0.3031955636490273,
+   "sc_d50l30_abs_rand": 0.31379450610394366,
+   "sc_d50l30_abs_beats": 0.6266666666666667,
+   "sc_d50l30_pos": 0.2166648222652285,
+   "sc_d50l30_pos_rand": 0.20648349464845495,
+   "sc_d50l30_pos_beats": 0.26666666666666666,
+   "sc_d50l30_enb3": 1.6331707850528017,
+   "sc_d50l30_enb3_rand": 1.9715195142034083,
+   "sc_d50l30_enb3_beats": 0.25,
+   "sc_d50l30_liq": 8.137795171125676,
+   "sc_d50l30_liq_rand": 7.750571739313385,
+   "sc_d50l30_liq_beats": 0.9733333333333334
+  },
+  {
+   "year": 2015,
+   "sc_div_ev": 0.7272761634314977,
+   "sc_div_ev_rand": 0.698857967190243,
+   "sc_div_ev_beats": 0.92,
+   "sc_div_abs": 0.2848881732636454,
+   "sc_div_abs_rand": 0.3064667217587318,
+   "sc_div_abs_beats": 0.8933333333333333,
+   "sc_div_pos": 0.16919124913346245,
+   "sc_div_pos_rand": 0.19786132119143168,
+   "sc_div_pos_beats": 0.9833333333333333,
+   "sc_div_enb3": 2.213595576060635,
+   "sc_div_enb3_rand": 2.147962906730423,
+   "sc_div_enb3_beats": 0.53,
+   "sc_div_liq": 8.125265323286657,
+   "sc_div_liq_rand": 7.719859864549122,
+   "sc_div_liq_beats": 0.9633333333333334,
+   "sc_d60_ev": 0.7272761634314977,
+   "sc_d60_ev_rand": 0.6980714041993715,
+   "sc_d60_ev_beats": 0.8966666666666666,
+   "sc_d60_abs": 0.2848881732636454,
+   "sc_d60_abs_rand": 0.3080957806026058,
+   "sc_d60_abs_beats": 0.9033333333333333,
+   "sc_d60_pos": 0.16919124913346242,
+   "sc_d60_pos_rand": 0.19906660109391416,
+   "sc_d60_pos_beats": 0.9766666666666667,
+   "sc_d60_enb3": 2.213595576060634,
+   "sc_d60_enb3_rand": 2.15933222455791,
+   "sc_d60_enb3_beats": 0.5333333333333333,
+   "sc_d60_liq": 8.125265323286657,
+   "sc_d60_liq_rand": 7.719859864549122,
+   "sc_d60_liq_beats": 0.9766666666666667,
+   "sc_d70_ev": 0.7321138665145276,
+   "sc_d70_ev_rand": 0.7007011221413799,
+   "sc_d70_ev_beats": 0.9666666666666667,
+   "sc_d70_abs": 0.29135720566736817,
+   "sc_d70_abs_rand": 0.3137157866724527,
+   "sc_d70_abs_beats": 0.9266666666666666,
+   "sc_d70_pos": 0.1710070919348842,
+   "sc_d70_pos_rand": 0.2005973796221488,
+   "sc_d70_pos_beats": 0.9766666666666667,
+   "sc_d70_enb3": 2.5315225763020375,
+   "sc_d70_enb3_rand": 2.088689762726429,
+   "sc_d70_enb3_beats": 0.78,
+   "sc_d70_liq": 8.134541086834737,
+   "sc_d70_liq_rand": 7.740683009137262,
+   "sc_d70_liq_beats": 0.9733333333333334,
+   "sc_d50l30_ev": 0.7272761634314977,
+   "sc_d50l30_ev_rand": 0.69717115969506,
+   "sc_d50l30_ev_beats": 0.94,
+   "sc_d50l30_abs": 0.2848881732636454,
+   "sc_d50l30_abs_rand": 0.30506332885812426,
+   "sc_d50l30_abs_beats": 0.9033333333333333,
+   "sc_d50l30_pos": 0.16919124913346245,
+   "sc_d50l30_pos_rand": 0.19824112804887373,
+   "sc_d50l30_pos_beats": 0.97,
+   "sc_d50l30_enb3": 2.2135955760606327,
+   "sc_d50l30_enb3_rand": 2.1349659101835936,
+   "sc_d50l30_enb3_beats": 0.56,
+   "sc_d50l30_liq": 8.125265323286657,
+   "sc_d50l30_liq_rand": 7.719859864549122,
+   "sc_d50l30_liq_beats": 0.9533333333333334
+  },
+  {
+   "year": 2016,
+   "sc_div_ev": 0.7222886750043231,
+   "sc_div_ev_rand": 0.7039906907546494,
+   "sc_div_ev_beats": 0.9,
+   "sc_div_abs": 0.34389434912645317,
+   "sc_div_abs_rand": 0.3412355202745465,
+   "sc_div_abs_beats": 0.44333333333333336,
+   "sc_div_pos": 0.23292335623402435,
+   "sc_div_pos_rand": 0.2154522289890186,
+   "sc_div_pos_beats": 0.18,
+   "sc_div_enb3": 1.8611361668857196,
+   "sc_div_enb3_rand": 2.2440822306416424,
+   "sc_div_enb3_beats": 0.29333333333333333,
+   "sc_div_liq": 8.420695161910903,
+   "sc_div_liq_rand": 7.879741620114826,
+   "sc_div_liq_beats": 0.9933333333333333,
+   "sc_d60_ev": 0.7222886750043231,
+   "sc_d60_ev_rand": 0.7020045647278275,
+   "sc_d60_ev_beats": 0.88,
+   "sc_d60_abs": 0.34389434912645317,
+   "sc_d60_abs_rand": 0.3393943088905219,
+   "sc_d60_abs_beats": 0.4,
+   "sc_d60_pos": 0.2329233562340244,
+   "sc_d60_pos_rand": 0.21440053206058635,
+   "sc_d60_pos_beats": 0.13333333333333333,
+   "sc_d60_enb3": 1.8611361668857092,
+   "sc_d60_enb3_rand": 2.185647877046767,
+   "sc_d60_enb3_beats": 0.34,
+   "sc_d60_liq": 8.420695161910903,
+   "sc_d60_liq_rand": 7.879228928038447,
+   "sc_d60_liq_beats": 0.99,
+   "sc_d70_ev": 0.7242326625503145,
+   "sc_d70_ev_rand": 0.7028397061384228,
+   "sc_d70_ev_beats": 0.94,
+   "sc_d70_abs": 0.3320525327560299,
+   "sc_d70_abs_rand": 0.34253400251354416,
+   "sc_d70_abs_beats": 0.6466666666666666,
+   "sc_d70_pos": 0.23088925966461496,
+   "sc_d70_pos_rand": 0.2155592045396381,
+   "sc_d70_pos_beats": 0.23666666666666666,
+   "sc_d70_enb3": 1.833233544399766,
+   "sc_d70_enb3_rand": 2.2305894540444946,
+   "sc_d70_enb3_beats": 0.25666666666666665,
+   "sc_d70_liq": 8.420695161910903,
+   "sc_d70_liq_rand": 7.879228928038447,
+   "sc_d70_liq_beats": 1.0,
+   "sc_d50l30_ev": 0.7222886750043231,
+   "sc_d50l30_ev_rand": 0.705128439282037,
+   "sc_d50l30_ev_beats": 0.9,
+   "sc_d50l30_abs": 0.34389434912645317,
+   "sc_d50l30_abs_rand": 0.3424715272559932,
+   "sc_d50l30_abs_beats": 0.4866666666666667,
+   "sc_d50l30_pos": 0.23292335623402435,
+   "sc_d50l30_pos_rand": 0.2141674438126484,
+   "sc_d50l30_pos_beats": 0.16333333333333333,
+   "sc_d50l30_enb3": 1.8611361668857125,
+   "sc_d50l30_enb3_rand": 2.3004545235362186,
+   "sc_d50l30_enb3_beats": 0.26666666666666666,
+   "sc_d50l30_liq": 8.420695161910903,
+   "sc_d50l30_liq_rand": 7.879228928038447,
+   "sc_d50l30_liq_beats": 0.9966666666666667
+  },
+  {
+   "year": 2017,
+   "sc_div_ev": 0.6871170534458585,
+   "sc_div_ev_rand": 0.6692485118400422,
+   "sc_div_ev_beats": 0.8133333333333334,
+   "sc_div_abs": 0.2520254980956049,
+   "sc_div_abs_rand": 0.2584075956952848,
+   "sc_div_abs_beats": 0.61,
+   "sc_div_pos": 0.18485867205573392,
+   "sc_div_pos_rand": 0.18897594224095565,
+   "sc_div_pos_beats": 0.5866666666666667,
+   "sc_div_enb3": 1.3795093270501568,
+   "sc_div_enb3_rand": 2.4783648233809084,
+   "sc_div_enb3_beats": 0.05,
+   "sc_div_liq": 8.568538573442456,
+   "sc_div_liq_rand": 7.952341851778697,
+   "sc_div_liq_beats": 0.99,
+   "sc_d60_ev": 0.6871170534458585,
+   "sc_d60_ev_rand": 0.6687707395726022,
+   "sc_d60_ev_beats": 0.8333333333333334,
+   "sc_d60_abs": 0.2520254980956049,
+   "sc_d60_abs_rand": 0.2596644215067626,
+   "sc_d60_abs_beats": 0.6033333333333334,
+   "sc_d60_pos": 0.18485867205573392,
+   "sc_d60_pos_rand": 0.18629600917743633,
+   "sc_d60_pos_beats": 0.5166666666666667,
+   "sc_d60_enb3": 1.3795093270501584,
+   "sc_d60_enb3_rand": 2.423847165092157,
+   "sc_d60_enb3_beats": 0.04,
+   "sc_d60_liq": 8.568538573442456,
+   "sc_d60_liq_rand": 7.9297504084178785,
+   "sc_d60_liq_beats": 0.9966666666666667,
+   "sc_d70_ev": 0.6822465638972395,
+   "sc_d70_ev_rand": 0.6688764399421672,
+   "sc_d70_ev_beats": 0.7466666666666667,
+   "sc_d70_abs": 0.2656472627546118,
+   "sc_d70_abs_rand": 0.26066423661370364,
+   "sc_d70_abs_beats": 0.43666666666666665,
+   "sc_d70_pos": 0.19070403472935998,
+   "sc_d70_pos_rand": 0.19142899378395328,
+   "sc_d70_pos_beats": 0.5166666666666667,
+   "sc_d70_enb3": 2.655633533844114,
+   "sc_d70_enb3_rand": 2.43689241731685,
+   "sc_d70_enb3_beats": 0.6166666666666667,
+   "sc_d70_liq": 8.568538573442456,
+   "sc_d70_liq_rand": 7.952341851778697,
+   "sc_d70_liq_beats": 0.9966666666666667,
+   "sc_d50l30_ev": 0.6871170534458585,
+   "sc_d50l30_ev_rand": 0.6679036512345953,
+   "sc_d50l30_ev_beats": 0.8433333333333334,
+   "sc_d50l30_abs": 0.252025498095605,
+   "sc_d50l30_abs_rand": 0.26331139500375667,
+   "sc_d50l30_abs_beats": 0.6233333333333333,
+   "sc_d50l30_pos": 0.18485867205573392,
+   "sc_d50l30_pos_rand": 0.19038414804357706,
+   "sc_d50l30_pos_beats": 0.6333333333333333,
+   "sc_d50l30_enb3": 1.379509327050156,
+   "sc_d50l30_enb3_rand": 2.3667404936853496,
+   "sc_d50l30_enb3_beats": 0.03666666666666667,
+   "sc_d50l30_liq": 8.568538573442456,
+   "sc_d50l30_liq_rand": 7.952341851778697,
+   "sc_d50l30_liq_beats": 0.99
+  },
+  {
+   "year": 2018,
+   "sc_div_ev": 0.7123192949033393,
+   "sc_div_ev_rand": 0.683616207618812,
+   "sc_div_ev_beats": 0.9866666666666667,
+   "sc_div_abs": 0.2741453707842503,
+   "sc_div_abs_rand": 0.3210753667516162,
+   "sc_div_abs_beats": 0.9866666666666667,
+   "sc_div_pos": 0.18387726852949343,
+   "sc_div_pos_rand": 0.2179379499126297,
+   "sc_div_pos_beats": 0.9633333333333334,
+   "sc_div_enb3": 2.080591030256506,
+   "sc_div_enb3_rand": 2.1109266786589203,
+   "sc_div_enb3_beats": 0.4633333333333333,
+   "sc_div_liq": 8.601153934902765,
+   "sc_div_liq_rand": 7.799001662063349,
+   "sc_div_liq_beats": 1.0,
+   "sc_d60_ev": 0.7123192949033393,
+   "sc_d60_ev_rand": 0.6802010374783136,
+   "sc_d60_ev_beats": 0.9866666666666667,
+   "sc_d60_abs": 0.2741453707842503,
+   "sc_d60_abs_rand": 0.31830253115862095,
+   "sc_d60_abs_beats": 0.9866666666666667,
+   "sc_d60_pos": 0.18387726852949343,
+   "sc_d60_pos_rand": 0.21620790794176487,
+   "sc_d60_pos_beats": 0.97,
+   "sc_d60_enb3": 2.080591030256505,
+   "sc_d60_enb3_rand": 2.1453735770664197,
+   "sc_d60_enb3_beats": 0.43,
+   "sc_d60_liq": 8.601153934902765,
+   "sc_d60_liq_rand": 7.892841759141736,
+   "sc_d60_liq_beats": 1.0,
+   "sc_d70_ev": 0.7140430440770288,
+   "sc_d70_ev_rand": 0.6832491044453128,
+   "sc_d70_ev_beats": 0.9933333333333333,
+   "sc_d70_abs": 0.28897036978203744,
+   "sc_d70_abs_rand": 0.3218460915125438,
+   "sc_d70_abs_beats": 0.9066666666666666,
+   "sc_d70_pos": 0.1877688343175101,
+   "sc_d70_pos_rand": 0.21708489394248923,
+   "sc_d70_pos_beats": 0.9333333333333333,
+   "sc_d70_enb3": 2.0704487911259126,
+   "sc_d70_enb3_rand": 2.1375855166367312,
+   "sc_d70_enb3_beats": 0.42,
+   "sc_d70_liq": 8.444283210660757,
+   "sc_d70_liq_rand": 7.90302517643527,
+   "sc_d70_liq_beats": 0.99,
+   "sc_d50l30_ev": 0.7123192949033393,
+   "sc_d50l30_ev_rand": 0.6808605294653735,
+   "sc_d50l30_ev_beats": 0.9866666666666667,
+   "sc_d50l30_abs": 0.2741453707842503,
+   "sc_d50l30_abs_rand": 0.3167402193773903,
+   "sc_d50l30_abs_beats": 0.9833333333333333,
+   "sc_d50l30_pos": 0.18387726852949343,
+   "sc_d50l30_pos_rand": 0.21789779960013939,
+   "sc_d50l30_pos_beats": 0.9433333333333334,
+   "sc_d50l30_enb3": 2.0805910302565054,
+   "sc_d50l30_enb3_rand": 2.0936517682471587,
+   "sc_d50l30_enb3_beats": 0.48,
+   "sc_d50l30_liq": 8.601153934902765,
+   "sc_d50l30_liq_rand": 7.892841759141736,
+   "sc_d50l30_liq_beats": 1.0
+  },
+  {
+   "year": 2019,
+   "sc_div_ev": 0.7069062689248027,
+   "sc_div_ev_rand": 0.6685869535764934,
+   "sc_div_ev_beats": 1.0,
+   "sc_div_abs": 0.3197470681319241,
+   "sc_div_abs_rand": 0.3275930132278948,
+   "sc_div_abs_beats": 0.6,
+   "sc_div_pos": 0.22225112073267042,
+   "sc_div_pos_rand": 0.21867255142148806,
+   "sc_div_pos_beats": 0.4166666666666667,
+   "sc_div_enb3": 1.9670211811574814,
+   "sc_div_enb3_rand": 2.0693523386915147,
+   "sc_div_enb3_beats": 0.38,
+   "sc_div_liq": 8.722395269239067,
+   "sc_div_liq_rand": 8.007447450069405,
+   "sc_div_liq_beats": 1.0,
+   "sc_d60_ev": 0.7069062689248027,
+   "sc_d60_ev_rand": 0.6661121379787623,
+   "sc_d60_ev_beats": 1.0,
+   "sc_d60_abs": 0.3197470681319241,
+   "sc_d60_abs_rand": 0.32386191636130435,
+   "sc_d60_abs_beats": 0.5666666666666667,
+   "sc_d60_pos": 0.22225112073267037,
+   "sc_d60_pos_rand": 0.21558758940075584,
+   "sc_d60_pos_beats": 0.36666666666666664,
+   "sc_d60_enb3": 1.9670211811574825,
+   "sc_d60_enb3_rand": 2.0419438290367022,
+   "sc_d60_enb3_beats": 0.39,
+   "sc_d60_liq": 8.722395269239067,
+   "sc_d60_liq_rand": 7.99694295817892,
+   "sc_d60_liq_beats": 1.0,
+   "sc_d70_ev": 0.70840133129895,
+   "sc_d70_ev_rand": 0.6674023333176008,
+   "sc_d70_ev_beats": 1.0,
+   "sc_d70_abs": 0.31477005420522464,
+   "sc_d70_abs_rand": 0.3271532683392979,
+   "sc_d70_abs_beats": 0.66,
+   "sc_d70_pos": 0.21651567166025992,
+   "sc_d70_pos_rand": 0.21623656056362117,
+   "sc_d70_pos_beats": 0.49333333333333335,
+   "sc_d70_enb3": 1.921854071596955,
+   "sc_d70_enb3_rand": 2.085554734207129,
+   "sc_d70_enb3_beats": 0.3,
+   "sc_d70_liq": 8.618023076074973,
+   "sc_d70_liq_rand": 7.946514602183653,
+   "sc_d70_liq_beats": 1.0,
+   "sc_d50l30_ev": 0.7069062689248027,
+   "sc_d50l30_ev_rand": 0.6689967017526846,
+   "sc_d50l30_ev_beats": 1.0,
+   "sc_d50l30_abs": 0.3197470681319241,
+   "sc_d50l30_abs_rand": 0.32452169585832036,
+   "sc_d50l30_abs_beats": 0.5633333333333334,
+   "sc_d50l30_pos": 0.22225112073267042,
+   "sc_d50l30_pos_rand": 0.21442877875074054,
+   "sc_d50l30_pos_beats": 0.3466666666666667,
+   "sc_d50l30_enb3": 1.9670211811574811,
+   "sc_d50l30_enb3_rand": 2.0982536279321864,
+   "sc_d50l30_enb3_beats": 0.34,
+   "sc_d50l30_liq": 8.722395269239067,
+   "sc_d50l30_liq_rand": 8.007447450069405,
+   "sc_d50l30_liq_beats": 1.0
+  },
+  {
+   "year": 2020,
+   "sc_div_ev": 0.8010919975188765,
+   "sc_div_ev_rand": 0.8014395354740154,
+   "sc_div_ev_beats": 0.49333333333333335,
+   "sc_div_abs": 0.4089704901969173,
+   "sc_div_abs_rand": 0.49344236830380384,
+   "sc_div_abs_beats": 0.99,
+   "sc_div_pos": 0.3307210649054302,
+   "sc_div_pos_rand": 0.33063113691105966,
+   "sc_div_pos_beats": 0.49666666666666665,
+   "sc_div_enb3": 1.5503664074068257,
+   "sc_div_enb3_rand": 1.7758906508475958,
+   "sc_div_enb3_beats": 0.09,
+   "sc_div_liq": 8.863417707755996,
+   "sc_div_liq_rand": 7.927267352731665,
+   "sc_div_liq_beats": 1.0,
+   "sc_d60_ev": 0.8010919975188765,
+   "sc_d60_ev_rand": 0.8035387137378401,
+   "sc_d60_ev_beats": 0.45,
+   "sc_d60_abs": 0.4089704901969173,
+   "sc_d60_abs_rand": 0.4906031439919224,
+   "sc_d60_abs_beats": 0.9966666666666667,
+   "sc_d60_pos": 0.33072106490543024,
+   "sc_d60_pos_rand": 0.3295099806809624,
+   "sc_d60_pos_beats": 0.4666666666666667,
+   "sc_d60_enb3": 1.5503664074068257,
+   "sc_d60_enb3_rand": 1.7875271140553033,
+   "sc_d60_enb3_beats": 0.10666666666666667,
+   "sc_d60_liq": 8.863417707755996,
+   "sc_d60_liq_rand": 7.927267352731665,
+   "sc_d60_liq_beats": 1.0,
+   "sc_d70_ev": 0.7983360505974079,
+   "sc_d70_ev_rand": 0.800488576029593,
+   "sc_d70_ev_beats": 0.4533333333333333,
+   "sc_d70_abs": 0.38355585049405416,
+   "sc_d70_abs_rand": 0.48260460044870895,
+   "sc_d70_abs_beats": 1.0,
+   "sc_d70_pos": 0.32254060840352244,
+   "sc_d70_pos_rand": 0.3242762478999879,
+   "sc_d70_pos_beats": 0.5333333333333333,
+   "sc_d70_enb3": 1.3891216456678859,
+   "sc_d70_enb3_rand": 1.662827468993509,
+   "sc_d70_enb3_beats": 0.03,
+   "sc_d70_liq": 8.532410277801302,
+   "sc_d70_liq_rand": 7.954222136640611,
+   "sc_d70_liq_beats": 1.0,
+   "sc_d50l30_ev": 0.8010919975188765,
+   "sc_d50l30_ev_rand": 0.8023245140916657,
+   "sc_d50l30_ev_beats": 0.4666666666666667,
+   "sc_d50l30_abs": 0.4089704901969173,
+   "sc_d50l30_abs_rand": 0.49069347418980025,
+   "sc_d50l30_abs_beats": 0.9966666666666667,
+   "sc_d50l30_pos": 0.33072106490543024,
+   "sc_d50l30_pos_rand": 0.33067156745347726,
+   "sc_d50l30_pos_beats": 0.5,
+   "sc_d50l30_enb3": 1.5503664074068253,
+   "sc_d50l30_enb3_rand": 1.7829639692739154,
+   "sc_d50l30_enb3_beats": 0.10666666666666667,
+   "sc_d50l30_liq": 8.863417707755996,
+   "sc_d50l30_liq_rand": 7.944230512749523,
+   "sc_d50l30_liq_beats": 1.0
+  },
+  {
+   "year": 2021,
+   "sc_div_ev": 0.7189845855318244,
+   "sc_div_ev_rand": 0.6868158451115904,
+   "sc_div_ev_beats": 0.9866666666666667,
+   "sc_div_abs": 0.2490263663008746,
+   "sc_div_abs_rand": 0.31614647362882403,
+   "sc_div_abs_beats": 1.0,
+   "sc_div_pos": 0.16735448669495823,
+   "sc_div_pos_rand": 0.1988253132762711,
+   "sc_div_pos_beats": 0.9766666666666667,
+   "sc_div_enb3": 1.3540196907863316,
+   "sc_div_enb3_rand": 3.630547368467302,
+   "sc_div_enb3_beats": 0.0,
+   "sc_div_liq": 8.731840506210132,
+   "sc_div_liq_rand": 8.168362384972594,
+   "sc_div_liq_beats": 1.0,
+   "sc_d60_ev": 0.7189845855318244,
+   "sc_d60_ev_rand": 0.688669817024899,
+   "sc_d60_ev_beats": 0.99,
+   "sc_d60_abs": 0.2490263663008746,
+   "sc_d60_abs_rand": 0.315338063451618,
+   "sc_d60_abs_beats": 1.0,
+   "sc_d60_pos": 0.16735448669495823,
+   "sc_d60_pos_rand": 0.19982547494299172,
+   "sc_d60_pos_beats": 0.9633333333333334,
+   "sc_d60_enb3": 1.354019690786332,
+   "sc_d60_enb3_rand": 3.6694274333803714,
+   "sc_d60_enb3_beats": 0.0,
+   "sc_d60_liq": 8.731840506210132,
+   "sc_d60_liq_rand": 8.169151352264976,
+   "sc_d60_liq_beats": 1.0,
+   "sc_d70_ev": 0.7324566933181833,
+   "sc_d70_ev_rand": 0.690552898980975,
+   "sc_d70_ev_beats": 1.0,
+   "sc_d70_abs": 0.2539162525476698,
+   "sc_d70_abs_rand": 0.3150533507643015,
+   "sc_d70_abs_beats": 0.9933333333333333,
+   "sc_d70_pos": 0.15442783517276737,
+   "sc_d70_pos_rand": 0.197875468590983,
+   "sc_d70_pos_beats": 1.0,
+   "sc_d70_enb3": 1.3226052400511275,
+   "sc_d70_enb3_rand": 3.626289343862158,
+   "sc_d70_enb3_beats": 0.0,
+   "sc_d70_liq": 8.512399735868774,
+   "sc_d70_liq_rand": 8.175956066198477,
+   "sc_d70_liq_beats": 0.97,
+   "sc_d50l30_ev": 0.7189845855318244,
+   "sc_d50l30_ev_rand": 0.6895393921375074,
+   "sc_d50l30_ev_beats": 0.9933333333333333,
+   "sc_d50l30_abs": 0.2490263663008746,
+   "sc_d50l30_abs_rand": 0.3129137563353128,
+   "sc_d50l30_abs_beats": 1.0,
+   "sc_d50l30_pos": 0.16735448669495823,
+   "sc_d50l30_pos_rand": 0.19828245175858644,
+   "sc_d50l30_pos_beats": 0.99,
+   "sc_d50l30_enb3": 1.354019690786332,
+   "sc_d50l30_enb3_rand": 3.6203819697795474,
+   "sc_d50l30_enb3_beats": 0.0,
+   "sc_d50l30_liq": 8.731840506210132,
+   "sc_d50l30_liq_rand": 8.171091292522192,
+   "sc_d50l30_liq_beats": 1.0
+  },
+  {
+   "year": 2022,
+   "sc_div_ev": 0.7838010218004052,
+   "sc_div_ev_rand": 0.7623463671113149,
+   "sc_div_ev_beats": 0.96,
+   "sc_div_abs": 0.32757625947394764,
+   "sc_div_abs_rand": 0.3631541881686916,
+   "sc_div_abs_beats": 0.9066666666666666,
+   "sc_div_pos": 0.2550165592661534,
+   "sc_div_pos_rand": 0.29070780090424486,
+   "sc_div_pos_beats": 0.8833333333333333,
+   "sc_div_enb3": 1.301731473719373,
+   "sc_div_enb3_rand": 3.5887106614973545,
+   "sc_div_enb3_beats": 0.0,
+   "sc_div_liq": 8.788060259159638,
+   "sc_div_liq_rand": 8.18987913098266,
+   "sc_div_liq_beats": 1.0,
+   "sc_d60_ev": 0.7838010218004052,
+   "sc_d60_ev_rand": 0.7637577840244538,
+   "sc_d60_ev_beats": 0.9433333333333334,
+   "sc_d60_abs": 0.32757625947394764,
+   "sc_d60_abs_rand": 0.3653726929489668,
+   "sc_d60_abs_beats": 0.9066666666666666,
+   "sc_d60_pos": 0.2550165592661534,
+   "sc_d60_pos_rand": 0.29615555797747506,
+   "sc_d60_pos_beats": 0.87,
+   "sc_d60_enb3": 1.301731473719373,
+   "sc_d60_enb3_rand": 3.5280238501239305,
+   "sc_d60_enb3_beats": 0.0,
+   "sc_d60_liq": 8.788060259159638,
+   "sc_d60_liq_rand": 8.19539450646707,
+   "sc_d60_liq_beats": 0.9966666666666667,
+   "sc_d70_ev": 0.7909409744794116,
+   "sc_d70_ev_rand": 0.7626480636414154,
+   "sc_d70_ev_beats": 0.9966666666666667,
+   "sc_d70_abs": 0.32348063119028136,
+   "sc_d70_abs_rand": 0.3668584794294255,
+   "sc_d70_abs_beats": 0.9666666666666667,
+   "sc_d70_pos": 0.25864765206617923,
+   "sc_d70_pos_rand": 0.29661144119485894,
+   "sc_d70_pos_beats": 0.9066666666666666,
+   "sc_d70_enb3": 1.2939270944810362,
+   "sc_d70_enb3_rand": 3.567974813238452,
+   "sc_d70_enb3_beats": 0.0,
+   "sc_d70_liq": 8.538827711096244,
+   "sc_d70_liq_rand": 8.175567616306175,
+   "sc_d70_liq_beats": 0.9633333333333334,
+   "sc_d50l30_ev": 0.7838010218004052,
+   "sc_d50l30_ev_rand": 0.7642943001657205,
+   "sc_d50l30_ev_beats": 0.9466666666666667,
+   "sc_d50l30_abs": 0.32757625947394764,
+   "sc_d50l30_abs_rand": 0.3650080341974301,
+   "sc_d50l30_abs_beats": 0.94,
+   "sc_d50l30_pos": 0.2550165592661534,
+   "sc_d50l30_pos_rand": 0.2934518356791881,
+   "sc_d50l30_pos_beats": 0.8966666666666666,
+   "sc_d50l30_enb3": 1.3017314737193733,
+   "sc_d50l30_enb3_rand": 3.5380768974308943,
+   "sc_d50l30_enb3_beats": 0.0,
+   "sc_d50l30_liq": 8.788060259159638,
+   "sc_d50l30_liq_rand": 8.1852441333529,
+   "sc_d50l30_liq_beats": 0.99
+  },
+  {
+   "year": 2023,
+   "sc_div_ev": 0.7861208621754611,
+   "sc_div_ev_rand": 0.7782797393388505,
+   "sc_div_ev_beats": 0.7166666666666667,
+   "sc_div_abs": 0.3307918285880904,
+   "sc_div_abs_rand": 0.3919050045085674,
+   "sc_div_abs_beats": 0.9933333333333333,
+   "sc_div_pos": 0.16902006731033717,
+   "sc_div_pos_rand": 0.1870224072929182,
+   "sc_div_pos_beats": 0.9133333333333333,
+   "sc_div_enb3": 1.544606050978531,
+   "sc_div_enb3_rand": 2.020497420170649,
+   "sc_div_enb3_beats": 0.0,
+   "sc_div_liq": 8.820244648116077,
+   "sc_div_liq_rand": 8.28144409759684,
+   "sc_div_liq_beats": 1.0,
+   "sc_d60_ev": 0.7861208621754611,
+   "sc_d60_ev_rand": 0.7809627727414923,
+   "sc_d60_ev_beats": 0.6766666666666666,
+   "sc_d60_abs": 0.3307918285880904,
+   "sc_d60_abs_rand": 0.3934106150919363,
+   "sc_d60_abs_beats": 1.0,
+   "sc_d60_pos": 0.16902006731033717,
+   "sc_d60_pos_rand": 0.1878725116400001,
+   "sc_d60_pos_beats": 0.92,
+   "sc_d60_enb3": 1.5446060509785304,
+   "sc_d60_enb3_rand": 2.0453482564509176,
+   "sc_d60_enb3_beats": 0.0,
+   "sc_d60_liq": 8.820244648116077,
+   "sc_d60_liq_rand": 8.340289103315902,
+   "sc_d60_liq_beats": 1.0,
+   "sc_d70_ev": 0.7905393109026296,
+   "sc_d70_ev_rand": 0.7810722632899452,
+   "sc_d70_ev_beats": 0.7533333333333333,
+   "sc_d70_abs": 0.34486479301923145,
+   "sc_d70_abs_rand": 0.39037110593133173,
+   "sc_d70_abs_beats": 0.9733333333333334,
+   "sc_d70_pos": 0.16088576335378613,
+   "sc_d70_pos_rand": 0.1865882493518466,
+   "sc_d70_pos_beats": 0.97,
+   "sc_d70_enb3": 1.5825195997532273,
+   "sc_d70_enb3_rand": 2.035916018282551,
+   "sc_d70_enb3_beats": 0.0033333333333333335,
+   "sc_d70_liq": 8.630269745440824,
+   "sc_d70_liq_rand": 8.340289103315902,
+   "sc_d70_liq_beats": 0.9466666666666667,
+   "sc_d50l30_ev": 0.7861208621754611,
+   "sc_d50l30_ev_rand": 0.7806144791244212,
+   "sc_d50l30_ev_beats": 0.61,
+   "sc_d50l30_abs": 0.3307918285880904,
+   "sc_d50l30_abs_rand": 0.3881532507598485,
+   "sc_d50l30_abs_beats": 0.9933333333333333,
+   "sc_d50l30_pos": 0.16902006731033717,
+   "sc_d50l30_pos_rand": 0.18666045460856417,
+   "sc_d50l30_pos_beats": 0.8966666666666666,
+   "sc_d50l30_enb3": 1.5446060509785309,
+   "sc_d50l30_enb3_rand": 2.0506410305391065,
+   "sc_d50l30_enb3_beats": 0.0033333333333333335,
+   "sc_d50l30_liq": 8.820244648116077,
+   "sc_d50l30_liq_rand": 8.320637385473884,
+   "sc_d50l30_liq_beats": 1.0
+  },
+  {
+   "year": 2024,
+   "sc_div_ev": 0.7897660802932276,
+   "sc_div_ev_rand": 0.7552768249168855,
+   "sc_div_ev_beats": 1.0,
+   "sc_div_abs": 0.3011242563832993,
+   "sc_div_abs_rand": 0.3254381129100131,
+   "sc_div_abs_beats": 0.8766666666666667,
+   "sc_div_pos": 0.2121429624011717,
+   "sc_div_pos_rand": 0.23090509138819953,
+   "sc_div_pos_beats": 0.83,
+   "sc_div_enb3": 1.6713806966875437,
+   "sc_div_enb3_rand": 4.002787814422633,
+   "sc_div_enb3_beats": 0.0,
+   "sc_div_liq": 8.767218265691454,
+   "sc_div_liq_rand": 8.356093438853343,
+   "sc_div_liq_beats": 0.9966666666666667,
+   "sc_d60_ev": 0.7897660802932276,
+   "sc_d60_ev_rand": 0.7562222820147528,
+   "sc_d60_ev_beats": 0.9933333333333333,
+   "sc_d60_abs": 0.3011242563832993,
+   "sc_d60_abs_rand": 0.32254193890214056,
+   "sc_d60_abs_beats": 0.8366666666666667,
+   "sc_d60_pos": 0.21214296240117161,
+   "sc_d60_pos_rand": 0.22934228235702975,
+   "sc_d60_pos_beats": 0.77,
+   "sc_d60_enb3": 1.671380696687543,
+   "sc_d60_enb3_rand": 3.9616616254038246,
+   "sc_d60_enb3_beats": 0.0,
+   "sc_d60_liq": 8.767218265691454,
+   "sc_d60_liq_rand": 8.356093438853343,
+   "sc_d60_liq_beats": 0.98,
+   "sc_d70_ev": 0.7938018644633592,
+   "sc_d70_ev_rand": 0.7556455284226554,
+   "sc_d70_ev_beats": 1.0,
+   "sc_d70_abs": 0.3116320652138493,
+   "sc_d70_abs_rand": 0.3224152185629835,
+   "sc_d70_abs_beats": 0.71,
+   "sc_d70_pos": 0.21472080470842667,
+   "sc_d70_pos_rand": 0.22711660860903327,
+   "sc_d70_pos_beats": 0.7733333333333333,
+   "sc_d70_enb3": 1.7308675648836018,
+   "sc_d70_enb3_rand": 3.9083930470628916,
+   "sc_d70_enb3_beats": 0.0,
+   "sc_d70_liq": 8.526342404528798,
+   "sc_d70_liq_rand": 8.356093438853343,
+   "sc_d70_liq_beats": 0.8666666666666667,
+   "sc_d50l30_ev": 0.7897660802932276,
+   "sc_d50l30_ev_rand": 0.7587649171901814,
+   "sc_d50l30_ev_beats": 1.0,
+   "sc_d50l30_abs": 0.30112425638329926,
+   "sc_d50l30_abs_rand": 0.3253456495262832,
+   "sc_d50l30_abs_beats": 0.87,
+   "sc_d50l30_pos": 0.21214296240117164,
+   "sc_d50l30_pos_rand": 0.22761139310924472,
+   "sc_d50l30_pos_beats": 0.7933333333333333,
+   "sc_d50l30_enb3": 1.6713806966875422,
+   "sc_d50l30_enb3_rand": 4.023351604215002,
+   "sc_d50l30_enb3_beats": 0.0,
+   "sc_d50l30_liq": 8.767218265691454,
+   "sc_d50l30_liq_rand": 8.356093438853343,
+   "sc_d50l30_liq_beats": 0.9833333333333333
+  },
+  {
+   "year": 2025,
+   "sc_div_ev": 0.7667179311291192,
+   "sc_div_ev_rand": 0.7320335851610396,
+   "sc_div_ev_beats": 1.0,
+   "sc_div_abs": 0.26672163985466735,
+   "sc_div_abs_rand": 0.3362318770495661,
+   "sc_div_abs_beats": 1.0,
+   "sc_div_pos": 0.18358004007445572,
+   "sc_div_pos_rand": 0.19917824873724532,
+   "sc_div_pos_beats": 0.85,
+   "sc_div_liq": 8.783861361375953,
+   "sc_div_liq_rand": 8.309796673773121,
+   "sc_div_liq_beats": 0.9966666666666667,
+   "sc_d60_ev": 0.7667179311291192,
+   "sc_d60_ev_rand": 0.732036352718545,
+   "sc_d60_ev_beats": 0.9933333333333333,
+   "sc_d60_abs": 0.2667216398546674,
+   "sc_d60_abs_rand": 0.3349744028667363,
+   "sc_d60_abs_beats": 1.0,
+   "sc_d60_pos": 0.18358004007445572,
+   "sc_d60_pos_rand": 0.19804036869256775,
+   "sc_d60_pos_beats": 0.8533333333333334,
+   "sc_d60_liq": 8.783861361375953,
+   "sc_d60_liq_rand": 8.280492038610294,
+   "sc_d60_liq_beats": 1.0,
+   "sc_d70_ev": 0.768281787679034,
+   "sc_d70_ev_rand": 0.7340162586215635,
+   "sc_d70_ev_beats": 0.9966666666666667,
+   "sc_d70_abs": 0.27122127833708687,
+   "sc_d70_abs_rand": 0.33321008083664083,
+   "sc_d70_abs_beats": 0.9966666666666667,
+   "sc_d70_pos": 0.18999139496173853,
+   "sc_d70_pos_rand": 0.1970825899889138,
+   "sc_d70_pos_beats": 0.6466666666666666,
+   "sc_d70_liq": 8.444441941766005,
+   "sc_d70_liq_rand": 8.313350172371287,
+   "sc_d70_liq_beats": 0.76,
+   "sc_d50l30_ev": 0.7667179311291192,
+   "sc_d50l30_ev_rand": 0.7329258308132969,
+   "sc_d50l30_ev_beats": 0.9933333333333333,
+   "sc_d50l30_abs": 0.26672163985466735,
+   "sc_d50l30_abs_rand": 0.33016063959860675,
+   "sc_d50l30_abs_beats": 1.0,
+   "sc_d50l30_pos": 0.18358004007445572,
+   "sc_d50l30_pos_rand": 0.1966722022408122,
+   "sc_d50l30_pos_beats": 0.8266666666666667,
+   "sc_d50l30_liq": 8.783861361375953,
+   "sc_d50l30_liq_rand": 8.313350172371287,
+   "sc_d50l30_liq_beats": 0.9966666666666667
+  },
+  {
+   "year": 2026,
+   "sc_div_ev": 0.7719583548358686,
+   "sc_div_ev_rand": 0.7585588325536821,
+   "sc_div_ev_beats": 0.7633333333333333,
+   "sc_div_abs": 0.2834279647337496,
+   "sc_div_abs_rand": 0.33917917331937614,
+   "sc_div_abs_beats": 0.95,
+   "sc_div_pos": 0.18016005093301624,
+   "sc_div_pos_rand": 0.20588691743142126,
+   "sc_div_pos_beats": 0.9,
+   "sc_div_liq": 8.855854993261442,
+   "sc_div_liq_rand": 8.31456958732468,
+   "sc_div_liq_beats": 1.0,
+   "sc_d60_ev": 0.7719583548358686,
+   "sc_d60_ev_rand": 0.7580056896356795,
+   "sc_d60_ev_beats": 0.7633333333333333,
+   "sc_d60_abs": 0.2834279647337496,
+   "sc_d60_abs_rand": 0.34252364292620674,
+   "sc_d60_abs_beats": 0.9733333333333334,
+   "sc_d60_pos": 0.18016005093301624,
+   "sc_d60_pos_rand": 0.205653774752178,
+   "sc_d60_pos_beats": 0.93,
+   "sc_d60_liq": 8.855854993261442,
+   "sc_d60_liq_rand": 8.298941385124003,
+   "sc_d60_liq_beats": 1.0,
+   "sc_d70_ev": 0.7762347130125711,
+   "sc_d70_ev_rand": 0.7576093001837626,
+   "sc_d70_ev_beats": 0.7966666666666666,
+   "sc_d70_abs": 0.2991617553860207,
+   "sc_d70_abs_rand": 0.337474302265155,
+   "sc_d70_abs_beats": 0.8833333333333333,
+   "sc_d70_pos": 0.18615193545473419,
+   "sc_d70_pos_rand": 0.2064706631135686,
+   "sc_d70_pos_beats": 0.8466666666666667,
+   "sc_d70_liq": 8.470036304057373,
+   "sc_d70_liq_rand": 8.32319490906412,
+   "sc_d70_liq_beats": 0.9633333333333334,
+   "sc_d50l30_ev": 0.7719583548358686,
+   "sc_d50l30_ev_rand": 0.7562365879116657,
+   "sc_d50l30_ev_beats": 0.77,
+   "sc_d50l30_abs": 0.28342796473374965,
+   "sc_d50l30_abs_rand": 0.33941791661953746,
+   "sc_d50l30_abs_beats": 0.95,
+   "sc_d50l30_pos": 0.18016005093301624,
+   "sc_d50l30_pos_rand": 0.20994338054224626,
+   "sc_d50l30_pos_beats": 0.9433333333333334,
+   "sc_d50l30_liq": 8.855854993261442,
+   "sc_d50l30_liq_rand": 8.293306398920294,
+   "sc_d50l30_liq_beats": 1.0
+  }
+ ],
+ "knee": []
+}
