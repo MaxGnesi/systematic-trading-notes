@@ -87,3 +87,16 @@ Everything above that is not listed here is dropped before any result (even spre
 3. Per-class speeds beat the shared set by less than the noise: no class passes the correction.
 4. The persistence speeds, chosen without any strategy profit, do about as well as the rule.
 5. The rule's probability of overfitting is clearly below 50% in every class; the single best stream's is close to 50%.
+
+## Addendum 5, 2026-11-13, before any result: the final plan, in one sentence (the user: "conceptually too much to digest")
+
+This replaces the rule, rivals, checks and expectations of addendum 4; the speeds (the twelve primes), rules, positions, costs and walk-forward stay.
+
+**The rule.** For each asset class, 500 times, split the in-sample years (3-month segments) and the class's markets at random into two halves; a stream **works** on a half if its Sharpe ratio after costs, averaged over that half's markets, is in the top half of the 36 streams; it **passes** if it works on the half where it was found and on the other half too. Keep the streams that pass in at least half of the 500 splits, with equal risk. If none passes, the class holds all 36 streams with equal risk.
+**Compared out of sample, 2013-2026 (walk-forward):** (1) one set for all classes: the same rule on all markets together; (2) all 36 streams with equal risk. Sharpe ratio after costs and worst drawdown, per class and for the five classes together; differences by block bootstrap over months.
+**Exercise, not part of the results:** choosing speeds without any backtest, from the horizons where a class's returns persist (variance ratio).
+
+**Expectations (replacing all above):**
+1. The 11- and 17-day speeds do not pass after costs of 10 bp.
+2. Per-class speeds beat one set for all classes by less than the noise.
+3. The kept speeds beat all 36 streams only slightly: the gain is in avoiding the speeds that fail, not in finding the best.
