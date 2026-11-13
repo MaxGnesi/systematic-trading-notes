@@ -62,7 +62,7 @@ Why each step uses what it uses:
 
 ### 2.1 116 ETFs
 
-All data are free: daily adjusted closes and volume from Yahoo Finance, through the open-source `yfinance` package, from the first trading day of each ETF to 12 November 2026 ([scripts/l25_fetch.py](scripts/l25_fetch.py)). ETFs were chosen over futures because the free futures data we used in Lecture 11 do not have reliable volume, and the volume is what tells us whether a market can be traded. The cost is that we trade a fund rather than the market itself, a small contamination stated in §8.
+All data are free: daily adjusted closes and volume from Yahoo Finance, through the open-source `yfinance` package, from the first trading day of each ETF to 12 November 2026 ([scripts/l25_fetch.py](scripts/l25_fetch.py)). ETFs were chosen over futures because the volume of the free futures data used in Lecture 11 is not fully trustworthy (some contracts repeat the same volume on consecutive days), and the volume is what tells us whether a market can be traded; ETFs also let us cover many more equity countries and themes. The cost is that we trade a fund rather than the market itself, a small contamination stated in §8.
 
 **Table 2.1. The universe**
 
