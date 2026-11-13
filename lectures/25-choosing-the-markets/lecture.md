@@ -41,6 +41,18 @@ Within a class, more ETFs add almost nothing: 87 equity ETFs make one bet. What 
 | 7 | Filling the slots | Which markets fill them, judged out of sample? |
 | 8 | The universe and its limits | The chosen markets, the yearly review, and what the free data cannot do |
 
+This lecture is the first of three steps that the whole part keeps in the same order:
+
+| Step | Uses | Never uses |
+|---|---|---|
+| 1. Markets (this lecture) | Market returns, liquidity, trend phases | Strategy profits |
+| 2. Weights (later lectures) | Volatility and correlation of the strategy's positioned returns (position times market return), costs, constraints | Strategy averages or Sharpe ratios |
+| 3. Evaluation | Strategy profit and loss, out of sample, against simple baselines | Feeding results back into steps 1 and 2 |
+
+<sub><b>How to read the table.</b> Each step may use only the information in its "Uses" column. Choosing markets or weights by past strategy profits would pick the markets where the strategy was lucky (Lecture 7, "is it real?"); Lecture 9's rule that sizing uses only risk and cost information extends here to the whole portfolio.</sub>
+
+Strategy profits enter only at step 3, to judge the result. If the evaluation leads to a change in step 1 or 2, the change is dated and judged again on later data.
+
 ## 2. The data
 
 ### 2.1 116 ETFs
