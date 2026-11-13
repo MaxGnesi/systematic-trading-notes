@@ -41,3 +41,17 @@ Fixed on 2026-11-13 with the user's approval, before any result was computed. Ev
 5. C2: the even spread, the least-correlated pair, all core speeds and the random pairs land close together out of sample, because the core does the work; all core speeds with equal risk has the smallest drawdowns. Finding the core matters; the point inside it hardly does.
 6. C4: all 36 streams with equal risk do about as well as any choice, which would say that the region matters more than the point.
 7. C5: the prime grid and the round grid differ little in correlation between adjacent speeds or in Sharpe ratio, because the ratio between speeds, not their divisibility, sets how different two speeds are. A benefit from trading on different days than the crowd cannot be measured with our data.
+
+## Addendum 1, 2026-11-13, before any result: three lenses and a mix (the user's request for smarter approaches)
+
+- **Lens A, backtest core:** the core of the selection rule above.
+- **Lens B, stability selection:** 500 block-bootstrap resamples of the in-sample history (blocks of 3 months, the same blocks for all markets so that co-movement is kept); in each, the class's core is found as above (without the time check); a speed is supported if it is in the core in at least half of the resamples. Its frequency is kept as a weight.
+- **Lens C, market persistence (returns only, no strategy profit):** for each class, the variance ratio of the class's markets at each of the twelve horizons (the variance of h-day returns over h times the variance of daily returns), averaged over the class's markets, in sample; a speed is supported if its variance ratio is in the upper half of the class's twelve.
+- **The mix:** a speed (with its rule; lens C applies to all three rules at that horizon) is kept if at least two lenses support it; kept speeds are held with risk in proportion to their lens B frequency. If none is kept, the class uses the shared set (C1).
+
+**Comparisons added:** C6, lens B alone (speeds in the core in at least half of the resamples, weighted by frequency); C7, lens C alone (the speeds in the upper half of the variance ratios, equal risk); C8, the mix, against the even spread, the shared set, all core speeds and random pairs from the core. Same measures and walk-forward as above.
+
+**Expectations, written before the run:**
+8. The mix does at least as well as the best single lens out of sample, and its chosen speeds change less from one year to the next (measured as the share of speeds kept from the previous review).
+9. Lens C alone, which uses no strategy profit, does about as well as lens A; if so, choosing speeds needs no backtest.
+10. Lenses A and C agree most for government bonds and commodities and least for equity.
