@@ -86,8 +86,8 @@ if __name__ == "__main__":
     D = pd.concat(days)
     s = np.zeros(len(D)); tgt = (TARGET / D.forecast_U).to_numpy(); s[0] = tgt[0]
     for i in range(1, len(D)): s[i] = s[i - 1] + LAMBDA * (tgt[i] - s[i - 1])
-    D["scale"] = s; D["aware"] = D.scale.shift(1) * D.U - COST_BP / 1e4 * D.scale.diff().abs() * D.gross_U
-    D = D.dropna(subset=["aware"]); D.to_parquet(OUT / "l27_daily.parquet")
+    D["scale"] = s; D["aware"] = D.scale.shift(1).fillna(s[0]) * D.U - COST_BP / 1e4 * D.scale.diff().abs().fillna(0) * D.gross_U   # first day: starts at its target
+    D.to_parquet(OUT / "l27_daily.parquet")
     summ = {v: {"sharpe": L26.sharpe(D[v]), "vol": float(D[v].std() * np.sqrt(252))} for v in ("rule", "aware", "groups", "ward")}
     (RESULTS / "portfolios.json").write_text(json.dumps({"summary": summ, "reviews": info}, indent=1), encoding="utf-8")
     print(pd.DataFrame(summ).round(3).to_string())

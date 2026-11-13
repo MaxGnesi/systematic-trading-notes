@@ -1,19 +1,775 @@
 {
  "summary": {
   "rule": {
-   "sharpe": 0.40752149385858233,
-   "vol": 0.10152989703690399
+   "sharpe": 0.4861690932239661,
+   "vol": 0.10702187688421183
   },
   "aware": {
-   "sharpe": 0.04632507369984149,
-   "vol": 0.11444039976526858
+   "sharpe": 0.46747090231750177,
+   "vol": 0.11551672233926318
   },
   "groups": {
-   "sharpe": 0.2620857929150554,
-   "vol": 0.11368837710529613
+   "sharpe": 0.5322205503068314,
+   "vol": 0.10893719947010873
+  },
+  "ward": {
+   "sharpe": 0.5218542433659026,
+   "vol": 0.10822219387747355
   }
  },
  "reviews": {
+  "2012": {
+   "groups": {
+    "G1": [
+     "SHY",
+     "LQD",
+     "HYG",
+     "UNG"
+    ],
+    "G2": [
+     "GDX",
+     "GLD",
+     "FXY"
+    ],
+    "G3": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "XLF",
+     "EWT",
+     "FXC"
+    ],
+    "G4": [
+     "OIH",
+     "TLT",
+     "USO",
+     "FXE"
+    ],
+    "G5": [
+     "FXI"
+    ]
+   },
+   "ward": {
+    "G1": [
+     "SHY",
+     "LQD",
+     "HYG",
+     "UNG"
+    ],
+    "G2": [
+     "GDX",
+     "GLD",
+     "FXY"
+    ],
+    "G3": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "XLF",
+     "EWT",
+     "FXC"
+    ],
+    "G4": [
+     "OIH",
+     "TLT",
+     "USO"
+    ],
+    "G5": [
+     "FXI",
+     "FXE"
+    ]
+   },
+   "lw_intensity": 0.05144504294047708
+  },
+  "2013": {
+   "groups": {
+    "G1": [
+     "GDX",
+     "GLD",
+     "FXY",
+     "FXA"
+    ],
+    "G2": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "EWT",
+     "HYG",
+     "USO"
+    ],
+    "G3": [
+     "FXI",
+     "FXE"
+    ],
+    "G4": [
+     "TLT",
+     "SHY",
+     "TIP",
+     "LQD"
+    ],
+    "G5": [
+     "UNG"
+    ]
+   },
+   "ward": {
+    "G1": [
+     "SMH",
+     "FXI",
+     "EWT",
+     "TLT",
+     "USO",
+     "FXE"
+    ],
+    "G2": [
+     "GDX",
+     "GLD",
+     "FXY",
+     "FXA"
+    ],
+    "G3": [
+     "SPY",
+     "XLV",
+     "HYG"
+    ],
+    "G4": [
+     "SHY",
+     "TIP",
+     "LQD"
+    ],
+    "G5": [
+     "UNG"
+    ]
+   },
+   "lw_intensity": 0.0845449192520125
+  },
+  "2014": {
+   "groups": {
+    "G1": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "XLV",
+     "EWT",
+     "SHY",
+     "HYG",
+     "GLD",
+     "FXY"
+    ],
+    "G2": [
+     "TLT",
+     "TIP",
+     "LQD",
+     "FXE",
+     "FXA"
+    ],
+    "G3": [
+     "USO"
+    ],
+    "G4": [
+     "FXI"
+    ],
+    "G5": [
+     "UNG"
+    ]
+   },
+   "ward": {
+    "G1": [
+     "TLT",
+     "TIP",
+     "LQD",
+     "USO"
+    ],
+    "G2": [
+     "UNG",
+     "FXE"
+    ],
+    "G3": [
+     "FXI"
+    ],
+    "G4": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "EWT",
+     "SHY",
+     "HYG"
+    ],
+    "G5": [
+     "GDX",
+     "GLD",
+     "FXY",
+     "FXA"
+    ]
+   },
+   "lw_intensity": 0.11574238842226672
+  },
+  "2015": {
+   "groups": {
+    "G1": [
+     "USO",
+     "UNG"
+    ],
+    "G2": [
+     "FXE"
+    ],
+    "G3": [
+     "TLT",
+     "TIP",
+     "LQD"
+    ],
+    "G4": [
+     "GDX",
+     "GLD"
+    ],
+    "G5": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "SHY",
+     "HYG",
+     "FXY"
+    ]
+   },
+   "ward": {
+    "G1": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "SHY",
+     "FXY"
+    ],
+    "G2": [
+     "FXI",
+     "EWT",
+     "HYG"
+    ],
+    "G3": [
+     "TLT",
+     "TIP",
+     "LQD"
+    ],
+    "G4": [
+     "GDX",
+     "GLD"
+    ],
+    "G5": [
+     "USO",
+     "UNG",
+     "FXE"
+    ]
+   },
+   "lw_intensity": 0.09763847976301117
+  },
+  "2016": {
+   "groups": {
+    "G1": [
+     "USO",
+     "UNG"
+    ],
+    "G2": [
+     "GDX",
+     "GLD",
+     "FXY"
+    ],
+    "G3": [
+     "FXI",
+     "FXE"
+    ],
+    "G4": [
+     "XLU",
+     "TLT",
+     "SHY",
+     "LQD"
+    ],
+    "G5": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "EWT",
+     "TIP",
+     "HYG"
+    ]
+   },
+   "ward": {
+    "G1": [
+     "USO",
+     "UNG"
+    ],
+    "G2": [
+     "GDX",
+     "GLD",
+     "FXY"
+    ],
+    "G3": [
+     "XLU",
+     "TLT",
+     "SHY",
+     "LQD"
+    ],
+    "G4": [
+     "FXI",
+     "FXE"
+    ],
+    "G5": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "EWT",
+     "TIP",
+     "HYG"
+    ]
+   },
+   "lw_intensity": 0.07726017912223394
+  },
+  "2017": {
+   "groups": {
+    "G1": [
+     "USO",
+     "UNG"
+    ],
+    "G2": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "HYG"
+    ],
+    "G3": [
+     "XLU",
+     "TLT",
+     "SHY",
+     "LQD"
+    ],
+    "G4": [
+     "GDX",
+     "TIP",
+     "GLD",
+     "FXY"
+    ],
+    "G5": [
+     "FXE"
+    ]
+   },
+   "ward": {
+    "G1": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "HYG"
+    ],
+    "G2": [
+     "USO",
+     "UNG"
+    ],
+    "G3": [
+     "XLU",
+     "TLT",
+     "SHY",
+     "LQD"
+    ],
+    "G4": [
+     "GDX",
+     "TIP",
+     "GLD",
+     "FXY"
+    ],
+    "G5": [
+     "FXE"
+    ]
+   },
+   "lw_intensity": 0.08257830863209367
+  },
+  "2018": {
+   "groups": {
+    "G1": [
+     "XLU",
+     "TLT",
+     "SHY",
+     "TIP",
+     "LQD"
+    ],
+    "G2": [
+     "GDX",
+     "GLD",
+     "FXE",
+     "FXY"
+    ],
+    "G3": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "HYG"
+    ],
+    "G4": [
+     "USO"
+    ],
+    "G5": [
+     "UNG"
+    ]
+   },
+   "ward": {
+    "G1": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "FXI",
+     "EWT",
+     "HYG"
+    ],
+    "G2": [
+     "XLU",
+     "TLT",
+     "SHY",
+     "TIP",
+     "LQD"
+    ],
+    "G3": [
+     "GDX",
+     "GLD",
+     "FXE",
+     "FXY"
+    ],
+    "G4": [
+     "USO"
+    ],
+    "G5": [
+     "UNG"
+    ]
+   },
+   "lw_intensity": 0.0882629163035672
+  },
+  "2019": {
+   "groups": {
+    "G1": [
+     "SPY",
+     "SMH",
+     "FXI",
+     "EWT",
+     "UNG"
+    ],
+    "G2": [
+     "GDX",
+     "XLV",
+     "XLU",
+     "TLT",
+     "SHY",
+     "TIP",
+     "LQD",
+     "HYG",
+     "GLD"
+    ],
+    "G3": [
+     "FXY"
+    ],
+    "G4": [
+     "USO"
+    ],
+    "G5": [
+     "FXE"
+    ]
+   },
+   "ward": {
+    "G1": [
+     "SPY",
+     "SMH",
+     "FXI",
+     "EWT",
+     "UNG"
+    ],
+    "G2": [
+     "XLV",
+     "XLU",
+     "SHY",
+     "HYG",
+     "FXE"
+    ],
+    "G3": [
+     "TLT",
+     "TIP",
+     "LQD"
+    ],
+    "G4": [
+     "GDX",
+     "GLD",
+     "FXY"
+    ],
+    "G5": [
+     "USO"
+    ]
+   },
+   "lw_intensity": 0.08523113334865733
+  },
+  "2020": {
+   "groups": {
+    "G1": [
+     "XLU",
+     "SHY",
+     "HYG",
+     "FXE"
+    ],
+    "G2": [
+     "XLV"
+    ],
+    "G3": [
+     "FXI",
+     "EWZ",
+     "PPLT"
+    ],
+    "G4": [
+     "SPY",
+     "GDX",
+     "SMH",
+     "EWT",
+     "TLT",
+     "TIP",
+     "LQD",
+     "GLD",
+     "UNG",
+     "FXY"
+    ],
+    "G5": [
+     "USO"
+    ]
+   },
+   "ward": {
+    "G1": [
+     "FXI",
+     "EWZ",
+     "PPLT"
+    ],
+    "G2": [
+     "GDX",
+     "GLD",
+     "UNG",
+     "FXY"
+    ],
+    "G3": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "EWT"
+    ],
+    "G4": [
+     "XLU",
+     "HYG",
+     "FXE"
+    ],
+    "G5": [
+     "TLT",
+     "SHY",
+     "TIP",
+     "LQD",
+     "USO"
+    ]
+   },
+   "lw_intensity": 0.21440836522916104
+  },
+  "2021": {
+   "groups": {
+    "G1": [
+     "TLT",
+     "LQD",
+     "FXE"
+    ],
+    "G2": [
+     "GDX",
+     "SHY",
+     "GLD",
+     "UNG",
+     "FXY"
+    ],
+    "G3": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "EWT",
+     "XLU",
+     "TIP",
+     "HYG"
+    ],
+    "G4": [
+     "FXI",
+     "EWZ",
+     "PPLT"
+    ],
+    "G5": [
+     "USO"
+    ]
+   },
+   "ward": {
+    "G1": [
+     "TLT",
+     "LQD",
+     "FXE"
+    ],
+    "G2": [
+     "GDX",
+     "SHY",
+     "GLD",
+     "UNG",
+     "FXY"
+    ],
+    "G3": [
+     "USO"
+    ],
+    "G4": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "EWT",
+     "XLU",
+     "TIP",
+     "HYG"
+    ],
+    "G5": [
+     "FXI",
+     "EWZ",
+     "PPLT"
+    ]
+   },
+   "lw_intensity": 0.22426260513149962
+  },
+  "2022": {
+   "groups": {
+    "G1": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "EWT",
+     "TIP",
+     "HYG"
+    ],
+    "G2": [
+     "XLU",
+     "EWZ",
+     "USO",
+     "DBA"
+    ],
+    "G3": [
+     "FXI",
+     "SHY",
+     "UNG",
+     "FXE",
+     "FXY"
+    ],
+    "G4": [
+     "GDX",
+     "GLD"
+    ],
+    "G5": [
+     "TLT",
+     "LQD"
+    ]
+   },
+   "ward": {
+    "G1": [
+     "FXI",
+     "SHY",
+     "UNG",
+     "FXE",
+     "FXY"
+    ],
+    "G2": [
+     "GDX",
+     "GLD"
+    ],
+    "G3": [
+     "TLT",
+     "LQD"
+    ],
+    "G4": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "EWT",
+     "TIP",
+     "HYG"
+    ],
+    "G5": [
+     "XLU",
+     "EWZ",
+     "USO",
+     "DBA"
+    ]
+   },
+   "lw_intensity": 0.1660014785776203
+  },
+  "2023": {
+   "groups": {
+    "G1": [
+     "GDX",
+     "GLD"
+    ],
+    "G2": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "EWT",
+     "EWZ",
+     "HYG",
+     "USO",
+     "DBA"
+    ],
+    "G3": [
+     "TLT",
+     "TIP",
+     "BNDX",
+     "LQD"
+    ],
+    "G4": [
+     "FXI",
+     "SHY",
+     "UNG",
+     "FXE",
+     "FXY",
+     "UUP"
+    ],
+    "G5": [
+     "XLU"
+    ]
+   },
+   "ward": {
+    "G1": [
+     "SPY",
+     "SMH",
+     "EWT",
+     "HYG"
+    ],
+    "G2": [
+     "XLV",
+     "XLU",
+     "EWZ",
+     "USO",
+     "DBA"
+    ],
+    "G3": [
+     "TLT",
+     "TIP",
+     "BNDX",
+     "LQD"
+    ],
+    "G4": [
+     "GDX",
+     "GLD"
+    ],
+    "G5": [
+     "FXI",
+     "SHY",
+     "UNG",
+     "FXE",
+     "FXY",
+     "UUP"
+    ]
+   },
+   "lw_intensity": 0.07789739289218539
+  },
   "2024": {
    "groups": {
     "G1": [
@@ -47,6 +803,38 @@
      "XLU"
     ]
    },
+   "ward": {
+    "G1": [
+     "SHY",
+     "TIP",
+     "BNDX",
+     "LQD"
+    ],
+    "G2": [
+     "GDX",
+     "GLD"
+    ],
+    "G3": [
+     "SPY",
+     "SMH",
+     "XLV",
+     "EWT",
+     "HYG",
+     "UNG",
+     "FXE"
+    ],
+    "G4": [
+     "XLU",
+     "EWZ"
+    ],
+    "G5": [
+     "FXI",
+     "TLT",
+     "USO",
+     "FXY",
+     "UUP"
+    ]
+   },
    "lw_intensity": 0.06478158778975894
   },
   "2025": {
@@ -77,6 +865,38 @@
     ],
     "G4": [
      "TLT"
+    ],
+    "G5": [
+     "EWZ"
+    ]
+   },
+   "ward": {
+    "G1": [
+     "USO",
+     "FXY",
+     "UUP"
+    ],
+    "G2": [
+     "XLV",
+     "TLT"
+    ],
+    "G3": [
+     "SPY",
+     "SMH",
+     "EWT",
+     "SHY",
+     "TIP",
+     "BNDX",
+     "LQD",
+     "HYG",
+     "GLD",
+     "UNG",
+     "FXE"
+    ],
+    "G4": [
+     "GDX",
+     "FXI",
+     "XLU"
     ],
     "G5": [
      "EWZ"
