@@ -34,6 +34,10 @@ if __name__ == "__main__":
     s2 = {k: [x for x in more if L.CLASS[x] == k] for k in L.CLASSES}; base = core + more
     rest = [x for x in C.index if x not in base and liq.get(x, 0) >= L.FLOOR]
     twin = {x: max(base, key=lambda m: abs(C.loc[x, m])) for x in rest}
+    for p in path: p["mean_abs"] = L.mean_abs(C, (core + more)[:p["n"]])
+    mem3 = list(base); path3 = []
+    for x in sorted(rest, key=lambda z: -liq.get(z, 0)):                   # stage 3 path: the most liquid first
+        mem3.append(x); path3.append(dict(n=len(mem3), added=x, explained=L.explained(C, mem3, list(C.index)), mean_abs=L.mean_abs(C, mem3)))
     def capacity(units):
         w = weights(C, vol, units); cap = {}
         for u in set(v[1] for v in units.values()):
@@ -50,7 +54,7 @@ if __name__ == "__main__":
         stages[name] = dict(n=len(members), members=members, capacity_usd=float(min(cap.values())), binding=min(cap, key=cap.get),
                             explained_all=L.explained(C, members, list(C.index)), mean_abs=L.mean_abs(C, members),
                             per_unit={u: float(c) for u, c in sorted(cap.items(), key=lambda z: z[1])}, weights=w.round(4).to_dict())
-    out = dict(review=str(END.date()), stage1=s1, stage2=s2, stage2_path=path, stage3={x: twin[x] for x in rest}, liquidity={x: liq.get(x, 0) for x in C.index},
+    out = dict(review=str(END.date()), stage1=s1, stage2=s2, stage2_path=path, stage3_path=path3, stage3={x: twin[x] for x in rest}, liquidity={x: liq.get(x, 0) for x in C.index},
                vol=vol.round(4).to_dict(), stages=stages, assumptions=dict(vol_target=VOL_TARGET, participation=PARTICIPATION, day_trade=DAY_TRADE))
     (L.RESULTS / "roadmap.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
     print("stage 2 adds:", s2); print("path:", [(p.get("added"), round(p["explained"], 3)) for p in path])
