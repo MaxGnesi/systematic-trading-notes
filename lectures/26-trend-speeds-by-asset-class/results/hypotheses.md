@@ -64,3 +64,8 @@ Fixed on 2026-11-13 with the user's approval, before any result was computed. Ev
   11. The single best stream has a probability of overfitting close to 50% in most classes; the core-based methods and the mix stay clearly below it.
   12. Speeds chosen on half the markets hold on the other half better than speeds chosen on half the years hold on the other years.
   13. The speeds chosen before and after 2022 differ most for government bonds.
+
+## Addendum 3, 2026-11-13, before any result: lens B built on random halves of everything (the user's proposal)
+
+Lens B of addendum 1 is replaced, before any result. **Lens B, random halves:** at each review, within the in-sample period, 500 splits each take a random half of the 3-month segments of history **and** a random half of the class's markets. On the half taken, the class's core is found (without the time check); on the half left out (the other segments and the other markets), every stream is ranked by its Sharpe ratio after costs. A speed is supported if it is in the core in at least half of the splits and ranks in the upper half out of sample in at least half of the splits; its weight in the mix is the share of splits in which it was both. This is stability selection on halves (Meinshausen and Bühlmann, 2010; to be checked at source), with a test set nested in every split. C6 becomes this lens alone.
+**Expectation, written before the run:** 14. Lens B on halves supports fewer speeds than the backtest core alone, and its speeds change less from one review to the next.
