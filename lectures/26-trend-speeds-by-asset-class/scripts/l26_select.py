@@ -56,6 +56,7 @@ if __name__ == "__main__":
         ok = [t for t in N if liq.get(t, 0) >= L.FLOOR and (stats[t][0].reindex(quarters).fillna(0) > 0).iloc[:, 0].sum() >= MIN_Q]
         W = {"shared": pass_share(stats, ok, quarters, rng)}; Weq = {}
         W["one_set"] = pass_share(stats, ok, quarters, rng, vote=np.log(np.array([liq[t] for t in ok])), groups=np.array([L.CLASS[t] for t in ok]))
+        W["one_set_sqrt"] = pass_share(stats, ok, quarters, rng, vote=np.sqrt(np.array([liq[t] for t in ok])), groups=np.array([L.CLASS[t] for t in ok]))
         for k in L.CLASSES:
             mk = [t for t in ok if L.CLASS[t] == k]; vote = np.log(np.array([liq[t] for t in mk]))   # log dollar volume: the size-weighted vote
             W[k] = pass_share(stats, mk, quarters, rng, vote) if len(mk) >= 2 else W["shared"]
@@ -67,15 +68,15 @@ if __name__ == "__main__":
         def variant(name):
             cls = {}
             for k, mk in uni.items():
-                wk = {"one_set": W["one_set"], "shared": W["shared"], "class": W[k], "class_equal_vote": Weq[k], "all36": pd.Series(1.0, L.STREAMS),
-                      "intersection": (W["one_set"] >= 0.9).astype(float), "union": (W["one_set"] > 0).astype(float)}[name]
+                wk = {"one_set": W["one_set"], "one_set_sqrt": W["one_set_sqrt"], "shared": W["shared"], "class": W[k], "class_equal_vote": Weq[k], "all36": pd.Series(1.0, L.STREAMS),
+                      "intersection": (W["one_set"] >= 0.9).astype(float), "union": (W["one_set"] > 0).astype(float), "union20": (W["one_set"] >= 0.2).astype(float)}[name]
                 if wk.sum() == 0: wk = pd.Series(1.0, L.STREAMS); rec.setdefault("empty", []).append(f"{name}:{k}")
                 R = pd.DataFrame({t: blend(N[t], wk) for t in mk if t in N})
                 full = R.div(R.loc[hist].std()).mean(axis=1)                                   # markets at equal risk (past three years)
                 cls[k] = full / full.loc[hist].std() * (0.10 / np.sqrt(252))                   # class scaled to 10% a year on the past three years
             P = pd.DataFrame(cls); tot = P.mean(axis=1); tot = tot / tot.loc[hist].std() * (0.10 / np.sqrt(252))
             return pd.concat([P, tot.rename("total")], axis=1).loc[nxt].assign(variant=name)
-        for v in ("one_set", "class", "class_equal_vote", "shared", "all36", "intersection", "union"): oos.append(variant(v))
+        for v in ("one_set", "one_set_sqrt", "union20", "class", "class_equal_vote", "shared", "all36", "intersection", "union"): oos.append(variant(v))
         top = {k: W[k].sort_values(ascending=False).head(4).round(2).to_dict() for k in ("one_set", "shared") + tuple(L.CLASSES)}
         print(y, f"{time.time() - t0:.0f} s", len(ok), "markets |", "; ".join(f"{k}: {', '.join(f'{s}={v}' for s, v in d.items())}" for k, d in top.items()), flush=True)
     O = pd.concat(oos); O.to_parquet(L.OUT / "oos.parquet")

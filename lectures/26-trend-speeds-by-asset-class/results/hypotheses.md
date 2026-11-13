@@ -137,3 +137,8 @@ Addendum 6 rested on a misreading: the user's "robust across all" meant across a
 ## Change, 2026-11-13, after the results above: one set for all markets, each asset class with the same vote (the user)
 
 Per-class speeds did not beat one shared set out of sample, so the rule becomes **one set of speeds for all markets**, chosen by the random halves, in which **each asset class has the same total vote** and, within a class, a market's vote is proportional to the log of its dollar volume (recomputed within each random half). The earlier shared set (one vote per market, so 87 equity funds against 29 others) and the per-class rule are kept as comparisons. A choice made after seeing results; logged here before its run.
+
+## Variant, 2026-11-13, after results: every speed passing in at least 20% of the splits (the user)
+
+"Union 20%": every stream whose pass share (one set, same vote per class) is at least 0.2, held with equal risk. More forward-looking: it keeps a stake in speeds only a minority of markets and periods favour today. Reported next to the weighted union, the intersection (0.9) and the plain union (> 0).
+**Variant, 2026-11-13, after results (the user):** "one set, square-root votes": as the rule, but within each class a market's vote is proportional to the square root of its dollar volume instead of its log (a much stronger tilt to large markets: SPY against Belgium about 330 to 1 instead of 2 to 1). Reported as a comparison.
