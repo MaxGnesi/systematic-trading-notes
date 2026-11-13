@@ -17,9 +17,9 @@ Speeds of two to five weeks almost never pass: they trade too often for what the
 |---|---|---|
 | 2 | Overfitting, carefully | What can be guarded against in advance, and what cannot? |
 | 3 | The streams | Which rules, which speeds, which returns and costs? |
-| 4 | The rule | How do random halves of years and markets choose speeds? |
+| 4 | The rule | How do random halves of years and markets choose speeds, and what if markets disagree? |
 | 5 | The areas | Which speeds pass, class by class, and do they stay? |
-| 6 | Two examples | Markets that disagree; super-long speeds in US equity |
+| 6 | Super-long speeds | Why do very slow trends work in US equity and not elsewhere? |
 | 7 | Out of sample | Does the rule beat holding everything, or choosing per class? |
 
 This lecture is step 2 of the workflow of Lecture 25 (§1): it uses strategy performance, but only in sample, to choose a region of speeds rather than a point, and it is judged out of sample.
@@ -84,3 +84,115 @@ r_{\text{account}} = \sum_i w_i\,\mathrm{TR}_i + r_f\Big(1 - \sum_i w_i\Big) = r
 Unused capital and the proceeds of short sales earn the cash rate; borrowed money for positions beyond the capital costs it. The account therefore earns the cash rate once, plus each position times its return over cash, and the second part is what separates one speed from another. Measured on total returns instead, a levered bond position collects interest on money it never paid for: at 89 days the government bond streams' Sharpe ratio is 0.60 on total returns and 0.28 over cash, credit's 0.52 and 0.34 (our calculation, all funds of the class with equal risk, 2007-2026). Real borrowing costs a little more than the bill rate and shorting a fund carries a fee; both bite only on leverage beyond the capital and are left to the lecture on constraints and costs.
 
 **Example: why fast speeds fail.** On IEF (Treasuries of 7 to 10 years), the fastest EWMA crossover (11 days) earned a Sharpe ratio of 0.32 before costs over 2007-2026, as much as the slow speeds (0.30 at 89 days, 0.31 at 251); it traded so often that costs of 5 bp took 1.5% a year and left 0.08. The 89- and 251-day crossovers paid 0.5% and 0.2% a year and kept 0.25 and 0.29. The fast speeds' failure here is a matter of cost, not of an absence of trend (our calculation, returns over cash).
+
+## 4. The rule
+
+**For all markets at once, 500 times, split the years and the markets at random into two halves, see which speeds work on one half and still work on the other, and hold, with equal risk, every speed that passes in at least 20% of the splits.**
+
+| Term | Meaning |
+|---|---|
+| Half | A random half of the quarters of the past (scattered over the whole history, not one block) and a random half of the markets |
+| Works | The stream's Sharpe ratio after costs, averaged over the half's markets, is in the top half of the 36 streams |
+| Vote | Each asset class has the same total weight in that average; within a class, a market counts in proportion to the logarithm of its daily dollar volume, so that SPY counts about twice as much as the smallest country fund, not a thousand times |
+| Passes | Works on the half where it is found and on the other half too |
+| Held | Every stream that passes in at least 20% of the 500 splits, with equal risk |
+
+The rule is run at every year end from 2012, on all data up to that date, and its choice is traded the following year.
+
+![Random halves and the areas they leave](figures/26_halves.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: quarters of the past (x) by markets above the liquidity floor (y) for one of the 500 splits at the end-2025 review; blue cells are the half where speeds are found, orange cells the half where they are checked, grey cells are left out of this split. Right: for each speed (x, trading days) and rule (y), the share of the 500 splits in which it passed, for all markets with the same vote per class and for each class alone. Our calculation.</sub>
+
+Each split hides a different half of the past and of the markets, so a speed that worked because of one crisis, or in one market, passes only when that crisis or market falls on both sides, which happens rarely. The pass share is the share of the 500 alternative histories in which the speed held. The bar of 20% keeps every speed that holds in a fair minority of them: the core speeds, which pass in most splits, and a stake in speeds that only some markets and periods favour today.
+
+**Example: markets that disagree.** Over 2007-2026 SPY's trend paid best at the slowest speeds (an EWMA crossover earned a Sharpe ratio of 0.56 at 359 days and 0.18 at 61), while Europe's (EFA) paid only at medium speeds (0.16 at 61 days, −0.12 at 359). Choosing each market's best speed would need to know in advance which market behaves like which; the rule does not. It holds the speeds that pass across random halves of markets, here every EWMA speed from 43 to 359 days, so it holds both the region SPY favoured and the one EFA favoured. On each market alone the blend earns less than that market's best speed in hindsight (0.37 for SPY, 0.03 for EFA), which is the price of not knowing in advance which speed each market will favour.
+
+## 5. The areas
+
+![Does the area stay?](figures/26_areas.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Speed (x, trading days) by yearly review (y), one panel for all markets with the same vote per class and one per class; colour is the pass share averaged over the three rules, from white (never passes) to blue (always). Each row uses all data up to its year end. Our calculation.</sub>
+
+| Group | Where speeds pass | Over time |
+|---|---|---|
+| All markets, same vote per class | 61 to 179 days, lighter out to 359 | Steady from 2012 to 2025 |
+| Equity | 127 to 251 days, lighter at 61-89 | Steady |
+| Government bonds | Broad, 61 to 503 days, strongest at the slow end | Slower in the early reviews |
+| Credit | 127 to 359 days in the early reviews | Narrows towards 127 days after 2020 |
+| Commodities | Scattered between 23 and 127 days | No clear area |
+| Currencies | 43 to 127 days, sharply | Shifts slower in 2022-2024, back by 2025 |
+
+<sub><b>How to read the table.</b> Our reading of the chart above.</sub>
+
+The rule holds 16 to 20 of the 36 streams at each review, and keeps 82% to 100% of them from one year to the next. Thirteen are held at every review from 2012 to 2025: all three rules at 61, 89, 127 and 179 days, and the EWMA crossover at 251. Nothing faster than 43 days is ever held. Between 12% and 37% of the streams held are slower than a year (251 days and more): a stake in the scenario that markets which do not favour slow trends today start to (§6).
+
+The classes do lean differently: bonds and credit slower, currencies and commodities faster. The mechanism hypothesis written before the run (bonds slower than commodities, policy cycles against supply shocks) is consistent with the chart. Whether these differences are worth choosing speeds per class is tested in §7.
+
+## 6. Super-long speeds in US equity
+
+A common view is that equities need very long moving averages. On US large companies the data agree: SPY's EWMA crossover earned 0.56 at 359 and 503 days against 0.26 at 89 days, and QQQ's 0.65 at 359 days. But at 503 days SPY was long on 93% of the days, and buying and holding it earned 0.54: the slow rule is close to holding US equity, with an exit in the large falls. It harvests the US equity drift of 2007-2026, which Lecture 5 separated from timing. Outside the US the same speeds lost: −0.13 for EFA, −0.39 for emerging markets (EEM) and −0.10 for Europe (VGK) at 503 days, where markets drifted much less and a slow rule sat long through years of sideways prices.
+
+So super-long speeds do not work across the board, and the rule gives them a small share rather than the bulk. Two points follow. A trend follower who wants US equity's drift should hold it as a deliberate long bias, decided in the allocation lectures, rather than through speeds that fail elsewhere. And the stake the rule keeps in slow speeds is insurance for the opposite scenario: other markets may come to drift like the US, or the US like the rest, and we do not know which.
+
+## 7. Out of sample
+
+Each version was chosen at every year end from 2012 on past data only and traded the following year on Lecture 25's markets, with every market at equal risk within its class and every class at equal risk. The comparisons were fixed before or dated during the work ([results/hypotheses.md](results/hypotheses.md)).
+
+**Table 7.1. Sharpe ratio after costs, out of sample 2013-2026**
+
+| Version | Equity | Govt bonds | Credit | Commodities | Currencies | Total | Worst drawdown |
+|---|---|---|---|---|---|---|---|
+| **The rule (20% of halves, one set, same vote per class)** | 0.34 | 0.12 | 0.02 | 0.40 | 0.45 | **0.49** | −22.2% |
+| Weighted by pass share | 0.36 | 0.10 | 0.02 | 0.41 | 0.44 | 0.48 | −22.9% |
+| Speeds chosen per class | 0.37 | 0.13 | −0.04 | 0.38 | 0.41 | 0.46 | −22.9% |
+| Intersection (passes in 90% of halves) | 0.36 | 0.05 | −0.05 | 0.54 | 0.43 | 0.48 | −20.4% |
+| Union (passes at least once) | 0.33 | 0.07 | 0.02 | 0.41 | 0.43 | 0.46 | −21.9% |
+| All 36 streams, equal risk | 0.24 | −0.13 | −0.01 | 0.42 | 0.36 | 0.32 | −22.6% |
+
+<sub><b>How to read the table.</b> Sharpe ratio of the daily returns over cash after 5 bp costs, 2013-2026, per class and for the five classes at equal risk; worst drawdown of the total. Every row uses the same markets, sizes and costs; only the choice of speeds differs. Our calculation.</sub>
+
+| The rule against… | Difference in total Sharpe ratio | 90% band (block bootstrap over months) |
+|---|---|---|
+| All 36 streams | +0.16 | +0.03 to +0.29 |
+| Speeds chosen per class | +0.03 | −0.05 to +0.09 |
+| Weighted by pass share | +0.00 | −0.02 to +0.03 |
+| Union | +0.03 | −0.03 to +0.08 |
+
+<sub><b>How to read the table.</b> Difference of the total Sharpe ratios out of sample, 2013-2026, with its 90% band from 2,000 resamples of calendar months. A band that excludes zero means the difference is unlikely to be luck. Our calculation.</sub>
+
+Three results, all expected before the run:
+
+1. **Choosing helps, by leaving out what fails.** The rule beats holding all 36 streams by 0.16, and the band excludes zero. The gain comes mostly from government bonds and equity, where the fast speeds lose: in bonds all 36 streams lost (−0.13) while the rule earned 0.12.
+2. **Choosing per class does not do better than one set for all.** No class beat the shared set after the Benjamini-Hochberg correction across the five classes, and the total differs by 0.03. This is a fair test: each class is judged on its own markets, and every class has the same vote in the shared set. It does not show that classes never differ: with 5 to 9 funds in most classes and 14 years, a benefit below about 0.1 in Sharpe ratio cannot be detected here.
+3. **Among sensible versions of the rule, the version hardly matters.** Weighting by pass share, a union, an intersection, square-root votes: all within a few hundredths. Finding the area matters; the point inside it does not.
+
+Two frameworks were checked in the same way. Sizing positions by volatility over 36 days, each stream's own speed or six months gave the rule 0.47, 0.50 and 0.49: the six months used here is the simplest, and a short window was a real hazard in quiet markets (in a calm spell of early 2026 the 36-day version held the high-yield fund HYG at three to five times its value, and lost about 11% in a year when HYG fell less than 3%). And credit is the class where the rule earned least (0.02): a credit fund's rise is mostly coupon income, which a long position collects and a trend rule gives back when it is short (HYG's price fell 18% from 2013 to 2026 while it paid 5.4% a year).
+
+What these numbers leave for later lectures: how much each class and market should weigh (the allocation lectures), whether larger markets should carry more risk, and how the trend portfolio sits next to simply holding the markets. The second kind of overfitting of §2, a future unlike the past, remains: the rule is reviewed every year, and its stake in slow speeds is there for scenarios the past did not favour.
+
+## 8. Summary
+
+### 8.1 Takeaways
+
+1. **Overfitting has two parts.** Dependence on the sample can be measured in advance by rerunning a choice on other slices of the past; a future unlike the past cannot, and is met by mechanism, yearly review and scenario stakes (§2).
+2. **One rule, one sentence.** Hold every speed that works on one random half of years and markets and still works on the other, in at least 20% of 500 splits (§4).
+3. **Medium speeds work across the board.** Three to nine months pass in nearly every review; two to five weeks never do, because costs eat them; beyond a year only some markets pay (§5).
+4. **Super-long speeds in US equity are drift, not timing.** They track buying and holding and fail where markets drifted less (§6).
+5. **Choosing helps by leaving out what fails**; choosing per class or the fine details of the rule add nothing measurable on our data (§7).
+6. **Framework choices matter more than they look.** Returns over cash, not total returns; volatility over months, not weeks (§3, §7).
+
+### 8.2 Exercises
+
+- [ ] Rerun the rule with 100, 500 and 2,000 splits. From how many does the set of held speeds stop changing?
+- [ ] Replace the 20% bar by 10%, 30% and 50%. Plot the number of streams held and the out-of-sample Sharpe ratio against the bar. Where is the result flat?
+- [ ] Choose each market's best speed in sample (2007-2016) and trade it in 2017-2026. Compare with the rule chosen on the same years. How much of the in-sample advantage survives?
+- [ ] Without any backtest: for each class, find the horizons where returns persist most (the variance ratio of h-day returns), hold all three rules there, and compare with the rule out of sample. Can speeds be chosen without looking at profits?
+- [ ] Put the trend signals on total returns and the profits on returns over cash. Which classes change most, and why does credit behave differently from currencies?
+- [ ] Size positions by volatility over 21, 63, 126 and 252 days. Plot the rule's Sharpe ratio and its worst year against the window. Which classes are most sensitive?
+
+### 8.3 Reading list
+
+- Bailey, D. H., Borwein, J. M., López de Prado, M. and Zhu, Q. J. (2017). The probability of backtest overfitting. *Journal of Computational Finance* 20(4), 39-69. — overfitting measured by splitting the history (§2; Lecture 7).
+- Hurst, B., Ooi, Y. H. and Pedersen, L. H. (2017). A century of evidence on trend-following investing. *Journal of Portfolio Management* 44(1), 15-29. — one blend of 1-, 3- and 12-month trends for 67 markets since 1880 (§2).
+- Meinshausen, N. and Bühlmann, P. (2010). Stability selection. *Journal of the Royal Statistical Society Series B* 72(4), 417-473. — keeping what is chosen on many random halves of the data (§2, §4).
+- Moskowitz, T. J., Ooi, Y. H. and Pedersen, L. H. (2012). Time series momentum. *Journal of Financial Economics* 104(2), 228-250. — one 12-month rule for 58 futures (§2).
+
+The details above were checked at source ([results/sources.md](results/sources.md)). *References are given from memory and should be checked against the originals before circulation.*
