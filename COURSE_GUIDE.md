@@ -34,10 +34,11 @@ The course follows one pipeline throughout (data → signal → position → eva
 | | 24 | Market making on one venue | Avellaneda–Stoikov with extras, the grid at the best price and ping-pong quoting, steered by the signals of Lectures 19–20, in the replay and the simulation; every result split into what earned and what cost | Bybit BTCUSDT perpetual: L2 book (200 levels, 100 ms) and trades, 20 Sep – 3 Nov 2025 (the 10 October cascade); Binance trades | Done |
 | | — | Cross-exchange market making | Quoting on Bybit and hedging on Binance | — | Not covered: the free archives do not hold both venues' books for our period ([Part IV roadmap](lectures/PART_IV_ROADMAP.md)) |
 | V. Portfolio | 25 | Choosing the markets | 116 US-listed ETFs, synchronous weekly closes; correlation, factors and noise; trend phases and trend strength; slots per class from the factor count; a score of representativeness, diversification and liquidity, ranked top to bottom, out of sample; a roadmap for growing capital | 25 (116 ETFs, Yahoo, free, 2007–2026) | Written |
-| | 26 | Covariance you can trust | Shrinkage, random-matrix denoising, how estimates drift | The universe of Lecture 25 | Planned |
-| | 27 | Allocation methods out of sample | 1/N, inverse volatility, HRP, NCO, risk budgeting, maximum diversification, the average of methods; weights from the risk of trend-positioned returns, never from strategy averages | As Lecture 25 | Planned |
-| | 28 | Constraints and capacity | Norm-constrained minimum variance in cvxpy, class risk bands, market caps, minimum size, capacity, dual values | As Lecture 25 | Planned |
-| | 29 | Trading the portfolio | No-trade bands; executing the rebalance with Part IV's costs | As Lecture 25 | Planned |
+| | 26 | Trend speeds that work across the board | Overfitting in two kinds; 36 streams (three rules, twelve prime speeds) on returns over cash; random halves of years and markets, each class the same vote; hold every speed passing in 20% of splits; per class against one set, out of sample | As Lecture 25, plus the 3-month bill rate (FRED, free) | Written |
+| | 27 | Covariance you can trust | Shrinkage, random-matrix denoising, how estimates drift | The universe of Lecture 25 | Planned |
+| | 28 | Allocation methods out of sample | 1/N, inverse volatility, HRP, NCO, risk budgeting, maximum diversification, the average of methods; weights from the risk of trend-positioned returns, never from strategy averages | As Lecture 25 | Planned |
+| | 29 | Constraints and capacity | Norm-constrained minimum variance in cvxpy, class risk bands, market caps, minimum size, capacity, dual values | As Lecture 25 | Planned |
+| | 30 | Trading the portfolio | No-trade bands; executing the rebalance with Part IV's costs | As Lecture 25 | Planned |
 | — | — | Prediction markets (Polymarket) | A price is a probability; calibration, Kelly on a bounded payoff | — | Not covered: replaced by the portfolio part (decided 13 November 2026) |
 
 Threads to keep visible across parts:
