@@ -35,7 +35,7 @@ Within a class, more ETFs add almost nothing: 87 equity ETFs make one bet. What 
 |---|---|---|
 | 2 | The data | Which ETFs, which prices, and why must the closes be synchronous? |
 | 3 | Correlation, factors and noise | What moves together, through which factors, and how much of it is noise? |
-| 4 | The same market? | When are two markets the same bet: correlation, or trend phases too? |
+| 4 | The same market? | When are two markets the same bet: correlation, trend phases, trend strength? |
 | 5 | The methods as a family | Which ways of choosing markets exist, and what did each show here? |
 | 6 | Slots per class | How many markets should each class get? |
 | 7 | Filling the slots | Which markets fill them, judged out of sample, and which universe results for 2026? |
@@ -207,7 +207,7 @@ Two ETFs are the same bet for a trend follower when they hold the same position 
 We use the measure of Lecture 3 (§8.4). A market's **trend phase** in a week is the sign of its log return over the past 26 weeks, about the 126 trading days of Lecture 3. The **concordance** of two markets is the share of weeks they are in the same phase (Harding and Pagan, 2002). For a trader who can be long or short, a market that always does the opposite of another is the same bet held the other way round, so we ignore the sign: concordance is the larger of the share of weeks in the same phase and the share in opposite phases.
 
 ![Correlation and trend phases](figures/25_concordance.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> Each dot is a pair of ETFs: correlation of weekly log returns, sign ignored (x), against the share of weeks both are in the same 26-week trend phase, sign ignored (y). Blue: both ETFs in the same class; grey: different classes. Shaded corner: pairs counted as duplicates (§4.2). 6,670 pairs with at least three years in common, 2007-2026; our calculation.</sub>
+<sub><b>How to read the figure.</b> <b>Axes.</b> Each dot is a pair of ETFs: correlation of weekly log returns, sign ignored (x), against the share of weeks both are in the same 26-week trend phase, sign ignored (y). Blue: both ETFs in the same class; grey: different classes. Shaded corner: pairs counted as duplicates (§4.3). 6,670 pairs with at least three years in common, 2007-2026; our calculation.</sub>
 
 **Table 4.1. Correlation and trend agreement, 2007-2026**
 
@@ -225,7 +225,27 @@ Above a correlation of 0.9, correlation is enough: those pairs share their trend
 
 **Example: the euro and the dollar, 2023-2025.** FXE holds euros; UUP is long the dollar against a basket in which the euro weighs most. Their weekly correlation was −0.96 in every three-year window, the mirror image of each other. Yet in 2023-2025 both rose, UUP by 3.6% a year and FXE by 4.8%, and their trend phases agreed as mirrors in only 55% of the weeks, against 93% in 2020-2022. Both funds earn interest, UUP on the Treasury bills held as collateral for its futures and FXE on its euro deposits; with rates at 3% to 5% and an exchange rate that moved little, the interest decided the sign of the 26-week return, and both trended up. The weekly correlation removed exactly the part that set the position: a trend rule on these two funds was long both, not long one and short the other. (Our measurement; the interest income as the cause is our reading.) The same income enters every trend signal computed on the total return of a bond or currency ETF, unlike the futures excess returns of Lecture 11.
 
-### 4.2 The duplicate rule
+### 4.2 Do markets trend at the same time?
+
+Concordance asks whether two markets point the same way; a second question is whether they trend at the same time at all. We measure a market's **trend strength** with the efficiency ratio of Lecture 3 (§6.1) on weekly closes over 26 weeks: the net move divided by the total path travelled, from 0 (back and forth) to 1 (a straight line), without direction. It uses prices only.
+
+![Trend strength across markets](figures/25_trend_strength.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: each dot is a pair of ETFs, correlation of weekly returns, sign ignored (x), against the correlation of their weekly trend-strength series (y); blue: same class, grey: different classes; dotted: equal correlation. Right: time (x) and the average trend strength of the ETFs in each class and of all 116 (y), smoothed over 4 weeks. 2007-2026; our calculation.</sub>
+
+**Table 4.2. Correlation of returns and of trend strength, 2007-2026**
+
+| Measure | Returns, sign ignored | Trend strength |
+|---|---|---|
+| Mean pairwise correlation | 0.45 | 0.19 |
+| Pairs within a class | 0.58 | 0.26 |
+| Pairs from two classes | 0.29 | 0.09 |
+| Share of the variance on the first factor | 50% | 25% |
+
+<sub><b>How to read the table.</b> Means over the 6,670 pairs of the 116 ETFs, or the first factor's share as in §3.2. The 26-week windows overlap from week to week, so the trend-strength series are smooth and their correlations rest on far fewer independent observations than weeks; they are descriptive. Our calculation.</sub>
+
+Markets that move together week by week often do not trend at the same time: almost every pair lies below the diagonal. Across classes, trend strength is nearly unrelated, 0.01 between equity and government bonds. Broad trend periods are rare: the average trend strength peaked at 0.49 in October and November 2008, against a mean of 0.21, but 2020 was a fall and a rebound rather than a trend, and in 2022 mainly government bonds trended. Trends come class by class more than all at once, which is the strongest reason in this lecture to hold several classes rather than many equity funds. The universe chosen in §7 has a mean trend-strength correlation of 0.11, lower than 80% of random selections in the same slots.
+
+### 4.3 The duplicate rule
 
 Two markets count as **duplicates** when their correlation is at least 0.9 in size **and** they share their trend phase, sign ignored, in at least 85% of the weeks of the review window. Of a duplicate pair, only the more liquid can be a member. Requiring both conditions keeps the pairs between 0.8 and 0.9 that trend differently, and lets two mirror-image funds be different bets in years when their drifts part, as FXE and UUP did.
 
@@ -376,7 +396,7 @@ The next step for a growing account is therefore to change the instrument where 
 1. **Bets come from classes, not from the number of funds.** 87 equity ETFs make one bet; one ETF per class holds about as many bets as all 116 (§1).
 2. **Few factors are real.** 16 of 116 lie above the noise band of random-matrix theory; the first is risk on or off and carries half the variance (§3).
 3. **Co-movement changes.** Factor 1's share jumps in crises and the bond hedge flipped in 2022, so the universe is reviewed every year on recent data (§3.5).
-4. **Correlation misses the drift.** Two markets are the same trend bet only if they also share their trend phases; mirror images with different interest income can trend the same way (§4).
+4. **Correlation misses the drift.** Two markets are the same trend bet only if they also share their trend phases; mirror images with different interest income can trend the same way. Trend strength is far less shared than returns, and nearly unrelated across classes (§4).
 5. **Selection effects bias correlations.** Joint falls must be read against what a normal distribution gives in the same weeks, and weeks chosen by one market's falls understate co-movement (§5.1).
 6. **Methods have roles, not votes.** Factors count the bets, the duplicate rule removes copies, a score chooses, the tree and downside correlation check (§5).
 7. **The slots do most of the work.** Among ways to fill them, a score of representativeness, diversification and liquidity, ranked top to bottom, keeps diversification and doubles liquidity, over a flat region of weights (§7).
