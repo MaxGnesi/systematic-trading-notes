@@ -1,0 +1,43 @@
+# Lecture 26: hypotheses, fixed before the results
+
+Fixed on 2026-11-13 with the user's approval, before any result was computed. Every later change is dated here before it is judged on later data.
+
+**The question.** For a trend follower trading the markets chosen in Lecture 25, which trend speeds should each broad asset class use? The aim is a small set of speeds that works across all markets of a class, chosen so that the speeds diversify each other, and judged out of sample against simpler choices. Choosing parameters is the one step of the workflow (Lecture 25, §1) that may look at strategy performance; it does so in sample only, chooses a region rather than a best point, and is judged out of sample against a luck baseline.
+
+**What is already known.** Lecture 7 found that at equal speed the trend families give nearly the same results, and that differences between speeds of 0.1 to 0.3 in Sharpe ratio lie inside the noise (a standard error of about 0.2 over 26 years). Lecture 9 found that fast rules need partial trading to survive costs (EWMAC 8/32: from −0.43 to 0.01 at 20 bp). No result on the ETFs of Lecture 25 has been computed.
+
+## Shared definitions
+
+- **Markets.** Every ETF of Lecture 25 above the USD 10 m floor at each review, grouped into the five broad classes (equity, government bonds, credit, commodities, currencies); no sub-classes, to limit the room for fitting. Speeds are chosen on all liquid ETFs of a class (more evidence), and traded on the markets Lecture 25 chose.
+- **Data.** Daily adjusted closes, free from Yahoo, as in Lecture 25.
+- **Speeds.** Twelve horizons from two weeks to two years, each about 1.4 times (the square root of 2) the one before, and each a prime number of trading days (the user's proposals): 11, 17, 23, 31, 43, 61, 89, 127, 179, 251, 359 and 503. Primes share no common divisor, so box windows (past return, breakout) share none of their blind spots, and they stay off the round lookbacks many trend followers use (20, 50, 100, 200) and off the calendar's cycles (21, 63, 252 days). The round grid 10, 15, 20, 30, 40, 60, 90, 120, 180, 250, 360, 500 is run alongside (C5).
+- **Rules, at equal speed (Lecture 7).** EWMAC with spans (h/4, h) rounded to whole days, a breakout over h days and a past return (time-series momentum) over h days, from `trading_models`. 36 streams per market.
+- **Positions.** Forecast scaled to a 10% yearly volatility target with the market's volatility from recent returns (Lecture 9); partial trading, closing a tenth of the gap to the target each day (Lecture 9). The forecast is never capped: the EWMAC forecast is divided by its own rolling standard deviation, so it is finite by construction.
+- **Costs.** 10 bp of the value traded for every market (main), 5 bp and 20 bp reported.
+- **Measure.** Sharpe ratio after costs, per market and stream.
+
+## The selection rule, per class
+
+1. **Region (in sample).** For each market, the best stream's Sharpe ratio after costs and its standard error, the square root of (1 + SR²/2) divided by the number of years. A stream **qualifies** for the class if it lies within one standard error of the market's best in at least 75% of the class's markets.
+2. **Core: well inside the region.** A speed (with its rule) belongs to the core if it qualifies, if the speeds one step faster and one step slower in the same rule also qualify, if it was in the region at at least two thirds of the past yearly reviews (once there are three), and if it still qualifies at costs of 20 bp. If a class's core is empty, the class uses the speeds shared by all classes (C1) and the empty core is reported as a result.
+3. **Even spread (the rule).** Within each rule's core, the speeds at about one quarter and three quarters of the core's width on the log scale (the nearest speeds of the grid; one speed if the core holds fewer than three). No profit enters this step.
+4. **Walk-forward.** The region, the core and the speeds are chosen at each year end from 2012 on, on all data up to then (at least five years), and traded the following year. The out-of-sample record runs from 2013 to 2026.
+
+## Comparisons, out of sample 2013-2026, per class and in total
+
+- **C1, buckets against one shared set:** the same rule applied to all markets of all classes together, giving one pair for every class.
+- **C2, inside the core:** the even spread against (a) the least-correlated pair in the core (the core's ends, compared only; not the user's preference), (b) all core speeds with equal risk (the average of all random picks, no choice), and (c) 500 random pairs from the core, the luck baseline.
+- **C3, against one default speed for all:** EWMAC 30/120.
+- **C4, against all 36 streams with equal risk:** no choice at all.
+- **C5, prime grid against round grid:** correlation between adjacent speeds and Sharpe ratio after costs, same rules otherwise.
+- Measures: Sharpe ratio after costs, the worst drawdown, and the correlation of the class's stream with the other classes'. Differences by block bootstrap over months (2,000), one-sided; Benjamini-Hochberg at 5% over the five classes for C1.
+
+## Expectations, written before the run
+
+1. The regions are wide: most classes qualify at least five of the twelve horizons, and the regions of different classes overlap.
+2. The fastest horizons (10 and 20 days) qualify in few classes after costs of 10 bp.
+3. Mechanism hypothesis: government bonds favour slower speeds than commodities (bond trends follow slow policy cycles; commodity trends follow faster supply shocks). Stated before the run; it may well fail.
+4. C1: per-class speeds beat one shared set by less than the noise: no class passes the Benjamini-Hochberg correction.
+5. C2: the even spread, the least-correlated pair, all core speeds and the random pairs land close together out of sample, because the core does the work; all core speeds with equal risk has the smallest drawdowns. Finding the core matters; the point inside it hardly does.
+6. C4: all 36 streams with equal risk do about as well as any choice, which would say that the region matters more than the point.
+7. C5: the prime grid and the round grid differ little in correlation between adjacent speeds or in Sharpe ratio, because the ratio between speeds, not their divisibility, sets how different two speeds are. A benefit from trading on different days than the crowd cannot be measured with our data.
