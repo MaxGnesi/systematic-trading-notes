@@ -38,8 +38,8 @@ Within a class, more ETFs add almost nothing: 87 equity ETFs make one bet. What 
 | 4 | The same market? | When are two markets the same bet: correlation, or trend phases too? |
 | 5 | The methods as a family | Which ways of choosing markets exist, and what did each show here? |
 | 6 | Slots per class | How many markets should each class get? |
-| 7 | Filling the slots | Which markets fill them, judged out of sample? |
-| 8 | The universe and its limits | The chosen markets, the yearly review, and what the free data cannot do |
+| 7 | Filling the slots | Which markets fill them, judged out of sample, and which universe results for 2026? |
+| 8 | A roadmap for growing capital | Which markets to add as capital grows, what the funds can carry, and what the free data cannot do |
 
 This lecture is the first of three steps that the whole part keeps in the same order:
 
@@ -197,3 +197,219 @@ The effective number of bets of §1 turns the factors into one number for a give
 | Effective bets | $`\exp\left(-\sum_k p_k \ln p_k\right)`$ | 1 if all risk comes from one factor; $`N`$ if it is spread evenly over $`N`$ |
 
 The measure takes a long-only view: two markets that move opposite each other hedge one another and raise the count. A trend follower, who can be short either one, holds the same bet in both, which is why §4 and §7 also measure overlap with the sign ignored.
+
+## 4. The same market?
+
+Two ETFs are the same bet for a trend follower when they hold the same position most of the time, not merely when their weekly returns are correlated. Correlation measures shocks and removes the drift (§3.1); over the months a trend lasts, the drift decides the sign of the position.
+
+### 4.1 Trend phases and concordance
+
+We use the measure of Lecture 3 (§8.4). A market's **trend phase** in a week is the sign of its log return over the past 26 weeks, about the 126 trading days of Lecture 3. The **concordance** of two markets is the share of weeks they are in the same phase (Harding and Pagan, 2002). For a trader who can be long or short, a market that always does the opposite of another is the same bet held the other way round, so we ignore the sign: concordance is the larger of the share of weeks in the same phase and the share in opposite phases.
+
+![Correlation and trend phases](figures/25_concordance.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Each dot is a pair of ETFs: correlation of weekly log returns, sign ignored (x), against the share of weeks both are in the same 26-week trend phase, sign ignored (y). Blue: both ETFs in the same class; grey: different classes. Shaded corner: pairs counted as duplicates (§4.2). 6,670 pairs with at least three years in common, 2007-2026; our calculation.</sub>
+
+**Table 4.1. Correlation and trend agreement, 2007-2026**
+
+| Correlation, sign ignored | Pairs | Same phase, median | Pairs in the same phase less than 80% of weeks | Drift of a hedge, median |
+|---|---|---|---|---|
+| 0.9 and above | 48 | 90% | 0% | 1.6% a year |
+| 0.8 to 0.9 | 245 | 83% | 28% | 3.2% a year |
+| 0.7 to 0.8 | 566 | 78% | 68% | 3.1% a year |
+| 0.5 to 0.7 | 2,279 | 70% | 94% | 3.7% a year |
+| below 0.5 | 3,532 | 60% | 100% | 3.6% a year |
+
+<sub><b>How to read the table.</b> Pairs grouped by their correlation. "Same phase": concordance as defined in §4.1. "Drift of a hedge": the absolute yearly return left when one ETF is hedged with the other by regression (Lecture 3, §8.4). Our calculation.</sub>
+
+Above a correlation of 0.9, correlation is enough: those pairs share their trend phase in at least 83% of the weeks, as QQQ and AIQ (0.95; 94%) or TLT and IEF (0.90; 89%). Below it, correlation alone misleads. IWM and UFO (small US companies and a space fund) correlate at 0.81 yet share their phase in only 71% of the weeks; Canada and international real estate (EWC, RWX), 0.82 and also 71%. Even in agreement, the size of the moves can differ: gold miners and gold (GDX, GLD) correlate at 0.82 and share 84% of their phases, but GDX hedged with GLD lost 11.6% a year. For a trend follower they mostly hold the same direction; for a long-only investor they are very different holdings.
+
+**Example: the euro and the dollar, 2023-2025.** FXE holds euros; UUP is long the dollar against a basket in which the euro weighs most. Their weekly correlation was −0.96 in every three-year window, the mirror image of each other. Yet in 2023-2025 both rose, UUP by 3.6% a year and FXE by 4.8%, and their trend phases agreed as mirrors in only 55% of the weeks, against 93% in 2020-2022. Both funds earn interest, UUP on the Treasury bills held as collateral for its futures and FXE on its euro deposits; with rates at 3% to 5% and an exchange rate that moved little, the interest decided the sign of the 26-week return, and both trended up. The weekly correlation removed exactly the part that set the position: a trend rule on these two funds was long both, not long one and short the other. (Our measurement; the interest income as the cause is our reading.) The same income enters every trend signal computed on the total return of a bond or currency ETF, unlike the futures excess returns of Lecture 11.
+
+### 4.2 The duplicate rule
+
+Two markets count as **duplicates** when their correlation is at least 0.9 in size **and** they share their trend phase, sign ignored, in at least 85% of the weeks of the review window. Of a duplicate pair, only the more liquid can be a member. Requiring both conditions keeps the pairs between 0.8 and 0.9 that trend differently, and lets two mirror-image funds be different bets in years when their drifts part, as FXE and UUP did.
+
+## 5. The methods as a family
+
+The literature offers many ways to choose markets from a correlation matrix. We fixed seven before any result ([results/hypotheses.md](results/hypotheses.md)) and ran all of them on the same weekly returns, at yearly reviews from 2009 to 2025, each on the past three years only.
+
+| Method | The question it answers | What it showed here |
+|---|---|---|
+| **Hierarchical clustering** on the distance $`\sqrt{2(1-\rho)}`$ (Mantegna, 1999; Onnela et al., 2003); average, complete and Ward linkage, cut at correlations of 0.70 to 0.90 | Which markets form groups? | Clear groups: European countries (12 ETFs at 0.8), the US broad market with cyclical sectors, technology with AI and robotics, cyber security with cloud, clean energy. But no plateau: 13 groups at 0.5, 22 at 0.6, 49 at 0.7, 68 at 0.8 (average linkage, 2007-2026), so the threshold must come from a purpose |
+| **Random-matrix cleaning** (Laloux et al., 1999) before clustering | Which correlations are noise? | Useful to count factors (16 above noise, §3.3), not to cluster: cleaning lowers very high pairwise correlations, so above 0.8 every market stood alone (116 groups) |
+| **Greedy diversification** (Choueifaty and Coignard, 2008) | Which market adds most diversification? | Low overlap out of sample in every year, but it drifts to the edges (no broad equity fund except its starting market) and, with the sign kept, counts a mirror image as a hedge |
+| **Graphical lasso** (Friedman, Hastie and Tibshirani, 2008) | Which markets carry information no other has? | No stable answer: SPY is a portfolio of the sector funds, so partial correlations are nearly undefined; no market became isolated at any penalty |
+| **Minimum spanning tree** (Mantegna, 1999) | Which markets are central, which peripheral? | Regional funds are the hubs (EEM and VGK with 11 links each, MDY 10, EFA 9); 64 of 116 markets are leaves, and 8 of the 10 markets greedy diversification held in 2025 are leaves, as Onnela et al. (2003) found for optimised portfolios |
+| **Downside correlation** (Longin and Solnik, 2001) | Do markets move together more in falls? | Yes, far more than chance (§5.1) |
+| **Effective number of bets** (Meucci, 2009) and the portfolio diversification index (Rudin and Morgan, 2006) | How many independent bets? | 1.07 bets with equal risk per ETF, 2.5 with equal risk per class; the index gives 17.7, close to the 16 factors above noise (§1, §3) |
+
+<sub><b>How to read the table.</b> One row per method fixed before the run; "What it showed here" is our result on the 116 ETFs, 2007-2026. A majority vote of the first three methods, also fixed in advance, kept almost everything (28 markets at the first review, 80 by 2025) and was dropped.</sub>
+
+The methods answer different questions, so they are not rivals to be put to a vote; each has a role. The factors say how many bets there are; the duplicate rule says which markets are interchangeable; a score of representativeness, diversification and liquidity chooses among the rest (§7); the tree and downside correlation check the result.
+
+### 5.1 In joint falls, markets move together
+
+![Downside correlation](figures/25_downside.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Each dot is a pair of ETFs: correlation over all weeks (x) against correlation in the weeks when both fell by more than one standard deviation (y). Blue: both equity; orange: equity and another class; green: neither. Black line: what a normal distribution with the pair's correlation gives in the same weeks. Dotted diagonal: the same correlation in falls as in all weeks. Pairs with at least 20 weeks of joint falls, 2007-2026; our calculation.</sub>
+
+Selecting the weeks in which both markets fall lowers the measured correlation by itself, because it cuts away most of the spread of both returns: under a normal distribution, a pair correlated at 0.6 shows only about 0.25 in its joint falls. The yardstick is therefore the black line, not the diagonal. Against it the pairs sit far higher: equity pairs correlate at 0.64 in joint falls against 0.25 for a normal distribution (medians), and equity with other classes at 0.53 against 0.08. Diversification across classes weakens most in the weeks it is needed, as in the rolling chart of §3.5.
+
+The same selection effect misleads when the weeks are chosen by one market. Clustering only the 115 weeks in which SPY fell by more than one standard deviation gives 77 groups at 0.8, against 68 over all weeks, as if markets moved together less in sell-offs. Selecting SPY's worst weeks cuts SPY's spread and so lowers every correlation measured in them. Forbes and Rigobon (2002) show the mirror image of this effect: correlations measured in high-volatility periods are biased upward, and "heteroskedasticity biases tests for contagion".
+
+## 6. Slots per class
+
+The classes are fixed first, and each class gets a number of slots before any market is chosen. Choosing across all 116 at once lets equity crowd out the rest: one correlation threshold that keeps eleven equity groups keeps a single government bond.
+
+| Rule | Value | Why |
+|---|---|---|
+| Classes | Equity, government bonds, credit, commodities, currencies | The bets come from the classes (§1) |
+| Slots per class | The number of the class's factors above the noise band (§3.3), from its own correlation matrix | As many markets as the class has independent bets |
+| At least | 2 per class | A class must not rest on one fund; with the floor, currencies once held only UUP from 2018 to 2024 |
+| At most | 30 in all | With 156 weeks per review, more markets than about a fifth of the weeks makes the correlations unreliable for the weights that follow |
+| Liquidity floor | Median daily dollar volume over the past year of at least USD 10 million | A market a small account can trade on screen; below it a market enters only to meet the minimum of 2, flagged as thin |
+| Review | Once a year, on the past three years only | Co-movement changes (§3.5) |
+| Leaving | A member leaves if it is redundant, below the floor or over its class's slots at two reviews in a row, or when its data end | No market flips in and out on one noisy year |
+
+<sub><b>How to read the table.</b> The rules for how many markets each class gets and when one leaves. The slots per class, the minimum and the floor were set after the first run and are dated in results/hypotheses.md.</sub>
+
+Over the 17 reviews the slots came to 6 to 8 for equity, 2 to 4 for government bonds, 2 for credit, 3 to 4 for commodities and 2 to 4 for currencies: 16 to 21 markets in all, close to the 16 factors above noise. A second count agrees: within each class, the diversification gained by each extra market falls below 2% at about the number of slots, a median of 3 for government bonds and commodities and 2 for credit; in equity it flattens a little earlier, at 5 against 7 slots.
+
+## 7. Filling the slots
+
+### 7.1 A score, ranked top to bottom
+
+Within a class, three things make a market worth a slot, and they pull in different directions:
+
+| Pillar | Measured as | What it buys |
+|---|---|---|
+| **Representativeness** | How much more of the class's variance the chosen markets explain with it | The class's main trend |
+| **Diversification** | How much it raises the class's diversification ratio, $`N / \sqrt{\sum_{ij} \lvert\rho_{ij}\rvert}`$, sign ignored | New bets |
+| **Liquidity** | Log of its median daily dollar volume over the past year | Low cost, capacity, fast price discovery |
+
+Each candidate gets a percentile rank on each pillar among the candidates of its class, and its **score** is the weighted average of the three ranks: a quarter representativeness, a half diversification, a quarter liquidity. The best market is added, the rest are ranked again, since diversification depends on what is already in, and so on. The result is one list per class, ranked top to bottom; the class's slots take the top of it. The first market of a class has nothing to diversify against and is scored on representativeness and liquidity alone, which makes it the class's **key market**: a broad, liquid stand-in for the class's first factor.
+
+Percentile ranks put dollars, correlations and ratios on one scale, so that no single number, such as SPY's USD 41 billion a day, swamps the others; the price is that being 35 times more liquid counts the same as being one place higher. The weights are a choice, so they were varied (§7.3).
+
+### 7.2 Out of sample
+
+Each way of filling the slots was run at every review from 2009 to 2025 and judged on the following year, against 300 random selections with the same number of markets in each class.
+
+![Filling the slots](figures/25_tradeoff.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Average correlation between the chosen markets in the year after each review, sign ignored (x, reversed: left is less overlap), against the share of each class's variance they explain in that year (y). Markers: medians over the 17 reviews; bars: interquartile range across years. Grey square: random selections in the same slots. Our calculation.</sub>
+
+**Table 7.1. Ways of filling the slots, out of sample 2010-2026**
+
+| Method | Variance of the class explained | Overlap | Overlap of trend-positioned returns | Median liquidity, USD a day |
+|---|---|---|---|---|
+| Greedy diversification | 0.745 (16) | **0.292** (16) | 0.194 (14) | 260 m (17) |
+| One market per factor | 0.745 (16) | 0.333 (13) | 0.201 (14) | 150 m (16) |
+| Explained variance, step by step | **0.773** (17) | 0.334 (10) | 0.204 (12) | 260 m (16) |
+| Key market, then greedy diversification | 0.757 (17) | 0.313 (15) | 0.207 (11) | 200 m (16) |
+| **Score (chosen)** | 0.754 (17) | 0.303 (16) | **0.191** (14) | **400 m** (17) |
+| Random, same slots | 0.73 | 0.33 | 0.21 | 90 m |
+
+<sub><b>How to read the table.</b> Medians over the 17 years after each review; in brackets, the number of years the method did better than the median of 300 random selections in the same slots. "Overlap": mean correlation between the chosen markets, sign ignored. "Trend-positioned": the same for each market's weekly return times the sign of its past 26-week return, the risk a trend follower holds (§1). Liquidity at the review. Our calculation.</sub>
+
+The slots do most of the work: random markets in the same slots already explain 73% of each class's variance the next year, and the best method adds four points. Between the methods the gaps are small and run along a trade-off. Explained variance represents each class best and overlaps most; greedy diversification overlaps least and drifts to the edge of each class. The score sits between them on both, has the lowest overlap of trend-positioned returns, and holds markets about twice as liquid as any other method. The year-to-year spread (the bars in the chart) is larger than these gaps, which is why the count of years against random selections, made year by year, is the better guide.
+
+### 7.3 How much the weights matter
+
+| Weights (representativeness, diversification, liquidity) | Explained | Overlap | Trend-positioned | Liquidity |
+|---|---|---|---|---|
+| A third each | 0.750 | 0.306 | 0.195 | 400 m |
+| 0.5, 0.25, 0.25 | 0.756 | 0.327 | 0.204 | 270 m |
+| **0.25, 0.5, 0.25 (chosen)** | 0.754 | 0.303 | 0.191 | 400 m |
+| 0.2, 0.6, 0.2 | 0.756 | 0.303 | 0.197 | 400 m |
+| 0.2, 0.5, 0.3 | 0.754 | 0.303 | 0.191 | 400 m |
+| 0.25, 0.25, 0.5 | 0.757 | 0.322 | 0.201 | 530 m |
+| 0.15, 0.7, 0.15 | 0.758 | 0.312 | 0.192 | 280 m |
+
+<sub><b>How to read the table.</b> The score run with other weights, judged as in Table 7.1 (medians over 17 years). Our calculation.</sub>
+
+Every weighting explains 75% to 76%; the weights mainly move overlap and liquidity. Diversification weights from 0.5 to 0.6 give the same result, the lowest overlap at full liquidity; at 0.7 the score starts taking thinner markets and overlap rises again. The chosen weights sit in the middle of that flat region, not at its best point.
+
+### 7.4 The universe at the end of 2025
+
+| Class | Markets, in the order of the ranking |
+|---|---|
+| Equity | SPY, GDX (gold miners), SMH (semiconductors), XLV (health care), FXI (China), EWT (Taiwan), XLU (utilities), EWZ (Brazil) |
+| Government bonds | TLT (20+ years), SHY (1-3 years), TIP (inflation-linked), BNDX (bonds outside the US, hedged to the dollar) |
+| Credit | LQD (investment grade), HYG (high yield) |
+| Commodities | USO (oil), GLD (gold), UNG (natural gas) |
+| Currencies | FXE (euro), FXY (yen), UUP (the dollar) |
+
+<sub><b>How to read the table.</b> The 20 markets chosen at the end-2025 review for 2026, by the score with weights 0.25, 0.5, 0.25. The currency funds trade little and are the first to bind as capital grows (§8).</sub>
+
+## 8. A roadmap for growing capital
+
+The universe of §7 suits a small account. As capital grows, markets can be added, first for new bets with falling gains and then, once the bets are held, only to spread the trading. The same rankings give the order.
+
+| Stage | What is added | Rule |
+|---|---|---|
+| **1. Core** | The universe of §7.4 | The top of each class's ranked list |
+| **2. More bets** | Markets that still add to what the core explains | One at a time, the market above the floor and not a duplicate that raises most the share of the variance of all 116 ETFs explained, until 85% is explained |
+| **3. Capacity** | Near-duplicates of members | Every other market above the floor, most liquid first, each sharing the risk budget of its closest member and splitting its trading |
+
+![The roadmap as a path](figures/25_roadmap_path.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Number of markets chosen so far (x) against the share of the variance of all 116 ETFs they explain (top, y) and the mean correlation among them, sign ignored (bottom, y). Shading: the three stages; dotted line: the 85% target of stage 2. End-2025 review, weekly log returns 2023-2025; our calculation.</sub>
+
+The core's first market, SPY, explains 35% of all 116; with the dollar, investment-grade credit, China, gold miners and oil it passes 60%, and its 20 markets reach 75%. Stage 2 needs ten more to reach 85%: Europe, US small companies, nuclear energy, clean energy, platinum, ARK's innovation fund, India, cyber security, Japan and US real estate. The mean correlation among the chosen markets moves only from 0.27 to 0.30: these are new bets. Stage 3 adds 52 markets for eleven more points, and the mean correlation climbs to 0.40: duplicates, held for capacity, not for diversification. Because 87 of the 116 ETFs are equity, "85% of the 116" rewards equity; a list balanced across classes would fill stage 2 differently.
+
+How much capital each stage can carry depends on the instruments, and here the ETFs' own trading volume misleads.
+
+![A roadmap for growing capital](figures/25_roadmap.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: the capital each market of stages 1 and 2 can carry on its own screen volume (x, USD million, log scale), one bar per ETF (y), coloured by class; hatched: added in stage 2; diamonds: with its stage 3 near-duplicates sharing the trading. Right: what each stage adds. Placeholder weights: equal risk per class, inverse volatility within, 10% portfolio volatility; a full trend reversal trades 20% of a position in a day (Lecture 9's slow rule traded partially, λ = 0.1), at most 1% of the ETF's median daily dollar volume. Our calculation.</sub>
+
+On their screen volume, the currency funds cap the whole portfolio at about USD 3 million, and short-dated, inflation-linked and foreign bonds at USD 20 to 60 million: a low-volatility market needs a large position for its share of risk, and these funds trade little. Equity and commodity funds can carry hundreds of millions or more. But an ETF's screen volume is not the size of its market, and it misleads in both directions:
+
+- **It understates the deep markets.** FXE trades about USD 11 million a day on screen, but the euro is the second most traded currency in the world, and a fund's shares can be created and redeemed against its holdings by authorised participants, so a large order need not go through the screen at all. For currencies and Treasuries, the limit in the chart is the wrapper's, not the market's.
+- **It can overstate the shallow ones.** A theme fund can trade heavily on screen while holding small companies. A large position in it becomes a large stake in those companies, and then the underlying shares set the limit.
+
+The next step for a growing account is therefore to change the instrument where the wrapper binds, for example currencies through futures or forwards and short-dated bonds through Treasury futures. These are different instruments, with rolls, margin and no income, so their correlations, trend phases and costs would have to be measured again; our free data cannot do that for futures volume. Large funds go further and trade as many markets as they can, not for bets, which stop growing early, but to spread their trading and its impact; that trade-off belongs to the lecture on constraints and capacity.
+
+**What the free data cannot do.** Four limits apply to everything in this lecture. Only surviving funds are in the data (§2.1), which flatters the themes most. We trade a fund, not the market: a fund of foreign shares can trade at a premium or a discount to the value of its holdings while the home market is shut, and every fund charges a fee. The total return of a bond or currency fund includes its interest income, which enters any trend signal computed on it (§4.1). And screen volume is a poor measure of capacity in both directions (above). None of these changes which classes and how many markets; each would shift individual choices.
+
+## 9. Summary
+
+### 9.1 Takeaways
+
+1. **Bets come from classes, not from the number of funds.** 87 equity ETFs make one bet; one ETF per class holds about as many bets as all 116 (§1).
+2. **Few factors are real.** 16 of 116 lie above the noise band of random-matrix theory; the first is risk on or off and carries half the variance (§3).
+3. **Co-movement changes.** Factor 1's share jumps in crises and the bond hedge flipped in 2022, so the universe is reviewed every year on recent data (§3.5).
+4. **Correlation misses the drift.** Two markets are the same trend bet only if they also share their trend phases; mirror images with different interest income can trend the same way (§4).
+5. **Selection effects bias correlations.** Joint falls must be read against what a normal distribution gives in the same weeks, and weeks chosen by one market's falls understate co-movement (§5.1).
+6. **Methods have roles, not votes.** Factors count the bets, the duplicate rule removes copies, a score chooses, the tree and downside correlation check (§5).
+7. **The slots do most of the work.** Among ways to fill them, a score of representativeness, diversification and liquidity, ranked top to bottom, keeps diversification and doubles liquidity, over a flat region of weights (§7).
+8. **Capacity depends on the instrument.** ETF screen volume understates deep markets and can overstate shallow ones (§8).
+
+### 9.2 Exercises
+
+- [ ] Recompute Table 1.1 with equal risk per group of Table 2.1 (eleven groups) instead of per class. How many bets do the themes add?
+- [ ] Show that the eigenvalues of a correlation matrix sum to $`N`$, and that the loading $`e_{ik}\sqrt{\lambda_k}`$ is the correlation of market $`i`$ with factor $`k`$.
+- [ ] Simulate 116 independent weekly series of 1,037 weeks and plot their eigenvalues against the Marchenko-Pastur band. How many exceed its top by chance? Repeat with 156 weeks.
+- [ ] Construct two price series with a weekly correlation of −0.95 whose 26-week trend phases agree, as mirrors, less than 60% of the time. What has to be true of their drifts? Compare with FXE and UUP in 2023-2025 (§4.1).
+- [ ] Rerun the duplicate rule with trend phases of 13 and 52 weeks. Which pairs change status?
+- [ ] Replace the score's percentile ranks with z-scores. Does SPY still lead the equity list, and what happens to the liquidity of the selection?
+- [ ] Rerun §7.2 with reviews every two years and windows of five years. Which result changes most?
+- [ ] For the stage 1 universe, find the capital at which each market binds if the participation limit is 5% instead of 1%, and if a reversal trades the whole position in one day.
+
+### 9.3 Reading list
+
+- Burns, P., Engle, R. F. and Mezrich, J. J. (1998). Correlations and volatilities of asynchronous data. *Journal of Derivatives* 5(4), 7-18. — why closes must be synchronous (§2.2).
+- Choueifaty, Y. and Coignard, Y. (2008). Toward maximum diversification. *Journal of Portfolio Management* 35(1), 40-51. — the diversification ratio (§5, §7).
+- DeMiguel, V., Garlappi, L. and Uppal, R. (2009). Optimal versus naive diversification: how inefficient is the 1/N portfolio strategy? *Review of Financial Studies* 22(5), 1915-1953. — why weights do not use estimated means (§1).
+- Elton, E. J., Gruber, M. J. and Blake, C. R. (1996). Survivor bias and mutual fund performance. *Review of Financial Studies* 9(4), 1097-1120. — survivorship (§2.1).
+- Forbes, K. J. and Rigobon, R. (2002). No contagion, only interdependence: measuring stock market comovements. *Journal of Finance* 57(5), 2223-2261. — selection effects in crisis correlations (§5.1).
+- Friedman, J., Hastie, T. and Tibshirani, R. (2008). Sparse inverse covariance estimation with the graphical lasso. *Biostatistics* 9(3), 432-441. — the graphical lasso (§5).
+- Harding, D. and Pagan, A. (2002). Dissecting the cycle: a methodological investigation. *Journal of Monetary Economics.* — concordance (§4.1).
+- Laloux, L., Cizeau, P., Bouchaud, J.-P. and Potters, M. (1999). Noise dressing of financial correlation matrices. *Physical Review Letters* 83(7), 1467-1470. — the noise band and its scaling (§3.3).
+- Lo, A. (2002). The statistics of Sharpe ratios. *Financial Analysts Journal* 58(4), 36-52. — the standard error of a Sharpe ratio (§1).
+- Longin, F. and Solnik, B. (2001). Extreme correlation of international equity markets. *Journal of Finance* 56(2), 649-676. — correlation in falls (§5).
+- Mantegna, R. N. (1999). Hierarchical structure in financial markets. *European Physical Journal B* 11(1), 193-197. — the spanning tree and hierarchical tree of markets (§5).
+- Marti, G., Nielsen, F., Bińkowski, M. and Donnat, P. (2021). A review of two decades of correlations, hierarchies, networks and clustering in financial markets. In *Progress in Information Geometry*, Springer, 245-274. — survey of the methods of §5.
+- Meucci, A. (2009). Managing diversification. *Risk*, 74-79. — the effective number of bets (§3.6).
+- Onnela, J.-P., Chakraborti, A., Kaski, K., Kertész, J. and Kanto, A. (2003). Dynamics of market correlations: taxonomy and portfolio analysis. *Physical Review E* 68(5), 056110. — the distance $`\sqrt{2(1-\rho)}`$; optimised portfolios on the leaves of the tree (§5).
+- Plerou, V., Gopikrishnan, P., Rosenow, B., Amaral, L. A. N., Guhr, T. and Stanley, H. E. (2002). Random matrix approach to cross correlations in financial data. *Physical Review E* 65(6), 066126. — factors above the noise band (§3.3).
+- Rudin, A. M. and Morgan, J. S. (2006). A portfolio diversification index. *Journal of Portfolio Management* 32(2), 81-89. — the portfolio diversification index (§5).
+
+The bibliographic details above were checked against Crossref, RePEc or the publishers' pages ([results/sources.md](results/sources.md)), except Meucci (2009), whose volume and issue are not confirmed, and Lo (2002) and Harding and Pagan (2002), cited as in Lectures 7 and 3. *References are given from memory and should be checked against the originals before circulation.*
