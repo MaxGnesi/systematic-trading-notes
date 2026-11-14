@@ -84,3 +84,7 @@ The scan's growth × inflation quadrants and the inflation filter are run twice:
 - Lecture 29: regime-driven long-short strategies (economic trend, the FOMC strategies) and combining part-time with always-in strategies (risk budgets, the idle budget).
 - Lecture 30: jump models and the similarity method as portfolio-level filters.
 - Exercises: per-class switching; halving instead of switching off.
+
+## Framing added 2026-11-14, before any result (the user: the approach must be clear to readers)
+
+**The same regime information can be used in two ways: as a switch or as a strategy.** Lecture 28 tests it as a switch (does it tell us when to hold trend?); Lecture 29 tests it as a strategy of its own next to trend (does it add a second return stream that fails at different times?) and combines part-time with always-in strategies. The switch comes first because it is the natural first idea and continues Lecture 8; Lecture 28 also builds the regime series (real time, data as first published) that Lecture 29 reuses without re-testing. The lecture's lead and §1 state this framing.
