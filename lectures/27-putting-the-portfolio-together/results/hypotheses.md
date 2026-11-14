@@ -1,4 +1,4 @@
-# Lecture 27: when positions lose together — plan fixed before any result
+# Lecture 27: putting the portfolio together (first planned as "when positions lose together") — plan fixed before any result
 
 Fixed 2026-11-13, before any number of this lecture was computed. Every later change is dated below with its reason.
 
@@ -69,3 +69,16 @@ Differences against the rule: block bootstrap over calendar months (2,000 resamp
 - **2026-11-13, constant leverage (the user), added after results as a second legitimate way to run the same portfolio, not a rival to beat.** Same proportions (equal risk per market and class); the total scaled each day so that gross exposure stays at the rule's median of the past three years, reached a tenth of the way each day, 5 bp on every change. Presented neutrally (the user): performance, risk over time, drawdowns, storm-after-calm windows, each class's share of capital and of risk; one is called better only if the data show it clearly.
 - **2026-11-14, the overlay isolated (the user: with a correlation overlay, which base is best?).** A 2x2: volatility target set daily on a forecast without correlations, and constant leverage, each with and without the overlay (multiplier: forecast risk ignoring correlations over forecast with them). **Correction of an earlier reading:** the multiplier was above 1 on only 4.4% of days (median 0.7), so the overlay almost never levered up; the 2023 leverage of position-aware risk came from targeting volatility daily on today's positions, which scales small net positions (speeds disagreeing in choppy markets) back up to full risk. The version without correlations did the same (2023: -15.6% against -6.3% for the yearly-scaled rule). The overlay's Sharpe effect is +0.01 and +0.02 (bands about +-0.09); its smaller drawdowns match its lower risk (drawdown over volatility 2.4 in all four).
 - **2026-11-14, equal capital inside the classes (the user), added after results, presented neutrally.** Inside each class every market gets the same average gross exposure (instead of the same risk); classes still at equal risk, the total scaled yearly as in the rule.
+
+## Restructure, 2026-11-14 (the user)
+
+**The lecture becomes "Putting the Portfolio Together": blending speeds inside each market, then markets and classes, then scaling the total.** The correlation overlay and the ideas that grew from it (trend strength, two kinds of low volatility, calm and stacked risk assets) move to the allocation lecture, which deals with correlations across markets; their results stay above. Allocation across markets stays equal risk here (the user: that method was right; the methods are compared in the next lecture). Equal capital inside a class is kept only as a remark on leverage, because it breaks the rule of one method at every level.
+
+**New step, fixed before its results: blending the speeds.** Equal weight per held stream piles risk into the medium band, where neighbouring speeds are nearly the same bet.
+
+- **Rule (one sentence):** inside each market, give the held streams equal risk contributions on their correlation, pooled over all markets, with each stream's risk budget cut by its cost.
+- **Correlation:** gross daily returns of the 36 streams, standardised per market, all in-sample data up to the review; the average of the markets' correlation matrices, each asset class the same total weight (as the vote of Lecture 26). It is mechanical (overlapping look-back windows on the same price), so it should be stable.
+- **Cost:** each stream's marginal cost in the combined position (5 bp times its contribution to the blend's turnover, which nets fast against slow trades) per unit of its risk, in Sharpe-ratio units; the budget is 0.3 minus that cost, where 0.3 is an assumed Sharpe ratio before costs common to all speeds (a prior, not fitted; 0.2 and 0.5 reported as a grid).
+- **Rivals:** equal per stream (the current rule), and correlation only (equal budgets), to separate the two effects.
+- **Measures:** Sharpe ratio after costs out of sample 2013-2026, cost a year, the effective number of independent streams (squared diversification ratio), skew and the 12 worst months of the rule; shown descriptively: skew and behaviour in the worst months by speed.
+- **Expectations:** (1) the effective number of independent streams rises and weight moves from the medium band to the distinct speeds; (2) the Sharpe ratio differs by less than about 0.05; (3) cost falls a little.

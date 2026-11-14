@@ -1,4 +1,4 @@
-"""Lecture 27, when positions lose together (results/hypotheses.md). The rule: Lecture 26's out-of-sample portfolio (volatility only: markets equal
+"""Lecture 27, putting the portfolio together (results/hypotheses.md). The rule: Lecture 26's out-of-sample portfolio (volatility only: markets equal
 risk within a class, classes equal risk, the total scaled to 10% on its past three years). Rival 1, position-aware risk: the total scaled each day
 to 10% on a forecast from today's signed exposures, the markets' six-month volatilities and their weekly correlations over the past three years
 shrunk to the identity (Ledoit-Wolf), reached a tenth of the way each day, 5 bp on every change. Rival 2, groups by trend phase: the classes
