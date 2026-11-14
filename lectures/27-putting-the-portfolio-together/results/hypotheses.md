@@ -110,3 +110,11 @@ Differences against the rule: block bootstrap over calendar months (2,000 resamp
 - **Expectation:** the fast speeds (11-31 days) beat the held set in most episodes; the sleeve cuts the worst months and drawdowns at a small cost in Sharpe ratio.
 
 **Crisis speeds, result (2026-11-14).** Six S&P 500 falls of more than 15%: 2000-02 (-49%), 2007-09 (-57%), 2018 Q4 (-20%), Feb-Mar 2020 (-34%), 2022 (-25%), Feb-Apr 2025 (-19%); futures cover the first five. **No speed beats the held set in two thirds of the episodes on both datasets, so no sleeve is added (as fixed).** The pattern instead depends on the speed of the crisis: in the quick crashes (2018 Q4, 2020, 2025) the fast speeds (11-43 days) earned and the held set lost (ETFs 2020: fast +0.04, held -0.025); in the long bear markets (2000-02, 2008, 2022) the medium speeds earned most (ETFs 2008 and 2022: 89-127 days +0.11 to +0.13) and the held set earned well (+0.085, +0.109). Expectation not met: fast speeds help only when the crisis is fast.
+
+## Take-profit per speed, fixed 2026-11-14 before any result (the user)
+
+- **Rule:** for each stream, the open gain since its signal last changed (sum of sign x daily return), in units of that speed's risk (six-month daily volatility at entry x square root of the speed); above k units the stream goes flat until its signal changes. Positions otherwise as in Lecture 26 (10% / volatility, a tenth of the way each day, 5 bp).
+- **Grid:** k = 2, 3, 4, 5 and none. Only within Lecture 26's held set.
+- **Judged:** ETFs out of sample 2013-2026 with the rule's structure; capstone futures 2003-2022 (Lecture 26's end-2025 held set). Sharpe ratio after costs, worst drawdown, the 12 worst months of the plain version, skew of monthly returns, and the return in each crisis episode inside each period.
+- **Expectations:** (1) it helps in the quick crashes that follow run-ups; (2) it lowers Sharpe ratio and skew overall, because it cuts the large winners; (3) slightly lower Sharpe at k = 2-3, about unchanged at 5.
+- **Exercises, not tested:** halve the position instead of exiting; re-enter after a pullback of one unit.
