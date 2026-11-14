@@ -55,12 +55,17 @@ if __name__ == "__main__":
             mc.append(L26.COST_BP / 1e4 * dmarg.to_numpy() * 252 / len(P) / risk)
         c_s = pd.Series(np.median(mc, axis=0), held)
         W = {"equal": pd.Series(1.0 / len(held), held)}
+        # maximum Sharpe ratio, long only, on the in-sample Sharpe ratios after costs pooled as the correlation (a demonstration of the error maximiser)
+        mu = pd.Series(np.nansum([NET[t].loc[:end, held].apply(L26.sharpe).to_numpy() * w for t, w in zip(ok, cw)], axis=0), held)
+        neg = lambda w: -(w @ mu.to_numpy()) / np.sqrt(w @ C @ w)
+        r = minimize(neg, np.ones(len(held)) / len(held), bounds=[(0, 1)] * len(held), constraints=[{"type": "eq", "fun": lambda w: w.sum() - 1}], method="SLSQP")
+        W["max_sharpe"] = pd.Series(r.x, held).clip(lower=0) / pd.Series(r.x, held).clip(lower=0).sum()
         w, rc = erc(C, np.ones(len(held))); W["correlation"] = pd.Series(w, held)
         for p in PRIORS:
             b = p - c_s
             if (b <= 0).any(): print(y, "budget not positive for", list(b[b <= 0].index), "at prior", p)
             w, rc = erc(C, np.maximum(b.to_numpy(), 1e-6) if (b <= 0).any() else b.to_numpy()); W[f"cost_{p}"] = pd.Series(w, held)
-        out["reviews"][str(y)] = dict(held=held, cost=c_s.round(4).to_dict(), weights={k: v.round(4).to_dict() for k, v in W.items()},
+        out["reviews"][str(y)] = dict(held=held, cost=c_s.round(4).to_dict(), weights={k: v.round(4).to_dict() for k, v in W.items()}, sharpe_in_sample=mu.round(3).to_dict(),
                                       bets={k: bets(C, v.to_numpy()) for k, v in W.items()}, corr=C36.round(3).to_dict())
         # out of sample: the rule's portfolio with each blend
         uni = universe[str(y)]["sc_div"]; row = {}
@@ -72,5 +77,5 @@ if __name__ == "__main__":
         days.append(pd.DataFrame(row))
         print(y, len(ok), "markets |", "bets:", {k: round(v, 2) for k, v in out["reviews"][str(y)]["bets"].items()}, "| cost range", round(c_s.min(), 3), round(c_s.max(), 3), flush=True)
     Dd = pd.concat(days); Dd.to_parquet(M.OUT / "l27_speeds_daily.parquet")
-    out["oos"] = {k: L26.sharpe(Dd[k]) for k in ["equal", "correlation"] + [f"cost_{p}" for p in PRIORS]}
+    out["oos"] = {k: L26.sharpe(Dd[k]) for k in ["equal", "correlation", "max_sharpe"] + [f"cost_{p}" for p in PRIORS]}
     (M.RESULTS / "speeds.json").write_text(json.dumps(out, indent=1), encoding="utf-8"); print(out["oos"])
