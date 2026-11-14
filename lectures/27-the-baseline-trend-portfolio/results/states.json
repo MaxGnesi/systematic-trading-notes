@@ -1,0 +1,250 @@
+{
+ "states": {
+  "high vol, chop": {
+   "n": 5528,
+   "vol_jump_median": 0.8428,
+   "vol_jump_share_over_1_5": 0.0649,
+   "trend_mean": 0.0177,
+   "trend_median": -0.1284
+  },
+  "high vol, smooth trend": {
+   "n": 5208,
+   "vol_jump_median": 0.8981,
+   "vol_jump_share_over_1_5": 0.0613,
+   "trend_mean": 0.1351,
+   "trend_median": 0.0033
+  },
+  "low vol, chop": {
+   "n": 6466,
+   "vol_jump_median": 0.9466,
+   "vol_jump_share_over_1_5": 0.105,
+   "trend_mean": 0.0175,
+   "trend_median": -0.1459
+  },
+  "low vol, smooth trend": {
+   "n": 6099,
+   "vol_jump_median": 0.9982,
+   "vol_jump_share_over_1_5": 0.1248,
+   "trend_mean": 0.0863,
+   "trend_median": -0.0121
+  }
+ },
+ "states_by_class": [
+  {
+   "cls": "Commodities",
+   "state": "high vol, chop",
+   "n": 372,
+   "vol_jump": 0.8611,
+   "trend": 0.1045
+  },
+  {
+   "cls": "Commodities",
+   "state": "high vol, smooth trend",
+   "n": 504,
+   "vol_jump": 0.9346,
+   "trend": 0.1584
+  },
+  {
+   "cls": "Commodities",
+   "state": "low vol, chop",
+   "n": 595,
+   "vol_jump": 0.9438,
+   "trend": 0.054
+  },
+  {
+   "cls": "Commodities",
+   "state": "low vol, smooth trend",
+   "n": 432,
+   "vol_jump": 1.0226,
+   "trend": 0.1108
+  },
+  {
+   "cls": "Credit",
+   "state": "high vol, chop",
+   "n": 233,
+   "vol_jump": 0.7735,
+   "trend": -0.0441
+  },
+  {
+   "cls": "Credit",
+   "state": "high vol, smooth trend",
+   "n": 172,
+   "vol_jump": 0.8781,
+   "trend": 0.1569
+  },
+  {
+   "cls": "Credit",
+   "state": "low vol, chop",
+   "n": 297,
+   "vol_jump": 0.9346,
+   "trend": 0.0459
+  },
+  {
+   "cls": "Credit",
+   "state": "low vol, smooth trend",
+   "n": 336,
+   "vol_jump": 0.8781,
+   "trend": 0.1904
+  },
+  {
+   "cls": "Equity",
+   "state": "high vol, chop",
+   "n": 4268,
+   "vol_jump": 0.842,
+   "trend": -0.0031
+  },
+  {
+   "cls": "Equity",
+   "state": "high vol, smooth trend",
+   "n": 3809,
+   "vol_jump": 0.8809,
+   "trend": 0.1275
+  },
+  {
+   "cls": "Equity",
+   "state": "low vol, chop",
+   "n": 4535,
+   "vol_jump": 0.9519,
+   "trend": 0.0185
+  },
+  {
+   "cls": "Equity",
+   "state": "low vol, smooth trend",
+   "n": 4469,
+   "vol_jump": 1.0024,
+   "trend": 0.0795
+  },
+  {
+   "cls": "FX",
+   "state": "high vol, chop",
+   "n": 361,
+   "vol_jump": 0.8203,
+   "trend": -0.0221
+  },
+  {
+   "cls": "FX",
+   "state": "high vol, smooth trend",
+   "n": 373,
+   "vol_jump": 0.9436,
+   "trend": 0.156
+  },
+  {
+   "cls": "FX",
+   "state": "low vol, chop",
+   "n": 552,
+   "vol_jump": 0.9362,
+   "trend": 0.0386
+  },
+  {
+   "cls": "FX",
+   "state": "low vol, smooth trend",
+   "n": 488,
+   "vol_jump": 1.0038,
+   "trend": 0.0031
+  },
+  {
+   "cls": "Rates",
+   "state": "high vol, chop",
+   "n": 294,
+   "vol_jump": 0.9291,
+   "trend": 0.3079
+  },
+  {
+   "cls": "Rates",
+   "state": "high vol, smooth trend",
+   "n": 350,
+   "vol_jump": 0.9785,
+   "trend": 0.1503
+  },
+  {
+   "cls": "Rates",
+   "state": "low vol, chop",
+   "n": 487,
+   "vol_jump": 0.9375,
+   "trend": -0.0781
+  },
+  {
+   "cls": "Rates",
+   "state": "low vol, smooth trend",
+   "n": 374,
+   "vol_jump": 0.9806,
+   "trend": 0.153
+  }
+ ],
+ "strength_vs_aware": {
+  "corr_daily": -0.5275919288667494,
+  "corr_monthly": -0.5484645862734924,
+  "corr_monthly_changes": -0.47699074565598143
+ },
+ "calm_stacked": {
+  "episodes": [
+   {
+    "start": "2014-06-12",
+    "end": "2014-08-26",
+    "days": 53,
+    "long_share": 0.8473413379073758,
+    "calm": 0.7569324830331396,
+    "rule_next63": 0.08489361001656791,
+    "rule_vol_next63": 0.12127502706177024
+   },
+   {
+    "start": "2016-10-07",
+    "end": "2016-11-09",
+    "days": 24,
+    "long_share": 0.8825757575757575,
+    "calm": 0.95676674380937,
+    "rule_next63": -0.034836247251121194,
+    "rule_vol_next63": 0.09355085844520267
+   },
+   {
+    "start": "2017-08-29",
+    "end": "2017-12-13",
+    "days": 75,
+    "long_share": 0.8555555555555556,
+    "calm": 0.654868215765172,
+    "rule_next63": -0.018925857257304682,
+    "rule_vol_next63": 0.13775510578387193
+   },
+   {
+    "start": "2018-01-04",
+    "end": "2018-02-13",
+    "days": 28,
+    "long_share": 0.8422619047619045,
+    "calm": 0.7232652143501843,
+    "rule_next63": 0.011269924508125927,
+    "rule_vol_next63": 0.10116463782897495
+   },
+   {
+    "start": "2019-12-17",
+    "end": "2020-01-31",
+    "days": 31,
+    "long_share": 0.9112903225806452,
+    "calm": 0.9305944869869915,
+    "rule_next63": -0.07086565706381093,
+    "rule_vol_next63": 0.23831455596451645
+   },
+   {
+    "start": "2024-07-05",
+    "end": "2024-08-07",
+    "days": 24,
+    "long_share": 0.8571428571428571,
+    "calm": 0.8727940268380401,
+    "rule_next63": 0.014962528458623368,
+    "rule_vol_next63": 0.08763449901688963
+   },
+   {
+    "start": "2025-10-15",
+    "end": "2026-02-05",
+    "days": 78,
+    "long_share": 0.8461538461538458,
+    "calm": 0.9458485583782206,
+    "rule_next63": 0.0016723641206049034,
+    "rule_vol_next63": 0.1120103527732539
+   }
+  ],
+  "baseline": {
+   "share_of_days_in_state": 0.11267201834862385,
+   "rule_next63_all_days_mean": 0.012267140802655337
+  }
+ }
+}

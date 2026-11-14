@@ -1,0 +1,67 @@
+{
+ "held": [
+  "ewma_43",
+  "ewma_61",
+  "ewma_89",
+  "ewma_127",
+  "ewma_179",
+  "ewma_251",
+  "ewma_359",
+  "breakout_61",
+  "breakout_89",
+  "breakout_127",
+  "breakout_179",
+  "breakout_251",
+  "breakout_359",
+  "return_43",
+  "return_61",
+  "return_89",
+  "return_127",
+  "return_179",
+  "return_251",
+  "return_359"
+ ],
+ "years": "2003-2022",
+ "markets": [
+  "cme-es",
+  "cme-nasdaq",
+  "cme-euro",
+  "cme-jpy",
+  "ice-us-dollar-index",
+  "nymex-cl",
+  "nymex-ng",
+  "comex-gc",
+  "cbot-corn",
+  "cbot-soybeans",
+  "cbot-wheat",
+  "ice-cocoa",
+  "VFITX",
+  "VUSTX"
+ ],
+ "sharpe": {
+  "equal": 0.46585686247607666,
+  "tilt": 0.44333244902894736
+ },
+ "vol": {
+  "equal": 0.10876184575305023,
+  "tilt": 0.10838879481909408
+ },
+ "drawdown": {
+  "equal": -0.2661685347557068,
+  "tilt": -0.2491159693781806
+ },
+ "worst12": {
+  "equal": -0.6779822111129761,
+  "tilt": -0.6850983253764242
+ },
+ "diff": -0.0225244134471293,
+ "ci90": [
+  -0.06912674147040873,
+  0.02643012302065361
+ ],
+ "state_share": {
+  "calm": 0.13314546839299315,
+  "normal": 0.7093221629855293,
+  "storm": 0.15753236862147754
+ }
+}
