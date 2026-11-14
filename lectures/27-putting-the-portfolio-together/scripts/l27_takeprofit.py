@@ -66,6 +66,17 @@ def portfolio(B, uni_of, reviews):
     return pd.concat(rows).dropna()
 
 
+def bands(D, cols=("4.0", "5.0", "3.0"), n=2000, seed=20261114):
+    """Sharpe ratio difference against no take-profit, 90% band, block bootstrap over calendar months."""
+    mo = D.index.to_period("M"); um = mo.unique(); idx = {u: np.where(mo == u)[0] for u in um}; rng = np.random.default_rng(seed); out = {}
+    for c in cols:
+        b = []
+        for _ in range(n):
+            ii = np.concatenate([idx[um[i]] for i in rng.choice(len(um), len(um))]); b.append(L26.sharpe(D[c].iloc[ii]) - L26.sharpe(D["None"].iloc[ii]))
+        out[c] = dict(diff=L26.sharpe(D[c]) - L26.sharpe(D["None"]), ci90=[float(np.quantile(b, .05)), float(np.quantile(b, .95))])
+    return out
+
+
 def measures(D, EP):
     mo = D.index.to_period("M"); worst = D["None"].groupby(mo).sum().nsmallest(12).index
     dd = lambda x: float(((1 + x).cumprod() / (1 + x).cumprod().cummax() - 1).min())
@@ -92,7 +103,7 @@ if __name__ == "__main__":
     for y in range(2012, 2026):
         Bk = {k: {t: per[t][k][heldy[y]].mean(axis=1) for t in names} for k in KS}
         rowsD.append(portfolio(Bk, uni_of, [y]))
-    D = pd.concat(rowsD); res["etf"] = measures(D, EP); print("ETFs 2013-2026:"); print(pd.DataFrame({c: {k: v for k, v in d.items() if k != "episodes"} for c, d in res["etf"].items()}).round(3).to_string())
+    D = pd.concat(rowsD); D.to_parquet(M.OUT / "l27_tp_etf.parquet"); res["etf"] = measures(D, EP); res["etf_bands"] = bands(D); print("bands ETFs:", res["etf_bands"]); print("ETFs 2013-2026:"); print(pd.DataFrame({c: {k: v for k, v in d.items() if k != "episodes"} for c, d in res["etf"].items()}).round(3).to_string())
     print(pd.DataFrame({c: d["episodes"] for c, d in res["etf"].items()}).round(3).to_string(), flush=True)
     # futures
     S = pd.read_pickle(FT.CACHE); px = {k: S[k]["ratio"] for k in S if k in FT.CLASS}
@@ -107,7 +118,7 @@ if __name__ == "__main__":
     fu = {}
     for t, k in FT.CLASS.items(): fu.setdefault(k, []).append(t)
     uf = lambda y: {k: [t for t in m if BF[None][t].loc[f"{y - 2}":f"{y}"].notna().sum() > 500] for k, m in fu.items() if any(BF[None][t].loc[f"{y - 2}":f"{y}"].notna().sum() > 500 for t in m)}
-    DF = portfolio(BF, uf, range(2002, 2022)); res["futures"] = measures(DF, EP)
+    DF = portfolio(BF, uf, range(2002, 2022)); DF.to_parquet(M.OUT / "l27_tp_futures.parquet"); res["futures"] = measures(DF, EP); res["futures_bands"] = bands(DF); print("bands futures:", res["futures_bands"])
     print("futures 2003-2022:"); print(pd.DataFrame({c: {k: v for k, v in d.items() if k != "episodes"} for c, d in res["futures"].items()}).round(3).to_string())
     print(pd.DataFrame({c: d["episodes"] for c, d in res["futures"].items()}).round(3).to_string())
     (M.RESULTS / "takeprofit.json").write_text(json.dumps(res, indent=1), encoding="utf-8")
