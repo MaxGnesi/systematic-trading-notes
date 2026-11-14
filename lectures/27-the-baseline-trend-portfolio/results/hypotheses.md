@@ -1,4 +1,4 @@
-# Lecture 27: putting the portfolio together (first planned as "when positions lose together") — plan fixed before any result
+# Lecture 27: the baseline trend portfolio (first planned as "when positions lose together", then "putting the portfolio together") — plan fixed before any result
 
 Fixed 2026-11-13, before any number of this lecture was computed. Every later change is dated below with its reason.
 
@@ -140,3 +140,7 @@ Reading: at k = 4-5 the Sharpe ratio is unchanged or slightly higher on both dat
 **Take-profit, bands (2026-11-14).** Sharpe ratio difference against no take-profit, 90% band, block bootstrap over months: ETFs k=3 -0.05 (-0.17 to +0.07), k=4 -0.00 (-0.09 to +0.09), k=5 +0.01 (-0.06 to +0.08); futures k=3 -0.01 (-0.10 to +0.08), k=4 +0.02 (-0.04 to +0.09), k=5 +0.03 (-0.01 to +0.07). No difference is distinguishable from zero: the take-profit is an option with known trade-offs (higher skew, smaller losses in quick crashes, less in long bear markets), not an improvement in return.
 
 **Stress scenarios (2026-11-14).** Today's portfolio (end-2025 markets, held speeds, all scales from 2023-2025) replayed through the six episodes; breakout on closes. Plain / take-profit 4: 2007-09 +35% / +38% (drawdown inside -13% / -11%); 2018 Q4 -3% / -2%; Feb-Mar 2020 **-18% / -13%** (drawdown -24% / -17%, worst day -7.3% / -4.8%; credit -16% / -12%, commodities +8%); 2022 +41% / +33%; Feb-Apr 2025 -7% / -7%. 2000-02 covers only 5 of 20 markets (equity), not comparable. Reading: the worst case is a quick crash hitting long, levered credit sized on calm years; the take-profit cuts that case by about a third and gives up about a fifth of the 2022 gain.
+
+## Renamed and placed, 2026-11-14 (the user)
+
+**"The Baseline Trend Portfolio".** The user: "we talk about putting together portfolios but we don't really put it together, we put it together again later". This lecture builds the baseline (equal risk at every level: speeds, markets, classes, total), with its choices and trade-offs; every later lecture changes one part and must beat it out of sample. The portfolio is assembled only in the last lecture. Part V order agreed: L28 part-time strategies (with their statistics); L29 combining part-time and always-in strategies; L30 allocation methods (across everything; takes the overlay and the parked ideas); L31 constraints, capacity and trading; L32 capstone: putting it all together, judged with the full set of statistics and a real-time regime scan (growth x inflation, Fed, volatility, contango or backwardation, dollar); course close.
