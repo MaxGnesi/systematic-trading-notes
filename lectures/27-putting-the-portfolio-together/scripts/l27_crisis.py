@@ -11,6 +11,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parent)); import l27 as M, l27_f
 L26 = M.L26; SLEEVES = (0.0, 0.1, 0.2, 0.3)
 
 
+def spx():
+    """S&P 500 closes 1999-2026 from Yahoo (^GSPC), saved locally on the first call."""
+    f = FT.RAW / "l27_spx.csv"
+    if not f.exists(): yf.download("^GSPC", start="1999-06-01", end="2026-12-31", auto_adjust=True, progress=False)["Close"].to_csv(f)
+    return pd.read_csv(f, index_col=0, parse_dates=True).iloc[:, 0]
+
+
 def episodes(p, fall=0.15):
     out, peak, pt, low, lt, inep = [], p.iloc[0], p.index[0], None, None, False
     for t, v in p.items():
@@ -32,7 +39,7 @@ def class_mean(df, cls):
 def futures_streams():
     S = pd.read_pickle(FT.CACHE); px = {k: S[k]["ratio"] for k in S if k in FT.CLASS}
     tb = pd.to_numeric(pd.read_csv(FT.RAW / "fred_DTB3.csv", index_col=0, parse_dates=True).iloc[:, 0], errors="coerce")
-    fx = yf.download(["VFITX", "VUSTX"], start="1998-01-01", end="2023-01-01", auto_adjust=True, progress=False)["Close"]
+    fx = FT.bond_funds()
     for t in ("VFITX", "VUSTX"):
         r = fx[t].pct_change() - (tb.reindex(fx.index).ffill() / 100 / 252).shift(1); px[t] = 100 * (1 + r.fillna(0)).cumprod()
     out = {}
@@ -59,8 +66,7 @@ def evaluate(NET, cls, held, sleeve, reviews, uni_of):
 
 
 if __name__ == "__main__":
-    spx = yf.download("^GSPC", start="1999-06-01", end="2026-12-31", auto_adjust=True, progress=False)["Close"].squeeze()
-    EP = episodes(spx.loc["2000":]); print("episodes:", [(str(a.date()), str(b.date())) for a, b in EP], flush=True)
+    spx = spx(); EP = episodes(spx.loc["2000":]); print("episodes:", [(str(a.date()), str(b.date())) for a, b in EP], flush=True)
     close, high, low, dv, rf = L26.load_daily()
     ETF = {t: L26.net(pd.read_parquet(L26.OUT / "streams" / f"{t}.parquet")) for t in close.columns if (L26.OUT / "streams" / f"{t}.parquet").exists()}
     FUT = futures_streams()

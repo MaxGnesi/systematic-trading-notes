@@ -16,12 +16,20 @@ CLASS = {"cme-es": "eq", "cme-nasdaq": "eq", "cme-euro": "fx", "cme-jpy": "fx", 
          "comex-gc": "mt", "cbot-corn": "ag", "cbot-soybeans": "ag", "cbot-wheat": "ag", "ice-cocoa": "ag", "VFITX": "bd", "VUSTX": "bd"}
 HELD = [k for k, v in M.SEL["2025"]["weights"]["one_set"].items() if v >= 0.2]
 SPEED = pd.Series({k: int(k.split("_")[1]) for k in HELD})
+BONDS = RAW / "l27_vfitx_vustx.csv"                                         # saved once, so every run uses the same download
+
+
+def bond_funds():
+    """Adjusted closes of VFITX and VUSTX 1998-2022 from Yahoo, saved locally on the first call."""
+    if not BONDS.exists():
+        import yfinance as yf
+        yf.download(["VFITX", "VUSTX"], start="1998-01-01", end="2023-01-01", auto_adjust=True, progress=False)["Close"].to_csv(BONDS)
+    return pd.read_csv(BONDS, index_col=0, parse_dates=True)
 
 if __name__ == "__main__":
     S = pd.read_pickle(CACHE); px = {k: S[k]["ratio"] for k in S if k in CLASS}
     tb = pd.to_numeric(pd.read_csv(RAW / "fred_DTB3.csv", index_col=0, parse_dates=True).iloc[:, 0], errors="coerce")
-    import yfinance as yf
-    fx = yf.download(["VFITX", "VUSTX"], start="1998-01-01", end="2023-01-01", auto_adjust=True, progress=False)["Close"]
+    fx = bond_funds()
     for t in ("VFITX", "VUSTX"):
         r = fx[t].pct_change() - (tb.reindex(fx.index).ffill() / 100 / 252).shift(1); px[t] = 100 * (1 + r.fillna(0)).cumprod()
     c = SPEED.rank(method="dense"); c = 2 * (c - c.min()) / (c.max() - c.min()) - 1          # -1 fastest ... +1 slowest held speed

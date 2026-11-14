@@ -72,14 +72,14 @@ def measures(D, EP):
     out = {}
     for c in D:
         m = D[c].groupby(mo).sum()
-        out[c] = dict(sharpe=L26.sharpe(D[c]), drawdown=dd(D[c]), worst12=float(D[c][mo.isin(worst)].sum()), skew_monthly=float(m.skew()),
+        out[c] = dict(sharpe=L26.sharpe(D[c]), vol=float(D[c].std() * np.sqrt(252)), drawdown=dd(D[c]), dd_over_vol=dd(D[c]) / float(D[c].std() * np.sqrt(252)), worst12_over_vol=float(D[c][mo.isin(worst)].sum()) / float(D[c].std() * np.sqrt(252)), worst12=float(D[c][mo.isin(worst)].sum()), skew_monthly=float(m.skew()),
                       episodes={f"{a.date()} to {b.date()}": float(D[c].loc[a:b].sum()) for a, b in EP if a >= D.index[0] and b <= D.index[-1]})
     return out
 
 
 if __name__ == "__main__":
     import yfinance as yf
-    spx = yf.download("^GSPC", start="1999-06-01", end="2026-12-31", auto_adjust=True, progress=False)["Close"].squeeze(); EP = CR.episodes(spx.loc["2000":])
+    spx = CR.spx(); EP = CR.episodes(spx.loc["2000":])
     close, high, low, dv, rf = L26.load_daily(); res = {}
     names = sorted({t for y in range(2012, 2026) for k, mk in M.UNI[str(y)]["sc_div"].items() for t in mk})
     heldy = {y: [k for k, v in M.SEL[str(y)]["weights"]["one_set"].items() if v >= 0.2] for y in range(2012, 2026)}
@@ -97,7 +97,7 @@ if __name__ == "__main__":
     # futures
     S = pd.read_pickle(FT.CACHE); px = {k: S[k]["ratio"] for k in S if k in FT.CLASS}
     tb = pd.to_numeric(pd.read_csv(FT.RAW / "fred_DTB3.csv", index_col=0, parse_dates=True).iloc[:, 0], errors="coerce")
-    fx = yf.download(["VFITX", "VUSTX"], start="1998-01-01", end="2023-01-01", auto_adjust=True, progress=False)["Close"]
+    fx = FT.bond_funds()
     for t in ("VFITX", "VUSTX"):
         r = fx[t].pct_change() - (tb.reindex(fx.index).ffill() / 100 / 252).shift(1); px[t] = 100 * (1 + r.fillna(0)).cumprod()
     held25 = heldy[2025]; BF = {k: {} for k in KS}
