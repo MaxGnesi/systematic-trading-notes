@@ -117,4 +117,5 @@ Differences against the rule: block bootstrap over calendar months (2,000 resamp
 - **Grid:** k = 2, 3, 4, 5 and none. Only within Lecture 26's held set.
 - **Judged:** ETFs out of sample 2013-2026 with the rule's structure; capstone futures 2003-2022 (Lecture 26's end-2025 held set). Sharpe ratio after costs, worst drawdown, the 12 worst months of the plain version, skew of monthly returns, and the return in each crisis episode inside each period.
 - **Expectations:** (1) it helps in the quick crashes that follow run-ups; (2) it lowers Sharpe ratio and skew overall, because it cuts the large winners; (3) slightly lower Sharpe at k = 2-3, about unchanged at 5.
-- **Exercises, not tested:** halve the position instead of exiting; re-enter after a pullback of one unit.
+- **Exercise, not tested:** halve the position instead of exiting.
+- **Added 2026-11-14 before any result (the user): re-entry after a pullback of one unit.** After a take-profit, the stream re-enters when the price has pulled back one unit from its best level since the exit; the re-entry is a new trade (gain reset, next take-profit after another k units). Reported next to exit-until-the-signal-changes.
