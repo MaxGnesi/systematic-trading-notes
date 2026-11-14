@@ -88,3 +88,12 @@ The scan's growth × inflation quadrants and the inflation filter are run twice:
 ## Framing added 2026-11-14, before any result (the user: the approach must be clear to readers)
 
 **The same regime information can be used in two ways: as a switch or as a strategy.** Lecture 28 tests it as a switch (does it tell us when to hold trend?); Lecture 29 tests it as a strategy of its own next to trend (does it add a second return stream that fails at different times?) and combines part-time with always-in strategies. The switch comes first because it is the natural first idea and continues Lecture 8; Lecture 28 also builds the regime series (real time, data as first published) that Lecture 29 reuses without re-testing. The lecture's lead and §1 state this framing.
+
+## Data check, 2026-11-14, before any result
+
+- **Philadelphia Fed Real-Time Data Set** (free, no account): CPI (PCPI, monthly vintages from November 1998) and industrial production (IPT, monthly vintages from November 1962); each vintage holds the full history as known then. Both available as planned.
+- **Clarifications (no result seen):** a vintage dated month m reflects data available in the middle of that month, so it is used from the 16th of month m (one day's lag). "Its own history to date" for a macro measure is the measure over the full history of the vintage in use that day, so the threshold is as known that day and is available from the first test day.
+- **Commodity curves: kept.** The capstone futures are stored one file per contract, and neighbouring contracts overlap (crude oil: 276 contracts). Commodities: crude oil, natural gas, gold, corn, soybeans, wheat, cocoa. On each day the front contract is the nearest one more than five trading days before its last day in the data, the next is the following contract; the gap is the log of front over next, annualised by the days between the two contracts' last trading days.
+- **Revised data for the look-ahead demonstration:** FRED CPIAUCSL and INDPRO, downloaded once and saved locally.
+- **Market-state series:** VIX (FRED VIXCLS), 10-year minus 2-year yield (FRED T10Y2Y), broad dollar index (FRED DTWEXBGS from 2006, spliced to DTWEXB before, on their overlap), Fed target (FRED DFEDTAR to 2008-12-15, DFEDTARU after).
+- Reading the Philadelphia Fed's files needs the free package openpyxl, added to the requirements.
