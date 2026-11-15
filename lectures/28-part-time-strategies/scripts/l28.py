@@ -24,6 +24,7 @@ PREFIX = os.environ.get("L28_PREFIX", "")
 COST_BP, LAMBDA = 5.0, 0.10
 FRACS = {"still": (0.25, 1 / 3, 0.5), "busy": (0.75, 2 / 3, 0.5)}           # threshold grid; the middle value is the fixed one
 FUT_START, ETF_START = "2006-01-01", "2013-01-01"
+END = {"etf": None, "futures": "2022-11-18"}   # futures: last week with all 14 markets; the capstone data run out market by market in December 2022 (dated correction 2026-11-15)
 FRED = ("DFEDTAR", "DFEDTARU", "T10Y2Y", "DTWEXB", "DTWEXBGS", "VIXCLS", "CPIAUCSL", "INDPRO")
 PHILLY = {"PCPI": "pcpiMvMd.xlsx", "IPT": "iptMvMd.xlsx"}
 

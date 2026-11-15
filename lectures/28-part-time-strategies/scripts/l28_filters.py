@@ -85,7 +85,7 @@ def bh(p, q=0.10):
 if __name__ == "__main__":
     apply_theme(); B = pd.read_parquet(L.OUT / "l28_base.parquet"); out = {"datasets": {}}; lam, cost = L.LAMBDA, L.COST_BP / 1e4
     for di, (tag, start) in enumerate((("etf", L.ETF_START), ("futures", L.FUT_START))):
-        base = B[tag].dropna().loc[start:]; G = pd.read_parquet(L.OUT / f"l28_regimes_{tag}.parquet").reindex(base.index)
+        base = B[tag].dropna().loc[start:L.END[tag]]; G = pd.read_parquet(L.OUT / f"l28_regimes_{tag}.parquet").reindex(base.index)
         ret, gross = base.ret.to_numpy(), base.gross.to_numpy(); res = {"baseline": measures(base.ret, base.ret, pd.Series(False, base.index))}
         for lev in range(3):
             F = offs(G, lev)

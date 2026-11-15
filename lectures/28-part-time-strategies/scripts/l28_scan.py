@@ -31,7 +31,7 @@ def band(r, mask, n=2000, seed=20261115):
 if __name__ == "__main__":
     apply_theme(); B = pd.read_parquet(L.OUT / "l28_base.parquet"); out = {}
     for tag, start in (("etf", L.ETF_START), ("futures", L.FUT_START)):
-        base = B[tag].dropna().loc[start:]; G = pd.read_parquet(L.OUT / f"l28_regimes_{tag}.parquet").reindex(base.index); r = base.ret; out[tag] = {}
+        base = B[tag].dropna().loc[start:L.END[tag]]; G = pd.read_parquet(L.OUT / f"l28_regimes_{tag}.parquet").reindex(base.index); r = base.ret; out[tag] = {}
         for k, _ in MACRO + MARKET:
             f = off_flag(G, k); ok = f.notna(); m = f[ok].astype(bool); rr = r[ok]
             out[tag][k] = dict(share_off=float(m.mean()), sharpe_off=L26.sharpe(rr[m]), sharpe_on=L26.sharpe(rr[~m]),
@@ -58,7 +58,7 @@ if __name__ == "__main__":
                         legendgroup="off", showlegend=c == 0, row=1, col=c + 1)
         for k, n in rows:
             fig.add_shape(type="line", x0=S[k]["sharpe_off"], x1=S[k]["sharpe_on"], y0=n, y1=n, line=dict(color=MUTED, width=1), row=1, col=c + 1)
-        fig.add_vline(x=L26.sharpe(B[tag].dropna().loc[(L.ETF_START if tag == "etf" else L.FUT_START):].ret), line=dict(color=INK, width=1, dash="dot"), row=1, col=c + 1)
+        fig.add_vline(x=L26.sharpe(B[tag].dropna().loc[(L.ETF_START if tag == "etf" else L.FUT_START):L.END[tag]].ret), line=dict(color=INK, width=1, dash="dot"), row=1, col=c + 1)
         fig.update_xaxes(title_text="Sharpe ratio of the baseline, after costs", row=1, col=c + 1)
     fig.add_hrect(y0=-0.5, y1=2.5, fillcolor=MUTED, opacity=0.08, line_width=0, row=1, col=1); fig.add_hrect(y0=-0.5, y1=2.5, fillcolor=MUTED, opacity=0.08, line_width=0, row=1, col=2)
     fig.update_yaxes(autorange="reversed", row=1, col=1)

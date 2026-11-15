@@ -15,7 +15,7 @@ LAB = ["below, falling", "below, rising", "above, falling", "above, rising"]
 if __name__ == "__main__":
     apply_theme(); B = pd.read_parquet(L.OUT / "l28_base.parquet"); vix = L.fred("VIXCLS"); out = {}
     for tag, start in (("etf", L.ETF_START), ("futures", L.FUT_START)):
-        base = B[tag].dropna().loc[start:]; G = pd.read_parquet(L.OUT / f"l28_regimes_{tag}.parquet")
+        base = B[tag].dropna().loc[start:L.END[tag]]; G = pd.read_parquet(L.OUT / f"l28_regimes_{tag}.parquet")
         v = vix.reindex(pd.bdate_range("1990-01-01", base.index[-1])).ffill(); c = G[("correlation", "measure")]
         for k, (lvl, chg) in {"volatility": (v.rolling(21).mean(), np.log(v) - np.log(v.shift(63))), "correlation": (c, c.diff(63))}.items():
             l = lvl.shift(1); above = (l > l.expanding(1260).mean()).reindex(base.index); up = (chg.shift(1) > 0).reindex(base.index)

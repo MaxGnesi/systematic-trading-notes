@@ -20,7 +20,7 @@ if __name__ == "__main__":
                                         "Correlation across markets: ETFs", "Correlation across markets: capstone futures"))
     FIFTHS = ["lowest fifth", "second", "middle", "fourth", "highest fifth"]
     for c, (tag, start) in enumerate((("etf", L.ETF_START), ("futures", L.FUT_START))):
-        base = B[tag].dropna().loc[start:]; G = pd.read_parquet(L.OUT / f"l28_regimes_{tag}.parquet")
+        base = B[tag].dropna().loc[start:L.END[tag]]; G = pd.read_parquet(L.OUT / f"l28_regimes_{tag}.parquet")
         v = vix.reindex(pd.bdate_range("1990-01-01", base.index[-1])).ffill()
         series = {"volatility": (v.rolling(21).mean(), np.log(v) - np.log(v.shift(63))),                 # level; 3-month change
                   "correlation": (G[("correlation", "measure")], G[("correlation", "measure")].diff(63))}

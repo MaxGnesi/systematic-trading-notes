@@ -31,7 +31,7 @@ def spans(q):
 
 
 if __name__ == "__main__":
-    apply_theme(); B = pd.read_parquet(L.OUT / "l28_base.parquet"); tag = "futures"; base = B[tag].dropna().loc[L.FUT_START:"2022-11-18"]   # last week with all 14 markets; the data run out in December 2022
+    apply_theme(); B = pd.read_parquet(L.OUT / "l28_base.parquet"); tag = "futures"; base = B[tag].dropna().loc[L.FUT_START:L.END[tag]]
     LABEL = {"volatility": ("VIX", "VIX level against its average to date (log ratio)", "3-month change of the VIX (log)"),
              "correlation": ("correlation", "correlation against its average to date (log ratio)", "3-month change of the correlation")}
     # ---- regime clock
