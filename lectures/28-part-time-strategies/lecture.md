@@ -19,12 +19,14 @@ The switch comes first because it is the natural first idea and continues Lectur
 
 **The rule in one sentence** (our proposal). *Trade trend while the regime is moving; step aside while it stands still*, where for each variable the unfavourable state was fixed before any result (§3). Off means the whole portfolio's target position is zero; it is reached a tenth of the way each day, like every position since Lecture 26, and every change costs 5 bp.
 
-The lecture's result fits in one chart.
+The lecture's central point fits in one chart: the best regime filter we found, against always-in.
 
-![A part-time strategy against always-in](figures/28_key.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> x: the share of days a filter keeps the baseline trend portfolio on; y: the portfolio's Sharpe ratio after costs over all days, idle days included (they earn the cash rate, zero excess return). Left: ETFs, out of sample 2013-2026; right: capstone futures 2006 to 18 November 2022 (the data run out market by market in December 2022). Dots: one per filter at its fixed threshold (blue: macro; orange: market state; green: both families combined). Dotted line: always in. Dashed curve: what time in the market alone gives, the always-in Sharpe ratio times the square root of the share of days on (Lecture 7 §4.3). Grey bars: 1,000 random switches per filter with the same time in the market and the same spell lengths, from their median to their 95th percentile. Our calculation.</sub>
+![A higher Sharpe ratio, a lower return](figures/28_key.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> x: time, 2006 to 18 November 2022 (the capstone futures run out market by market in December 2022); y: the value of 100 invested, excess return over cash, after costs. Black: the baseline trend portfolio, always in. Solid blue: the same portfolio switched off while US growth stands still (the growth filter of §2.3), as it would have been run. Dashed blue: the solid blue line scaled after the fact to the same volatility as always-in (× 1.33), a comparison, not a strategy that could have been run. Grey bands: the periods the filter was off. At the right: each line's Sharpe ratio and excess return a year. Our calculation.</sub>
 
-The dots lie around the dashed curve: most of what a filter does to the Sharpe ratio over all days is explained by the time it spends out of the market, not by when it is out. On the ETFs every filter is below always-in (0.49). On the futures (always-in 0.55), four come near it or above it (growth still 0.63, both composites agreeing 0.57, the yield curve still 0.57, volatility low 0.55), and growth beats 96% of its random switches there; the same filter beats 50% of them on the ETFs. Under the verdict fixed in advance (beat 90% of random switches on both datasets, Benjamini-Hochberg at 10% within each family), **no filter works** on our data. The lecture shows how this was measured and what the data say about why, so that readers can judge the evidence themselves.
+Switched off for 41% of the time, the part-time strategy has the higher Sharpe ratio (0.63 against 0.55) and the smaller losses, yet ends with less money (5.3% a year against 6.1%): its capital is idle during the grey bands. It earns more only when scaled up to the same risk. Whether that is worth it depends on what the idle capital could do, and on whether the filter's timing is information or luck (§2).
+
+Over all twelve filters and both datasets, under the verdict fixed in advance (beat 90% of random switches with the same time in the market on both datasets, Benjamini-Hochberg at 10% within each family), **no filter works** on our data. Even this one beats 96% of its random switches on the futures but only 50% on the ETFs. The lecture shows how this was measured and what the data say about why, so that readers can judge the evidence themselves.
 
 | § | Topic | Question |
 |---|---|---|
@@ -34,6 +36,7 @@ The dots lie around the dashed curve: most of what a filter does to the Sharpe r
 | 5 | The filters against luck | Does switching on these regimes beat always-in and random switching? |
 | 6 | Why | What drives the patterns that appear, and do they repeat on years not used to find them? |
 | 7 | One class at a time | A worked example: commodity trend by the shape of the futures curve |
+| 8 | Summary | Takeaways, exercises, reading |
 
 ## 2. Comparing a part-time strategy with always-in
 
@@ -56,7 +59,7 @@ A filter that knew nothing would leave the Sharpe ratio while on unchanged and l
 
 <sub><b>How to read the table.</b> Each column is a filter that keeps trend on for the given share of days. The middle row is $`1/\sqrt{p}`$: how much better than always-in the days kept must be for the part-time strategy to match always-in over all days. The bottom row applies it to the ETF baseline. A definition, from the formula above.</sub>
 
-The bar rises quickly: a filter that is off half the time must pick days on which trend earns a Sharpe ratio 41% higher than its average. The random filters of the key chart show the bar in practice: their medians sit close to the dashed curve. For the growth filter of §2.3 (on 59% of days on the futures) the formula gives 0.55 × √0.59 = 0.42 and its random filters' median is 0.43; on the ETFs (on 54% of days) 0.36 against 0.33.
+The bar rises quickly: a filter that is off half the time must pick days on which trend earns a Sharpe ratio 41% higher than its average. Random filters show the bar in practice: switched on and off at random with the same time in the market, their median Sharpe ratio sits close to what the formula predicts. For the growth filter of §2.3 (on 59% of days on the futures) the formula gives 0.55 × √0.59 = 0.42 and its random filters' median is 0.43; on the ETFs (on 54% of days) 0.36 against 0.33.
 
 The formula is a guide, not an identity. Positions move a tenth of the way each day, so the portfolio is still partly invested in the first days of an off spell and not yet fully invested in the first days of an on spell; switching also costs. The **random filter** with the same time in the market, the same spell lengths and the same attachment (Lecture 8 §4.5) includes all of this, which is why it, not the formula, is the yardstick of the verdict.
 
@@ -154,7 +157,7 @@ On revised data the futures' best quadrant moves from "growth down, inflation up
 Before switching anything, the scan splits the baseline's days by each variable's state and compares the Sharpe ratio on the two sides. Nothing is traded; the scan shows whether there is anything for a switch to find.
 
 ![The regime scan](figures/28_scan.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> x: the baseline trend portfolio's Sharpe ratio after costs; y: one row per regime variable (shaded: macro, data as first published; unshaded: market state). Blue dot: the days the filter would keep trend on (regime moving); orange cross: the days it would switch trend off (regime still; for correlation and turning points, crowded and turning); dotted: all days. Left: ETFs 2013-2026; right: capstone futures 2006-2022. Fixed thresholds; every regime known the day before. Our calculation.</sub>
+<sub><b>How to read the figure.</b> <b>Axes.</b> y: one row per regime variable (the first three macro, on data as first published; the rest market state); x: the baseline trend portfolio's Sharpe ratio after costs on the days the filter would keep trend on, minus on the days it would switch trend off. A bar to the right means trend did better while the regime moved, as the rule expects; to the left, while it stood still (for correlation and turning points: while markets were not crowded and turning). Blue: ETFs 2013-2026; orange: capstone futures 2006-2022. Star: the 90% band of the difference (block bootstrap over months) excludes zero. Fixed thresholds; every regime known the day before. Our calculation.</sub>
 
 **Result.** No variable separates the days in the planned direction on both datasets with a 90% band (block bootstrap over months) that excludes zero. Two separate in the **opposite** direction:
 
@@ -170,7 +173,7 @@ The yield curve goes the planned way on the futures (still 0.09, moving 0.75; ba
 Each filter now switches the baseline off in its unfavourable state, with the costs and the gradual attachment of §1, and is judged by the six numbers of §2.
 
 ![Regime filters against random filters](figures/28_filters.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> x: Sharpe ratio after costs over all days; y: one row per filter (shaded top: macro; middle: market state; shaded bottom: both families). Blue dot: the filter at its fixed threshold. Grey: 1,000 random filters with the same time in the market and the same spell lengths, from their median (tick) to their 95th percentile (end of the bar). Dotted: always in. Left: ETFs 2013-2026; right: capstone futures 2006-2022. Our calculation.</sub>
+<sub><b>How to read the figure.</b> <b>Axes.</b> y: one row per filter (macro first, then market state, then the two combinations of both families); x: the share of 1,000 random switches, with the same time in the market and the same spell lengths, whose Sharpe ratio after costs the filter beats. Blue: ETFs 2013-2026; orange: capstone futures 2006-2022. Dotted line: 50%, what a coin would do; dashed line: 90%, the bar fixed in advance, to be cleared on both datasets. Fixed thresholds. Our calculation.</sub>
 
 **Verdict (as fixed): no filter works.** None beats 90% of its random filters on both datasets, and none passes Benjamini-Hochberg at 10% within its family.
 
@@ -225,25 +228,22 @@ Five fifths and two directions make ten cells, some with almost no days. Four qu
 
 <sub><b>How to read the table.</b> One row per quadrant; each cell describes in market terms what the quadrant means for volatility (VIX) or for the average correlation across the portfolio's markets. Our wording.</sub>
 
-Two charts show the quadrants: the **regime clock** shows where the market was and what trend earned there; the **regime timeline** shows when. Both use the capstone futures.
+Two charts show the quadrants: the **volatility clock** shows how a crisis moves through them; the **regime timeline** shows when each quadrant occurred and where trend earned. Both use the capstone futures.
 
-**The regime clock.**
+**The volatility clock.**
 
-![The regime clock](figures/28_clock.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> x: how far the level is above (right) or below (left) its own average to date, as a log ratio (0.5 means about 65% above); y: how much it changed over the past three months (up: rising, down: falling). Left: volatility (VIX); right: correlation across markets. Grey dots: every month end 2006-2022. Black lines: two crises month by month, arrows pointing forward in time (solid: June 2008 to December 2009; dashed: 2020). Tint of each quadrant: the trend portfolio's Sharpe ratio after costs on that quadrant's days (blue: positive; orange: negative; stronger: larger), written in its corner with the share of days. Our calculation.</sub>
+![The volatility clock](figures/28_clock.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> x: the VIX below (left) or above (right) its own average to date; y: the VIX falling (down) or rising (up) over the past three months. Each quadrant is named in plain words and shows the trend portfolio's Sharpe ratio after costs on its days, 2006-2022, and its share of days; a darker tint means a higher Sharpe ratio. Black line: the VIX month by month from June 2008 to December 2009, arrows pointing forward in time. Both coordinates known the day before. Our calculation.</sub>
 
 | Step | Look at | What it tells you |
 |---|---|---|
-| 1 | One dot | Where the market stood at one month end: right of the vertical line, the level was above its usual; above the horizontal line, it was climbing |
-| 2 | The cloud of grey dots | Where the market usually is: most months sit near the centre, slightly left (calm is the normal state) |
-| 3 | The tint and the corner labels | What trend earned in each quadrant over the whole sample; the share of days shows how much evidence each number rests on |
-| 4 | A black path, following the arrows | How one episode moved through the quadrants, month by month |
+| 1 | The four quadrant names | The four states of the market's nerves, from calm to stress and back |
+| 2 | The number in each quadrant | What trend earned in that state over the whole sample, and how much evidence it rests on (share of days) |
+| 3 | The black line, following the arrows | How one crisis moved through the states, month by month |
 
-Following the solid path for volatility: in mid-2008 the VIX sits near its average; by October 2008 it is far above and still climbing (top right); through 2009 it stays high but falls (bottom right); by the end of 2009 it is back near the centre. The dashed 2020 path makes the same loop faster, starting from calm (top left). A crisis runs **clockwise**: building, peak, fading, calm. *Analogy (labelled):* the chart is what physicists call a phase portrait, the position of a system against its speed; a variable that swings up and back down traces a clockwise loop in it, as a pendulum does. Trend earned most on the "fading" leg (1.56), after the positions built during the shock had turned in its direction.
+In June 2008 the VIX sits near its average. By October 2008 it is far above and still climbing (top right, stress building). Through 2009 it stays high but falls (bottom right, stress fading), and by December 2009 it is back near the centre. A crisis runs **clockwise**: building, peak, fading, calm. *Analogy (labelled):* the chart is what physicists call a phase portrait, the position of a system against its speed; a variable that swings up and back down traces a clockwise loop in it, as a pendulum does. Trend earned most in "stress fading" (1.56), after the positions built during the shock had turned in its direction.
 
-The correlation panel looks different: in 2008-2009 the path stays on the right, correlation remains high for months, while in 2020 it crosses the centre quickly. The two variables do not cycle together.
-
-What the clock cannot show: how long each visit lasted (each month is one dot, whatever happened within it), and whether the tint would hold on other years (§6.4 checks this).
+What the clock cannot show: how long each visit lasted, and whether the numbers would hold on other years (§6.4 checks this).
 
 **The regime timeline.**
 
@@ -281,4 +281,53 @@ The third sample is 1990-2005, years no test of this course had used for this qu
 
 ## 7. One class at a time: commodity curves
 
-*To be added: the commodity trend sleeve of the capstone futures, by backwardation and contango, as a worked example of a per-class switch.*
+Every filter so far switched the whole portfolio. Some regimes belong to one asset class only. The shape of a commodity futures curve is one: it says something about oil or wheat, nothing about bonds. This section is a worked example of a **per-class** regime, labelled exploratory and kept outside the Benjamini-Hochberg families (decided before any result, 2026-11-15).
+
+**Backwardation and contango** (definitions). A commodity curve is in **backwardation** when the nearest futures contract is priced above the next one, and in **contango** when it is priced below. Contango is the normal state of a well-supplied, storable commodity: the later contract pays for storage and financing. Backwardation usually signals scarce inventories, when holding the physical good today is worth more than holding it later (the theory of storage; Gorton, Hayashi and Rouwenhorst, 2013). A long futures position in a backwardated market also earns the roll: as the contract approaches expiry its price tends to rise towards the higher spot price. A long trend position then has carry on its side; a short one has it against.
+
+**Measured as.** For each commodity of the capstone futures and each day, the front contract is the nearest one more than five trading days before its last day in the data, and the next is the following contract; the gap is the log of front over next, annualised. Backwardation means a positive gap, known the day before. Each market's trend stream (Lecture 26's held speeds, after costs) is split by its own curve state; the commodity sleeve (the seven markets at equal risk) is split by whether most of its markets are backwardated. Nothing is switched.
+
+![Commodity trend by the shape of the futures curve](figures/28_curves.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> x: one group per commodity, and the commodity sleeve at the right, each labelled with the share of days its curve was in backwardation; y: the Sharpe ratio after costs of the market's trend stream on the days its curve was in backwardation (blue) or in contango (orange). Capstone futures 2006 to November 2022; curve state known the day before. Our calculation.</sub>
+
+**Result.**
+
+- **Crude oil** is the clearest case: its trend stream earned a Sharpe ratio of 0.81 in backwardation and −0.10 in contango (difference 0.91; 90% band 0.13 to 1.74), with the curve backwardated on 30% of days.
+- **Gold and wheat** go strongly the other way (−1.83 and −2.39 in backwardation; bands exclude zero), but their curves were backwardated on only 6% and 5% of days: a few short episodes.
+- **Natural gas, corn, soybeans and cocoa** show no clear difference.
+- **The sleeve** had most of its markets backwardated on only 7% of days: −0.33 against 0.06 (band −1.59 to +0.86). Over the whole period the commodity trend sleeve itself earned little (0.03).
+
+Two cautions. Seven markets were scanned with no correction for multiple tests, so one or two bands excluding zero is close to what chance alone would produce. And for seasonal commodities (natural gas, the grains), the gap between neighbouring contracts mixes scarcity with the seasons: a winter gas contract is dearer than a spring one in any year. Comparing contracts a year apart removes that (exercise 3).
+
+**Our reading (labelled).** The example shows how a regime can matter for one class and not for the portfolio: in crude oil, trend did better when the curve signalled scarcity, consistent with trend and carry pulling the same way. Whether to use the curve as a switch for one class, or as a strategy of its own (commodity carry), is the step from this lecture to the next.
+
+## 8. Summary
+
+### 8.1 Takeaways
+
+1. **A part-time strategy is compared on several numbers, not one.** Out of the market a share $`1-p`$ of the time, a filter with no information lowers the Sharpe ratio over all days by $`\sqrt{p}`$; a filter must beat random switching with the same time in the market to show information; a higher Sharpe ratio can come with a lower return, because the capital is idle while the filter is off (§2).
+2. **Macro data must be used as first published.** On revised data, a fifth of the days fall in a different growth × inflation quadrant, and the ranking of the quadrants changes (§3.2).
+3. **On our data, no regime filter beat random switching on both datasets**, macro or market state, alone or combined. The relations seen in the scan changed between periods (§4, §5).
+4. **Patterns found after looking need data they were not found in.** Volatility and correlation quadrants looked consistent on 2006-2026 and did not repeat on 1990-2005 (§6).
+5. **Some regimes belong to one class.** Crude oil trend did better when its curve was backwardated; the portfolio-wide version of the question has little to say (§7).
+
+Lecture 29 uses the same regime series differently: not to switch trend off, but as strategies of their own next to it, and asks whether a strategy exists that earns in the regimes where trend does not.
+
+### 8.2 Exercises
+
+1. **Per-class switching.** Switch only the bond and commodity sleeves off on the inflation filter, keep the rest always in, and report the six numbers of §2 against random per-class switches.
+2. **Halving instead of switching off.** Repeat §5 with the filters halving the position instead of closing it. How do the six numbers change, and why does the bar of §2.1 move?
+3. **A cleaner curve.** Measure the commodity curve between contracts a year apart (removing the seasons) and redo §7. Fix your expectation for each market before running it.
+4. **Trend with or against carry.** Split each commodity's trend returns by whether the trend position and the curve agree (long in backwardation, short in contango) or disagree. Is the crude-oil result of §7 a result about agreement with carry?
+5. **The dollar, an open question.** Trend earned more when the dollar stood still, in every window of §4. Write down one mechanism, derive one testable prediction from it (for example: fast dollar moves coincide with many markets reversing at once), fix it, and test it on the 1990-2005 portfolio of §6.4.
+
+### 8.3 Reading
+
+- Lecture 7 §4.3 (Sharpe ratios of strategies not always in the market), Lecture 8 §4.5-§4.6 (the random filter; confirmation out of sample), Lecture 27 (the baseline).
+- Croushore, D. and Stark, T. (2001). A real-time data set for macroeconomists. *Journal of Econometrics* 105(1), 111-130. The Philadelphia Fed's vintages used in §3.2.
+- Benjamini, Y. and Hochberg, Y. (1995). Controlling the false discovery rate. *Journal of the Royal Statistical Society B* 57(1), 289-300.
+- Hurst, B., Ooi, Y. H. and Pedersen, L. H. (2017). A century of evidence on trend-following investing. *Journal of Portfolio Management* 44(1), 15-29.
+- Goulding, C., Harvey, C. R. and Mazzoleni, M. (2023). Momentum turning points. *Journal of Financial Economics* 149(3), 378-406.
+- Neville, H., Draaisma, T., Funnell, B., Harvey, C. R. and Van Hemert, O. (2021). The best strategies for inflationary times. Working paper, SSRN 3813202.
+- Gorton, G., Hayashi, F. and Rouwenhorst, K. G. (2013). The fundamentals of commodity futures returns. *Review of Finance* 17(1), 35-105.
+- Levine, A., Ooi, Y. H., Richardson, M. and Sasseville, C. (2018). Commodities for the long run. *Financial Analysts Journal* 74(2), 55-68. Commodity futures and their curves over more than a century.

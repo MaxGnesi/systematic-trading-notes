@@ -47,23 +47,4 @@ if __name__ == "__main__":
         print(tag, "quadrants first published:", {s: (round(v["share"], 2), round(v["sharpe"], 2)) for s, v in out[tag]["quadrant_first_published"].items()})
         print(tag, "quadrants revised:", {s: (round(v["share"], 2), round(v["sharpe"], 2)) for s, v in out[tag]["quadrant_revised"].items()}, "| days in a different quadrant:", round(out[tag]["quadrant_disagreement"], 2))
     (L.RESULTS / "scan.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
-    # chart: per variable, Sharpe while off and while on, both datasets
-    rows = [(k, n) for k, n in MACRO] + [(k, n) for k, n in MARKET]
-    fig = make_subplots(rows=1, cols=2, shared_yaxes=True, horizontal_spacing=0.04, subplot_titles=("ETFs, out of sample 2013-2026", "Capstone futures 2006-2022"))
-    for c, tag in enumerate(("etf", "futures")):
-        S = out[tag]; lab = [n for _, n in rows]
-        fig.add_scatter(x=[S[k]["sharpe_on"] for k, _ in rows], y=lab, mode="markers", marker=dict(color=SERIES[0], size=11), name="regime moving: the filter keeps trend on",
-                        legendgroup="on", showlegend=c == 0, row=1, col=c + 1)
-        fig.add_scatter(x=[S[k]["sharpe_off"] for k, _ in rows], y=lab, mode="markers", marker=dict(color=SERIES[1], size=11, symbol="x"), name="regime still (or crowded): the filter would switch trend off",
-                        legendgroup="off", showlegend=c == 0, row=1, col=c + 1)
-        for k, n in rows:
-            fig.add_shape(type="line", x0=S[k]["sharpe_off"], x1=S[k]["sharpe_on"], y0=n, y1=n, line=dict(color=MUTED, width=1), row=1, col=c + 1)
-        fig.add_vline(x=L26.sharpe(B[tag].dropna().loc[(L.ETF_START if tag == "etf" else L.FUT_START):L.END[tag]].ret), line=dict(color=INK, width=1, dash="dot"), row=1, col=c + 1)
-        fig.update_xaxes(title_text="Sharpe ratio of the baseline, after costs", row=1, col=c + 1)
-    fig.add_hrect(y0=-0.5, y1=2.5, fillcolor=MUTED, opacity=0.08, line_width=0, row=1, col=1); fig.add_hrect(y0=-0.5, y1=2.5, fillcolor=MUTED, opacity=0.08, line_width=0, row=1, col=2)
-    fig.update_yaxes(autorange="reversed", row=1, col=1)
-    fig.update_layout(title="Does trend earn less when the regime stands still?<br><sup>the baseline trend portfolio's Sharpe ratio on the days each filter would keep it on "
-                            "and on the days it would switch it off, at the fixed threshold; shaded: macro filters (data as first published), unshaded: market state; "
-                            "dotted: all days<br>every regime known the day before; nothing is switched here</sup>",
-                      height=600, width=1250, margin=dict(t=125, l=220, r=30, b=110), legend=dict(orientation="h", y=-0.17, x=0))
-    save_figure(fig, L.PREFIX + "28_scan", L.FIG)
+    # chart: l28_charts.py
