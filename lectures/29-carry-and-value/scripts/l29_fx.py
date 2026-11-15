@@ -41,6 +41,19 @@ def build():
     return pd.DataFrame(S), pd.DataFrame(R), pd.DataFrame(C)
 
 
+REER = {"EUR": "XM", "JPY": "JP", "GBP": "GB", "CHF": "CH", "CAD": "CA", "AUD": "AU", "NZD": "NZ", "NOK": "NO", "SEK": "SE", "USD": "US"}
+
+
+def reer():
+    """BIS real broad effective exchange rates (FRED RB..BIS, monthly, 1994-), each month usable from the start of the month two months later
+    (the BIS publishes in the middle of the following month), as a daily table of log levels; higher = dearer in real terms."""
+    days = pd.bdate_range("1994-01-03", "2026-10-30"); out = {}
+    for c, k in REER.items():
+        x = np.log(fred(f"RB{k}BIS")); x.index = x.index + pd.offsets.MonthBegin(2)
+        out[c] = x.reindex(days, method="ffill", limit=45)
+    return pd.DataFrame(out)
+
+
 if __name__ == "__main__":
     S, R, C = build()
     print("coverage (first and last day with a return):")
