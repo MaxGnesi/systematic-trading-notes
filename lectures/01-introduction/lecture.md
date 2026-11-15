@@ -249,6 +249,25 @@ It is plausible that markets keep evolving, so the useful question is not whethe
 
 **Multiple testing.** The more variants are tried, the stronger the first warning sign. If you test 100 independent strategies with no true edge, about five will show a $`t`$-statistic above 2 by chance alone. Harvey, Liu and Zhu (2016) counted more than 300 factors proposed for US stock returns and argue that, after so many trials, a new factor should clear a $`t`$-statistic of 3.0 rather than 2. The practical rule is to keep a record of everything you tried, not only what worked, and to demand an economic explanation alongside the statistics.
 
+**How to tell noise from an edge.** No single result can prove it is not noise. What can be done is to measure how large the noise is and look for its fingerprints:
+
+1. **Size the noise.** A Sharpe ratio measured over $`T`$ years has a standard error of about $`1/\sqrt{T}`$: about 0.32 over ten years, so a Sharpe ratio of 0.5 is only about 1.6 standard errors from zero.
+2. **Count the tries.** The best of many tries is lifted by luck: about two standard errors above the median for 30 tries and about three for 1,000 (Lecture 7 §5.2).
+3. **Run the same search on noise.** Repeat the whole procedure on a luck baseline. A result that does not clearly beat the best of the luck baseline cannot be told apart from it.
+4. **Look where noise and an edge differ:**
+
+| Check | Noise | An edge |
+|---|---|---|
+| Neighbouring parameters | An isolated peak; neighbours much worse | A plateau: neighbours share most trades and do about as well |
+| Other periods | The ranking does not repeat | The ranking repeats |
+| Other markets | One place only | Wherever its mechanism applies |
+| Data not used to find it | It fades | It shrinks somewhat but remains |
+| Mechanism | None, or found after seeing the result | Stated before the test: who pays, and why |
+
+<sub><b>How to read the table.</b> One row per check that can be run on a backtest result; the middle column is what a result fitted to noise tends to show, the right column what a lasting effect tends to show. Our summary, with the evidence of Lectures 7 and 28.</sub>
+
+Lecture 7 shows the difference on the same data. The Sharpe ratios of 31 trend systems in 2000-2012 and in 2013-2026 are correlated at 0.62; those of 1,000 zero-edge strategies at 0.02, and the 31 luckiest of them fall from 0.60 to −0.01. Lecture 28 shows the other outcome: a regime filter that beat 96% of its random filters on one dataset beat 50% on another, the "one place only" fingerprint. Even a real edge shrinks out of sample, because the best choice was helped by some luck; the question is whether something remains. Each check passed lowers the odds of noise; none removes them.
+
 ### 5.4 Many small edges, not one ace
 
 A common picture of systematic trading is the search for one strategy that wins: a hidden ace. The picture misleads. If such a strategy exists, others find it too: its returns are competed away, or it becomes crowded, and crowded trades exit together (§5.2). The evidence is large: across 97 published predictors of US stock returns, the returns were 26% lower out of sample and 58% lower after publication (McLean and Pontiff, 2016). What lasts is less spectacular: **many strategies, each with a small edge backed by a mechanism, held together.** The art is in choosing edges that are robust (§5.3) and in combining them.
