@@ -1,0 +1,116 @@
+{
+ "etf": {
+  "volatility": {
+   "below falling": {
+    "sharpe": 0.23695996621577642,
+    "share": 0.44896788990825687
+   },
+   "below rising": {
+    "sharpe": 1.254404005199281,
+    "share": 0.28698394495412843
+   },
+   "above falling": {
+    "sharpe": 0.5692091018516487,
+    "share": 0.10722477064220183
+   },
+   "above rising": {
+    "sharpe": -0.19582708051567335,
+    "share": 0.15682339449541285
+   }
+  },
+  "correlation": {
+   "below falling": {
+    "sharpe": 0.26889259466960685,
+    "share": 0.5326834862385321
+   },
+   "below rising": {
+    "sharpe": 1.1032548149888746,
+    "share": 0.3606651376146789
+   },
+   "above falling": {
+    "sharpe": 2.1524420358480705,
+    "share": 0.02522935779816514
+   },
+   "above rising": {
+    "sharpe": -0.7694318382188418,
+    "share": 0.08142201834862385
+   }
+  }
+ },
+ "futures": {
+  "volatility": {
+   "below falling": {
+    "sharpe": 0.3237475407941262,
+    "share": 0.3707015130674003
+   },
+   "below rising": {
+    "sharpe": 0.2757972470657197,
+    "share": 0.25378266850068776
+   },
+   "above falling": {
+    "sharpe": 1.5594716052672235,
+    "share": 0.17767079321412196
+   },
+   "above rising": {
+    "sharpe": 0.5351998428588948,
+    "share": 0.19761577258138469
+   }
+  },
+  "correlation": {
+   "below falling": {
+    "sharpe": 0.35811364674217355,
+    "share": 0.2551581843191197
+   },
+   "below rising": {
+    "sharpe": 1.3885011366701572,
+    "share": 0.21389270976616231
+   },
+   "above falling": {
+    "sharpe": 0.22123253701475176,
+    "share": 0.19761577258138469
+   },
+   "above rising": {
+    "sharpe": 0.3788626846543796,
+    "share": 0.33310408069692804
+   }
+  }
+ },
+ "1990-2005": {
+  "volatility": {
+   "below falling": {
+    "sharpe": 1.1532168883502676,
+    "share": 0.3389382656737929
+   },
+   "below rising": {
+    "sharpe": -0.16215842706929814,
+    "share": 0.20417967811674273
+   },
+   "above falling": {
+    "sharpe": 0.5797949312365321,
+    "share": 0.1993754503963488
+   },
+   "above rising": {
+    "sharpe": 0.8249234452557271,
+    "share": 0.22627912563055488
+   }
+  },
+  "correlation": {
+   "below falling": {
+    "sharpe": 0.5229952360857518,
+    "share": 0.28537112659140046
+   },
+   "below rising": {
+    "sharpe": 0.3962275991493944,
+    "share": 0.14869084794619264
+   },
+   "above falling": {
+    "sharpe": -0.269846807880727,
+    "share": 0.21210665385539273
+   },
+   "above rising": {
+    "sharpe": 1.347644462376245,
+    "share": 0.35383137160701417
+   }
+  }
+ }
+}
