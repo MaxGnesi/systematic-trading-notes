@@ -261,12 +261,12 @@ It is plausible that markets keep evolving, so the useful question is not whethe
 | Neighbouring parameters | An isolated peak; neighbours much worse | A plateau: neighbours share most trades and do about as well |
 | Other periods | The ranking does not repeat | The ranking repeats |
 | Other markets | One place only | Wherever its mechanism applies |
-| Data not used to find it | It fades | It shrinks somewhat but remains |
+| Data not used to find it | It fades | It remains, larger or smaller |
 | Mechanism | None, or found after seeing the result | Stated before the test: who pays, and why |
 
 <sub><b>How to read the table.</b> One row per check that can be run on a backtest result; the middle column is what a result fitted to noise tends to show, the right column what a lasting effect tends to show. Our summary, with the evidence of Lectures 7 and 28.</sub>
 
-Lecture 7 shows the difference on the same data. The Sharpe ratios of 31 trend systems in 2000-2012 and in 2013-2026 are correlated at 0.62; those of 1,000 zero-edge strategies at 0.02, and the 31 luckiest of them fall from 0.60 to −0.01. Lecture 28 shows the other outcome: a regime filter that beat 96% of its random filters on one dataset beat 50% on another, the "one place only" fingerprint. Even a real edge shrinks out of sample, because the best choice was helped by some luck; the question is whether something remains. Each check passed lowers the odds of noise; none removes them.
+Lecture 7 shows the difference on the same data. The Sharpe ratios of 31 trend systems in 2000-2012 and in 2013-2026 are correlated at 0.62; those of 1,000 zero-edge strategies at 0.02, and the 31 luckiest of them fall from 0.60 to −0.01. Lecture 28 shows the other outcome: a regime filter that beat 96% of its random filters on one dataset beat 50% on another, the "one place only" fingerprint. Out of sample, the result chosen as the best is expected to look worse **on average**, because the choice favoured the luckiest; any single edge can still do better or worse, since the future is not known (in Lecture 7 the five best trend systems went from 0.47 to 0.56). The question is not whether it shrinks but whether something remains. Each check passed lowers the odds of noise; none removes them.
 
 ### 5.4 Many small edges, not one ace
 
