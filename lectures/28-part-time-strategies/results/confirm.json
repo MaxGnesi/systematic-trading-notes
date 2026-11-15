@@ -1,0 +1,71 @@
+{
+ "sharpe": 0.6414410341162013,
+ "markets": [
+  "^GSPC",
+  "^N225",
+  "^FTSE",
+  "^GDAXI",
+  "UST10",
+  "UST2",
+  "DEXJPUS",
+  "DEXUSUK",
+  "DEXSZUS",
+  "DEXCAUS",
+  "OIL",
+  "GAS"
+ ],
+ "volatility": {
+  "below falling": {
+   "sharpe": 1.1532168883502676,
+   "share": 0.3389382656737929
+  },
+  "below rising": {
+   "sharpe": -0.16215842706929814,
+   "share": 0.20417967811674273
+  },
+  "above falling": {
+   "sharpe": 0.5797949312365321,
+   "share": 0.1993754503963488
+  },
+  "above rising": {
+   "sharpe": 0.8249234452557271,
+   "share": 0.22627912563055488
+  }
+ },
+ "correlation": {
+  "below falling": {
+   "sharpe": 0.5229952360857518,
+   "share": 0.28537112659140046
+  },
+  "below rising": {
+   "sharpe": 0.3962275991493944,
+   "share": 0.14869084794619264
+  },
+  "above falling": {
+   "sharpe": -0.269846807880727,
+   "share": 0.21210665385539273
+  },
+  "above rising": {
+   "sharpe": 1.347644462376245,
+   "share": 0.35383137160701417
+  }
+ },
+ "E1": {
+  "best_quadrant": "above rising",
+  "holds": false,
+  "diff_vs_rest": -0.29276638618337225,
+  "ci90": [
+   -1.5533881104512566,
+   0.9653217458587445
+  ]
+ },
+ "E2": {
+  "above_falling": 0.5797949312365321,
+  "above_rising": 0.8249234452557271,
+  "holds": false,
+  "ci90": [
+   -1.4259464105363728,
+   0.986520736909206
+  ]
+ }
+}
