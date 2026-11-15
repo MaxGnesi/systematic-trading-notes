@@ -212,9 +212,58 @@ A level alone may hide what matters: whether volatility or correlation is buildi
 - **Volatility.** Rising volatility helps at moderate levels and stops helping at the highest (ETFs: −0.42, 2.52, 0.83, 0.79, −0.81 from the lowest to the highest fifth; futures 0.02, 0.56, 0.24, 1.02, 0.26). The best cell on both datasets is the highest fifth while volatility falls, after a spike (1.29 and 1.67).
 - **Correlation.** Rising correlation from a middle level is the best cell on both (1.68 and 1.56). Unlike volatility, correlation falling from its highest level is not good.
 
-### 6.3 Four quadrants, found and checked
+### 6.3 Four quadrants, and two ways to see them
 
-Five fifths and two directions make ten cells, some with almost no days. Four quadrants are simpler: the level above or below its own average to date, rising or falling over three months. From the ETFs and the futures, two statements were fixed **before** a third sample was loaded:
+Five fifths and two directions make ten cells, some with almost no days. Four quadrants are simpler: the level above or below its own average to date, rising or falling over three months. In plain words:
+
+| Quadrant | Volatility | Correlation across markets |
+|---|---|---|
+| Below average, rising | Calm, but nerves are building | Markets still move apart, but start to move together |
+| Above average, rising | Stress is building | One common driver is taking over |
+| Above average, falling | Stress is fading after a shock | The common driver is losing its grip |
+| Below average, falling | Calm and getting calmer | Markets go their own ways |
+
+<sub><b>How to read the table.</b> One row per quadrant; each cell describes in market terms what the quadrant means for volatility (VIX) or for the average correlation across the portfolio's markets. Our wording.</sub>
+
+Two charts show the quadrants: the **regime clock** shows where the market was and what trend earned there; the **regime timeline** shows when. Both use the capstone futures, ending on 18 November 2022, the last week in which all 14 markets have data, so their numbers differ slightly from those in §6.4.
+
+**The regime clock.**
+
+![The regime clock](figures/28_clock.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> x: how far the level is above (right) or below (left) its own average to date, as a log ratio (0.5 means about 65% above); y: how much it changed over the past three months (up: rising, down: falling). Left: volatility (VIX); right: correlation across markets. Grey dots: every month end 2006-2022. Black lines: two crises month by month, arrows pointing forward in time (solid: June 2008 to December 2009; dashed: 2020). Tint of each quadrant: the trend portfolio's Sharpe ratio after costs on that quadrant's days (blue: positive; orange: negative; stronger: larger), written in its corner with the share of days. Our calculation.</sub>
+
+| Step | Look at | What it tells you |
+|---|---|---|
+| 1 | One dot | Where the market stood at one month end: right of the vertical line, the level was above its usual; above the horizontal line, it was climbing |
+| 2 | The cloud of grey dots | Where the market usually is: most months sit near the centre, slightly left (calm is the normal state) |
+| 3 | The tint and the corner labels | What trend earned in each quadrant over the whole sample; the share of days shows how much evidence each number rests on |
+| 4 | A black path, following the arrows | How one episode moved through the quadrants, month by month |
+
+Following the solid path for volatility: in mid-2008 the VIX sits near its average; by October 2008 it is far above and still climbing (top right); through 2009 it stays high but falls (bottom right); by the end of 2009 it is back near the centre. The dashed 2020 path makes the same loop faster, starting from calm (top left). A crisis runs **clockwise**: building, peak, fading, calm. *Analogy (labelled):* the chart is what physicists call a phase portrait, the position of a system against its speed; a variable that swings up and back down traces a clockwise loop in it, as a pendulum does. Trend earned most on the "fading" leg (1.56), after the positions built during the shock had turned in its direction.
+
+The correlation panel looks different: in 2008-2009 the path stays on the right, correlation remains high for months, while in 2020 it crosses the centre quickly. The two variables do not cycle together.
+
+What the clock cannot show: how long each visit lasted (each month is one dot, whatever happened within it), and whether the tint would hold on other years (§6.4 checks this).
+
+**The regime timeline.**
+
+![The regime timeline](figures/28_timeline.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> x: time, 2006 to November 2022, shared by all panels. First panel, y: the VIX (21-day average, black line) with its average to date (dotted); the area under the line is coloured by the quadrant of that day. Second panel, y: the trend portfolio's daily returns after costs added up over the days of each volatility quadrant only (one line per quadrant, same colours; the final total written at the right). Third and fourth panels: the same for correlation across markets. Our calculation.</sub>
+
+| Step | Look at | What it tells you |
+|---|---|---|
+| 1 | The colour under the line | Which quadrant the market was in on each day; above the dotted line means "above average" |
+| 2 | A line in the panel below | It moves only on its own quadrant's days: flat stretches are days spent in other quadrants |
+| 3 | Read down from a coloured spell | Which line moved during that spell, and in which direction |
+| 4 | The totals at the right | Where trend's money came from over the whole sample; compare with the share of days in the clock |
+
+For example, volatility was above average and rising (orange) from July to December 2008. Reading down, the orange line first falls, from +14% to +1% between July and September, as markets turned against the positions held, then climbs back to +15% in the October-December crash, once the positions had turned. The blue spells of 2010-2011 (high and fading) are where the blue line climbs, from +17% to +31%. One quadrant can hold both a loss and a gain within the same episode. Over the whole sample, volatility above average and falling gave +47% on 18% of days; below average and falling, +18% on 37% of days. For correlation, below average and rising gave +55%, earned steadily from 2014 on rather than in one episode.
+
+What the timeline cannot show: whether a line's rise could have been known in advance. The quadrant on each day was known the day before, but which quadrant would pay was learned only by looking at the whole chart.
+
+### 6.4 Two statements, checked on untouched years
+
+From the ETFs and the futures, two statements were fixed **before** a third sample was loaded:
 
 - **E1.** Correlation below its average and rising is the best of the four correlation quadrants (trends start to line up).
 - **E2.** With volatility above its average, trend earns more while volatility falls than while it rises (after a spike positions pay; while volatility still climbs they are whipsawed).
