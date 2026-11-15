@@ -219,16 +219,55 @@ with $`T`$ the number of return periods per year. A high backtest Sharpe ratio i
 
 | Pitfall | What goes wrong | Defence |
 |---|---|---|
-| Overfitting and multiple testing | Many variants tried; the best one looks significant by chance | Fewer parameters, out-of-sample data, adjusting for the number of trials (e.g. the deflated Sharpe ratio) |
+| Overfitting and multiple testing | Many variants tried; the best one looks significant by chance; the future differs from the past | Fewer parameters, regions of parameters instead of the best point, tests across markets, out-of-sample data, adjusting for the number of trials (e.g. the deflated Sharpe ratio); see §5.3 |
 | Transaction costs and slippage | Paper profits vanish after spread, fees and market impact | Model costs explicitly; test with higher cost assumptions |
 | Regime change | Relationships estimated in one environment break in another | Test across crises and rate regimes; monitor live behaviour |
 | Crowding | Many funds hold the same trades and exit together | Track position overlap; prefer diversified, less obvious signals |
 | Capacity | Returns shrink as assets under management grow | Estimate market impact at target size |
 | Operational risk | Bugs, data outages, stale feeds | Independent checks, kill switches, reconciliation |
 
-### 5.3 Multiple testing in one paragraph
+### 5.3 Overfitting: the gap between the past and the future
 
-If you test 100 independent strategies with no true edge, about five will show a $`t`$-statistic above 2 by chance alone. Published work argues that, given how many factors the profession has tried, a new factor should clear a higher bar than the conventional threshold of 2 (Harvey, Liu and Zhu, 2016). The practical rule is to keep a record of everything you tried, not only what worked, and to demand an economic explanation alongside the statistics.
+Every rule is chosen on the past and used in the future. **If the future were an exact copy of the past, there would be no overfitting:** the rule that did best in the sample would also do best afterwards. Overfitting is the name for the gap between the two, and it has two sources (Lecture 26 §2 treats them in detail):
+
+| Source | What it means | Can it be checked in advance? |
+|---|---|---|
+| **Dependence on the sample** | The history we saw is one draw among many that could have happened. The best rule partly fits that draw's noise: one crash, one lucky market | Yes: rerun the choice on other slices of the past, on other markets, and against strategies with no edge |
+| **A future unlike the past** | Markets evolve: interest-rate regimes change, different players trade, a strategy becomes crowded | No: only a mechanism (a reason why the rule should keep working) and monitoring help |
+
+<sub><b>How to read the table.</b> The two reasons a rule that worked in the sample can fail afterwards, and whether each can be checked before the rule is used. Our summary.</sub>
+
+It is plausible that markets keep evolving, so the useful question is not whether a rule will degrade but how to avoid choosing the rules most likely to. Three warning signs point to choices that fit the past more than they capture something lasting:
+
+| Warning sign | Why it points to overfitting | What to prefer |
+|---|---|---|
+| **The exact best parameter of an optimisation** | The peak of a search is where noise helped most. Its neighbours usually did worse, and the future will not land on the peak again. Bailey, Borwein, López de Prado and Zhu (2017) estimate how often the best rule in a sample does worse than the median out of sample | A region of parameters that all work (a plateau), held together (Lecture 7 §6; Lecture 26) |
+| **Outlier performance** | A result far above what similar strategies earn is more often luck than skill: the best of many strategies with no edge can look excellent (Lecture 7 §5.2). And a real outlier attracts competitors | Compare with a luck baseline and with published evidence; distrust the best result in a list |
+| **A strategy that works in one market only** | One market's history is the least evidence there is. A real mechanism usually shows wherever it should apply | Test across markets and asset classes; accept a rule where its mechanism says it should work |
+
+<sub><b>How to read the table.</b> One row per warning sign: what to look out for, why it suggests the rule fits the sample rather than a lasting effect, and the safer alternative. Our proposal, built on the lectures cited.</sub>
+
+**Multiple testing.** The more variants are tried, the stronger the first warning sign. If you test 100 independent strategies with no true edge, about five will show a $`t`$-statistic above 2 by chance alone. Harvey, Liu and Zhu (2016) counted more than 300 factors proposed for US stock returns and argue that, after so many trials, a new factor should clear a $`t`$-statistic of 3.0 rather than 2. The practical rule is to keep a record of everything you tried, not only what worked, and to demand an economic explanation alongside the statistics.
+
+### 5.4 Many small edges, not one ace
+
+A common picture of systematic trading is the search for one strategy that wins: a hidden ace. The picture misleads. If such a strategy exists, others find it too: its returns are competed away, or it becomes crowded, and crowded trades exit together (§5.2). The evidence is large: across 97 published predictors of US stock returns, the returns were 26% lower out of sample and 58% lower after publication (McLean and Pontiff, 2016). What lasts is less spectacular: **many strategies, each with a small edge backed by a mechanism, held together.** The art is in choosing edges that are robust (§5.3) and in combining them.
+
+The arithmetic shows why. Take $`n`$ strategies, each with the same Sharpe ratio $`s`$ (the return each earns per unit of risk), held at equal risk, with an average correlation $`\rho`$ between their returns (how often they win and lose together). The combination's Sharpe ratio is
+
+```math
+\text{SR}_{\text{combined}} \;=\; s\,\sqrt{\frac{n}{1 + (n-1)\,\rho}} .
+```
+
+| | One strategy | 10 strategies, $`\rho = 0`$ | 10 strategies, $`\rho = 0.2`$ | 10 strategies, $`\rho = 0.5`$ |
+|---|---|---|---|---|
+| Sharpe ratio | 0.30 | 0.95 | 0.57 | 0.40 |
+
+<sub><b>How to read the table.</b> Each column is a portfolio of strategies that each earn a Sharpe ratio of 0.30 on their own, held at equal risk; $`\rho`$ is the average correlation between their returns. The cells apply the formula above. A definition under the stated assumptions (same Sharpe ratio, equal risk).</sub>
+
+Ten modest edges that do not move together reach a Sharpe ratio that almost no single strategy keeps for long. Correlation matters more than the count: at $`\rho = 0.5`$, ten strategies are barely better than one, because they win and lose at the same time. The value of a new strategy lies less in its own Sharpe ratio than in **failing at different times** from the others. Grinold (1989) put the same idea in one line for active management, the fundamental law: the information ratio is approximately the skill per decision (the correlation of forecasts with outcomes) times the square root of the number of **independent** decisions. The word independent carries the weight, as the table shows.
+
+The course is built this way. Lectures 25-27 hold many markets and many trend speeds at equal risk instead of picking the best; Lectures 28-29 ask whether other strategies add to trend because they fail at different times.
 
 ## 6. Worked case study: a diversified trend-following model
 
@@ -256,11 +295,12 @@ The same template applies to the other families: replace the signal and the sizi
 
 ## 7. Summary, exercises and reading
 
-### 7.1 Three takeaways
+### 7.1 Four takeaways
 
 - Systematic trading is a pipeline from data to execution; allocation and risk are solved together, and a feedback loop keeps the system honest.
 - Every strategy needs an answer to who is on the other side of the trade. Trend following, StatArb and factors answer it differently, and so have different risks.
 - Bias is not removed but relocated into research. Discipline in the research process matters more than sophistication of the model.
+- Overfitting is the gap between the past and the future. Prefer regions of parameters to the best point, distrust outlier results and rules that work in one market only; then combine many robust small edges rather than search for one ace.
 
 ### 7.2 Exercises
 
@@ -268,12 +308,14 @@ The same template applies to the other families: replace the signal and the sizi
 - [ ] Implement the volatility-targeted trend signal from Section 4.1 on a set of futures series and report turnover.
 - [ ] Re-run it with a one-day execution delay and with doubled costs. Explain what changes and why.
 - [ ] Simulate 200 strategies with no edge and report the best Sharpe ratio. Relate the result to Section 5.3.
+- [ ] Take ten strategies with a Sharpe ratio of 0.3 each. Plot the combined Sharpe ratio of §5.4 against their average correlation from 0 to 1. At what correlation do ten strategies stop being worth more than three?
 - [ ] For a pairs strategy, explain how a structural break in the spread would show up, and what rule would stop trading it.
 - [ ] Choose one family from Section 4 and describe who loses money to it and under what conditions that stops.
 
 ### 7.3 Reading list
 
 - Carver, R. (2015). *Systematic Trading.* Harriman House.
+- Grinold, R. (1989). The fundamental law of active management. *Journal of Portfolio Management* 15(3).
 - Grinold, R. and Kahn, R. (2000). *Active Portfolio Management.* McGraw-Hill.
 - López de Prado, M. (2018). *Advances in Financial Machine Learning.* Wiley.
 - Moskowitz, T., Ooi, Y. and Pedersen, L. (2012). Time series momentum. *Journal of Financial Economics.*
@@ -282,7 +324,9 @@ The same template applies to the other families: replace the signal and the sizi
 - Avellaneda, M. and Lee, J.-H. (2010). Statistical arbitrage in the US equities market. *Quantitative Finance.*
 - Khandani, A. and Lo, A. (2011). What happened to the quants in August 2007? *Journal of Financial Markets.*
 - Asness, C., Moskowitz, T. and Pedersen, L. (2013). Value and momentum everywhere. *Journal of Finance.*
-- Harvey, C., Liu, Y. and Zhu, H. (2016). ... and the cross-section of expected returns. *Review of Financial Studies.*
+- Harvey, C., Liu, Y. and Zhu, H. (2016). ... and the cross-section of expected returns. *Review of Financial Studies* 29(1), 5-68.
+- McLean, R. D. and Pontiff, J. (2016). Does academic research destroy stock return predictability? *Journal of Finance* 71(1), 5-32.
+- Bailey, D., Borwein, J., López de Prado, M. and Zhu, Q. (2017). The probability of backtest overfitting. *Journal of Computational Finance* 20(4).
 - Bailey, D. and López de Prado, M. (2014). The deflated Sharpe ratio. *Journal of Portfolio Management.*
 
 *References are given from memory and should be checked against the originals before circulation.*
