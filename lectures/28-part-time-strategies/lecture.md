@@ -156,7 +156,7 @@ On revised data the futures' best quadrant moves from "growth down, inflation up
 Before switching anything, the scan splits the baseline's days by each variable's state and compares the Sharpe ratio on the two sides. Nothing is traded; the scan shows whether there is anything for a switch to find.
 
 ![The regime scan](figures/28_scan.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> x: the baseline trend portfolio's Sharpe ratio after costs; y: one row per regime variable (shaded: macro, data as first published; unshaded: market state). Blue dot: the days the filter would keep trend on (regime moving); orange cross: the days it would switch trend off (regime still; for correlation and turning points, crowded and turning); dotted: all days. Left: ETFs 2013-2026; right: capstone futures 2006-2022. Fixed thresholds; every regime known the day before. Our calculation.</sub>
+<sub><b>How to read the figure.</b> <b>Axes.</b> y: one row per regime variable (the first three macro, on data as first published; the rest market state); x: the baseline trend portfolio's Sharpe ratio after costs on the days the filter would keep trend on, minus on the days it would switch trend off. A bar to the right means trend did better while the regime moved, as the rule expects; to the left, while it stood still (for correlation and turning points: while markets were not crowded and turning). Blue: ETFs 2013-2026; orange: capstone futures 2006-2022. Star: the 90% band of the difference (block bootstrap over months) excludes zero. Fixed thresholds; every regime known the day before. Our calculation.</sub>
 
 **Result.** No variable separates the days in the planned direction on both datasets with a 90% band (block bootstrap over months) that excludes zero. Two separate in the **opposite** direction:
 
@@ -172,7 +172,7 @@ The yield curve goes the planned way on the futures (still 0.09, moving 0.75; ba
 Each filter now switches the baseline off in its unfavourable state, with the costs and the gradual attachment of §1, and is judged by the six numbers of §2.
 
 ![Regime filters against random filters](figures/28_filters.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> x: Sharpe ratio after costs over all days; y: one row per filter (shaded top: macro; middle: market state; shaded bottom: both families). Blue dot: the filter at its fixed threshold. Grey: 1,000 random filters with the same time in the market and the same spell lengths, from their median (tick) to their 95th percentile (end of the bar). Dotted: always in. Left: ETFs 2013-2026; right: capstone futures 2006-2022. Our calculation.</sub>
+<sub><b>How to read the figure.</b> <b>Axes.</b> y: one row per filter (macro first, then market state, then the two combinations of both families); x: the share of 1,000 random switches, with the same time in the market and the same spell lengths, whose Sharpe ratio after costs the filter beats. Blue: ETFs 2013-2026; orange: capstone futures 2006-2022. Dotted line: 50%, what a coin would do; dashed line: 90%, the bar fixed in advance, to be cleared on both datasets. Fixed thresholds. Our calculation.</sub>
 
 **Verdict (as fixed): no filter works.** None beats 90% of its random filters on both datasets, and none passes Benjamini-Hochberg at 10% within its family.
 
@@ -227,25 +227,22 @@ Five fifths and two directions make ten cells, some with almost no days. Four qu
 
 <sub><b>How to read the table.</b> One row per quadrant; each cell describes in market terms what the quadrant means for volatility (VIX) or for the average correlation across the portfolio's markets. Our wording.</sub>
 
-Two charts show the quadrants: the **regime clock** shows where the market was and what trend earned there; the **regime timeline** shows when. Both use the capstone futures.
+Two charts show the quadrants: the **volatility clock** shows how a crisis moves through them; the **regime timeline** shows when each quadrant occurred and where trend earned. Both use the capstone futures.
 
-**The regime clock.**
+**The volatility clock.**
 
-![The regime clock](figures/28_clock.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> x: how far the level is above (right) or below (left) its own average to date, as a log ratio (0.5 means about 65% above); y: how much it changed over the past three months (up: rising, down: falling). Left: volatility (VIX); right: correlation across markets. Grey dots: every month end 2006-2022. Black lines: two crises month by month, arrows pointing forward in time (solid: June 2008 to December 2009; dashed: 2020). Tint of each quadrant: the trend portfolio's Sharpe ratio after costs on that quadrant's days (blue: positive; orange: negative; stronger: larger), written in its corner with the share of days. Our calculation.</sub>
+![The volatility clock](figures/28_clock.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> x: the VIX below (left) or above (right) its own average to date; y: the VIX falling (down) or rising (up) over the past three months. Each quadrant is named in plain words and shows the trend portfolio's Sharpe ratio after costs on its days, 2006-2022, and its share of days; a darker tint means a higher Sharpe ratio. Black line: the VIX month by month from June 2008 to December 2009, arrows pointing forward in time. Both coordinates known the day before. Our calculation.</sub>
 
 | Step | Look at | What it tells you |
 |---|---|---|
-| 1 | One dot | Where the market stood at one month end: right of the vertical line, the level was above its usual; above the horizontal line, it was climbing |
-| 2 | The cloud of grey dots | Where the market usually is: most months sit near the centre, slightly left (calm is the normal state) |
-| 3 | The tint and the corner labels | What trend earned in each quadrant over the whole sample; the share of days shows how much evidence each number rests on |
-| 4 | A black path, following the arrows | How one episode moved through the quadrants, month by month |
+| 1 | The four quadrant names | The four states of the market's nerves, from calm to stress and back |
+| 2 | The number in each quadrant | What trend earned in that state over the whole sample, and how much evidence it rests on (share of days) |
+| 3 | The black line, following the arrows | How one crisis moved through the states, month by month |
 
-Following the solid path for volatility: in mid-2008 the VIX sits near its average; by October 2008 it is far above and still climbing (top right); through 2009 it stays high but falls (bottom right); by the end of 2009 it is back near the centre. The dashed 2020 path makes the same loop faster, starting from calm (top left). A crisis runs **clockwise**: building, peak, fading, calm. *Analogy (labelled):* the chart is what physicists call a phase portrait, the position of a system against its speed; a variable that swings up and back down traces a clockwise loop in it, as a pendulum does. Trend earned most on the "fading" leg (1.56), after the positions built during the shock had turned in its direction.
+In June 2008 the VIX sits near its average. By October 2008 it is far above and still climbing (top right, stress building). Through 2009 it stays high but falls (bottom right, stress fading), and by December 2009 it is back near the centre. A crisis runs **clockwise**: building, peak, fading, calm. *Analogy (labelled):* the chart is what physicists call a phase portrait, the position of a system against its speed; a variable that swings up and back down traces a clockwise loop in it, as a pendulum does. Trend earned most in "stress fading" (1.56), after the positions built during the shock had turned in its direction.
 
-The correlation panel looks different: in 2008-2009 the path stays on the right, correlation remains high for months, while in 2020 it crosses the centre quickly. The two variables do not cycle together.
-
-What the clock cannot show: how long each visit lasted (each month is one dot, whatever happened within it), and whether the tint would hold on other years (§6.4 checks this).
+What the clock cannot show: how long each visit lasted, and whether the numbers would hold on other years (§6.4 checks this).
 
 **The regime timeline.**
 

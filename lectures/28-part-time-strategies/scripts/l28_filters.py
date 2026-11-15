@@ -112,23 +112,4 @@ if __name__ == "__main__":
                                        works=bool(ok[k] and all(out["datasets"][t][k][fx(k)]["beaten"] >= 0.9 for t in ("etf", "futures")))) for k in ks}
     print(json.dumps(out["verdict"], indent=1))
     (L.RESULTS / "filters.json").write_text(json.dumps(out, indent=1, default=float), encoding="utf-8")
-    # chart: each filter's Sharpe ratio against its random filters (median and 95th percentile), both datasets
-    ks = [k for ks in FAMILIES.values() for k in ks]; lab = [NAMES[k] for k in ks]
-    fig = make_subplots(rows=1, cols=2, shared_yaxes=True, horizontal_spacing=0.04, subplot_titles=("ETFs, out of sample 2013-2026", "Capstone futures 2006-2022"))
-    for c, tag in enumerate(("etf", "futures")):
-        D = out["datasets"][tag]
-        for k, n in zip(ks, lab):
-            m = D[k][fx(k)]; fig.add_shape(type="line", x0=m["random_median"], x1=m["random_p95"], y0=n, y1=n, line=dict(color=MUTED, width=6), row=1, col=c + 1)
-        fig.add_scatter(x=[D[k][fx(k)]["random_median"] for k in ks], y=lab, mode="markers", marker=dict(color=MUTED, size=9, symbol="line-ns-open", line=dict(width=2)),
-                        name="random filters with the same time in the market: median (tick) to 95th percentile (bar)", legendgroup="r", showlegend=c == 0, row=1, col=c + 1)
-        fig.add_scatter(x=[D[k][fx(k)]["sharpe"] for k in ks], y=lab, mode="markers", marker=dict(color=SERIES[0], size=11), name="the filter",
-                        legendgroup="f", showlegend=c == 0, row=1, col=c + 1)
-        fig.add_vline(x=D["baseline"]["sharpe"], line=dict(color=INK, width=1, dash="dot"), row=1, col=c + 1)
-        fig.update_xaxes(title_text="Sharpe ratio after costs, all days", row=1, col=c + 1)
-    for c in (1, 2): fig.add_hrect(y0=-0.5, y1=3.5, fillcolor=MUTED, opacity=0.08, line_width=0, row=1, col=c); fig.add_hrect(y0=9.5, y1=11.5, fillcolor=SERIES[0], opacity=0.05, line_width=0, row=1, col=c)
-    fig.update_yaxes(autorange="reversed", row=1, col=1)
-    fig.update_layout(title="Regime filters as switches, against luck<br><sup>each filter switches the baseline trend portfolio off in its regime (known the day before), "
-                            "a tenth of the way each day, 5 bp per change; grey: 1,000 random switches with the same time in the market and the same spell lengths; "
-                            "dotted: always in<br>shaded: macro filters (top), both families (bottom); fixed thresholds</sup>",
-                      height=650, width=1250, margin=dict(t=125, l=200, r=30, b=110), legend=dict(orientation="h", y=-0.15, x=0))
-    save_figure(fig, L.PREFIX + "28_filters", L.FIG)
+    # chart: l28_charts.py
