@@ -7,8 +7,9 @@ Carry (raw measure, annualised):
   bonds (VFITX, VUSTX): term spread + roll-down, 5y - bill + 4.5 * (5y - 3y) / 2 and 20y - bill + 14 * (20y - 10y) / 10;
   equity (S&P 500): earnings yield (Shiller 12-month earnings, used six months later, over the daily index) minus (bill - 12-month CPI inflation).
   Carry is averaged over 21 days before use. Signal = average of the within-group rank of the level and the rank of the 3-month change.
-Value: minus ln(today / average 4.5 to 5.5 years earlier) of a price without income: the real exchange rate (currencies), the front contract
-(commodities), the spot index (equity); bonds: the yield minus its average 4.5 to 5.5 years earlier."""
+Value (rule, user 2026-11-15): minus ln(today / its average over the past five years), cheap or dear against the long-term trend, of a price without income: the real exchange rate (currencies), the front contract
+(commodities), the spot index (equity); bonds: the yield minus its five-year average (above = cheap).
+AQR's version (against the average 4.5 to 5.5 years earlier: reversal(), value_bonds()) is kept as a variant."""
 import sys
 from pathlib import Path
 import numpy as np, pandas as pd
@@ -84,6 +85,51 @@ def carry_signal(C):
 
 
 # ---------- value ----------
+LONG = RAW / "l29_long"
+
+
+def trend_gap(M, years=10, z=True):
+    """Monthly: minus (today's level - the straight line fitted through the past `years` years, extended to today), divided by the standard
+    deviation of the gaps from that line over the same years (z=True: comparable across markets of different volatility). Past months only."""
+    n = years * 12; t = np.arange(n); out = pd.DataFrame(index=M.index, columns=M.columns, dtype=float)
+    for c in M:
+        x = M[c].to_numpy(dtype=float)
+        for k in range(n, len(x)):
+            w = x[k - n:k]
+            if np.isfinite(w).sum() >= 0.8 * n and np.isfinite(x[k]):
+                ok = np.isfinite(w); b = np.polyfit(t[ok], w[ok], 1); sd = np.std(w[ok] - (b[0] * t[ok] + b[1]), ddof=2) if z else 1.0
+                out.iat[k, out.columns.get_loc(c)] = -(x[k] - (b[0] * n + b[1])) / sd
+    return out
+
+
+def long_monthly():
+    """Long monthly series for the value signal only (returns stay on the traded series), each month used from when it is known:
+    commodities, World Bank monthly average prices (from the next month); equity, month-end spot indices; currencies, BIS real rates
+    (already lagged two months in l29_fx.reer); bonds, month-end yields."""
+    W = pd.read_csv(LONG / "wb_commodities_monthly.csv", index_col=0, parse_dates=True); W.index = W.index + pd.offsets.MonthBegin(1)
+    E = pd.read_csv(LONG / "spot_indices_1985.csv", index_col=0, parse_dates=True).resample("MS").last(); E.index = E.index + pd.offsets.MonthBegin(1)
+    E.columns = ["cme-es" if "GSPC" in c else "cme-nasdaq" for c in E.columns]
+    R = FX.reer().resample("MS").first().drop(columns="USD")                         # already shifted to when it is known
+    y = pd.DataFrame({"VFITX": fred_local("DGS5"), "VUSTX": fred_local("DGS20")}).resample("MS").last() / 100; y.index = y.index + pd.offsets.MonthBegin(1)
+    return {"commod": np.log(W[COMMOD]), "equity": np.log(E[EQUITY]), "fx": R, "bonds": y}
+
+
+def value_trend(years=10):
+    """The value rule: cheap or dear against the market's own 10-year trend line (bonds: a yield above its line is cheap)."""
+    out = {}
+    for g, M in long_monthly().items():
+        v = trend_gap(M, years); v = -v if g == "bonds" else v
+        out[g] = v.reindex(DAYS.union(v.index)).ffill(limit=25).reindex(DAYS)
+    return out
+
+
+def vs_trend(X, years=5, log=True):
+    """Value against the long-term trend: minus (today - its average over the past `years` years); log prices, or yields (log=False, sign
+    flipped by the caller: a yield above its trend is cheap)."""
+    x = np.log(X) if log else X; n = int(years * 252)
+    return -(x - x.rolling(n, min_periods=int(0.8 * n)).mean())
+
+
 def reversal(P):
     lp = np.log(P); past = lp.shift(LO).rolling(HI - LO + 1, min_periods=(HI - LO) // 2).mean()
     return -(lp - past)
@@ -118,5 +164,5 @@ def signals():
     P = traded()
     carry = {"fx": carry_fx(), "commod": carry_commod(), "bonds": carry_bonds(), "equity": carry_equity()}
     Q = spot_prices()
-    value = {"fx": value_fx().drop(columns="USD"), "commod": reversal(Q[COMMOD]), "bonds": value_bonds(), "equity": reversal(Q[EQUITY])}
+    value = value_trend(10)
     return carry, value, P
