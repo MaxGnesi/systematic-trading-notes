@@ -150,3 +150,5 @@ The capstone futures run out market by market in December 2022 (14 markets to mi
 ## Commodity curves, result (2026-11-15; exploratory per-class example, outside the BH families)
 
 Capstone futures 2006 to 2022-11-18, front against next contract, known the day before (scripts/l28_curves.py, results/curves.json, figures/28_curves.png). Trend stream Sharpe ratio, backwardation against contango (share of days backwardated): crude oil 0.81 / -0.10 (30%; band of the difference 0.13 to 1.74), natural gas 0.33 / 0.45 (16%), gold -1.83 / 0.21 (6%), corn 0.33 / -0.14 (15%), soybeans 0.09 / 0.28 (33%), wheat -2.39 / -0.21 (5%), cocoa -0.73 / -0.37 (29%); sleeve (most markets backwardated, 7% of days) -0.33 / 0.06 (band -1.59 to 0.86). Seven markets, no multiple-testing correction; seasonal curves (gas, grains) mix seasons with scarcity (exercise: contracts a year apart).
+
+**2026-11-15, after the lecture was complete: Lecture 29's scope changed (user).** Lecture 29 now adds carry and value to trend instead of strategies built from the regime series. §1's table and paragraphs and §8's bridge were rewritten to match. No result, figure or number of this lecture changed.

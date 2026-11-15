@@ -6,19 +6,19 @@ Lecture 27's baseline trend portfolio is always in the market. A **regime filter
 
 ## 1. Regime information as a switch
 
-The same regime information can be used in two ways.
+Trend loses money in some regimes. There are two answers to that, and the course takes them in turn.
 
-| | As a switch (this lecture) | As a strategy (Lecture 29) |
+| | Switching trend (this lecture) | Adding strategies to trend (Lecture 29) |
 |---|---|---|
-| Question | Does the regime tell us **when trend works**? | Does the regime tell us **where prices go**? |
-| What the regime does | Turns an existing strategy on and off | Sets the positions of a new strategy next to trend |
-| Result | A part-time version of trend | A second return stream, judged by what it adds to trend |
-| Judged against | Always-in and random switching with the same time in the market | What it adds to trend, above all in the regimes where trend loses |
-| Idle capital | Stays idle: a switch can only take away | Used by the second strategy |
+| Question | Does the regime tell us **when trend works**? | Is there a strategy that **earns when trend does not**? |
+| What changes | Trend is turned on and off | New return streams (carry, value) are held next to trend, always in |
+| What the regime does | Sets the switch | Nothing is switched: the regimes only show where each strategy earned |
+| Judged against | Always-in and random switching with the same time in the market | What it adds to trend, against random strategies |
+| Idle capital | Stays idle: a switch can only take away | None: every strategy is always in |
 
-**Why both, and why in this order.** The two lectures do not repeat each other: they ask the same information two different questions, and a variable can fail one and pass the other. Inflation is an example. As a switch, it asks whether trend should be held while inflation stands still. As a strategy, it asks whether being long commodities and short bonds while inflation rises earns money. These are different bets on different returns, and each needs its own test. *Analogy (labelled):* a weather forecast can tell a fisherman to stay in port before a storm (a switch) or tell a shop to stock umbrellas (a strategy); one forecast, two businesses.
+**Why both, and why in this order.** The two lectures do not repeat each other. A switch needs a forecast: it must know, on the day, that trend is about to do badly. A second strategy needs no forecast: if it earns for a different reason, it tends to earn when trend does not, whatever the regime. *Analogy (labelled):* a fisherman can stay in port when a storm is forecast (a switch), or also own an umbrella shop (a second business); the shop earns in storms without anyone forecasting them.
 
-The switch comes first because it is the natural first idea, and because its result motivates the second. It continues Lecture 8, which tested filters on single markets; here the filter switches the whole portfolio. A switch can only take away: while trend is off its capital is idle, so even a switch that raises the Sharpe ratio lowers the return (key chart below). It can never earn in the regimes where trend fails. A second strategy can, and that is Lecture 29's question. This lecture also builds the regime series (known the day before, macro data as first published) that Lecture 29 reuses without testing them again as switches; what Lecture 29 tests is new: the strategies' own returns and what they add to trend.
+The switch comes first because it is the natural first idea, and because its result motivates the second. It continues Lecture 8, which tested filters on single markets; here the filter switches the whole portfolio. A switch can only take away: while trend is off its capital is idle, so even a switch that raises the Sharpe ratio lowers the return (key chart below). It can never earn in the regimes where trend fails. A second strategy can, and that is Lecture 29's question. Lecture 29 reuses the regime quadrants built here only to show where each strategy earned; nothing is switched there.
 
 **The rule in one sentence** (our proposal). *Trade trend while the regime is moving; step aside while it stands still*, where for each variable the unfavourable state was fixed before any result (§3). Off means the whole portfolio's target position is zero; it is reached a tenth of the way each day, like every position since Lecture 26, and every change costs 5 bp.
 
@@ -314,7 +314,7 @@ Two cautions. Seven markets were scanned with no correction for multiple tests, 
 4. **Patterns found after looking need data they were not found in.** Volatility and correlation quadrants looked consistent on 2006-2026 and did not repeat on 1990-2005 (§6).
 5. **Some regimes belong to one class.** Crude oil trend did better when its curve was backwardated; the portfolio-wide version of the question has little to say (§7).
 
-**From switch to strategy.** This lecture asked the regimes *when* to hold trend, and on our data they could not say better than chance. A switch could not have done more than that: switched off, trend's capital sits idle and earns nothing. Lecture 29 asks the same regime series a different question, *where prices go*, by turning them into strategies of their own next to trend (carry, economic trend, the Fed-announcement strategies), and judges each by what it adds in the regimes where trend loses. The regime series are reused as built here; the switches are not tested again.
+**From switch to strategy.** This lecture asked the regimes *when* to hold trend, and on our data they could not say better than chance. A switch could not have done more than that: switched off, trend's capital sits idle and earns nothing. Lecture 29 takes the other answer: it holds, next to trend, two strategies that earn for different reasons, **carry** and **value**, the cross-asset styles of Asness, Moskowitz and Pedersen (2013), and judges each by what it adds to trend. This lecture's quadrants are reused there only to show where each strategy earned, above all in the regimes where trend lost.
 
 ### 8.2 Exercises
 

@@ -134,7 +134,7 @@ Inside each asset class the baseline gives every market the same risk, measured 
 
 <sub><b>How to read the table.</b> The same speeds, classes and total scaling; only the weights of the markets inside each class differ. Volatility about 10.5% for both. Excess returns over cash, 5 bp per trade; our calculation.</sub>
 
-The two portfolios are nearly the same (correlation 0.98). Equal capital carries a third less gross exposure, which matters where leverage is limited or costs money (Lecture 31), and earns a little less because the calm markets in each class barely count: within government bonds, the long Treasury fund carries almost all the risk. It also breaks the one method used at every other level, so the baseline keeps equal risk and treats equal capital as a remark on leverage.
+The two portfolios are nearly the same (correlation 0.98). Equal capital carries a third less gross exposure, which matters where leverage is limited or costs money (Lecture 30), and earns a little less because the calm markets in each class barely count: within government bonds, the long Treasury fund carries almost all the risk. It also breaks the one method used at every other level, so the baseline keeps equal risk and treats equal capital as a remark on leverage.
 
 **Equal risk per class is a convention.** It gives a class of two credit funds the same risk as a class of eight equity funds, and it would give a single Bitcoin future the risk of all equity. Classes could instead be weighted by how many independent bets they contain, or by size; Lecture 30 compares such methods, and an exercise asks how much the class weights matter (§7.2).
 
