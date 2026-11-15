@@ -36,6 +36,7 @@ Over all twelve filters and both datasets, under the verdict fixed in advance (b
 | 5 | The filters against luck | Does switching on these regimes beat always-in and random switching? |
 | 6 | Why | What drives the patterns that appear, and do they repeat on years not used to find them? |
 | 7 | One class at a time | A worked example: commodity trend by the shape of the futures curve |
+| 8 | Summary | Takeaways, exercises, reading |
 
 ## 2. Comparing a part-time strategy with always-in
 
@@ -280,4 +281,53 @@ The third sample is 1990-2005, years no test of this course had used for this qu
 
 ## 7. One class at a time: commodity curves
 
-*To be added: the commodity trend sleeve of the capstone futures, by backwardation and contango, as a worked example of a per-class switch.*
+Every filter so far switched the whole portfolio. Some regimes belong to one asset class only. The shape of a commodity futures curve is one: it says something about oil or wheat, nothing about bonds. This section is a worked example of a **per-class** regime, labelled exploratory and kept outside the Benjamini-Hochberg families (decided before any result, 2026-11-15).
+
+**Backwardation and contango** (definitions). A commodity curve is in **backwardation** when the nearest futures contract is priced above the next one, and in **contango** when it is priced below. Contango is the normal state of a well-supplied, storable commodity: the later contract pays for storage and financing. Backwardation usually signals scarce inventories, when holding the physical good today is worth more than holding it later (the theory of storage; Gorton, Hayashi and Rouwenhorst, 2013). A long futures position in a backwardated market also earns the roll: as the contract approaches expiry its price tends to rise towards the higher spot price. A long trend position then has carry on its side; a short one has it against.
+
+**Measured as.** For each commodity of the capstone futures and each day, the front contract is the nearest one more than five trading days before its last day in the data, and the next is the following contract; the gap is the log of front over next, annualised. Backwardation means a positive gap, known the day before. Each market's trend stream (Lecture 26's held speeds, after costs) is split by its own curve state; the commodity sleeve (the seven markets at equal risk) is split by whether most of its markets are backwardated. Nothing is switched.
+
+![Commodity trend by the shape of the futures curve](figures/28_curves.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> x: one group per commodity, and the commodity sleeve at the right, each labelled with the share of days its curve was in backwardation; y: the Sharpe ratio after costs of the market's trend stream on the days its curve was in backwardation (blue) or in contango (orange). Capstone futures 2006 to November 2022; curve state known the day before. Our calculation.</sub>
+
+**Result.**
+
+- **Crude oil** is the clearest case: its trend stream earned a Sharpe ratio of 0.81 in backwardation and −0.10 in contango (difference 0.91; 90% band 0.13 to 1.74), with the curve backwardated on 30% of days.
+- **Gold and wheat** go strongly the other way (−1.83 and −2.39 in backwardation; bands exclude zero), but their curves were backwardated on only 6% and 5% of days: a few short episodes.
+- **Natural gas, corn, soybeans and cocoa** show no clear difference.
+- **The sleeve** had most of its markets backwardated on only 7% of days: −0.33 against 0.06 (band −1.59 to +0.86). Over the whole period the commodity trend sleeve itself earned little (0.03).
+
+Two cautions. Seven markets were scanned with no correction for multiple tests, so one or two bands excluding zero is close to what chance alone would produce. And for seasonal commodities (natural gas, the grains), the gap between neighbouring contracts mixes scarcity with the seasons: a winter gas contract is dearer than a spring one in any year. Comparing contracts a year apart removes that (exercise 3).
+
+**Our reading (labelled).** The example shows how a regime can matter for one class and not for the portfolio: in crude oil, trend did better when the curve signalled scarcity, consistent with trend and carry pulling the same way. Whether to use the curve as a switch for one class, or as a strategy of its own (commodity carry), is the step from this lecture to the next.
+
+## 8. Summary
+
+### 8.1 Takeaways
+
+1. **A part-time strategy is compared on several numbers, not one.** Out of the market a share $`1-p`$ of the time, a filter with no information lowers the Sharpe ratio over all days by $`\sqrt{p}`$; a filter must beat random switching with the same time in the market to show information; a higher Sharpe ratio can come with a lower return, because the capital is idle while the filter is off (§2).
+2. **Macro data must be used as first published.** On revised data, a fifth of the days fall in a different growth × inflation quadrant, and the ranking of the quadrants changes (§3.2).
+3. **On our data, no regime filter beat random switching on both datasets**, macro or market state, alone or combined. The relations seen in the scan changed between periods (§4, §5).
+4. **Patterns found after looking need data they were not found in.** Volatility and correlation quadrants looked consistent on 2006-2026 and did not repeat on 1990-2005 (§6).
+5. **Some regimes belong to one class.** Crude oil trend did better when its curve was backwardated; the portfolio-wide version of the question has little to say (§7).
+
+Lecture 29 uses the same regime series differently: not to switch trend off, but as strategies of their own next to it, and asks whether a strategy exists that earns in the regimes where trend does not.
+
+### 8.2 Exercises
+
+1. **Per-class switching.** Switch only the bond and commodity sleeves off on the inflation filter, keep the rest always in, and report the six numbers of §2 against random per-class switches.
+2. **Halving instead of switching off.** Repeat §5 with the filters halving the position instead of closing it. How do the six numbers change, and why does the bar of §2.1 move?
+3. **A cleaner curve.** Measure the commodity curve between contracts a year apart (removing the seasons) and redo §7. Fix your expectation for each market before running it.
+4. **Trend with or against carry.** Split each commodity's trend returns by whether the trend position and the curve agree (long in backwardation, short in contango) or disagree. Is the crude-oil result of §7 a result about agreement with carry?
+5. **The dollar, an open question.** Trend earned more when the dollar stood still, in every window of §4. Write down one mechanism, derive one testable prediction from it (for example: fast dollar moves coincide with many markets reversing at once), fix it, and test it on the 1990-2005 portfolio of §6.4.
+
+### 8.3 Reading
+
+- Lecture 7 §4.3 (Sharpe ratios of strategies not always in the market), Lecture 8 §4.5-§4.6 (the random filter; confirmation out of sample), Lecture 27 (the baseline).
+- Croushore, D. and Stark, T. (2001). A real-time data set for macroeconomists. *Journal of Econometrics* 105(1), 111-130. The Philadelphia Fed's vintages used in §3.2.
+- Benjamini, Y. and Hochberg, Y. (1995). Controlling the false discovery rate. *Journal of the Royal Statistical Society B* 57(1), 289-300.
+- Hurst, B., Ooi, Y. H. and Pedersen, L. H. (2017). A century of evidence on trend-following investing. *Journal of Portfolio Management* 44(1), 15-29.
+- Goulding, C., Harvey, C. R. and Mazzoleni, M. (2023). Momentum turning points. *Journal of Financial Economics* 149(3), 378-406.
+- Neville, H., Draaisma, T., Funnell, B., Harvey, C. R. and Van Hemert, O. (2021). The best strategies for inflationary times. Working paper, SSRN 3813202.
+- Gorton, G., Hayashi, F. and Rouwenhorst, K. G. (2013). The fundamentals of commodity futures returns. *Review of Finance* 17(1), 35-105.
+- Levine, A., Ooi, Y. H., Richardson, M. and Sasseville, C. (2018). Commodities for the long run. *Financial Analysts Journal* 74(2), 55-68. Commodity futures and their curves over more than a century.
