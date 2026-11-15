@@ -10,12 +10,15 @@ The same regime information can be used in two ways.
 
 | | As a switch (this lecture) | As a strategy (Lecture 29) |
 |---|---|---|
-| Question | When should trend be held? | Does the regime itself earn a return? |
+| Question | Does the regime tell us **when trend works**? | Does the regime tell us **where prices go**? |
 | What the regime does | Turns an existing strategy on and off | Sets the positions of a new strategy next to trend |
 | Result | A part-time version of trend | A second return stream, judged by what it adds to trend |
-| Idle capital | Stays idle | Used by the second strategy |
+| Judged against | Always-in and random switching with the same time in the market | What it adds to trend, above all in the regimes where trend loses |
+| Idle capital | Stays idle: a switch can only take away | Used by the second strategy |
 
-The switch comes first because it is the natural first idea and continues Lecture 8, which tested filters on single markets; here the filter switches the whole portfolio. This lecture also builds the regime series (known the day before, macro data as first published) that Lecture 29 reuses without testing them again.
+**Why both, and why in this order.** The two lectures do not repeat each other: they ask the same information two different questions, and a variable can fail one and pass the other. Inflation is an example. As a switch, it asks whether trend should be held while inflation stands still. As a strategy, it asks whether being long commodities and short bonds while inflation rises earns money. These are different bets on different returns, and each needs its own test. *Analogy (labelled):* a weather forecast can tell a fisherman to stay in port before a storm (a switch) or tell a shop to stock umbrellas (a strategy); one forecast, two businesses.
+
+The switch comes first because it is the natural first idea, and because its result motivates the second. It continues Lecture 8, which tested filters on single markets; here the filter switches the whole portfolio. A switch can only take away: while trend is off its capital is idle, so even a switch that raises the Sharpe ratio lowers the return (key chart below). It can never earn in the regimes where trend fails. A second strategy can, and that is Lecture 29's question. This lecture also builds the regime series (known the day before, macro data as first published) that Lecture 29 reuses without testing them again as switches; what Lecture 29 tests is new: the strategies' own returns and what they add to trend.
 
 **The rule in one sentence** (our proposal). *Trade trend while the regime is moving; step aside while it stands still*, where for each variable the unfavourable state was fixed before any result (§3). Off means the whole portfolio's target position is zero; it is reached a tenth of the way each day, like every position since Lecture 26, and every change costs 5 bp.
 
@@ -311,7 +314,7 @@ Two cautions. Seven markets were scanned with no correction for multiple tests, 
 4. **Patterns found after looking need data they were not found in.** Volatility and correlation quadrants looked consistent on 2006-2026 and did not repeat on 1990-2005 (§6).
 5. **Some regimes belong to one class.** Crude oil trend did better when its curve was backwardated; the portfolio-wide version of the question has little to say (§7).
 
-Lecture 29 uses the same regime series differently: not to switch trend off, but as strategies of their own next to it, and asks whether a strategy exists that earns in the regimes where trend does not.
+**From switch to strategy.** This lecture asked the regimes *when* to hold trend, and on our data they could not say better than chance. A switch could not have done more than that: switched off, trend's capital sits idle and earns nothing. Lecture 29 asks the same regime series a different question, *where prices go*, by turning them into strategies of their own next to trend (carry, economic trend, the Fed-announcement strategies), and judges each by what it adds in the regimes where trend loses. The regime series are reused as built here; the switches are not tested again.
 
 ### 8.2 Exercises
 
