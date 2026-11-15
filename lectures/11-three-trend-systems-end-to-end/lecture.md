@@ -626,7 +626,7 @@ Three checks, chosen to guard against three different risks (Lecture 7, §5 and 
 
 ### 12.1 Choices fixed in advance
 
-The main results involve almost no selection from results: all speeds on the plateau blended with equal weights, equal risk per class and market, the volatility floor, a 10% volatility target, the two systems at equal risk, costs of 5 bp. Choices fixed in advance cannot be overfitted. The one exception is the correlation filter, adopted after its tests in §10.2; the portfolio without it is shown alongside.
+The main results involve almost no selection from results: all speeds on the plateau blended with equal weights, equal risk per class and market, the volatility floor, a 10% volatility target, the two systems at equal risk, costs of 5 bp. Choices fixed in advance cannot be overfittedted. The one exception is the correlation filter, adopted after its tests in §10.2; the portfolio without it is shown alongside.
 
 ### 12.2 Split by market
 

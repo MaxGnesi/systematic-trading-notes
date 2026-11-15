@@ -232,7 +232,7 @@ Every rule is chosen on the past and used in the future. **If the future were an
 
 | Source | What it means | Can it be checked in advance? |
 |---|---|---|
-| **Dependence on the sample** | The history we saw is one draw among many that could have happened. The best rule partly fits that draw's noise: one crash, one lucky market | Yes: rerun the choice on other slices of the past, on other markets, and against strategies with no edge |
+| **Dependence on the sample** | The history we saw is one draw among many that could have happened. The best rule partly fits that draw's noise: one crash, one lucky market | Yes: rerun the choice on other slices of the past, on other markets, and against a luck baseline |
 | **A future unlike the past** | Markets evolve: interest-rate regimes change, different players trade, a strategy becomes crowded | No: only a mechanism (a reason why the rule should keep working) and monitoring help |
 
 <sub><b>How to read the table.</b> The two reasons a rule that worked in the sample can fail afterwards, and whether each can be checked before the rule is used. Our summary.</sub>
@@ -242,7 +242,7 @@ It is plausible that markets keep evolving, so the useful question is not whethe
 | Warning sign | Why it points to overfitting | What to prefer |
 |---|---|---|
 | **The exact best parameter of an optimisation** | The peak of a search is where noise helped most. Its neighbours usually did worse, and the future will not land on the peak again. Bailey, Borwein, López de Prado and Zhu (2017) estimate how often the best rule in a sample does worse than the median out of sample | A region of parameters that all work (a plateau), held together (Lecture 7 §6; Lecture 26) |
-| **Outlier performance** | A result far above what similar strategies earn is most often a mistake (look-ahead, survivorship, missing costs, a data error), and otherwise more often luck than skill: the best of many strategies with no edge can look excellent (Lecture 7 §5.2). And a real outlier attracts competitors | First look for a bug; then compare with a luck baseline and with published evidence; distrust the best result in a list |
+| **Outlier performance** | A result far above what similar strategies earn is most often a mistake (look-ahead, survivorship, missing costs, a data error), and otherwise more often luck than skill: the best of many zero-edge strategies (random strategies with no edge by construction) can look excellent (Lecture 7 §5.2). And a real outlier attracts competitors | First look for a bug; then compare with a **luck baseline**, many random versions of the same strategy with no information (zero-edge strategies in Lecture 7, random filters in Lecture 8), and with published evidence; distrust the best result in a list |
 | **A strategy that works in one market only** | One market's history is the least evidence there is. A real mechanism usually shows wherever it should apply, unless the mechanism itself is local (a commodity's seasons, one exchange's rules) | Test across markets and asset classes; accept a rule where its mechanism says it should work, and only there |
 
 <sub><b>How to read the table.</b> One row per warning sign: what to look out for, why it suggests the rule fits the sample rather than a lasting effect, and the safer alternative. Our proposal, built on the lectures cited.</sub>
@@ -269,7 +269,7 @@ Ten modest edges that do not move together reach a Sharpe ratio that almost no s
 
 Three limits keep the arithmetic honest:
 
-- **Each edge must be real and survive costs.** The formula assumes every strategy has a positive Sharpe ratio. Adding an unrelated strategy with no edge at equal risk lowers the combination: it adds risk and no return. Small edges are also the most fragile to costs.
+- **Each edge must be real and survive costs.** The formula assumes every strategy has a positive Sharpe ratio. Adding an unrelated zero-edge strategy at equal risk lowers the combination: it adds risk and no return. Small edges are also the most fragile to costs.
 - **Correlations are not constant.** Strategies that look independent in calm years can fail together in a crisis, when many funds sell the same positions at once, as quantitative equity funds did in August 2007 (Khandani and Lo, 2011). The $`\rho`$ of the formula is an average that hides its worst days.
 - **Lasting edges are often uncomfortable rather than secret.** An edge that rests on information is competed away once it is known. Trend, carry and value have survived decades of publication because holding them hurts: long drawdowns, sudden crashes. Few investors sit through the pain, which is why the premium remains, and why such edges are modest and best held together.
 
