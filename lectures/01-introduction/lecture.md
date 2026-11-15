@@ -228,7 +228,7 @@ with $`T`$ the number of return periods per year. A high backtest Sharpe ratio i
 
 ### 5.3 Overfitting: the gap between the past and the future
 
-Every rule is chosen on the past and used in the future. **If the future were an exact copy of the past, there would be no overfitting:** the rule that did best in the sample would also do best afterwards. Overfitting is the name for the gap between the two, and it has two sources (Lecture 26 §2 treats them in detail):
+Every rule is chosen on the past and used in the future. **If the future were an exact copy of the past, there would be no overfitting:** the rule that did best in the sample would also do best afterwards. An exact copy means the same path, not only the same market: even if markets never changed, the future would be a new draw from the same process, and the noise a rule fitted in the past would not repeat. Overfitting is the name for the gap between the two, and it has two sources (Lecture 26 §2 treats them in detail):
 
 | Source | What it means | Can it be checked in advance? |
 |---|---|---|
@@ -242,8 +242,8 @@ It is plausible that markets keep evolving, so the useful question is not whethe
 | Warning sign | Why it points to overfitting | What to prefer |
 |---|---|---|
 | **The exact best parameter of an optimisation** | The peak of a search is where noise helped most. Its neighbours usually did worse, and the future will not land on the peak again. Bailey, Borwein, López de Prado and Zhu (2017) estimate how often the best rule in a sample does worse than the median out of sample | A region of parameters that all work (a plateau), held together (Lecture 7 §6; Lecture 26) |
-| **Outlier performance** | A result far above what similar strategies earn is more often luck than skill: the best of many strategies with no edge can look excellent (Lecture 7 §5.2). And a real outlier attracts competitors | Compare with a luck baseline and with published evidence; distrust the best result in a list |
-| **A strategy that works in one market only** | One market's history is the least evidence there is. A real mechanism usually shows wherever it should apply | Test across markets and asset classes; accept a rule where its mechanism says it should work |
+| **Outlier performance** | A result far above what similar strategies earn is most often a mistake (look-ahead, survivorship, missing costs, a data error), and otherwise more often luck than skill: the best of many strategies with no edge can look excellent (Lecture 7 §5.2). And a real outlier attracts competitors | First look for a bug; then compare with a luck baseline and with published evidence; distrust the best result in a list |
+| **A strategy that works in one market only** | One market's history is the least evidence there is. A real mechanism usually shows wherever it should apply, unless the mechanism itself is local (a commodity's seasons, one exchange's rules) | Test across markets and asset classes; accept a rule where its mechanism says it should work, and only there |
 
 <sub><b>How to read the table.</b> One row per warning sign: what to look out for, why it suggests the rule fits the sample rather than a lasting effect, and the safer alternative. Our proposal, built on the lectures cited.</sub>
 
@@ -266,6 +266,12 @@ The arithmetic shows why. Take $`n`$ strategies, each with the same Sharpe ratio
 <sub><b>How to read the table.</b> Each column is a portfolio of strategies that each earn a Sharpe ratio of 0.30 on their own, held at equal risk; $`\rho`$ is the average correlation between their returns. The cells apply the formula above. A definition under the stated assumptions (same Sharpe ratio, equal risk).</sub>
 
 Ten modest edges that do not move together reach a Sharpe ratio that almost no single strategy keeps for long. Correlation matters more than the count: at $`\rho = 0.5`$, ten strategies are barely better than one, because they win and lose at the same time. The value of a new strategy lies less in its own Sharpe ratio than in **failing at different times** from the others. Grinold (1989) put the same idea in one line for active management, the fundamental law: the information ratio is approximately the skill per decision (the correlation of forecasts with outcomes) times the square root of the number of **independent** decisions. The word independent carries the weight, as the table shows.
+
+Three limits keep the arithmetic honest:
+
+- **Each edge must be real and survive costs.** The formula assumes every strategy has a positive Sharpe ratio. Adding an unrelated strategy with no edge at equal risk lowers the combination: it adds risk and no return. Small edges are also the most fragile to costs.
+- **Correlations are not constant.** Strategies that look independent in calm years can fail together in a crisis, when many funds sell the same positions at once, as quantitative equity funds did in August 2007 (Khandani and Lo, 2011). The $`\rho`$ of the formula is an average that hides its worst days.
+- **Lasting edges are often uncomfortable rather than secret.** An edge that rests on information is competed away once it is known. Trend, carry and value have survived decades of publication because holding them hurts: long drawdowns, sudden crashes. Few investors sit through the pain, which is why the premium remains, and why such edges are modest and best held together.
 
 The course is built this way. Lectures 25-27 hold many markets and many trend speeds at equal risk instead of picking the best; Lectures 28-29 ask whether other strategies add to trend because they fail at different times.
 
