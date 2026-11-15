@@ -1,7 +1,7 @@
 {
  "etf": {
   "volatility": {
-   "volatility rising (3 months)": {
+   "rising (3 months)": {
     "lowest fifth": {
      "sharpe": -0.4166632365237725,
      "share": 0.05733944954128441
@@ -23,7 +23,7 @@
      "share": 0.07454128440366972
     }
    },
-   "volatility falling (3 months)": {
+   "falling (3 months)": {
     "lowest fifth": {
      "sharpe": 0.36306603531303766,
      "share": 0.1565366972477064
@@ -43,6 +43,52 @@
     "highest fifth": {
      "sharpe": 1.2851769695554276,
      "share": 0.0389908256880734
+    }
+   }
+  },
+  "correlation": {
+   "rising (3 months)": {
+    "lowest fifth": {
+     "sharpe": 0.9869656296409706,
+     "share": 0.11009174311926606
+    },
+    "second": {
+     "sharpe": 0.9525458108851647,
+     "share": 0.1694380733944954
+    },
+    "middle": {
+     "sharpe": 1.676424256724767,
+     "share": 0.0782683486238532
+    },
+    "fourth": {
+     "sharpe": -0.8978010855481705,
+     "share": 0.0676605504587156
+    },
+    "highest fifth": {
+     "sharpe": 0.045140573127710505,
+     "share": 0.016628440366972478
+    }
+   },
+   "falling (3 months)": {
+    "lowest fifth": {
+     "sharpe": 0.6569439847533062,
+     "share": 0.31823394495412843
+    },
+    "second": {
+     "sharpe": -0.5951048650139477,
+     "share": 0.12184633027522936
+    },
+    "middle": {
+     "sharpe": 0.3472179530199559,
+     "share": 0.0963302752293578
+    },
+    "fourth": {
+     "sharpe": 1.819075415218696,
+     "share": 0.02150229357798165
+    },
+    "highest fifth": {
+     "sharpe": NaN,
+     "share": 0.0
     }
    }
   },
@@ -241,7 +287,7 @@
  },
  "futures": {
   "volatility": {
-   "volatility rising (3 months)": {
+   "rising (3 months)": {
     "lowest fifth": {
      "sharpe": 0.023031360452675658,
      "share": 0.06581644272375313
@@ -263,7 +309,7 @@
      "share": 0.11113641539512639
     }
    },
-   "volatility falling (3 months)": {
+   "falling (3 months)": {
     "lowest fifth": {
      "sharpe": 0.7053092154126632,
      "share": 0.14620815304030974
@@ -283,6 +329,52 @@
     "highest fifth": {
      "sharpe": 1.6729672690074255,
      "share": 0.08471874288317012
+    }
+   }
+  },
+  "correlation": {
+   "rising (3 months)": {
+    "lowest fifth": {
+     "sharpe": NaN,
+     "share": 0.002277385561375541
+    },
+    "second": {
+     "sharpe": 1.0060034688076607,
+     "share": 0.06194488726941471
+    },
+    "middle": {
+     "sharpe": 1.5561020887261188,
+     "share": 0.1448417217034844
+    },
+    "fourth": {
+     "sharpe": 0.21304502814540396,
+     "share": 0.15645638806649967
+    },
+    "highest fifth": {
+     "sharpe": 0.5077765861810406,
+     "share": 0.1844682304714188
+    }
+   },
+   "falling (3 months)": {
+    "lowest fifth": {
+     "sharpe": 1.5295771844961554,
+     "share": 0.03393304486449556
+    },
+    "second": {
+     "sharpe": 0.5016019580598388,
+     "share": 0.11614666363015258
+    },
+    "middle": {
+     "sharpe": 0.17071603100855662,
+     "share": 0.11295832384422683
+    },
+    "fourth": {
+     "sharpe": 0.21638609971728787,
+     "share": 0.11478023229332726
+    },
+    "highest fifth": {
+     "sharpe": -0.6224829647962126,
+     "share": 0.07196538373946709
     }
    }
   }
