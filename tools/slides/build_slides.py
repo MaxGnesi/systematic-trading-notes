@@ -1,7 +1,8 @@
 """Build a lecture's slide deck as a PDF from a short Markdown source.
 
 Usage: python tools/slides/build_slides.py lectures/16-the-final-portfolio
-Reads <lecture>/slides/slides.md, writes <lecture>/slides/<NN>_slides.pdf (and the intermediate .html).
+Reads <lecture>/slides/slides.md, writes <lecture>/slides/<NN>_slides.pdf, one PNG per slide in slides/pages/ and
+slides/README.md, which shows the slides on GitHub with a download link to the PDF (the intermediate .html is not committed).
 
 Source format: slides separated by a line '---'. In each slide:
   '# Title'                       the slide title (the first slide is the title slide)
@@ -130,8 +131,30 @@ def build(lecture_dir: Path) -> Path:
     if not browser: raise SystemExit("No Chrome or Edge found to print the PDF.")
     subprocess.run([browser, "--headless=new", "--disable-gpu", "--no-pdf-header-footer", f"--print-to-pdf={pdf.resolve()}",
                     "--virtual-time-budget=5000", html_path.resolve().as_uri()], capture_output=True, timeout=120, check=False)
-    print(f"{len(blocks)} slides -> {pdf}")
+    pages = page_images(browser, html_path, len(blocks), sdir / "pages", num)
+    title = re.search(r"^# (.+)$", blocks[0], re.M).group(1)
+    view = [f"# Slides · {title}", "", f"**[Download the slides as PDF]({pdf.name}?raw=1)** · [Back to the lecture](../lecture.md)", ""]
+    view += [f"![Slide {k + 1}](pages/{p.name})\n" for k, p in enumerate(pages)]
+    (sdir / "README.md").write_text("\n".join(view), encoding="utf-8")
+    print(f"{len(blocks)} slides -> {pdf}, {len(pages)} page images, slides/README.md")
     return pdf
+
+
+def page_images(browser: str, html_path: Path, n: int, out: Path, num: str) -> list[Path]:
+    """One PNG per slide, for viewing on GitHub: a screenshot of the whole deck, cut into pages."""
+    from PIL import Image
+    out.mkdir(exist_ok=True)
+    for old in out.glob("*.png"): old.unlink()
+    shot = out / "_all.png"
+    subprocess.run([browser, "--headless=new", "--disable-gpu", "--hide-scrollbars", f"--window-size=1280,{720 * n}",
+                    "--virtual-time-budget=5000", f"--screenshot={shot.resolve()}", html_path.resolve().as_uri()],
+                   capture_output=True, timeout=120, check=False)
+    im = Image.open(shot); paths = []
+    for k in range(n):
+        p = out / f"{num}_slide_{k + 1:02d}.png"
+        im.crop((0, 720 * k, 1280, 720 * (k + 1))).convert("RGB").save(p, optimize=True); paths.append(p)
+    im.close(); shot.unlink()
+    return paths
 
 
 if __name__ == "__main__":
