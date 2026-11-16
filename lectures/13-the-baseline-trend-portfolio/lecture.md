@@ -27,9 +27,9 @@ Two trend streams in the same market overlap by how far apart their speeds are, 
 
 | Step | Uses | Lecture |
 |---|---|---|
-| Markets | Liquidity, history, overlap | 25 |
-| Speeds | Strategy performance, in sample, as a region rather than a point | 26 |
-| Weights | Risk only: volatilities, correlations, costs | **27** (baseline), 30 (other methods) |
+| Markets | Liquidity, history, overlap | 11 |
+| Speeds | Strategy performance, in sample, as a region rather than a point | 12 |
+| Weights | Risk only: volatilities, correlations, costs | **13** (the baseline and its rivals) |
 | Judge | Profit and loss, out of sample | every lecture |
 
 Profit and loss never feeds back into the weights silently: where a weight depends on past performance (maximum Sharpe ratio in §2, speed timing in §2.4), the lecture says so and shows the cost.
