@@ -30,9 +30,16 @@ def hedge(W, R, alpha):
     return out
 
 
+def stats(r):
+    """Sharpe, Sortino, Omega (gains / losses, monthly, over cash) and Calmar (compound return a year / worst drawdown)."""
+    r = r.dropna(); w = (1 + r).cumprod(); dd = (w / w.cummax() - 1).min(); ann = w.iloc[-1] ** (12 / len(r)) - 1
+    return dict(sharpe=G.sharpe_m(r), sortino=r.mean() / np.sqrt((np.minimum(r, 0) ** 2).mean()) * np.sqrt(12),
+                omega=r[r > 0].sum() / -r[r < 0].sum(), calmar=ann / abs(dd), maxdd=dd)
+
+
 def run(Gs, W, tf, vol_months=36):
     S = pd.DataFrame({g: G.stream(W[g], Gs[g]["R"], vol_months) for g in Gs}); tot = M.scale_total(S.mean(axis=1, skipna=True)).loc[A:B_]
-    return G.sharpe_m(tot), G.sharpe_m(M.with_trend(tot, tf.loc[A:B_]))
+    return stats(tot), stats(M.with_trend(tot, tf.loc[A:B_]))
 
 
 if __name__ == "__main__":
@@ -47,5 +54,9 @@ if __name__ == "__main__":
     rows.append(("weighting: rank instead of score", rank, 36))
     for a in (0, 0.5, 1):
         rows.append((f"hedge alpha = {a} (currencies, commodities)", {g: (hedge(rule[g], Gs[g]["R"], a) if g in ("fx", "commod") else rule[g]) for g in Gs}, 36))
+    s0, _ = run(Gs, rule, tf); idx = M.with_trend(M.scale_total(pd.DataFrame({g: G.stream(rule[g], Gs[g]["R"]) for g in Gs}).mean(axis=1, skipna=True)).loc[A:B_], tf.loc[A:B_]).index
+    tr = stats(tf.loc[idx]); fmt = lambda x: f"{x['sharpe']:+5.2f} {x['sortino']:+6.2f} {x['omega']:5.2f} {x['calmar']:5.2f} {x['maxdd']:6.1%}"
+    print(f"{'':50s} {'carry: Sharpe Sortino Omega Calmar maxDD':>40s} | {'trend + carry: same':>36s}")
+    print(f"{'trend alone (same months as the combinations)':50s} {'':40s} | {fmt(tr)}")
     for name, W, vm in rows:
-        s, c = run(Gs, W, tf, vm); print(f"{name:52s} carry {s:+.2f}   trend + carry {c:+.2f}", flush=True)
+        s, c = run(Gs, W, tf, vm); print(f"{name:50s} {fmt(s):>40s} | {fmt(c)}", flush=True)
