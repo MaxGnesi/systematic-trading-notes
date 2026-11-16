@@ -9,7 +9,7 @@ from scipy import stats
 import os, sys
 if hasattr(sys.stdout, "reconfigure"): sys.stdout.reconfigure(encoding="utf-8", errors="replace")   # tables print on any console; Jupyter handles its own
 HERE = Path(__file__).resolve().parent                                     # lectures/13-.../scripts
-sys.path[:0] = [str(HERE), str(HERE.parents[1] / "18-tick-data-the-tape"), str(HERE.parents[2])]   # this folder, tape.py, trading_models
+sys.path[:0] = [str(HERE), str(HERE.parents[1] / "18-tick-data-the-tape"), str(HERE.parents[3])]   # this folder, tape.py, trading_models
 import tape
 L13_RESULTS = tape.ROOT / "interim" / "l13"; L13_RESULTS.mkdir(parents=True, exist_ok=True)          # results: in the data folder, never committed
 FIG = Path(os.environ.get("L13_FIG", HERE.parent / "figures")); FIG.mkdir(parents=True, exist_ok=True)

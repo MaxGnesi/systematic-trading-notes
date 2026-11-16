@@ -21,7 +21,7 @@ import os, sys
 if hasattr(sys.stdout, "reconfigure"): sys.stdout.reconfigure(encoding="utf-8", errors="replace")   # tables print on any console; Jupyter handles its own
 HERE = Path(__file__).resolve().parent                                     # lectures/17-.../scripts
 sys.path[:0] = [str(HERE), str(HERE.parents[1] / "22-trend-on-the-tape" / "scripts"), str(HERE.parents[1] / "19-bars-not-cut-by-time" / "scripts"),
-                str(HERE.parents[1] / "18-tick-data-the-tape"), str(HERE.parents[2])]
+                str(HERE.parents[1] / "18-tick-data-the-tape"), str(HERE.parents[3])]
 import tape
 L17_RESULTS = Path(os.environ.get("L17_RESULTS", tape.ROOT / "interim" / "l17")); L17_RESULTS.mkdir(parents=True, exist_ok=True)   # results: in the data folder, never committed
 ONE_YEAR = os.environ.get("L17_ONE_YEAR")                                # a check: run the tape scripts on one year only
