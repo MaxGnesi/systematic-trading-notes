@@ -14,7 +14,7 @@ Lecture 28 tried to avoid trend's bad regimes by switching trend off, and on our
 
 ## Samples and machinery (as Lectures 27-28)
 
-- **Trend:** Lecture 27's baseline, always in. ETFs out of sample 2013-2026; capstone futures 2006 to 2022-11-18 (Lecture 28's end date).
+- **Trend:** Lecture 27's baseline, always in, **across all its markets** (ETFs: the whole selected universe, equities, rates, credit, commodities and currencies, out of sample 2013-2026; futures: all 14 markets, 2006 to 2022-11-18, Lecture 28's end date). It is **not** trend on the carry or value markets alone: carry and value trade their own markets (the futures' groups; on the ETFs the 12 bond and credit funds for carry), and the two strategies meet only at the portfolio level, at equal risk, the total scaled to 10%. The text states this wherever a combination is shown (added 2026-11-16, user).
 - **Every strategy** uses the same machinery as trend: each market's position scaled to 10% volatility (six-month), reached a tenth of the way each day, 5 bp per trade; classes at equal risk; the strategy's total scaled each year to 10% on its past three years. Every signal known the day before.
 
 ## Two strategies, in their simplest versions
