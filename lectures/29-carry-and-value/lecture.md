@@ -189,7 +189,7 @@ The comparison above judges one strategy. But the rule was chosen from many vers
 
 Two things lower the number. The tries: 6.8 independent attempts make a Sharpe ratio of 0.20 what luck alone would deliver. And the tails: carry's monthly returns have a kurtosis of 8.6, far above the normal's 3, so a Sharpe ratio overstates how reliable its returns are. The best of the 21 tries earned 0.61; reporting it as "the" result would have overstated carry by a tenth of a unit.
 
-**How much evidence to expect.** About 90% is good evidence, and a stricter bar would mostly measure the length of the sample. To be 95% sure that a Sharpe ratio is above zero takes about $`(1.65/	ext{SR})^2`$ years:
+**How much evidence to expect.** About 90% is good evidence, and a stricter bar would mostly measure the length of the sample. To be 95% sure that a Sharpe ratio is above zero takes about $`(1.65/\text{SR})^2`$ years:
 
 | Sharpe ratio | Years of data to clear 95% once |
 |---|---|
