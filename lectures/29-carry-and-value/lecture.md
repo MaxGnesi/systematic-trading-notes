@@ -155,3 +155,71 @@ Value lost a little with our rule and broke even with AQR's construction. Its co
 *Our reading (labelled).* Value is not shown to work here, and not shown not to work. Its role in a portfolio is the one the correlation suggests, a diversifier of trend, but on this sample it did not earn enough to pay for its place. Whether it belongs in Lecture 30's final portfolio is a question for that lecture, to be decided before looking at data it was not tested on.
 
 One more observation links value to carry. In currencies and commodities the two point in opposite directions: the high-carry markets tend to be the dear ones (the signals' rank correlation is −0.12 and −0.24; the strategies' returns −0.31 and −0.43). A currency that pays a high rate attracts money and appreciates; a commodity in backwardation has usually just risen. §7 asks whether that can be used.
+
+## 6. Results
+
+**Key message.** Carry passes every test of luck we set, but less comfortably once the search that chose it is counted: about 90% likely to be a real edge, not the 100% that a single comparison suggests. It adds to trend on every measure in 2006-2022, at a price, sudden losses, and it did not help in 2013-2026.
+
+### 6.1 Against luck
+
+The rule was compared with 1,000 random strategies on the same markets, each market's position switching at random with the same average holding period, built by the same machinery and added to trend in the same way (futures period, monthly).
+
+| | Carry | Random: median | Random: 95th percentile | Share of random beaten |
+|---|---|---|---|---|
+| Carry alone | 0.57 | −0.11 | 0.28 | 100% |
+| Trend + carry | 0.86 | 0.36 | 0.65 | 100% |
+| Value alone | −0.09 | −0.08 | 0.34 | 48% |
+
+<sub><b>How to read the table.</b> Sharpe ratios after costs, 2006 to October 2022. The random strategies have no information by construction; added to trend at equal risk, they dilute it (median 0.36 against trend's 0.67 alone), which is the bar a real strategy must clear. Our calculation.</sub>
+
+### 6.2 The number of tries
+
+The comparison above judges one strategy. But the rule was chosen from many versions tried along the way, and the best of many tries is lifted by luck (Lecture 1 §5.3; Bailey, Borwein, López de Prado and Zhu 2014). Counting them honestly:
+
+| | |
+|---|---|
+| Carry configurations tried | 21: the robustness grid (§7), three hedges, three value tilts, four combinations of the best rows, two mixes |
+| Their average correlation | 0.71 |
+| Effective number of independent tries | 6.8 |
+| What the best of 6.8 tries of noise would show | Sharpe ratio 0.20 |
+| The rule, on the same months | 0.53 |
+| **Deflated Sharpe ratio** | **0.90** (0.83 if all 21 counted as independent) |
+
+<sub><b>How to read the table.</b> The tries are listed in [results/tries.json](results/tries.json) with their Sharpe ratios, on the months all of them cover (2008-2022). Effective tries: $`\bar\rho + (1-\bar\rho)M`$ for $`M`$ tries with average correlation $`\bar\rho`$. The deflated Sharpe ratio (Bailey and López de Prado 2014) is the probability that the rule's true Sharpe ratio is above zero once the number of tries, their spread, the sample length and the fat tails of the returns are taken into account. Our calculation.</sub>
+
+Two things lower the number. The tries: 6.8 independent attempts make a Sharpe ratio of 0.20 what luck alone would deliver. And the tails: carry's monthly returns have a kurtosis of 8.6, far above the normal's 3, so a Sharpe ratio overstates how reliable its returns are. The result, about 90%, is good evidence, not proof; the usual bar is 95%. The best of the 21 tries earned 0.61; reporting it as "the" result would have overstated carry by a tenth of a unit.
+
+### 6.3 What carry costs: crash measures
+
+A Sharpe ratio measures risk by volatility. Carry's risk comes in sudden losses, so it is also judged by its worst loss (Calmar: return a year over the worst drawdown), by the balance of gains and losses (Omega: the sum of gains over the sum of losses) and by the asymmetry of its returns (skew).
+
+| Futures period, monthly | Sharpe | Return a year | Worst drawdown | Calmar | Omega | Skew | Worst month |
+|---|---|---|---|---|---|---|---|
+| Carry | 0.57 | 5.9% | −22.7% | 0.26 | 1.61 | +0.29 | −12.0% |
+| Trend | 0.67 | 6.7% | −19.3% | 0.35 | 1.67 | +0.41 | −7.4% |
+| **Trend + carry** | **0.86** | **9.7%** | −20.6% | **0.47** | **1.95** | −0.15 | −11.4% |
+
+<sub><b>How to read the table.</b> One row per strategy, excess returns over cash, after costs, 2006 to October 2022 (trend and the combination from 2007, when the combination's scaling has a year of history). Calmar and Omega: higher is better; skew: negative means the large months are losses. Our calculation.</sub>
+
+On these years carry improves trend on every measure, crash measures included: Calmar from 0.35 to 0.47, Omega from 1.67 to 1.95, with a worst drawdown barely deeper. The cost is in the tail. Trend's positive skew, its habit of earning in crises, turns negative, and the worst month deepens from −7.4% to −11.4%. Currency carry shows the classic pattern most clearly (skew −0.45): steady income, then a sharp loss when high-rate currencies fall together. Carry is often described as picking up coins in front of a steamroller; the table shows both the coins and the steamroller.
+
+### 6.4 Where carry earned: trend's weak regimes
+
+The plan fixed, from Lecture 28, the two quadrants of each regime variable in which trend had done worst on the futures. In each, carry's Sharpe ratio against trend's:
+
+| Trend's weak quadrant (fixed in advance) | Carry | Trend | Months |
+|---|---|---|---|
+| Volatility below average, falling | **0.33** | 0.11 | 81 |
+| Volatility below average, rising | 0.70 | 0.79 | 43 |
+| Correlation below average, falling | **0.34** | 0.21 | 50 |
+| Correlation above average, falling | **1.02** | 0.43 | 46 |
+| Growth down, inflation down | 0.25 | 0.30 | 63 |
+| Growth up, inflation down | **1.69** | 0.27 | 27 |
+
+<sub><b>How to read the table.</b> Rows: the six quadrants named in the plan before any carry result (Lecture 28's definitions, each month classified by its quadrant at the end of the month before). Monthly Sharpe ratios on the months in each quadrant, futures 2006 to October 2022. With 27 to 81 months a cell has a standard error of about 0.4 to 0.7, so single cells are weak evidence; the count across cells is the reading. Our calculation ([results/quadrants.json](results/quadrants.json)).</sub>
+
+Carry beat trend in four of the six regimes where trend was weak, and lost narrowly in the other two. It is what a second business should do: earn when the first one does not, without a forecast of when that will be. The cells are small; the pattern across them, not any one number, is the evidence.
+
+### 6.5 The weak spot: 2013-2026
+
+On the ETF years the picture changes. Over 2013-2026 carry earned a Sharpe ratio of 0.23, with no commodity group after 2022, and trend plus carry (0.45) did slightly worse than trend alone (0.48), with a deeper worst loss (−28.1% against −20.1%). Two readings, neither tested here: the commodity group, carry's second-best diversifier, drops out after 2022; and 2022's rate shock hit bond and currency carry together. A strategy that helps in one period and not in the next is what Lecture 1 calls the normal case: an edge of this size can disappear for a decade by chance alone.

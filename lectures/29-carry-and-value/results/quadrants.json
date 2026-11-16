@@ -1,0 +1,68 @@
+{
+ "volatility": {
+  "above falling": {
+   "carry": 0.17882458587313213,
+   "trend": 1.0624959933517049,
+   "months": 39
+  },
+  "above rising": {
+   "carry": 1.1077010031374472,
+   "trend": 0.9241971767765514,
+   "months": 38
+  },
+  "below falling": {
+   "carry": 0.3250739077389161,
+   "trend": 0.11309279214506791,
+   "months": 81
+  },
+  "below rising": {
+   "carry": 0.702558180132073,
+   "trend": 0.7901934336970657,
+   "months": 43
+  }
+ },
+ "correlation": {
+  "above falling": {
+   "carry": 1.0204226262480938,
+   "trend": 0.4257550254824506,
+   "months": 46
+  },
+  "above rising": {
+   "carry": 0.5061995640444987,
+   "trend": 0.512951025912,
+   "months": 63
+  },
+  "below falling": {
+   "carry": 0.3441402919516207,
+   "trend": 0.21156269590436183,
+   "months": 50
+  },
+  "below rising": {
+   "carry": 0.48388631713776104,
+   "trend": 1.4445592653626054,
+   "months": 42
+  }
+ },
+ "growth x inflation": {
+  "growth down, inflation down": {
+   "carry": 0.25336510112438304,
+   "trend": 0.3044475252310253,
+   "months": 63
+  },
+  "growth down, inflation up": {
+   "carry": 0.6350310936070183,
+   "trend": 0.9459867499391247,
+   "months": 47
+  },
+  "growth up, inflation down": {
+   "carry": 1.6948494371720817,
+   "trend": 0.2651089425933401,
+   "months": 27
+  },
+  "growth up, inflation up": {
+   "carry": 0.33872471215706945,
+   "trend": 0.7043633530495732,
+   "months": 64
+  }
+ }
+}
