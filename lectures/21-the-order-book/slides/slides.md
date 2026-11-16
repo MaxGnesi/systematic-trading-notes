@@ -133,9 +133,8 @@ $$\lambda(t) = \mu + \sum_{t_j < t} \phi(t - t_j)$$
 | Statistic | The question it answers | On our sample | Verdict |
 |---|---|---|---|
 | Book imbalance | Which way will the mid move next? | AUC 0.90 on all 45 days | Holds |
-| Imbalance that resists gaming | Can the forecast be kept while walls are ignored? | Distance weight: same AUC, walls louder | Holds for distance only |
 | Markouts | What is a fill worth a second later? | −59 ticks per BTC | Holds |
-| Order-flow imbalance | Does it explain and forecast moves? | 39% against 17%; forecast 0.10% | Holds; too small to trade |
+| Order-flow imbalance | Does it explain moves? | 39% against 17% | Holds; too small to trade |
 | VPIN | When trading turns one-sided, is a storm coming? | Partial correlation −0.004 | Fails |
 
 - After the Benjamini-Hochberg correction: eleven of the 15 tests of the book hold, three of the 12 of the flow
