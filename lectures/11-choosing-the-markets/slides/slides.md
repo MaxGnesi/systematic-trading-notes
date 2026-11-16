@@ -139,7 +139,7 @@ Over the 17 reviews: 16 to 21 markets in all, close to the 16 factors above nois
 
 # Filling the slots: a score
 
-> The slots do most of the work; among ways to fill them, a score of representativeness, diversification and liquidity keeps diversification and doubles liquidity.
+> The slots do most of the work; among ways to fill them, a score of representativeness, diversification and liquidity keeps diversification and holds the most liquid markets.
 
 | Method, out of sample 2010-2026 | Variance of the class explained | Overlap of trend-positioned returns | Median liquidity, USD a day |
 |---|---|---|---|
@@ -187,7 +187,7 @@ The first market of each class is its key market: a broad, liquid stand-in for t
 2. **Few factors are real:** 16 of 116 lie above the noise band; the first is risk on or off
 3. **Co-movement changes:** the bond hedge flipped in 2022, so the universe is reviewed every year
 4. **Correlation misses the drift:** the same trend bet needs shared trend phases too
-5. **The slots do most of the work:** a score fills them, keeping diversification and doubling liquidity
+5. **The slots do most of the work:** a score fills them, keeping diversification and holding the most liquid markets
 6. **Capacity depends on the instrument:** screen volume understates deep markets and can overstate shallow ones
 
 > Markets are chosen on their own properties, never on strategy profits: whether they can be traded, how they move with each other, how often their trends agree.
