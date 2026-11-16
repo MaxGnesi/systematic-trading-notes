@@ -43,3 +43,7 @@ The evidence is read together: the Sharpe ratios as probabilities (against rando
 
 - The hedge, value tilts and mixes of Lecture 29 are not revisited.
 - Exercise: rebuild the 1990-2005 test with your own Lecture 29 variant, fixed before you look, and count it as a try.
+
+## The course close: where higher Sharpe ratios come from (user, 2026-11-16)
+
+Not to diminish the result but to set direction. Large multi-strategy funds often report higher Sharpe ratios than this portfolio's realistic range; the difference is mostly breadth and granularity, not a better signal (Grinold's law, Lecture 1 §5.4: IR ≈ IC × √breadth). The closing section compares, source by source, this portfolio (about 40 markets, two or three styles, monthly or daily, whole countries, free data, a flat cost) with a large fund (thousands of instruments, dozens of mostly market-neutral strategies, intraday and single names, capacity-limited niches, measured execution and technology, paid data and large teams), and points each source to where the course touched it (Lecture 25 markets and capacity; Lecture 1 many small edges; Part IV tick data, microstructure and execution). Message: this portfolio is the base layer; higher Sharpe ratios come from adding breadth and granularity, at a cost in data, infrastructure and capacity. Directions to explore next, not a verdict on what was built.
