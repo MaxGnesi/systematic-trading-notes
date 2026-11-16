@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · draft, Nov 13, 2026 · Max Gnesi*
 
-Lecture 11 chose the markets without looking at any strategy's results. This lecture takes the next step of the portfolio part's workflow: it chooses the **speeds** of the trend rules that will trade them. It is the one step that may look at how a strategy performed, so it is also where a portfolio is most easily fitted to the accidents of the past. The question is how to choose speeds that work across the board, on all asset classes and their markets, and how much the choice is worth once it is judged on years it never saw. The plan was fixed before any result was computed, and every change made after seeing results is dated and labelled ([results/hypotheses.md](results/hypotheses.md)).
+Lecture 11 chose the markets without looking at any strategy's results. This lecture takes the next step of trend at portfolio scale (the workflow of Lecture 11, §1): it chooses the **speeds** of the trend rules that will trade them. It is the one step that may look at how a strategy performed, so it is also where a portfolio is most easily fitted to the accidents of the past. The question is how to choose speeds that work across the board, on all asset classes and their markets, and how much the choice is worth once it is judged on years it never saw. The plan was fixed before any result was computed, and every change made after seeing results is dated and labelled ([results/hypotheses.md](results/hypotheses.md)).
 
 ## 1. Speeds that work across the board
 

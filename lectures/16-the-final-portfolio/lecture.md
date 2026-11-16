@@ -2,7 +2,9 @@
 
 *Systematic Trading: Lecture Notes (MSc) · draft, Nov 16, 2026 · Max Gnesi*
 
-The course ends with one portfolio and an honest number. The portfolio is the simplest combination the evidence of Lectures 12-15 supports: trend and carry at equal risk. The number is what such a portfolio can be expected to deliver, not what its best backtest shows. Both are tested on years no lecture used to build them, 1990-2005, and judged the way an investor would judge them: as an addition to an ordinary portfolio of stocks and bonds. The plan was fixed before any result was computed, and every change made after seeing results is dated and labelled ([results/hypotheses.md](results/hypotheses.md)).
+**Part IV: the portfolio.** The base layer is assembled here, and Lecture 17 closes it with how such research is done well with an AI assistant. Part V then goes below the daily bar.
+
+The base layer ends with one portfolio and an honest number. The portfolio is the simplest combination the evidence of Lectures 12-15 supports: trend and carry at equal risk. The number is what such a portfolio can be expected to deliver, not what its best backtest shows. Both are tested on years no lecture used to build them, 1990-2005, and judged the way an investor would judge them: as an addition to an ordinary portfolio of stocks and bonds. The plan was fixed before any result was computed, and every change made after seeing results is dated and labelled ([results/hypotheses.md](results/hypotheses.md)).
 
 ## 1. The final portfolio on years it was not built on
 
@@ -92,7 +94,7 @@ Both periods tell the same story: a modest share, 20-30% of the risk, lifts a st
 
 <sub><b>How to read the table.</b> The rule's Sharpe ratio when carry's trades cost more; trend's costs unchanged. At 20 bp in 2006-2022 the rule falls below trend alone (0.67). Our calculation.</sub>
 
-At 20 bp the combination does worse than trend alone in 2006-2022. Execution is therefore not a detail for carry: Part V's lessons (Lectures 25-30: slicing, timing, cost as a distribution) are what keep its edge. A slower carry signal, or trading only when a score changes enough, are the obvious next steps (§9.2).
+At 20 bp the combination does worse than trend alone in 2006-2022. Execution is therefore not a detail for carry: Part V's lessons (Lectures 25-30: slicing, timing, cost as a distribution) are what keep its edge. A slower carry signal, or trading only when a score changes enough, are the obvious next steps (§9.2). A flat cost per trade also understates the problem. Part V measures trading costs on the tape and in the order book as a distribution, not a constant: they widen in fast markets and grow with the size traded (Lectures 21 and 27-28), which is exactly when trend and carry rebalance the most. Measuring each market's own costs, and trading the rebalancing with Part V's methods, is the first improvement of §8.1.
 
 **Crashes.** Carry adds sudden losses: in 2006-2022 the combination's worst month was −11.4% against trend's −7.4% (Lecture 15 §6.3). That is the price of carry's premium, and the reason it persists.
 
@@ -158,7 +160,7 @@ The order follows cost and certainty. Execution improves what is already known t
 4. **Costs and periods decide the realistic number.** At 20 bp carry's edge mostly disappears in 2006-2022, and the same rule earned 0.43 to 1.00 across decades; about 0.6 to 0.7 is the honest expectation (§6, §7).
 5. **Improve on a fixed base layer.** Higher Sharpe ratios come from what is added on top, in order: cheaper execution, more markets, new strategies that earn for different reasons, finer granularity. Each addition is judged by what it adds to the base, on data it was not built on; the base itself is not re-tuned (§8).
 
-**The course in one sentence.** Build simple rules on reasons that should last, judge them against luck and on data they were not built on, count every try, and expect what such rules can honestly deliver.
+**The base layer in one sentence.** Build simple rules on reasons that should last, judge them against luck and on data they were not built on, count every try, and expect what such rules can honestly deliver.
 
 ### 9.2 Exercises
 
