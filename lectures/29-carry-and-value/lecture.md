@@ -73,7 +73,7 @@ The agreement follows the universe. Where ours is nearly the same as AQR's, curr
 
 | Group | Markets | Carry: what the position earns if prices stand still | Median carry, 2006-2022 |
 |---|---|---|---|
-| **Currencies** | 9 against the dollar: euro, yen, pound, Swiss franc, Canadian, Australian and New Zealand dollars, Norwegian and Swedish krona | The foreign 3-month rate minus the US rate: holding a currency earns its deposit rate and pays the dollar's | from −0.9% (Swiss franc) to +2.5% (New Zealand dollar) |
+| **Currencies** | 9 against the dollar: euro, yen, pound, Swiss franc, Canadian, Australian and New Zealand dollars, Norwegian krone, Swedish krona | The foreign 3-month rate minus the US rate: holding a currency earns its deposit rate and pays the dollar's | from −0.9% (Swiss franc) to +2.5% (New Zealand dollar) |
 | **Commodities** | 7: crude oil, natural gas, gold, corn, soybeans, wheat, cocoa | The gap between the front futures contract and the one about 12 months later: a future rolls towards the price of the nearer contract | from −11.2% (natural gas) to +0.7% (soybeans) |
 | **Government bonds** | 10-year bonds of 9 countries (US, Germany, Japan, UK, Canada, Australia, Norway, Sweden, Switzerland) | The 10-year yield minus the 3-month rate (the term spread): a bond earns its yield and is financed at cash | from +0.3% (Japan) to +1.4% (US) |
 | **Equity indices** | 15: the US and 14 country funds | The US: the earnings yield of the S&P 500 minus the real bill rate. Elsewhere: the dividend yield minus the real cash rate | from 1.4% (Japan) to 5.1% (UK) |
