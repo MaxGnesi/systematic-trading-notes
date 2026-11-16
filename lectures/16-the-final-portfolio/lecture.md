@@ -2,7 +2,9 @@
 
 *Systematic Trading: Lecture Notes (MSc) · draft, Nov 16, 2026 · Max Gnesi*
 
-The course ends with one portfolio and an honest number. The portfolio is the simplest combination the evidence of Lectures 12-15 supports: trend and carry at equal risk. The number is what such a portfolio can be expected to deliver, not what its best backtest shows. Both are tested on years no lecture used to build them, 1990-2005, and judged the way an investor would judge them: as an addition to an ordinary portfolio of stocks and bonds. The plan was fixed before any result was computed, and every change made after seeing results is dated and labelled ([results/hypotheses.md](results/hypotheses.md)).
+**Part IV: the portfolio.** The base layer is assembled here, and Lecture 17 closes it with how such research is done well with an AI assistant. Part V then goes below the daily bar.
+
+The base layer ends with one portfolio and an honest number. The portfolio is the simplest combination the evidence of Lectures 12-15 supports: trend and carry at equal risk. The number is what such a portfolio can be expected to deliver, not what its best backtest shows. Both are tested on years no lecture used to build them, 1990-2005, and judged the way an investor would judge them: as an addition to an ordinary portfolio of stocks and bonds. The plan was fixed before any result was computed, and every change made after seeing results is dated and labelled ([results/hypotheses.md](results/hypotheses.md)).
 
 ## 1. The final portfolio on years it was not built on
 
@@ -158,7 +160,7 @@ The order follows cost and certainty. Execution improves what is already known t
 4. **Costs and periods decide the realistic number.** At 20 bp carry's edge mostly disappears in 2006-2022, and the same rule earned 0.43 to 1.00 across decades; about 0.6 to 0.7 is the honest expectation (§6, §7).
 5. **Improve on a fixed base layer.** Higher Sharpe ratios come from what is added on top, in order: cheaper execution, more markets, new strategies that earn for different reasons, finer granularity. Each addition is judged by what it adds to the base, on data it was not built on; the base itself is not re-tuned (§8).
 
-**The course in one sentence.** Build simple rules on reasons that should last, judge them against luck and on data they were not built on, count every try, and expect what such rules can honestly deliver.
+**The base layer in one sentence.** Build simple rules on reasons that should last, judge them against luck and on data they were not built on, count every try, and expect what such rules can honestly deliver.
 
 ### 9.2 Exercises
 
