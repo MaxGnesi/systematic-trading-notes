@@ -23,7 +23,7 @@ Lecture 11 chose the markets and Lecture 12 the speeds of the trend rules that t
 ![The build: one rule, equal risk, at every level](figures/27_build.png)
 <sub><b>How to read the figure.</b> A stylised diagram, not data. From top to bottom: the total, the five groups (asset classes in the baseline), the markets of one group, the speeds of one market; every box at a level gets the same risk. Left arrow: the risk budget is shared out from the total downwards. Right arrow: the portfolio is computed from the speeds upwards.</sub>
 
-**Why weigh in nested steps, not in one optimisation.** Steps 3 to 5 could be one optimisation over every stream in every market. They are kept apart for three reasons. (1) **The two kinds of correlation deserve different treatment:** across speeds the correlation comes from construction, is much the same in every market and can be estimated once on all markets pooled (§1); across markets and classes it is estimated and changes with regimes (§4.3). One matrix would mix the two, and the unreliable part would decide the answer. (2) **One large matrix is mostly noise:** about 20 streams in about 20 markets make some 400 streams and tens of thousands of correlations, far more than a few years of data can pin down. (3) **Nesting removes duplication:** in one step, a market with many held speeds would get more risk only because it has more streams; nested, each market first becomes one blended stream, and markets then compete on equal terms. Large funds that run one optimisation over all their streams add heavy constraints that bring back much of this structure; a one-step allocation is an exercise (§7.2).
+**Why weigh in nested steps, not in one optimisation.** Steps 3 to 5 could be one optimisation over every stream in every market. They are kept apart for three reasons. (1) **The two kinds of correlation deserve different treatment:** across speeds the correlation comes from construction, is much the same in every market and can be estimated once on all markets pooled (§1); across markets and classes it is estimated and changes with regimes (§4.3). One matrix would mix the two, and the unreliable part would decide the answer. (2) **One large matrix is mostly noise:** about 20 streams in about 20 markets make some 400 streams and tens of thousands of correlations, far more than a few years of data can pin down. (3) **Nesting removes duplication:** in one step, a market with many held speeds would get more risk only because it has more streams; nested, each market first becomes one blended stream, and markets then compete on equal terms. Large funds that run one optimisation over all their streams add heavy constraints that bring back much of this structure; a one-step allocation is an exercise (§7.3).
 
 ## 1. Equal risk at every level
 
@@ -309,7 +309,7 @@ Inside each asset class the baseline gives every market the same risk, measured 
 
 The two portfolios are nearly the same (correlation 0.98). Equal capital carries a third less gross exposure, which matters where leverage is limited or costs money (Lecture 16), and earns a little less because the calm markets in each class barely count: within government bonds, the long Treasury fund carries almost all the risk. It also breaks the one method used at every other level, so the baseline keeps equal risk and treats equal capital as a remark on leverage.
 
-**Equal risk per class is a convention.** It gives a class of two credit funds the same risk as a class of eight equity funds, and it would give a single Bitcoin future the risk of all equity. Classes could instead be weighted by how many independent bets they contain, or by size; Lecture 16 compares such methods, and an exercise asks how much the class weights matter (§7.2).
+**Equal risk per class is a convention.** It gives a class of two credit funds the same risk as a class of eight equity funds, and it would give a single Bitcoin future the risk of all equity. Classes could instead be weighted by how many independent bets they contain, or by size; Lecture 16 compares such methods, and an exercise asks how much the class weights matter (§7.3).
 
 ### 4.2 Asset classes or groups found in the data?
 
@@ -411,7 +411,7 @@ Every method carries between about 6% and 12% depending on the regime. Min-max l
 
 **Step 6. Size the total for the regimes it may meet.** Since the weights cannot remove the regime risk, the total must carry it: check the 10% target against the crisis correlations before committing leverage (§4.4), and scale the total on a window that holds a bad regime (§4.3, §5).
 
-**What the example says.** At the level of asset classes the weights hardly depend on the method: class trend streams overlap little on average (0.04 in the blend), so every method lands near equal risk. The regime risk does not sit in the weights; it sits in the total. So correlations across classes earn their place as a **check on the total**, not as an input to the weights. Within a class, where markets overlap more, they would move the weights more, and the same workflow applies (§7.2). Limits: the example uses every regime at once, which no yearly review could have done (at the 2012 review only the crises up to then were known); volatilities are held fixed, while in crises they rise as well, which the volatility target of §5 answers; and the 2020 window holds only 11 months.
+**What the example says.** At the level of asset classes the weights hardly depend on the method: class trend streams overlap little on average (0.04 in the blend), so every method lands near equal risk. The regime risk does not sit in the weights; it sits in the total. So correlations across classes earn their place as a **check on the total**, not as an input to the weights. Within a class, where markets overlap more, they would move the weights more, and the same workflow applies (§7.3). Limits: the example uses every regime at once, which no yearly review could have done (at the 2012 review only the crises up to then were known); volatilities are held fixed, while in crises they rise as well, which the volatility target of §5 answers; and the 2020 window holds only 11 months.
 
 ## 5. The total
 
@@ -465,7 +465,27 @@ The worst case is a quick crash that hits a long, levered position sized on calm
 
 ## 7. Summary
 
-### 7.1 Takeaways
+### 7.1 Choosing the settings
+
+**When methods built on different assumptions agree, the choice does not matter: take the simplest, and look for the risk elsewhere.** Agreement shows that the result does not hinge on one assumption, the plateau of Lecture 7 applied to methods instead of parameters. It does not show that the portfolio is safe. Across speeds the methods agree because there is little to choose (about 1.4 independent bets in 20 streams, §3.1); across classes every method agreed and every one still carried 6% to 12% on a 10% target (§4.5).
+
+Sensible settings come from the order in which the questions are asked, not from trying every combination and keeping the best backtest, which with hundreds of combinations is mostly luck (Lecture 12 §2):
+
+1. **Decide from what is known about the inputs, before any result.** The correlations of speeds are built in; volatilities are fairly reliable; correlations across classes are shaky; expected returns are the least known. A setting may lean only on inputs it can trust (the belief table of §2.4).
+2. **Rule out what fails tests that do not depend on opinion:** weights that jump when the history is resampled (§3.3), risk that overshoots badly under crisis correlations (§4.4), bets on differences smaller than their noise.
+3. **Only then look at results, one setting at a time, against the noise.** Change one setting, keep the rest, and ask whether the difference lies outside its 90% band; if it does not, keep the simpler setting.
+
+| Setting | Sensible default | Why | Change only if |
+|---|---|---|---|
+| Speed weights | Equal, or equal risk contributions | The correlations are built in, and on an even grid every method agrees (§3) | The held speeds bunch: group at the natural gaps |
+| Market weights | Equal risk | Uses volatilities only (§4.1) | Leverage is limited or costly: equal capital |
+| Groups of markets | Asset classes | Stable; clusters found in the data changed every year (§4.2) | Many more markets, and clusters that hold from year to year |
+| Correlations across classes | None in the weights; a crisis matrix to check the total | The least reliable input (§4, §4.5) | Never on one matrix blended over regimes |
+| The total | Volatility target, on a window that holds a bad regime | Steady risk (§5, §4.3) | Steady exposure is preferred: constant leverage |
+
+<sub><b>How to read the table.</b> One row per setting of the build. "Sensible default": the choice made before any result, from what is known about its inputs; these are the baseline's settings. "Change only if": the circumstance that would justify another choice, judged by the three steps above.</sub>
+
+### 7.2 Takeaways
 
 - **The baseline:** equal risk at every level, for the speeds in each market, the markets in each class and the classes, with the total scaled each year to 10% on its past three years. Sharpe ratio 0.49 after costs, out of sample 2013-2026. Every later lecture changes one part and must beat it.
 - **Speeds overlap by their ratio.** Neighbouring speeds are 0.9 correlated, and different rules at the same speed are too; 20 streams make about 1.4 independent bets in a market. Equal weights, equal risk contributions and cost-adjusted budgets gave the same result; maximum Sharpe ratio concentrated on a few streams and did worse.
@@ -478,7 +498,7 @@ The worst case is a quick crash that hits a long, levered position sized on calm
 - **Volatility target or constant leverage** is a choice between steady risk and steady exposure, not a winner and a loser on our sample. Scaling daily on today's positions re-levers weak signals.
 - **Today's portfolio is most exposed to a quick reversal of a calm, levered long trend,** as in 2020 (−18%, most of it in credit); the two long bear markets would have paid well (§6).
 
-### 7.2 Exercises
+### 7.3 Exercises
 
 - [ ] **One step.** Allocate every market × speed stream at once with equal risk contributions on their full correlation matrix, instead of two steps. How far are the weights from the two-step baseline? Does the out-of-sample result change?
 - [ ] **Class weights by bets.** Weight each class by its number of independent bets (§3.1's formula applied to the markets' correlation) instead of equally. How much do the class weights matter?
@@ -487,7 +507,7 @@ The worst case is a quick crash that hits a long, levered position sized on calm
 - [ ] **The workflow inside a class.** Repeat the six steps of §4.5 for the markets of one class (government bonds or equity), with their correlations measured in the same regime windows. Do the methods part ways more than across classes? Which regime would set the weights, and would you have known it at the 2012 review?
 - [ ] **Bunching, on your own correlations.** Repeat the random-grid test of §3 ([scripts/l27_edge_cases.py](scripts/l27_edge_cases.py)) with the correlations measured between real trend streams of one market instead of the ratio model. Draw 500 sets of six held speeds, weigh each by equal weight, equal risk contributions, minimum variance, HRP and grouping at the natural gaps, and compare how far each strays from an even split and how steady it is. Does the ranking hold on both measures, the three parts and the whole range?
 
-### 7.3 Reading list
+### 7.4 Reading list
 
 - Chow, G., Jacquier, E., Kritzman, M. and Lowry, K. (1999). Optimal portfolios in good times and bad. *Financial Analysts Journal*, 55(3), 65-73. Separate matrices for quiet and turbulent periods, the idea of §4.5.
 - Maillard, S., Roncalli, T. and Teïletche, J. (2010). The properties of equally weighted risk contribution portfolios. *Journal of Portfolio Management*, 36(4), 60-70. The equal-risk-contribution portfolio of §2.
