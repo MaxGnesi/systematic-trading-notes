@@ -241,3 +241,33 @@ Carry beat trend in four of the six regimes where trend was weak, and lost narro
 ### 6.5 The weak spot: 2013-2026
 
 On the ETF years the picture changes. Over 2013-2026 carry earned a Sharpe ratio of 0.23, with no commodity group after 2022, and trend plus carry (0.45) did slightly worse than trend alone (0.48), with a deeper worst loss (−28.1% against −20.1%). Two possible readings, neither tested here: the commodity group drops out after 2022, so carry rests on three groups instead of four; and the rate shock of 2022 may have hit several groups at once. A strategy that helps in one period and not in the next is what Lecture 1 calls the normal case: an edge of this size can disappear for a decade by chance alone.
+
+## 7. What did not add
+
+**Key message.** Five refinements were tried after the first results. None improved carry reliably: the gains seen on 2006-2022 were small, within noise, or did not repeat on 2013-2026. One check changed how the result should be read: most of carry's return came from markets and months where it agreed with trend.
+
+| Refinement (tried after the first results) | Idea | 2006-2022 | 2013-2026 | Reading |
+|---|---|---|---|---|
+| **Hedge the common risk** (currencies, commodities): remove the dollar or the commodity market from the baskets, risk-off by half | Long and short baskets that move alike on the main common risk, still tilted to carry | Trend + carry 0.86 → 0.92; difference +0.06, 90% band −0.03 to +0.13 | 0.45 → 0.44 | Noise: the hedged and unhedged versions are 97% correlated |
+| **Tilt carry towards cheap markets** (value against its 5-year line, weight ¼ to 1) | Buy carry when it is cheap, not overextended; Jordà and Taylor (2012) find currency carry crashes mostly when high-rate currencies are overvalued | Worse at every weight: carry 0.57 → 0.42 → 0.21 → −0.03; drawdowns deeper | Worse at every weight | On our data, carry markets that had fallen kept falling |
+| **The best grid rows combined** (6-month change, hedge, 12-month sizing) | Keep the variants with the best drawdowns | Calmar 0.47 → 0.66, worst loss −20.6% → −14.5% | Worse on every measure (Sharpe 0.45 → 0.37) | Fitted to 2006-2022 |
+| **Mix the variants** (one of each type, or all eleven) | Spread the risk of a wrong specification | Same Sharpe, drawdown −15% instead of −21% | Slightly worse | Variants are 0.71 to 0.97 correlated: little to diversify |
+| **The variants of the signal** (level only, change only, 1- or 6-month change, rank) | Simpler or different signals | 0.28 to 0.45, all below the rule (0.57) | – | Level and change together beat either alone (0.37 and 0.42) |
+
+<sub><b>How to read the table.</b> One row per refinement; Sharpe ratios of trend + carry unless stated, monthly, after costs. "90% band": block bootstrap over 12-month blocks. Every row was found or chosen after seeing the first results, so 2013-2026 is the check that matters. All of them are counted in §6.2. Our calculation.</sub>
+
+Two lessons. **Gains come from different sources, not from different settings.** The four groups diversify each other, and level and change diversify each other (correlation −0.02); variants of one idea mostly do not. Mixing them still buys something small: less dependence on having picked exactly the right specification and parameters, a little protection against model and parameter risk rather than a higher return. And **an intuitive refinement can be tested and rejected**: buying carry on the dip sounds prudent and made carry worse at every step of the grid, the same way in both periods. That is a result, not a failure.
+
+### 7.1 Carry and trend: a second business, or a filter in disguise?
+
+Carry and trend trade some of the same markets: the euro and the yen, the seven commodities, the S&P 500, US Treasuries. Where both hold a position, their positions add up when they agree and cancel when they disagree. On those markets carry acts like a soft carry filter on trend: trend held more when the curve agrees, less when it does not. Is that where carry's money came from?
+
+| Part of carry's return, 2006-2022 | Return a year | Share of carry's return | Sharpe ratio |
+|---|---|---|---|
+| Same market as trend, same side | +5.3% | 83% | 0.75 |
+| Same market as trend, opposite side | −0.5% | −8% | −0.13 |
+| Markets or months trend does not hold | +1.6% | 25% | 0.15 |
+
+<sub><b>How to read the table.</b> Carry's monthly return (the rule, four groups) split by market and month according to trend's position at the end of the month before: on the same side, on the opposite side, or none. The three parts add up to carry's return (the rebuild matches it at 0.9997). Our calculation ([results/split.json](results/split.json)).</sub>
+
+Most of carry's return came from the markets trend also trades, in the months when trend held the same side: a short in a commodity whose curve was in contango while its price fell, a long in a currency whose rate was rising while it rose. In the many markets trend never trades, carry earned little (0.15). So on this sample carry worked largely as **an amplifier of trend where the curve agreed**, a carry filter that adds rather than takes away, more than as an independent source of return. The split does not say which signal deserves the credit, since a return earned where both agree belongs to both; but it tempers §1's picture of two unrelated businesses. Their *timing* is unrelated (correlation 0.06), their *profits* are not.
