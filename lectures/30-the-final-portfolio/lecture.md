@@ -43,7 +43,7 @@ And the modest target is valuable. Most investors already hold stocks and bonds.
 
 <sub><b>How to read the table.</b> What is held, what it is compared with, and on which years. Every choice was fixed in the plan before any result of this lecture.</sub>
 
-The 1990-2005 data are partial, and the test says so. Trend is Lecture 28's 12-market portfolio built with the baseline's rules from long free series. Carry's groups join as their data begin: currencies trade from 1990 (the euro before 1999 through the German mark at the fixed conversion rate; Japan's call-money rate before its 3-month rate begins in 2002); government bonds from 1995; equities from 2001; commodities from 2004. So for most of the test, carry rests on currencies and bonds.
+The 1990-2005 data are partial, and the test says so. Trend is Lecture 28's 12-market portfolio built with the baseline's rules from long free series. Carry's groups join as their data begin: currencies trade from 1990 (the euro before 1999 through the German mark at the fixed conversion rate, from monthly average rates, which smooth those years' returns a little; Japan's call-money rate before its 3-month rate begins in 2002); government bonds from 1995; equities from 2001; commodities from 2004. So for most of the test, carry rests on currencies and bonds.
 
 ## 4. Results
 
