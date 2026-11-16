@@ -1,4 +1,4 @@
-"""Lecture 27 figures 21_01 and 21_02. 21_01: the chain of Part IV, Lecture 27 outlined. 21_02, the key chart: left, one real moment of Bybit
+"""Lecture 27 figures 21_01 and 21_02. 21_01: the chain of Part V, Lecture 27 outlined. 21_02, the key chart: left, one real moment of Bybit
 BTCUSDT (1 October 2025, 09:33:15 UTC): a resting bid of 0.001 BTC at the best, the trades that reach it and when it is filled under the three
 fill rules; below, the size ahead of it in the queue; right, over the whole of that day, the same order every 15 s: how often it is filled and
 the price after the fill under each rule. From l21_s1_key.py's results (L21_OUT/key, or results/key as shipped)."""
@@ -16,7 +16,7 @@ RULES = [("q0", "touch", SERIES[1]), ("q2", "queue", SERIES[0]), ("q1", "trade-t
 INF_C = "#8fb8ea"                                                                  # the queue rule with every cancellation behind us
 DAY_RULES = RULES[:2] + [("q2i", "queue, a = ∞", INF_C)] + RULES[2:]
 
-# 21_01: the chain of Part IV
+# 21_01: the chain of Part V
 steps = [("18", "The order book", "what is there"), ("19", "Levels", "the state now"), ("20", "Deltas", "what changed"),
          ("21", "Replay", "our own orders"), ("22", "A market that reacts", "the market answers"), ("23", "Trading styles", "who else trades"),
          ("24", "Market making", "one venue"), ("25", "Cross-exchange", "quote here, hedge there")]
@@ -36,7 +36,7 @@ for x0, x1, lab in ((0, 1.2, "describe"), (1.45, 4.1, "measure"), (4.35, 7.0, "s
     fig.add_annotation(x=(x0 + x1) / 2, y=1.27, text=lab, showarrow=False, font=dict(size=11, color=MUTED))
     fig.add_shape(type="line", x0=x0, x1=x1, y0=1.13, y1=1.13, line=dict(color=GRID, width=2))
 fig.update_xaxes(visible=False, range=[-0.1, 11.45]); fig.update_yaxes(visible=False, range=[-0.15, 1.42])
-fig.update_layout(title="Part IV in one line: Lecture 27 puts our own orders into the recorded market<br><sup>Each lecture builds on the one before; "
+fig.update_layout(title="Part V in one line: Lecture 27 puts our own orders into the recorded market<br><sup>Each lecture builds on the one before; "
                         "the current one is outlined, done ones are ticked</sup>", height=270, width=1400, margin=dict(t=80, l=20, r=20, b=10), showlegend=False)
 save_figure(fig, L21.PREFIX + "21_01_part_iv", FIG)
 

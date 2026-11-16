@@ -15,11 +15,11 @@ The order-book lectures start from the order book and ends with market making. O
 | [30. Market making on one venue](30-market-making/lecture.md) | What does it take to break even, and what can we not see? | The strategies: a quoting rule as a family of choices, from Avellaneda-Stoikov and ping-pong to stops, pauses and speed. The loss comes in the first second after a fill; every rule moves it by about a tenth of a basis point, no public fee level closes the gap, and resting orders pay as the execution of a strategy with an edge | Done |
 | Cross-exchange market making (not numbered) | Does hedging on a second venue help? | The hedge: quote on Bybit, lay off the risk on Binance, against latency and two sets of fees | Not covered: the free archives do not hold both venues' books for our period (Binance's best bid and ask ends in March 2024), so the price of the hedge cannot be measured. Recording both venues' best bid and ask live, from their free public feeds, would make the question answerable; it is left as an open question |
 
-<sub><b>How to read the table.</b> Read top to bottom: each lecture uses what the ones above established. Planned lectures may change as results come in. Every result in Part IV is a result on one symbol, Bybit BTCUSDT, over 45 days from 20 September to 3 November 2025, with Binance's trades alongside; on this sample we cannot generalise.</sub>
+<sub><b>How to read the table.</b> Read top to bottom: each lecture uses what the ones above established. Planned lectures may change as results come in. Every result in Part V is a result on one symbol, Bybit BTCUSDT, over 45 days from 20 September to 3 November 2025, with Binance's trades alongside; on this sample we cannot generalise.</sub>
 
 ## The sum a quote has to pass
 
-Everything in Part IV feeds one sum. For a resting order:
+Everything in Part V feeds one sum. For a resting order:
 
 | Term | What it is | Measured so far, order of 0.001 BTC at the best price |
 |---|---|---|

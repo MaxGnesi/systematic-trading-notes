@@ -152,7 +152,7 @@ This is the method with the most practical value in the lecture, and the one the
 | Method | Why not in depth |
 |---|---|
 | Conviction | Sizing by forecast strength did not beat the signal's sign here: EWMAC 32/128 continuous earned a Sharpe ratio of 0.46 against 0.54 for its sign, with the same turnover (notebook §3.3). It pays only if stronger forecasts are followed by larger moves, which has to be tested market by market |
-| Kelly | Growth-optimal leverage $`f = \mu/\sigma^2`$; a strategy run at full Kelly has volatility equal to its Sharpe ratio. On the base strategy it asked for leverage of about six, with a worst loss of 79% of wealth, 53% at half Kelly (notebook §7). Systematic managers rarely size by Kelly in practice: the edge is estimated with large errors and returns are fat-tailed; it is a ceiling on leverage, and Part IV returns to it |
+| Kelly | Growth-optimal leverage $`f = \mu/\sigma^2`$; a strategy run at full Kelly has volatility equal to its Sharpe ratio. On the base strategy it asked for leverage of about six, with a worst loss of 79% of wealth, 53% at half Kelly (notebook §7). Systematic managers rarely size by Kelly in practice: the edge is estimated with large errors and returns are fat-tailed; it is a ceiling on leverage, and Part V returns to it |
 | Further refinements | Volatility forecasting models (GARCH, or the Kalman filter on log ranges of Lecture 4), risk budgets in expected shortfall, bet sizing from a predicted probability of success, correlation-aware budgets (Lecture 13); regime-dependent sizing is a filter (Lecture 8) |
 
 ## 8. Side by side, and what to watch out for

@@ -20,7 +20,7 @@ A trend signal says which way; a filter says whether to listen. It can be built 
 |---|---|---|
 | The price itself, and its transformations | Trend strength (efficiency ratio, ADX), volatility regime, distribution shape, persistence, stretch from the trend | Always available; but it is the data the signal already uses, so the filter may be a second trend rule in disguise |
 | Bar data beyond the close | Volume, order imbalance, range expansion, open interest | Open interest needs futures data |
-| High-frequency data | Intraday order flow and trade signs, realised volatility from intraday returns, liquidity and spreads | Daily filters built from intraday information; Part III |
+| High-frequency data | Intraday order flow and trade signs, realised volatility from intraday returns, liquidity and spreads | Daily filters built from intraday information; Part V |
 | Cross-market structure | Correlations, breadth, dispersion, lead–lag, the futures term structure | Correlation regimes matter for trend (Baltas and Kosowski) |
 | Macro data | Policy-rate regime, yield-curve slope, inflation, growth surprises | Only data known at the time: publication lags and revisions |
 | Flows and positioning | Trader positioning (Commitments of Traders), ETF and fund flows, dealer gamma estimated from options open interest, estimates of CTA positioning, implied volatility and skew | The mechanism is often clear: who must buy or sell, and when |

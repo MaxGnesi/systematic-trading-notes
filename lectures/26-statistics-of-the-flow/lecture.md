@@ -6,10 +6,10 @@ Lecture 25 read the book at one moment: which side outweighs the other, and what
 
 ## 1. The flow as a delta
 
-Part IV moves from describing the order book to trading on it, one step per lecture:
+Part V moves from describing the order book to trading on it, one step per lecture:
 
-![Part IV in one line: Lecture 26 measures what changes in the book](figures/20_01_part_iv.png)
-<sub><b>How to read the figure.</b> Each box is one lecture of Part IV, each building on the one before; this lecture is outlined, Lectures 24 and 25 are done. Above the boxes, the five stages: describing the book, measuring it, simulating our own orders in it, reading the other players, and trading strategies on it.</sub>
+![Part V in one line: Lecture 26 measures what changes in the book](figures/20_01_part_iv.png)
+<sub><b>How to read the figure.</b> Each box is one order-book lecture of Part V, each building on the one before; this lecture is outlined, Lectures 24 and 25 are done. Above the boxes, the five stages: describing the book, measuring it, simulating our own orders in it, reading the other players, and trading strategies on it.</sub>
 
 The plot behind these lectures, and what each one settles: [order-book roadmap](../ORDER_BOOK_ROADMAP.md).
 

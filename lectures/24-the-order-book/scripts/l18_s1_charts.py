@@ -1,4 +1,4 @@
-"""Lecture 24 figures 18_01-18_03. 18_01: the chain of Part IV (schematic). 18_02: the Bybit BTCUSDT book at 12 March 2024, 12:20:30.015 UTC, best 25
+"""Lecture 24 figures 18_01-18_03. 18_01: the chain of Part V (schematic). 18_02: the Bybit BTCUSDT book at 12 March 2024, 12:20:30.015 UTC, best 25
 levels each side, and what market buys of 0.5-5 BTC would pay by walking it (from l18_moments.json, top 50 levels). 18_03: the same moment at
 three levels of detail: L1 (best bid and ask), L2 (every level), L3 (individual orders: an illustration, not observed in our data)."""
 import json, sys
@@ -15,7 +15,7 @@ BID, ASK = "#2a63b0", "#c0436f"
 S = json.loads(L18.result_path("l18_moments.json").read_text())["snapshot"]
 bids = [(p / 10, q) for p, q in S["bids"]]; asks = [(p / 10, q) for p, q in S["asks"]]; mid = (bids[0][0] + asks[0][0]) / 2
 
-# 18_01: the chain of Part IV
+# 18_01: the chain of Part V
 steps = [("18", "The order book", "what is there"), ("19", "Levels", "the state now"), ("20", "Deltas", "what changed"),
          ("21", "Replay", "our own orders"), ("22", "A market that reacts", "the market answers"), ("23", "Trading styles", "who else trades"),
          ("24", "Market making", "one venue"), ("25", "Cross-exchange", "quote here, hedge there")]
@@ -34,7 +34,7 @@ for x0, x1, lab in ((0, 1.2, "describe"), (1.45, 4.1, "measure"), (4.35, 7.0, "s
     fig.add_annotation(x=(x0 + x1) / 2, y=1.27, text=lab, showarrow=False, font=dict(size=11, color=MUTED))
     fig.add_shape(type="line", x0=x0, x1=x1, y0=1.13, y1=1.13, line=dict(color=GRID, width=2))
 fig.update_xaxes(visible=False, range=[-0.1, 11.45]); fig.update_yaxes(visible=False, range=[-0.15, 1.42])
-fig.update_layout(title="Part IV in one line: from describing the order book to trading on it<br><sup>Each lecture builds on the one before; "
+fig.update_layout(title="Part V in one line: from describing the order book to trading on it<br><sup>Each lecture builds on the one before; "
                         "the current one is outlined</sup>", height=270, width=1400, margin=dict(t=80, l=20, r=20, b=10), showlegend=False)
 save_figure(fig, L18.PREFIX + "18_01_part_iv", FIG)
 

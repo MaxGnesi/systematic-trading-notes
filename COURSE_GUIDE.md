@@ -70,42 +70,42 @@ The course follows one pipeline throughout (data → signal → position → eva
 
 Threads to keep visible across parts:
 
-- **Sizing comes back three times:** volatility targeting (Part II), inventory and spread limits (Parts III and IV), and the portfolio's weights and constraints (Part V), which combine them.
+- **Sizing comes back three times:** volatility targeting (Part II), inventory and spread limits (Part V), and the portfolio's weights and constraints (Part V), which combine them.
 - **The portfolio part keeps one workflow** (Lecture 11, §1): markets from market data only, weights from the risk of trend-positioned returns only, strategy profits only to evaluate, out of sample; any change after evaluation is dated and judged again.
-- **Lecture 3 sets up Part III:** discrete sampling and bid-ask bounce (Lecture 3, §4.4) are the hook for "what is inside the bar".
+- **Lecture 3 sets up Part V:** discrete sampling and bid-ask bounce (Lecture 3, §4.4) are the hook for "what is inside the bar".
 - **Lecture 22 mirrors Lecture 3:** same data with different transformations, versus the same strategy on different data.
 - **Two kinds of trend signal:** a positive-weight moving average always lags below price in a steady rise, while the Kalman level + slope extrapolates and can sit above price while the market still rises (QQQ illustration: above price on 43% of up-market days versus 23% for EMA(20); signals agree on 68% of days; naive rule returns correlate 0.37, one asset, one setting). In the three-state filter, acceleration also moves the level (forecast = level + slope + ½·acceleration), so it changes where the filter sits relative to price. Three signal sources to compare, each from a different mechanism: position (price versus the level of an EMA, the level + slope filter and the three-state filter), slope, and acceleration (early warning of regime change). Each state carries its own signal: position (price versus level), slope (direction), acceleration (strengthening or fading). Prototype on QQQ 1999–2026, models matched to EMA(20) on variance reduction: signals from the same state agree 78–91% (position) and 89% (slope), signals from different states only 45–75%, i.e. three distinct signal families (agreement, not performance). Lecture 4 explains the mechanisms; Part II tested it. On daily futures the Kalman slope trades like EWMAC at equal speed (daily returns correlate 0.93–0.95) and earns less, so Lecture 10 treats it as a variant of EWMAC (Lecture 4, §3: in steady state it is a linear filter).
 - **The research checklist** (Lecture 1, §1.2) is applied in every *How we judge it* section.
 
 Notebook numbers above were assigned from file names; check each notebook's contents before writing its lecture.
 
-The order-book lectures' plot, for readers: [lectures/ORDER_BOOK_ROADMAP.md](lectures/ORDER_BOOK_ROADMAP.md). Update it when a Part IV lecture is finished.
+The order-book lectures' plot, for readers: [lectures/ORDER_BOOK_ROADMAP.md](lectures/ORDER_BOOK_ROADMAP.md). Update it when a Part V lecture is finished.
 
 ### 1.1 How Parts II and III are separated
 
 **OHLCV is a summary format, not a type of bar.** Every bar has an open, high, low, close and volume, whatever decides when it ends. The parts differ in the **sampling rule**:
 
 - **Part II: bars that close on the clock.** Daily, weekly or monthly OHLCV, the data available for decades. Daily is the main case; everything holds for weekly or monthly bars too.
-- **Part III: changing the rule, or dropping bars.** Bars that close after a number of trades, an amount of volume or dollars, or an order-flow imbalance (still OHLCV, on a different clock); or the raw events themselves.
+- **Part V: changing the rule, or dropping bars.** Bars that close after a number of trades, an amount of volume or dollars, or an order-flow imbalance (still OHLCV, on a different clock); or the raw events themselves.
 
-Strategy family and data frequency are separate choices: trend and stat arb run on daily bars, minute bars or alternative bars. The dividing line in Part III is whether a strategy needs **aggregated bars** (Lectures 19 and 22) or **individual events and the path between them** (Lectures 20, 21 and 23).
+Strategy family and data frequency are separate choices: trend and stat arb run on daily bars, minute bars or alternative bars. The dividing line in Part V is whether a strategy needs **aggregated bars** (Lectures 19 and 22) or **individual events and the path between them** (Lectures 20, 21 and 23).
 
-### 1.1a Before starting Part III
+### 1.1a Before starting Part V
 
-Part III is a step up: the data are billions of trades instead of a few thousand bars, and the statistics and the literature are those of market microstructure. What a reader needs:
+Part V is a step up: the data are billions of trades instead of a few thousand bars, and the statistics and the literature are those of market microstructure. What a reader needs:
 
 | Need | Why | Where |
 |---|---|---|
-| Lectures 2 and 3 | What a bar compresses; order flow, volatility estimators and their biases, which Part III measures against the tape | Lecture 3, §4 and §7 |
+| Lectures 2 and 3 | What a bar compresses; order flow, volatility estimators and their biases, which Part V measures against the tape | Lecture 3, §4 and §7 |
 | Lecture 7 | Comparing systems at equal speed, used again in Lecture 20 | Lecture 7 |
 | Polars basics | Reading data larger than memory: lazy queries, streaming, chunks | Lecture 18, Appendix A |
 | A computer with about 8 GB of free memory and 25 GB of disk | Five years of one market; every stage works in chunks and waits for free memory | Lecture 18, Appendix A.2 |
 
-Each Part III lecture opens with a short *What to take away* box, and marks passages that can be skipped on a first reading.
+Each Part V lecture opens with a short *What to take away* box, and marks passages that can be skipped on a first reading.
 
-### 1.1b Six uses of the tape: the spine of Part III
+### 1.1b Six uses of the tape: the spine of Part V
 
-Part III is organised around what the tape adds to bars. Lectures 19 to 21 each cover two of the six uses; Lectures 22 and 23 apply them to two strategies, trend and an intraday grid. Each lecture names, in its first lines, which uses it covers, and each method lecture ends with *For the two examples*: what the trend rule and the grid take from it.
+Part V is organised around what the tape adds to bars. Lectures 19 to 21 each cover two of the six uses; Lectures 22 and 23 apply them to two strategies, trend and an intraday grid. Each lecture names, in its first lines, which uses it covers, and each method lecture ends with *For the two examples*: what the trend rule and the grid take from it.
 
 | The tape adds… | Used for | Strategy type | Lecture |
 |---|---|---|---|
@@ -131,7 +131,7 @@ These four points form the *How we judge it* part of Lecture 22.
 
 ### 1.2a Risk measures on tick data (for Lecture 20)
 
-Lecture 3, §11 promises that Part III returns to risk measures beyond clock-time bars. Two routes to cover:
+Lecture 3, §11 promises that Part V returns to risk measures beyond clock-time bars. Two routes to cover:
 
 - **Same measures on other bars**, with the three caveats from Lecture 3 §11: per-day and annualised figures assume equal time spans; correlation needs a common clock; returns in trade or volume time are closer to normal (Clark, 1973; Ané and Geman, 2000; contested by Murphy and Izzeldin, 2005).
 - **Dedicated high-frequency estimators:** realised variance and its noise-robust versions (two-scale estimators, realised kernels), bipower variation for jumps, realised skewness and kurtosis, and correlation for asynchronous trading (the Epps effect; Hayashi–Yoshida). Candidate references, to verify before citing: Andersen, Bollerslev, Diebold and Labys (2003); Barndorff-Nielsen and Shephard (2004); Zhang, Mykland and Aït-Sahalia (2005); Barndorff-Nielsen, Hansen, Lunde and Shephard (2008); Amaya, Christoffersen, Jacobs and Vasquez (2015); Epps (1979); Hayashi and Yoshida (2005).
@@ -228,7 +228,7 @@ Headings must match what follows them. A heading that promises "three" of someth
 - Name methods neutrally. Describe discretionary trading without loaded words: "a person can read the same data differently over time or bring in extra information", not "state of mind".
 - Define a term the first time it is used; reuse the same term afterwards (e.g. *rolling*, *expanding*, *cumulative* memory).
 - Cross-reference with section numbers: "Lecture 2, §6.3".
-- No hype, no "key takeaways" boxes beyond the summary (except the short *What to take away* box that opens each Part III lecture, §1.1a), no repetition of a table's numbers in prose.
+- No hype, no "key takeaways" boxes beyond the summary (except the short *What to take away* box that opens each Part V lecture, §1.1a), no repetition of a table's numbers in prose.
 - **Cite at the point of the claim.** Put the reference in the sentence that uses it, e.g. "(Durbin and Koopman, 2012, ch. 5)", with a chapter when known, so a reader interested in one point can go straight to the source. Every inline citation also appears in the reading list, with a note on what it is used for (e.g. "— starting a Kalman filter (§9.1)").
 - **Say what is ours.** Results derived or measured for these notes are labelled as such: "the calculation is ours", "our measurement for these notes". Such numbers must be reproducible in the companion notebook.
 - **Justify specific examples.** When naming one tool, library, dataset or vendor out of many, say in a clause why that one (e.g. TA-Lib: the long-standing open-source reference implementation that documents the issue).

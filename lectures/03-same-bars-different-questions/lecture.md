@@ -355,7 +355,7 @@ On 16 March 2020 SPY's log return was −11.6% against a $`\sigma`$ of 1.45%: $`
 
 The two imbalance measures agree closely on daily data, with correlations of 0.82 to 0.89.
 
-**Watch out for** what all three infer: who traded is deduced from how price moved, not observed. None of them sees actual buy and sell orders; that requires trade data (Part III).
+**Watch out for** what all three infer: who traded is deduced from how price moved, not observed. None of them sees actual buy and sell orders; that requires trade data (Part V).
 
 ## 8. Relationship between series: do two assets still move together
 
@@ -612,7 +612,7 @@ atr_plain = tr.rolling(14).mean()                       # memory exactly 14 bars
 atr_wilder = tr.ewm(alpha=1 / 14, adjust=False).mean()  # Wilder's smoothing, seeded from the first value
 ```
 
-**Clock-time bars, and other bars.** Every statistic here was computed on daily clock-time bars, but none of them strictly requires them: each needs only OHLCV, which bars cut by trades, volume or dollars also have (Lecture 8). Three things change on such bars. Anything stated per day or annualised, including the range estimators built on $`\sqrt{8/\pi}`$, assumes every bar covers the same span of time. Correlation and beta need both assets observed at the same moments. And returns per bar look different: in trade or volume time they tend to be closer to normal, so measured kurtosis falls (Clark, 1973; Ané and Geman, 2000), although how close is debated. With tick data there are also dedicated estimators: realised volatility, skewness and kurtosis built from intraday returns, and correlation estimators for assets that trade at different moments. Part III returns to both.
+**Clock-time bars, and other bars.** Every statistic here was computed on daily clock-time bars, but none of them strictly requires them: each needs only OHLCV, which bars cut by trades, volume or dollars also have (Lecture 8). Three things change on such bars. Anything stated per day or annualised, including the range estimators built on $`\sqrt{8/\pi}`$, assumes every bar covers the same span of time. Correlation and beta need both assets observed at the same moments. And returns per bar look different: in trade or volume time they tend to be closer to normal, so measured kurtosis falls (Clark, 1973; Ané and Geman, 2000), although how close is debated. With tick data there are also dedicated estimators: realised volatility, skewness and kurtosis built from intraday returns, and correlation estimators for assets that trade at different moments. Part V returns to both.
 
 ## 12. Summary, exercises and reading
 

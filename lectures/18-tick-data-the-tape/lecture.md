@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 21, 2026 · Max Gnesi*
 
-Parts I and II worked with bars: a day of trading compressed into an open, high, low, close and volume. Part III goes underneath the bar, to the record of every trade, and it works primarily with crypto markets. The choice is practical: the data is complete, free and open every hour of the year, which makes it well suited to teaching. The methods are not specific to crypto; conceptually they apply to the tape of any asset class. This lecture describes that record, which practitioners call the tape: the instrument and what one trade records; how to obtain five years of it and check it; what the market's activity looks like; how trades form prices; and what a bar loses. It is descriptive and builds no strategy.
+Parts I and II worked with bars: a day of trading compressed into an open, high, low, close and volume. Part V goes underneath the bar, to the record of every trade, and it works primarily with crypto markets. The choice is practical: the data is complete, free and open every hour of the year, which makes it well suited to teaching. The methods are not specific to crypto; conceptually they apply to the tape of any asset class. This lecture describes that record, which practitioners call the tape: the instrument and what one trade records; how to obtain five years of it and check it; what the market's activity looks like; how trades form prices; and what a bar loses. It is descriptive and builds no strategy.
 
 > **What to take away**
 >
@@ -37,7 +37,7 @@ Lecture 2 described a bar as compression: thousands of trades reduced to five nu
 | 6 | The market's activity | How much is traded, when, in what sizes, and by which side? |
 | 7 | How prices form | How do trades turn into prices? |
 | 8 | What a candle loses | What exactly does a bar throw away? |
-| 9 | What the tape can and cannot answer | What does this make possible, and how is the rest of Part III organised? |
+| 9 | What the tape can and cannot answer | What does this make possible, and how is the rest of Part V organised? |
 
 Appendix A collects the tools: the Polars library, working with data larger than memory, and the pipeline stage by stage, with the memory it needs. Three passages are marked as deep dives; they can be skipped on a first reading without losing the argument.
 
@@ -159,7 +159,7 @@ Binance publishes its market data as daily and monthly files at data.binance.vis
 | Market | Data | What a row is | Used in |
 |---|---|---|---|
 | Spot, USDⓈ-M futures (settled in USDT), COIN-M futures (settled in the coin) | `trades` | One fill between one aggressive and one resting order | Mentioned only |
-| | **`aggTrades`** | **All fills within 100 milliseconds at the same price on the same side, combined** | **This lecture and Part III** |
+| | **`aggTrades`** | **All fills within 100 milliseconds at the same price on the same side, combined** | **This lecture and Part V** |
 | | `klines` | A candle: open, high, low, close, volume, at intervals from one second to one month | §8, as a check |
 | USDⓈ-M futures | `bookTicker` | The best bid and best ask, with their sizes, at every change | Lecture 21 |
 | | `fundingRate`, `metrics` | Funding payments; open interest and positioning | §2 |
@@ -184,7 +184,7 @@ Older files have no header row and newer ones do; step 3 has to handle both. Lik
 
 ### 4.3 The pipeline
 
-The steps of §4.2 are the first stage of a pipeline that turns the archive into the tables the rest of Part III uses. Each stage reads only the stage before it, so any stage can be rerun alone, and each takes the market and the period as parameters, so the same code serves any symbol.
+The steps of §4.2 are the first stage of a pipeline that turns the archive into the tables the rest of Part V uses. Each stage reads only the stage before it, so any stage can be rerun alone, and each takes the market and the period as parameters, so the same code serves any symbol.
 
 ```mermaid
 flowchart LR
@@ -502,7 +502,7 @@ BTCUSDT behaves like the stocks of Jones, Kaul and Lipson. The coefficient on th
 | Largest 1% of moves | 26 basis points or more | 5.3 | 7.4 | 2% |
 | Largest 0.1% of moves | 57 basis points or more | 13.3 | 19.4 | 0.04% |
 
-On BTCUSDT, a large one-minute move almost never happens in a quiet minute. Of the 2,630 largest moves of the five years, one happened in a minute with less trading than usual. This seems to contradict the stock-market finding that jumps come with little volume (Joulin, Lefevre, Grunberg and Bouchaud, 2008), but the two measure different things. Farmer and his co-authors looked at single orders, and on our tape, too, the largest one-minute moves are made of many trades, each moving the price little except where the book has a gap, as in the flash crash of §5.4. Heavy trading and thin books are not alternatives: when the price starts to move, stop orders and liquidations add trades, and resting orders are withdrawn. Which comes first, the trading or the move, the tape cannot tell; trading measured within the same minute includes the reaction to the move. The order book of Part IV can show the gaps directly.
+On BTCUSDT, a large one-minute move almost never happens in a quiet minute. Of the 2,630 largest moves of the five years, one happened in a minute with less trading than usual. This seems to contradict the stock-market finding that jumps come with little volume (Joulin, Lefevre, Grunberg and Bouchaud, 2008), but the two measure different things. Farmer and his co-authors looked at single orders, and on our tape, too, the largest one-minute moves are made of many trades, each moving the price little except where the book has a gap, as in the flash crash of §5.4. Heavy trading and thin books are not alternatives: when the price starts to move, stop orders and liquidations add trades, and resting orders are withdrawn. Which comes first, the trading or the move, the tape cannot tell; trading measured within the same minute includes the reaction to the move. The order book of Part V can show the gaps directly.
 
 **How concentrated is the variance?** Of all the variance of five years of one-minute returns:
 
@@ -677,7 +677,7 @@ The tape records every trade, but only trades: not the orders waiting in the boo
 
 ### 9.1 The map
 
-| What the tape can do | How well | Why | Where in Part III |
+| What the tape can do | How well | Why | Where in Part V |
 |---|---|---|---|
 | Build bars on other clocks: trades, dollars, imbalance, price moves | Fully | Every trade is recorded with its time, size and side | Lecture 19 |
 | Measure volatility, order flow, its persistence, and what happens around events | Fully | These are statistics of the trades themselves (§6, §7) | Lectures 20, 21 |
@@ -686,10 +686,10 @@ The tape records every trade, but only trades: not the orders waiting in the boo
 | Check one's own fills after trading live | Fully | One's own trades appear on the tape; the fill can be compared with the trades around it | Lecture 23 |
 | Backtest a strategy of small aggressive orders | **Approximately** | The fill is taken from the tape after a delay; the strategy's own orders are assumed not to change what others do | Lectures 22, 23 |
 | Backtest large aggressive orders | **Only with an impact model** | A large order would have moved the price; the tape shows the market without it | Lecture 21 |
-| Backtest passive limit orders | **Only conservatively** | The tape shows trades at a price, not one's place in the queue at that price; a resting order is counted as filled only if the price trades through it | Lectures 21, 23, Part IV |
-| Market making, queue position, strategies that move the market | **Not at all** | These need the order book and a model of how others react | Part IV |
+| Backtest passive limit orders | **Only conservatively** | The tape shows trades at a price, not one's place in the queue at that price; a resting order is counted as filled only if the price trades through it | Lectures 21, 23, Part V |
+| Market making, queue position, strategies that move the market | **Not at all** | These need the order book and a model of how others react | Part V |
 
-The table is the frame for the rest of Part III: every later lecture states which row it stands on. The capstone of Lecture 23, an intraday grid of resting buy and sell orders, stands on the row marked "only conservatively": its orders count as filled only when the price trades through them, and Part IV measures what that assumption costs.
+The table is the frame for the rest of Part V: every later lecture states which row it stands on. The capstone of Lecture 23, an intraday grid of resting buy and sell orders, stands on the row marked "only conservatively": its orders count as filled only when the price trades through them, and Part V measures what that assumption costs.
 
 ### 9.2 Backtesting on the tape: the rules
 
@@ -708,9 +708,9 @@ A backtest on trades is a replay: the recorded trades are run forward, the strat
 
 Rules 1 to 3 and 5 to 7 can be applied exactly with the tape alone; rules 4 and 8 are approximations, and they are where results on the tape stop being reliable. That is why the map in §9.1 has rows marked "approximately" and "only conservatively".
 
-### 9.3 Six uses of the tape: the plan of Part III
+### 9.3 Six uses of the tape: the plan of Part V
 
-What the tape adds to bars comes down to six things. They organise the rest of Part III: Lectures 19 to 21 each teach two of them, and Lectures 22 and 23 apply them to two strategies, a trend rule and an intraday grid.
+What the tape adds to bars comes down to six things. They organise the rest of Part V: Lectures 19 to 21 each teach two of them, and Lectures 22 and 23 apply them to two strategies, a trend rule and an intraday grid.
 
 | The tape adds… | Used for | Taught in | Used in |
 |---|---|---|---|
@@ -754,7 +754,7 @@ This appendix collects the tools behind §4: how the tape is read without loadin
 
 ### A.1 Reading the tape with Polars
 
-Five years of tape hold 2.6 billion rows: far more than a computer's memory, and far more than pandas, the library of the earlier notebooks, can handle. Part III uses **Polars**, a DataFrame library like pandas, built for data of this size. It is not a database: the data stay in the Parquet files, and Polars reads them.
+Five years of tape hold 2.6 billion rows: far more than a computer's memory, and far more than pandas, the library of the earlier notebooks, can handle. Part V uses **Polars**, a DataFrame library like pandas, built for data of this size. It is not a database: the data stay in the Parquet files, and Polars reads them.
 
 The main difference is **when the work happens**. Take the dollar volume of one day, 10 January 2024, from the January file of 57 million trades:
 
@@ -767,7 +767,7 @@ The main difference is **when the work happens**. Take the dollar volume of one 
 
 Eager code cannot know at step 1 what step 3 will need; lazy code sees the whole query before reading anything. This works because Parquet stores each block's minimum and maximum, so the blocks outside 10 January are never opened. Polars also uses all processor cores, and a streaming mode processes data larger than memory in chunks.
 
-Four operations cover most of Part III:
+Four operations cover most of Part V:
 
 | Operation | What it does |
 |---|---|
@@ -800,7 +800,7 @@ DuckDB does the same with SQL queries instead of Python, for readers who prefer 
 
 The rule is to let the engine chunk where it can, and to chunk by hand where the statistic needs its neighbours. A.2 shows where each kind sits in the pipeline.
 
-**Plotting the tape** needs the same care: a chart of 36 million trades overwhelms any plotting library. Most charts in Part III plot aggregates (bars, histograms, profiles), which stay small. Two tools handle the raw trades: **plotly-resampler** shows a thinned line and fetches more detail as one zooms in, from a day down to milliseconds; **Datashader** turns millions of points into an image of their density. The notebook's explorer uses both.
+**Plotting the tape** needs the same care: a chart of 36 million trades overwhelms any plotting library. Most charts in Part V plot aggregates (bars, histograms, profiles), which stay small. Two tools handle the raw trades: **plotly-resampler** shows a thinned line and fetches more detail as one zooms in, from a day down to milliseconds; **Datashader** turns millions of points into an image of their density. The notebook's explorer uses both.
 
 ### A.2 The pipeline, stage by stage
 

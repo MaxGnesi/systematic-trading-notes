@@ -92,7 +92,7 @@ Both periods tell the same story: a modest share, 20-30% of the risk, lifts a st
 
 <sub><b>How to read the table.</b> The rule's Sharpe ratio when carry's trades cost more; trend's costs unchanged. At 20 bp in 2006-2022 the rule falls below trend alone (0.67). Our calculation.</sub>
 
-At 20 bp the combination does worse than trend alone in 2006-2022. Execution is therefore not a detail for carry: Part IV's lessons (Lectures 25-30: slicing, timing, cost as a distribution) are what keep its edge. A slower carry signal, or trading only when a score changes enough, are the obvious next steps (§9.2).
+At 20 bp the combination does worse than trend alone in 2006-2022. Execution is therefore not a detail for carry: Part V's lessons (Lectures 25-30: slicing, timing, cost as a distribution) are what keep its edge. A slower carry signal, or trading only when a score changes enough, are the obvious next steps (§9.2).
 
 **Crashes.** Carry adds sudden losses: in 2006-2022 the combination's worst month was −11.4% against trend's −7.4% (Lecture 15 §6.3). That is the price of carry's premium, and the reason it persists.
 
@@ -123,7 +123,7 @@ Large multi-strategy funds often report higher Sharpe ratios than this portfolio
 |---|---|---|---|
 | Breadth of markets | about 40 | thousands: single stocks, credit names, options, many futures | Lecture 11 |
 | Breadth of strategies | two or three styles | dozens, often market-neutral | Lecture 1 §5.4 |
-| Granularity | monthly or daily, whole countries | intraday, single names, sectors within countries | Part IV |
+| Granularity | monthly or daily, whole countries | intraday, single names, sectors within countries | Part V |
 | Niches | none | capacity-limited markets, too small for large money | Lecture 11 (capacity) |
 | Execution and technology | a flat cost per trade | measured costs, smart execution, fast infrastructure | Lectures 25-30 |
 | Research | free data, one team | paid data, many teams, years of testing | – |
@@ -138,10 +138,10 @@ The base layer stays as it is: trend and carry on the rules of Lectures 13 and 1
 
 | Order | What to add | Why it should help | What it needs | Course |
 |---|---|---|---|---|
-| 1 | **Cheaper execution of what is already held** | Trend + carry falls from 0.84 to 0.36 between 5 and 20 bp in 2006-2022 (§6): costs are the cheapest gain | Rebalancing thresholds, slower carry signals, Part IV's execution | Lectures 25-30 |
+| 1 | **Cheaper execution of what is already held** | Trend + carry falls from 0.84 to 0.36 between 5 and 20 bp in 2006-2022 (§6): costs are the cheapest gain | Rebalancing thresholds, slower carry signals, Part V's execution | Lectures 25-30 |
 | 2 | **More markets for the same styles** | Breadth: by Grinold's law, four times the independent markets doubles the information ratio of a style | More free data: emerging-market currencies, more commodity futures and bond countries, equity sectors | Lectures 11, 15 (exercises) |
 | 3 | **New strategies that earn for different reasons** | A second business next to the first (Lecture 15 §2), ideally market-neutral and uncorrelated with trend and carry | A mechanism stated in advance; the same tests | Lecture 14 (economic trend, the Fed day), Lecture 15 (value, equity factors) |
-| 4 | **Finer granularity** | Single names and intraday horizons hold many more independent bets | Tick data, infrastructure, capacity limits | Part IV |
+| 4 | **Finer granularity** | Single names and intraday horizons hold many more independent bets | Tick data, infrastructure, capacity limits | Part V |
 | 5 | **Smarter allocation between strategies** | Small gains once the parts differ; little to gain while they are few (Lecture 13) | More strategies first | Lecture 13 |
 
 <sub><b>How to read the table.</b> One row per kind of addition, in the order we would pursue them: cheapest and most certain first. "Course": where the ideas and tools were introduced. Our proposal, not a result.</sub>
@@ -169,7 +169,7 @@ The order follows cost and certainty. Execution improves what is already known t
 
 ### 9.3 Reading
 
-- Lecture 1 §5.3-5.4 (overfitting; many small edges), Lecture 11 (markets and capacity), Lectures 12-13 (trend), Lecture 14 (regimes), Lecture 15 (carry and value), Part IV (execution).
+- Lecture 1 §5.3-5.4 (overfitting; many small edges), Lecture 11 (markets and capacity), Lectures 12-13 (trend), Lecture 14 (regimes), Lecture 15 (carry and value), Part V (execution).
 - Grinold, R. C. (1989). The fundamental law of active management. *Journal of Portfolio Management* 15(3).
 - Koijen, R. S. J., Moskowitz, T. J., Pedersen, L. H. and Vrugt, E. B. (2018). Carry. *Journal of Financial Economics* 127(2), 197-225.
 - Asness, C. S., Moskowitz, T. J. and Pedersen, L. H. (2013). Value and momentum everywhere. *Journal of Finance* 68(3), 929-985.

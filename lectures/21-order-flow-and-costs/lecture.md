@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 24, 2026 · Max Gnesi*
 
-Every trade on the tape has a buyer and a seller, but only one of them was in a hurry: the aggressor, who took the price offered rather than waiting for a better one. This lecture asks what that hurry tells us and what it costs. The first part is about order flow: does one-sided buying or selling predict where the price goes next, what happens when a single order sweeps through the book, and can the explosive days of Lecture 20 be seen coming? The second part is about costs: what a trade really pays, when a resting order is filled, and how large a strategy can grow before its costs eat its edge. It covers the fifth and sixth of Part III's six uses of the tape (the course guide, §1.1b): order flow, and costs and capacity.
+Every trade on the tape has a buyer and a seller, but only one of them was in a hurry: the aggressor, who took the price offered rather than waiting for a better one. This lecture asks what that hurry tells us and what it costs. The first part is about order flow: does one-sided buying or selling predict where the price goes next, what happens when a single order sweeps through the book, and can the explosive days of Lecture 20 be seen coming? The second part is about costs: what a trade really pays, when a resting order is filled, and how large a strategy can grow before its costs eat its edge. It covers the fifth and sixth of Part V's six uses of the tape (the course guide, §1.1b): order flow, and costs and capacity.
 
 > **What to take away**
 >
@@ -26,7 +26,7 @@ Every trade on the tape has a buyer and a seller, but only one of them was in a 
 
 **Three words.** The **aggressor** of a trade is the side that sent the order which executed at once, against an order already resting in the book (Lecture 18, §3.2). **Net aggressive buying**, or flow, is the dollars bought by aggressors minus the dollars sold by aggressors, here divided by all dollars traded, so that it runs from −1 (only sellers in a hurry) to +1 (only buyers). The **spread** is the gap between the best price at which someone is willing to buy and the best price at which someone is willing to sell; a market order pays at least half of it.
 
-**Data.** The tape of Lecture 18: the BTCUSDT perpetual on Binance, October 2021 to September 2026. Where the best bid and ask are needed (§5), Binance published them only from May 2023 to March 2024; those results are labelled with that period. The order book beyond the best prices, every level and every change, is the subject of Part IV.
+**Data.** The tape of Lecture 18: the BTCUSDT perpetual on Binance, October 2021 to September 2026. Where the best bid and ask are needed (§5), Binance published them only from May 2023 to March 2024; those results are labelled with that period. The order book beyond the best prices, every level and every change, is the subject of Part V.
 
 ## 2. Does one-sided flow predict the price?
 
@@ -224,7 +224,7 @@ Section 5 showed that a resting order pays 2 bp where a market order pays 5. But
 | H2 | Fills are adverse and misses run away | An order is filled when the price comes against it; the trades it misses are those that moved the other way |
 | H3 | For a trend rule's entries, buying after a rise, a resting order costs more than it saves; for a grid's entries, buying after a fall, it saves | A trend entry chases a moving price; a grid entry waits for one to come back |
 
-**How it is measured.** At every seventh minute of the five years a trader decides to buy, and, mirrored, to sell, so that the drift of the price cancels. The choice is between a market order at once, paying the taker fee and the half-spread of §5, and a resting order one tick or a few basis points inside the last price, which pays the maker fee if filled. If it is not filled by a cut-off, it becomes a market order at the price then. Both choices end with the same position, so the difference in what they paid is the whole comparison. A resting order counts as filled only when a later trade goes strictly through its price, a conservative rule, since our place in the queue is unknown; a trade at the price would fill it sooner. The grid of distances and waiting times uses one-minute bars over the five years; the cut-offs shorter than a minute use the tick tape on every tenth day, 180 days. Fees are those of a regular account. The t-statistics below use days as clusters. All fills are simulated from the tape; simulated fills can differ from real ones (Lo, MacKinlay and Zhang, 2002), an open question that Part IV, with the order book, takes up.
+**How it is measured.** At every seventh minute of the five years a trader decides to buy, and, mirrored, to sell, so that the drift of the price cancels. The choice is between a market order at once, paying the taker fee and the half-spread of §5, and a resting order one tick or a few basis points inside the last price, which pays the maker fee if filled. If it is not filled by a cut-off, it becomes a market order at the price then. Both choices end with the same position, so the difference in what they paid is the whole comparison. A resting order counts as filled only when a later trade goes strictly through its price, a conservative rule, since our place in the queue is unknown; a trade at the price would fill it sooner. The grid of distances and waiting times uses one-minute bars over the five years; the cut-offs shorter than a minute use the tick tape on every tenth day, 180 days. Fees are those of a regular account. The t-statistics below use days as clusters. All fills are simulated from the tape; simulated fills can differ from real ones (Lo, MacKinlay and Zhang, 2002), an open question that Part V, with the order book, takes up.
 
 ![How often a resting order is filled, and what it saves against a market order when it chases at the cut-off, by distance and waiting time](figures/15_09_resting_fill_and_saving.png)
 <sub><b>How to read the figure.</b> <b>Axes.</b> Resting order's distance from the price (x). Left: share filled, % (y). Right: cost against a market order, bp (y). Five years of BTCUSDT, a decision every seventh minute, buys and mirrored sells, simulated on one-minute bars; an order is filled when the price trades through it. Colours are the waiting time: 1 minute (blue), 10 minutes (orange), 60 minutes (green). <b>Right:</b> orders not filled by then are chased with a market order; negative means cheaper than trading at once.</sub>
@@ -333,7 +333,7 @@ Over the five years the perpetual's price tracked spot within a median of 5 bp, 
 
 ## 8. For the two examples
 
-Lectures 22 and 23 apply Part III to a trend rule and to an intraday grid. Each takes something different from this lecture; only results measured here are listed, with their section.
+Lectures 22 and 23 apply Part V to a trend rule and to an intraday grid. Each takes something different from this lecture; only results measured here are listed, with their section.
 
 ### 8.1 The trend rule (Lecture 22)
 
@@ -362,7 +362,7 @@ The results above hold on BTCUSDT from 2021 to 2026, and, for the best bid and a
 
 - Does a sweep against the trend in volatile hours mark the turn of a trend (§3, §4)?
 - Do extreme funding or long calm warn of cascades at horizons longer than a day (§4)?
-- Are the fills simulated in §6 those a real order gets? Part IV, with the order book, measures queue positions and what a resting order really gets.
+- Are the fills simulated in §6 those a real order gets? The order-book lectures (24-30) measure queue positions and what a resting order really gets.
 - Does the square-root law hold for bitcoin trades executed over a day, with a constant near 0.9? Only data that identify traders can tell.
 - Does the re-posted entry of §6 keep its saving on a thinner market, such as SOLUSDT, and at higher fee tiers?
 - When does holding a trend rule's longs in spot, and its shorts in the perpetual, beat holding both in the perpetual (§7)?

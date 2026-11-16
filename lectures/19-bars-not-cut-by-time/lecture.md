@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 21, 2026 · Max Gnesi*
 
-Every bar so far closed on the clock: at the end of a day in Parts I and II, at the end of a minute in Lecture 18. This lecture asks when the market trades. It builds bars that close after a fixed amount of trading, of one-sided pressure, or of price movement, from the same five years of BTCUSDT trades as Lecture 18, and asks whether they describe the market better; then it maps the market's rhythms: the time of day, the week, the round clock times and the scheduled events. The two halves belong together: the market's clocks take the rhythm out of the bars, while seasonality maps that rhythm in calendar time, where orders are placed. It covers the first and fourth of Part III's six uses of the tape (the course guide, §1.1b): a clock, and seasonality.
+Every bar so far closed on the clock: at the end of a day in Parts I and II, at the end of a minute in Lecture 18. This lecture asks when the market trades. It builds bars that close after a fixed amount of trading, of one-sided pressure, or of price movement, from the same five years of BTCUSDT trades as Lecture 18, and asks whether they describe the market better; then it maps the market's rhythms: the time of day, the week, the round clock times and the scheduled events. The two halves belong together: the market's clocks take the rhythm out of the bars, while seasonality maps that rhythm in calendar time, where orders are placed. It covers the first and fourth of Part V's six uses of the tape (the course guide, §1.1b): a clock, and seasonality.
 
 > **What to take away**
 >
@@ -699,7 +699,7 @@ Neither is better in general. Which execution profile is cheaper, the crowd at t
 
 ## 8. For the two examples
 
-Lectures 22 and 23 apply Part III to two strategies: a trend rule, held for days, and an intraday grid, held for minutes or hours (Lecture 18, §9.3). Each takes something different from this lecture.
+Lectures 22 and 23 apply Part V to two strategies: a trend rule, held for days, and an intraday grid, held for minutes or hours (Lecture 18, §9.3). Each takes something different from this lecture.
 
 ### 8.1 The trend rule (Lecture 22)
 

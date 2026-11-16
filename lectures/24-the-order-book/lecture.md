@@ -2,14 +2,14 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 29, 2026 · Max Gnesi*
 
-Part III worked with the tape: every trade, the moment two orders met. This lecture opens Part IV by turning to the orders themselves, those waiting in the order book to be met. It explains what an order book is and how much of it public data show, how to obtain the data and rebuild the book from it, and what the rebuilt book reveals about a market's liquidity. The data are Bybit's BTCUSDT perpetual from 20 September to 3 November 2025, around the liquidation cascade of 10 October; one day of 2024 serves to illustrate the data's format.
+Part V worked with the tape: every trade, the moment two orders met. This lecture opens the order-book half of Part V by turning to the orders themselves, those waiting in the order book to be met. It explains what an order book is and how much of it public data show, how to obtain the data and rebuild the book from it, and what the rebuilt book reveals about a market's liquidity. The data are Bybit's BTCUSDT perpetual from 20 September to 3 November 2025, around the liquidation cascade of 10 October; one day of 2024 serves to illustrate the data's format.
 
 ## 1. The order book
 
-Part IV moves from describing the order book to trading on it, one step per lecture:
+Part V moves from describing the order book to trading on it, one step per lecture:
 
-![Part IV in one line: from describing the order book to trading on it](figures/18_01_part_iv.png)
-<sub><b>How to read the figure.</b> Each box is one lecture of Part IV, each building on the one before; this lecture is outlined. Above the boxes, the five stages: describing the book, measuring it, simulating our own orders in it, reading the other players, and trading strategies on it.</sub>
+![Part V in one line: from describing the order book to trading on it](figures/18_01_part_iv.png)
+<sub><b>How to read the figure.</b> Each box is one order-book lecture of Part V, each building on the one before; this lecture is outlined. Above the boxes, the five stages: describing the book, measuring it, simulating our own orders in it, reading the other players, and trading strategies on it.</sub>
 
 The plot behind these lectures, and what each one settles: [order-book roadmap](../ORDER_BOOK_ROADMAP.md).
 
@@ -33,7 +33,7 @@ At that moment the best bid was $71,950.0, with 6.35 BTC queued, and the best as
 
 ### 1.1 What is in it
 
-An order book is the list of orders waiting to trade at each price. Every term the rest of Part IV uses is defined here once:
+An order book is the list of orders waiting to trade at each price. Every term the rest of Part V uses is defined here once:
 
 | Term | Meaning | Financial interpretation |
 |---|---|---|
@@ -68,7 +68,7 @@ The cost grows faster than the size, because each additional bitcoin is bought f
 
 ### 1.3 How an exchange handles an order
 
-Between a trader's decision and a trade lies a chain of steps, each with its own rules. Together they are the venue's **market model**, and every later question of Part IV, from manipulation (Lecture 25) to replaying the exchange (Lecture 27) and quoting on two venues (Lecture 30), is a question about one of these steps:
+Between a trader's decision and a trade lies a chain of steps, each with its own rules. Together they are the venue's **market model**, and every later question of the order-book lectures, from manipulation (Lecture 25) to replaying the exchange (Lecture 27) and quoting on two venues (Lecture 30), is a question about one of these steps:
 
 ![The path of an order through an exchange: gateway, sequencer, matching engine, market data, and clearing underneath](figures/18_02b_order_path.png)
 <sub><b>How to read the figure.</b> An order travels from left to right; what the market data step publishes goes back to every trader (dotted). Under each step, what it decides (black), and what Bybit (blue) and Binance (green) do there. Orange: where the defences against manipulation of Lecture 25, §2.1 act. * The standard rule of continuous books; neither venue states it in the documents we checked.</sub>
@@ -99,7 +99,7 @@ Public order-book data come at three levels of detail, and the level decides whi
 | Level | What it shows | Example |
 |---|---|---|
 | **L1** | The best bid and the best ask, with their sizes | Binance's best bid and ask, used in Lecture 21, §5 |
-| **L2** | Every level, with the total size resting there | **Bybit's book, used in Part IV**: 500 levels a side until mid-2025, 200 since, updated every 100 milliseconds |
+| **L2** | Every level, with the total size resting there | **Bybit's book, used in Lectures 24-30**: 500 levels a side until mid-2025, 200 since, updated every 100 milliseconds |
 | **L3** | Every single order: when it arrived, at which price and size, and when it was filled or cancelled | Some venues publish it live; historical L3 data are rare and usually paid for |
 
 ![The same moment at three levels of detail](figures/18_03_l1_l2_l3.png)
@@ -120,11 +120,11 @@ The book alone shows that the size fell by 3.136 BTC. Only the trades say that 0
 
 **Why it matters for a waiting order.** Suppose our own order had been waiting at the back of that queue. The trades took 0.132 BTC from its front, so our order moved up by that much. Of the remaining orders ahead of us, some were cancelled. Since only 0.747 BTC rest at the level afterwards, at most 0.747 BTC can still be ahead of us, and as little as nothing if the orders that remain all joined behind us. Our position after 100 milliseconds is somewhere between the front of the queue and 0.747 BTC behind it. With L3, the exact position would be known. With L2, it must be estimated by a model of where in the queue cancellations happen, and the estimate becomes a range. Lecture 27 builds such models; the fills it simulates come as ranges for this reason. The same gap hides how long the orders at a level have rested: L2 shows the size, not its age. Old orders are depth that tends to stay, fresh ones are more often fleeting; Lecture 25 estimates the age of the depth with the same kind of queue model.
 
-The window has already used the two kinds of data that Part IV needs: the book, for what rests, and the trades, for what traded. Section 3 shows how to obtain both.
+The window has already used the two kinds of data that Part V needs: the book, for what rests, and the trades, for what traded. Section 3 shows how to obtain both.
 
 ## 3. Getting the data
 
-Bybit publishes the history of its book and its trades as daily files, free and without an account. This section shows what the files contain, what they look like as tables, and how to download and convert them, so that every number in Part IV can be rebuilt by the reader.
+Bybit publishes the history of its book and its trades as daily files, free and without an account. This section shows what the files contain, what they look like as tables, and how to download and convert them, so that every number in Part V can be rebuilt by the reader.
 
 ### 3.1 Two files a day
 

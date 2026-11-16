@@ -245,7 +245,7 @@ Four results:
 3. **The tape's order works against the grid.** At every step the gross result on the tape is 0.08 to 0.12 percentage points a day below that of the same minutes shuffled, with t-statistics between −1.9 and −2.9. With the same minutes, in random order, the grid would have done better. This need not contradict Lecture 20's variance ratio below one, an average over all hours: §2.2 showed that what reversion pays a grid depends on how it is spread between swings and runs, and §1.4 how many round trips a single run can take back.
 4. **Every year, at every step up to 100 bp, the net result is negative.** Only the widest grid earned, in 2021 and 2022, and it lost in each year since. At the narrow steps the losses have shrunk over the years, but not to zero.
 
-These are results on one market with conservative fills: every fill on a turning point that did not trade through is missed, so they are a lower bound on what a real order would get. Part IV, with the order book, measures how much better the fills could be. Sections 4 and 5 ask whether the grid's settings, or something known in advance about the hours ahead, change the picture.
+These are results on one market with conservative fills: every fill on a turning point that did not trade through is missed, so they are a lower bound on what a real order would get. The order-book lectures (24-30) measure how much better the fills could be. Sections 4 and 5 ask whether the grid's settings, or something known in advance about the hours ahead, change the picture.
 
 ## 4. The levers
 
@@ -468,7 +468,7 @@ The bar is stable across the two periods. The narrow grid needs a small rebate o
 
 **Open questions.** These results hold on one market, BTCUSDT, from 2021 to 2026, with fills counted only when the price trades through. They leave questions that readers are invited to test, on this market and on others:
 
-- How much better are real fills than the conservative bound? Part IV, with the order book, measures queue positions and what a resting order really gets.
+- How much better are real fills than the conservative bound? The order-book lectures (24-30) measure queue positions and what a resting order really gets.
 - Does the grid's lead in the US morning, 12:00 to 16:00 UTC, survive on more data or other markets (§5)?
 - Is there a regime of swings of three to four steps, the one the bimodal profile bets on, and can it be recognised in advance (§4)?
 - Does the grid behave differently on a thinner market, such as SOLUSDT, where swings may be larger relative to costs?
@@ -497,11 +497,11 @@ The bar is stable across the two periods. The narrow grid needs a small rebate o
 
 ### 8.3 Reading
 
-For why no rule of trading at the market can beat a price with no pattern, the martingale transform and optional stopping in Williams (1991, ch. 10). For the correction for many tests, Benjamini and Hochberg (1995). For the grid's opposite, the convex payoff of trend following, Fung and Hsieh (2001) and Dao et al. (2016), as in Lecture 22, §8. For market making as a problem of quoting against inventory risk, the starting point of Part IV, Avellaneda and Stoikov (2008).
+For why no rule of trading at the market can beat a price with no pattern, the martingale transform and optional stopping in Williams (1991, ch. 10). For the correction for many tests, Benjamini and Hochberg (1995). For the grid's opposite, the convex payoff of trend following, Fung and Hsieh (2001) and Dao et al. (2016), as in Lecture 22, §8. For market making as a problem of quoting against inventory risk, the starting point of Part V, Avellaneda and Stoikov (2008).
 
 ## References
 
-- Avellaneda, M. and Stoikov, S. (2008). High-frequency trading in a limit order book. *Quantitative Finance* 8(3), 217–224. — market making with inventory risk, for Part IV (§8.3).
+- Avellaneda, M. and Stoikov, S. (2008). High-frequency trading in a limit order book. *Quantitative Finance* 8(3), 217–224. — market making with inventory risk, for Part V (§8.3).
 - Benjamini, Y. and Hochberg, Y. (1995). Controlling the false discovery rate: a practical and powerful approach to multiple testing. *Journal of the Royal Statistical Society, Series B* 57(1), 289–300. — the correction for many tests (§5).
 - Dao, T.-L., Nguyen, T.-T., Deremble, C., Lempérière, Y., Bouchaud, J.-P. and Potters, M. (2016). Tail protection for long investors: trend convexity at work. *Journal of Investment Strategies*; arXiv 1607.02410. — the convexity of trend following (§8.3).
 - Fung, W. and Hsieh, D. A. (2001). The risk in hedge fund strategies: theory and evidence from trend followers. *Review of Financial Studies* 14(2), 313–341. — trend following as lookback straddles (§8.3).

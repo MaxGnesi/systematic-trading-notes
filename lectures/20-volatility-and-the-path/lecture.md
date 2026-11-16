@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 22, 2026 · Max Gnesi*
 
-A bar keeps four prices of everything that happened inside it. This lecture looks at what it throws away, the path between those prices, and at the number that summarises how much a price moves, its volatility. The path decides whether a stop or a target is hit first, how often a grid's orders fill, and how far a position runs against its owner before it is closed; volatility decides how large a position may be, how wide a grid should be spaced and where a stop belongs. Both are measured on the same five years of BTCUSDT trades as Lectures 18 and 19. The lecture covers the second and third of Part III's six uses of the tape (the course guide, §1.1b): the path between bars, and volatility measured precisely.
+A bar keeps four prices of everything that happened inside it. This lecture looks at what it throws away, the path between those prices, and at the number that summarises how much a price moves, its volatility. The path decides whether a stop or a target is hit first, how often a grid's orders fill, and how far a position runs against its owner before it is closed; volatility decides how large a position may be, how wide a grid should be spaced and where a stop belongs. Both are measured on the same five years of BTCUSDT trades as Lectures 18 and 19. The lecture covers the second and third of Part V's six uses of the tape (the course guide, §1.1b): the path between bars, and volatility measured precisely.
 
 > **What to take away**
 >
@@ -267,7 +267,7 @@ Where our methods are established, the results agree with the literature; where 
 
 ## 7. For the two examples
 
-Lectures 22 and 23 apply Part III to a trend rule and to an intraday grid. Each takes something different from this lecture; only results measured here are listed, with their section.
+Lectures 22 and 23 apply Part V to a trend rule and to an intraday grid. Each takes something different from this lecture; only results measured here are listed, with their section.
 
 ### 7.1 The trend rule (Lecture 22)
 

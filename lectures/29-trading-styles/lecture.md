@@ -198,7 +198,7 @@ The ordering matters. The first two rows are the core of market making on this v
 
 ### 6.2 Reading a market before quoting in it
 
-The same six questions apply to any market with a public book and trades. Each is answered with a measure from Part IV, using only what was known at the moment.
+The same six questions apply to any market with a public book and trades. Each is answered with a measure from Part V, using only what was known at the moment.
 
 | Step | Question | What to look at | From |
 |---|---|---|---|

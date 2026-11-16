@@ -1,4 +1,4 @@
-"""Lecture 26 figures 20_01 and 20_02. 20_01: the chain of Part IV, Lecture 26 outlined. 20_02, the key chart: left, one real minute of Bybit BTCUSDT
+"""Lecture 26 figures 20_01 and 20_02. 20_01: the chain of Part V, Lecture 26 outlined. 20_02, the key chart: left, one real minute of Bybit BTCUSDT
 (1 October 2025, 12:00 UTC): the mid, the book imbalance at the best (a level) and the order-flow imbalance and trade imbalance added up since the
 start of the minute (deltas); right, on the whole of that day, the share of the change of the mid over 1 s, 10 s and 60 s explained by each of the three.
 Without the data of that day, 20_02 is drawn from the extract shipped in results/key."""
@@ -17,7 +17,7 @@ TRADES = L20.TRADES
 DAY, HM, SEC = "2025-10-01", "12:00", 60
 LEVEL_C, OFI_C, TI_C = MUTED, "#2a78d6", "#eb6834"
 
-# 20_01: the chain of Part IV
+# 20_01: the chain of Part V
 steps = [("18", "The order book", "what is there"), ("19", "Levels", "the state now"), ("20", "Deltas", "what changed"),
          ("21", "Replay", "our own orders"), ("22", "A market that reacts", "the market answers"), ("23", "Trading styles", "who else trades"),
          ("24", "Market making", "one venue"), ("25", "Cross-exchange", "quote here, hedge there")]
@@ -37,7 +37,7 @@ for x0, x1, lab in ((0, 1.2, "describe"), (1.45, 4.1, "measure"), (4.35, 7.0, "s
     fig.add_annotation(x=(x0 + x1) / 2, y=1.27, text=lab, showarrow=False, font=dict(size=11, color=MUTED))
     fig.add_shape(type="line", x0=x0, x1=x1, y0=1.13, y1=1.13, line=dict(color=GRID, width=2))
 fig.update_xaxes(visible=False, range=[-0.1, 11.45]); fig.update_yaxes(visible=False, range=[-0.15, 1.42])
-fig.update_layout(title="Part IV in one line: Lecture 26 measures what changes in the book<br><sup>Each lecture builds on the one before; "
+fig.update_layout(title="Part V in one line: Lecture 26 measures what changes in the book<br><sup>Each lecture builds on the one before; "
                         "the current one is outlined, done ones are ticked</sup>", height=270, width=1400, margin=dict(t=80, l=20, r=20, b=10), showlegend=False)
 save_figure(fig, L20.PREFIX + "20_01_part_iv", FIG)
 

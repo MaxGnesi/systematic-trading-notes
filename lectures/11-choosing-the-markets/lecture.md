@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · draft, Nov 13, 2026 · Max Gnesi*
 
-Parts III and IV went down to single trades and the order book of one market. That was not a detour from portfolios: it is how we learned what trading costs, how fast prices react and how a large order should be worked, which is what a portfolio that rebalances once a day or once a week needs from execution. This part goes back to daily data and builds that portfolio. Its first question comes before any weight: **which markets should be in it at all?** We start from 116 exchange-traded funds listed in the United States, covering equity countries, sectors and themes, government bonds, credit, commodities and currencies, and ask which of them form a universe that is diverse and tradable, chosen without looking at any strategy's results. The plan was fixed before any result was computed, and every change made after seeing results is dated and labelled ([results/hypotheses.md](results/hypotheses.md)).
+Lectures 5 to 10 built trend systems and tested them market by market, ending with three systems on futures. This lecture and the next two run trend at portfolio scale: many markets, one set of speeds, one portfolio. The first question comes before any weight: **which markets should be in it at all?** We start from 116 exchange-traded funds listed in the United States, covering equity countries, sectors and themes, government bonds, credit, commodities and currencies, and ask which of them form a universe that is diverse and tradable, chosen without looking at any strategy's results. The plan was fixed before any result was computed, and every change made after seeing results is dated and labelled ([results/hypotheses.md](results/hypotheses.md)).
 
 ## 1. 116 ETFs, a few bets
 
