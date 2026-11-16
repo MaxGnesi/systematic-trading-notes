@@ -35,11 +35,12 @@ Speeds of two to five weeks almost never pass: they trade too often for what the
 | § | Step | Question |
 |---|---|---|
 | 2 | Overfitting, carefully | What can be guarded against in advance, and what cannot? |
-| 3 | The streams | Which rules, which speeds, which returns and costs? |
+| 3 | The streams | Which rules, which speeds, which returns and costs, and what about streams that are often flat? |
 | 4 | The rule | How do random halves of years and markets choose speeds, and what if markets disagree? |
 | 5 | The areas | Which speeds pass, class by class, and do they stay? |
 | 6 | Super-long speeds | Why do very slow trends work in US equity and not elsewhere? |
 | 7 | Out of sample | Does the rule beat holding everything, or choosing per class? |
+| 8 | Static or dynamic speeds? | Should the speeds' weights follow recent performance, the market's state or the kind of crisis? |
 
 This lecture is step 2 of the workflow of Lecture 11 (§1): it uses strategy performance, but only in sample, to choose a region of speeds rather than a point, and it is judged out of sample.
 
@@ -77,6 +78,17 @@ These are not new ideas. The classic studies of trend following apply one rule t
 
 What makes two speeds different is mainly their ratio, not their divisibility: 59 and 61 are both prime and almost the same rule. So the grid is spaced by ratio first and made of primes second.
 
+**Why space by ratio: an example.** The correlation between two speeds depends on their ratio, not their difference (Lecture 13 §1), so evenly spaced should mean evenly spaced in ratio. With six speeds between 40 and 400 days, each held with equal weight:
+
+| Six speeds, 40 to 400 days | Risk in the fast / middle / slow third, equal weight |
+|---|---|
+| Same ratio: 40, 63, 100, 159, 252, 400 | 32 / 35 / 32 |
+| Same day difference: 40, 112, 184, 256, 328, 400 | 13 / 34 / 52 |
+
+<sub><b>How to read the table.</b> The range is split into three thirds by ratio: fast 40-86 days, middle 86-186, slow 186-400. Cells: the share of the blend's risk in each third, in %; 33 each would be fair. Correlations from the speed ratio as measured in Lecture 13 §1; illustrative, not estimates ([scripts](../13-the-baseline-trend-portfolio/scripts/l27_edge_cases.py), [results](../13-the-baseline-trend-portfolio/results/spacing.json)).</sub>
+
+Spaced by days, 150 and 200 days are nearly the same speed (a ratio of 1.33) while 40 and 100 are very different (2.5), so the slow third ends up with half the risk. On a same-ratio grid even the simplest method is fair, which is why this grid steps each speed up by about 1.4 times. Lecture 13 §2.4 shows what each weighting method does when the held speeds end up unevenly spaced anyway.
+
 **Rules.** Three trend rules from Lecture 6, each taking a position of +1 (long) or −1 (short) at the close of each day, computed with `trading_models`:
 
 | Rule | At speed h |
@@ -105,6 +117,20 @@ r_{\text{account}} = \sum_i w_i\,\mathrm{TR}_i + r_f\Big(1 - \sum_i w_i\Big) = r
 Unused capital and the proceeds of short sales earn the cash rate; borrowed money for positions beyond the capital costs it. The account therefore earns the cash rate once, plus each position times its return over cash, and the second part is what separates one speed from another. Measured on total returns instead, a levered bond position collects interest on money it never paid for: at 89 days the government bond streams' Sharpe ratio is 0.60 on total returns and 0.28 over cash, credit's 0.52 and 0.34 (our calculation, all funds of the class with equal risk, 2007-2026). Real borrowing costs a little more than the bill rate and shorting a fund carries a fee; both bite only on leverage beyond the capital and are left to the lecture on constraints and costs.
 
 **Example: why fast speeds fail.** On IEF (Treasuries of 7 to 10 years), the fastest EWMA crossover (11 days) earned a Sharpe ratio of 0.32 before costs over 2007-2026, as much as the slow speeds (0.30 at 89 days, 0.31 at 251); it traded so often that costs of 5 bp took 1.5% a year and left 0.08. The 89- and 251-day crossovers paid 0.5% and 0.2% a year and kept 0.25 and 0.29. The fast speeds' failure here is a matter of cost, not of an absence of trend (our calculation, returns over cash).
+
+### 3.3 Streams that are not always in the market
+
+The breakout rule is flat after the price crosses back over its half-length channel (§3.1), so its streams are **often flat**: on Lecture 11's markets the held breakout speeds had a signal on 71% of days over 2007-2026 (median over markets and speeds). This raises a question that has no single answer: are the flat days zeros or missing?
+
+| Purpose | Flat days count as | Why | Label |
+|---|---|---|---|
+| Profit and loss of the account | Zero return | The capital is there and earns cash (zero over cash) | Definition |
+| How the strategy behaves while it trades (volatility, correlation with other streams) | Missing | Zeros would dilute the volatility and pull correlations towards zero | Convention |
+| Risk budget in the portfolio | Either: on average or while active | A choice with known trade-offs | Our proposal (Lecture 15) |
+
+The two give different numbers. The breakout streams earned a Sharpe ratio of 0.20 over all days and 0.26 on the days with a signal (median over markets and speeds), consistent with Lecture 7 §4.3: the Sharpe ratio over the whole period is roughly the Sharpe ratio while invested times the square root of the share of time invested ($`0.26 \times \sqrt{0.71} \approx 0.22`$). The difference is not an edge; it is the idle capital, which Lecture 7 §4.3 showed can be used elsewhere.
+
+In the baseline (Lecture 13) the breakout streams are blended as they are, with zeros on flat days: their volatility is measured on all days and their risk is the average risk. Strategies that are in the market much less often, and how to combine them with strategies that always are, are the subject of Lectures 14 and 15.
 
 ## 4. The rule
 
@@ -189,11 +215,55 @@ Two frameworks were checked in the same way. Sizing positions by volatility over
 
 What these numbers leave for later lectures: how much each class and market should weigh (the allocation lectures), whether larger markets should carry more risk, and how the trend portfolio sits next to simply holding the markets. The second kind of overfitting of §2, a future unlike the past, remains, and nothing here removes it: the rule is reviewed every year, which follows a change after it shows but does not foresee it.
 
+## 8. Static or dynamic speeds?
+
+The rule of §4 is **static**: it chooses one set of speeds at each year end and holds it, with equal risk, for the whole year. A **dynamic** choice would let the speeds' weights follow what has worked lately, or the state of the market, or the kind of crisis under way. This section tests the main versions against the static rule. All keep the held set and only move weight inside it, so none brings in a speed that was not chosen; the rest of the portfolio is the baseline of Lecture 13.
+
+### 8.1 Following recent performance
+
+Two opposite rules are both plausible:
+
+- **Momentum.** Tilt towards the speeds that did best over the past three or six months: if a speed suits the current market, it may keep suiting it.
+- **Reversal.** Tilt towards the speeds that did worst: the held speeds all work over the long run, so a recent laggard may be due to catch up.
+
+Each tilts the equal weights at the start of every quarter by the speeds' rank over the past three or six months, at half or full strength (weights between zero and twice equal). Reweighting pays 5 bp on the change in each position.
+
+| Tilt | Lookback | Sharpe ratio difference to the static rule | 90% band |
+|---|---|---|---|
+| Momentum, half / full | 3 months | −0.06 / −0.11 | −0.08 to −0.03 / −0.16 to −0.06 |
+| Momentum, half / full | 6 months | −0.05 / −0.10 | −0.07 to −0.03 / −0.14 to −0.06 |
+| Reversal, half / full | 3 months | +0.02 / +0.04 | −0.00 to +0.05 / −0.01 to +0.09 |
+| Reversal, half / full | 6 months | +0.03 / +0.05 | +0.00 to +0.05 / +0.00 to +0.10 |
+
+<sub><b>How to read the table.</b> Each row tilts the speed weights inside every market each quarter by the rank of each held speed's recent Sharpe ratio; the rest of the portfolio is the baseline's (Lecture 13). Difference to the static equal weights in Sharpe ratio after costs, out of sample 2013-2026; 90% band from a block bootstrap over calendar months. Our calculation ([results/hypotheses.md](../13-the-baseline-trend-portfolio/results/hypotheses.md)).</sub>
+
+Momentum lost clearly; reversal gained a little, and two of its four bands only just exclude zero. With eight variants tried and no mechanism beyond "the held speeds catch up", this is weak evidence, and the baseline stays static.
+
+**Is there anything to time?** A descriptive check, with nothing fitted: in each market, rank the held speeds by their Sharpe ratio in one window and again in the next. Over three months the ranks persist slightly (rank correlation +0.06 to +0.08, standard error 0.014), over six months less (+0.04), over a year not at all (−0.03). The persistence that momentum needs is there but small, and it fades within the quarter the tilt holds: momentum pays to reweight and concentrates the blend for a difference that is mostly gone by the time it is traded. Reversal's small gain runs against the measured persistence, so it has no mechanism on our data; it stays an open question (§9.2).
+
+**Following the state of the market.** A third way conditions on the market rather than on past performance: a "switch speed" filter in the sense of Lecture 8 §2.2. Goulding, Harvey and Mazzoleni (2023) blend fast and slow trends by whether they agree, which marks turning points. A version of it did not hold here: leaning towards fast speeds in volatile markets and slow speeds in calm ones looked promising on the ETFs (calm: slow speeds led; storms: fast speeds led) but did not survive a test on the capstone futures (difference −0.02, 90% band −0.07 to +0.03).
+
+### 8.2 Which speeds work in crises?
+
+Trend following is often sold as crisis insurance. If some speeds outside the held set worked reliably in crises, they could be added as a small sleeve, switched on when a crisis begins. The test, fixed in advance: a speed works in crises if it beats the held set in at least two thirds of the S&P 500's falls of more than 15%, on the ETFs and on the capstone futures.
+
+![Which speeds work in crises](../13-the-baseline-trend-portfolio/figures/27_crisis_speeds.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> x: trend speed in trading days; y: the return over each fall of the S&P 500 of more than 15%, for a stream at 10% risk, averaged over the three rules and over the ETFs with data, each class the same weight. One line per fall; orange: quick crashes (under four months), blue: long bear markets. Shaded: the held speeds. Excess returns over cash, 5 bp per trade; our calculation.</sub>
+
+**No speed passed.** What works depends on the crisis's own speed:
+
+- **Quick crashes** (2018 Q4, Feb-Mar 2020, Feb-Apr 2025: one to three months): fast speeds of 11 to 31 days earned up to 5%; the held speeds earned little or lost, the slowest the most. A trend measured over months cannot turn within a five-week crash; it enters the crash long.
+- **Long bear markets** (2007-09 and 2022: a year or more): the held speeds earned most (89 to 251 days: +7% to +13%), the fast speeds about half as much or less. 2000-02 shows the same shape on the futures; on the ETFs only 42 funds, mostly equity, existed and every speed earned about 1%.
+
+A fast sleeve would have paid in the quick crashes and cost in the long ones, and in the years between, where §5 showed the fast speeds lose to costs. Crisis protection here is a matter of which kind of crisis comes, which is not known in advance. How today's whole portfolio would fare in these falls is in Lecture 13 §5.
+
+**Static, on our data.** Neither recent performance nor the market's state nor the kind of crisis gave a dynamic choice of speeds that beat the static rule out of sample. The speeds that work are a region that moves slowly, which the yearly review follows.
+
 **Next in the build.** The markets (Lecture 11) and the speeds (this lecture) are chosen; Lecture 13 weighs them, by risk alone: the speeds inside each market, the markets inside each class, the classes, and the total.
 
-## 8. Summary
+## 9. Summary
 
-### 8.1 Takeaways
+### 9.1 Takeaways
 
 1. **Overfitting has two parts.** Dependence on the sample can be measured in advance by rerunning a choice on other slices of the past; a future unlike the past cannot. Moving away from today's best speed does not help against it on average, because we do not know which way the future goes. Spreading only narrows the range of outcomes; mechanism and the yearly review are what remain (§2).
 2. **One rule, one sentence.** Hold every speed that works on one random half of years and markets and still works on the other, in at least 20% of 500 splits (§4).
@@ -201,8 +271,9 @@ What these numbers leave for later lectures: how much each class and market shou
 4. **Super-long speeds in US equity are drift, not timing.** They track buying and holding and fail where markets drifted less (§6).
 5. **Choosing helps by leaving out what fails**; choosing per class or the fine details of the rule add nothing measurable on our data (§7).
 6. **Framework choices matter more than they look.** Returns over cash, not total returns; volatility over months, not weeks (§3, §7).
+7. **Static beat dynamic on our data.** Tilting towards recent winners lost clearly; reversal's small gain has no mechanism; a volatility-state tilt failed on the capstone futures; no speed worked reliably in crises, because quick crashes and long bear markets need opposite speeds (§8).
 
-### 8.2 Exercises
+### 9.2 Exercises
 
 - [ ] Rerun the rule with 100, 500 and 2,000 splits. From how many does the set of held speeds stop changing?
 - [ ] Replace the 20% bar by 10%, 30% and 50%. Plot the number of streams held and the out-of-sample Sharpe ratio against the bar. Where is the result flat?
@@ -210,11 +281,13 @@ What these numbers leave for later lectures: how much each class and market shou
 - [ ] Without any backtest: for each class, find the horizons where returns persist most (the variance ratio of h-day returns), hold all three rules there, and compare with the rule out of sample. Can speeds be chosen without looking at profits?
 - [ ] Put the trend signals on total returns and the profits on returns over cash. Which classes change most, and why does credit behave differently from currencies?
 - [ ] Size positions by volatility over 21, 63, 126 and 252 days. Plot the rule's Sharpe ratio and its worst year against the window. Which classes are most sensitive?
+- [ ] **Reversal, again.** The reversal tilt of §8.1 gained a little with no mechanism behind it. Test it on the capstone futures with the rule fixed before you look. Does it hold?
 
-### 8.3 Reading list
+### 9.3 Reading list
 
 - Bailey, D. H., Borwein, J. M., López de Prado, M. and Zhu, Q. J. (2017). The probability of backtest overfitting. *Journal of Computational Finance* 20(4), 39-69. — overfitting measured by splitting the history (§2; Lecture 7).
-- Hurst, B., Ooi, Y. H. and Pedersen, L. H. (2017). A century of evidence on trend-following investing. *Journal of Portfolio Management* 44(1), 15-29. — one blend of 1-, 3- and 12-month trends for 67 markets since 1880 (§2).
+- Goulding, C. L., Harvey, C. R. and Mazzoleni, M. G. (2023). Momentum turning points. *Journal of Financial Economics* 149(3), 378-406. — blending fast and slow trends by whether they agree (§8.1).
+- Hurst, B., Ooi, Y. H. and Pedersen, L. H. (2017). A century of evidence on trend-following investing. *Journal of Portfolio Management* 44(1), 15-29. — one blend of 1-, 3- and 12-month trends for 67 markets since 1880 (§2); trend following across crises (§8.2).
 - Meinshausen, N. and Bühlmann, P. (2010). Stability selection. *Journal of the Royal Statistical Society Series B* 72(4), 417-473. — keeping what is chosen on many random halves of the data (§2, §4).
 - Moskowitz, T. J., Ooi, Y. H. and Pedersen, L. H. (2012). Time series momentum. *Journal of Financial Economics* 104(2), 228-250. — one 12-month rule for 58 futures (§2).
 

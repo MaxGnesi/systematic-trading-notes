@@ -1,9 +1,10 @@
 """Lecture 13's section charts, from saved results only (no recomputation):
   27_total       volatility target against constant leverage: drawdowns and gross exposure, out of sample 2013-2026 (OUT/l27_daily.parquet);
   27_takeprofit  Sharpe ratio and monthly skew against the take-profit threshold k, ETFs and capstone futures (results/takeprofit.json);
-  27_crisis      return of each speed in each S&P 500 fall of more than 15% (ETFs, results/crisis.json), and today's portfolio replayed
-                 through the same episodes with and without take-profit at k = 4 (results/stress.json).
-Usage: python l27_charts.py. Output: figures/27_total.png, 27_takeprofit.png, 27_crisis.png."""
+  27_crisis_speeds  return of each speed in each S&P 500 fall of more than 15% (ETFs, results/crisis.json; used in Lecture 12 §8.2);
+  27_crisis_today   today's portfolio replayed through the same falls, with and without take-profit at k = 4 (results/stress.json).
+27_takeprofit is used in Lecture 8 §4.8.
+Usage: python l27_charts.py [function names]. Output: figures/27_total.png, 27_takeprofit.png, 27_crisis_speeds.png, 27_crisis_today.png."""
 import json, sys
 from pathlib import Path
 import numpy as np, pandas as pd
@@ -50,33 +51,43 @@ def takeprofit_chart():
     save_figure(fig, M.PREFIX + "27_takeprofit", M.FIG)
 
 
-def crisis_chart():
-    C, S = load("crisis.json"), load("stress.json"); sp = C["speeds"]
+def crisis_speeds_chart():
+    C = load("crisis.json"); sp = C["speeds"]
     name = lambda p, t: f"{p[:7]} to {t[:7]}"
-    fig = make_subplots(rows=1, cols=2, column_widths=[0.55, 0.45], horizontal_spacing=0.12,
-                        subplot_titles=("Return of each speed in each fall (ETFs)", "Today's portfolio replayed through the falls"))
+    fig = make_subplots(rows=1, cols=1)
     quick = [e for e in C["episodes"] if e.get("etf") and (pd.Timestamp(e["trough"]) - pd.Timestamp(e["peak"])).days < 120]
     slow = [e for e in C["episodes"] if e.get("etf") and e not in quick]
-    for group, col, dash in ((quick, SERIES[1], "solid"), (slow, SERIES[0], "solid")):
+    for group, col in ((quick, SERIES[1]), (slow, SERIES[0])):
         for j, e in enumerate(group):
             fig.add_scatter(x=sp, y=[e["etf"]["by_speed"][h] for h in sp], mode="lines+markers", line=dict(color=col, width=2, dash=("solid", "dash", "dot")[j % 3]),
-                            marker=dict(size=6), name=f"{name(e['peak'], e['trough'])} (S&P {e['spx_fall']:.0%}, {'quick crash' if group is quick else 'long bear market'})",
-                            legendgroup="c", row=1, col=1)
-    i0, i1 = sp.index("43"), sp.index("359"); fig.add_vrect(x0=i0 - 0.5, x1=i1 + 0.5, fillcolor=MUTED, opacity=0.1, line_width=0, row=1, col=1)
-    fig.add_hline(y=0, line=dict(color=MUTED, width=1), row=1, col=1)
-    fig.update_xaxes(type="category", title_text="speed, trading days (shaded: Lecture 12's held speeds)", row=1, col=1)
-    fig.update_yaxes(tickformat=".0%", title_text="return over the fall, stream at 10% risk", row=1, col=1)
+                            marker=dict(size=6), name=f"{name(e['peak'], e['trough'])} (S&P {e['spx_fall']:.0%}, {'quick crash' if group is quick else 'long bear market'})")
+    i0, i1 = sp.index("43"), sp.index("359"); fig.add_vrect(x0=i0 - 0.5, x1=i1 + 0.5, fillcolor=MUTED, opacity=0.1, line_width=0)
+    fig.add_hline(y=0, line=dict(color=MUTED, width=1))
+    fig.update_xaxes(type="category", title_text="speed, trading days (shaded: Lecture 12's held speeds)")
+    fig.update_yaxes(tickformat=".0%", title_text="return over the fall, stream at 10% risk")
+    fig.update_layout(title="Which speeds work in crises<br><sup>every fall of the S&P 500 of more than 15% from peak to trough 2000-2026; each of the twelve speeds "
+                            "averaged over the three rules<br>and over all ETFs with data (each class the same weight; 2000-02: only 42 funds, mostly equity); "
+                            "excess returns over cash, 5 bp per trade</sup>",
+                      height=620, width=1100, margin=dict(t=125, l=70, r=30, b=170), legend=dict(orientation="h", y=-0.22, x=0))
+    save_figure(fig, M.PREFIX + "27_crisis_speeds", M.FIG)
+
+
+def crisis_today_chart():
+    S = load("stress.json"); name = lambda p, t: f"{p[:7]} to {t[:7]}"
     eps = [e for e in S["episodes"] if e["plain"]["markets"] >= 15]; lab = [name(e["peak"], e["trough"]) for e in eps]
-    for i, (k, nm, c) in enumerate((("plain", "today's portfolio", INK), ("take-profit 4", "with take-profit at k = 4", SERIES[2]))):
-        fig.add_bar(y=lab, x=[e[k]["ret"] for e in eps], orientation="h", marker_color=c, name=nm, legendgroup="s", row=1, col=2)
-    fig.add_vline(x=0, line=dict(color=MUTED, width=1), row=1, col=2)
-    fig.update_yaxes(autorange="reversed", row=1, col=2); fig.update_xaxes(tickformat=".0%", title_text="return over the fall", row=1, col=2)
-    fig.update_layout(title="Crises: which speeds work, and how today's portfolio fares<br><sup>every fall of the S&P 500 of more than 15% from peak to trough "
-                            "2000-2026; left: each of the twelve speeds averaged over the three rules and over all ETFs with data (each class the same weight; 2000-02: only 42 funds, mostly equity)<br>"
-                            "right: end-2025 markets and held speeds, scales from 2023-2025, replayed through each fall; excess returns over cash, 5 bp per trade</sup>",
-                      barmode="group", height=640, width=1250, margin=dict(t=125, l=70, r=30, b=150), legend=dict(orientation="h", y=-0.22, x=0))
-    save_figure(fig, M.PREFIX + "27_crisis", M.FIG)
+    fig = make_subplots(rows=1, cols=1)
+    for k, nm, c in (("plain", "today's portfolio", INK), ("take-profit 4", "with take-profit at k = 4 (Lecture 8 §4.8)", SERIES[2])):
+        fig.add_bar(y=lab, x=[e[k]["ret"] for e in eps], orientation="h", marker_color=c, name=nm)
+    fig.add_vline(x=0, line=dict(color=MUTED, width=1))
+    fig.update_yaxes(autorange="reversed"); fig.update_xaxes(tickformat=".0%", title_text="return over the fall")
+    fig.update_layout(title="Today's portfolio replayed through past crises<br><sup>end-2025 markets and held speeds, scales from 2023-2025, through each fall of the "
+                            "S&P 500 of more than 15%; excess returns over cash, 5 bp per trade</sup>",
+                      barmode="group", height=480, width=1000, margin=dict(t=110, l=150, r=30, b=110), legend=dict(orientation="h", y=-0.2, x=0))
+    save_figure(fig, M.PREFIX + "27_crisis_today", M.FIG)
 
 
 if __name__ == "__main__":
-    apply_theme(); total_chart(); takeprofit_chart(); crisis_chart()
+    apply_theme()
+    only = sys.argv[1:]
+    for f in (total_chart, takeprofit_chart, crisis_speeds_chart, crisis_today_chart):
+        if not only or f.__name__ in only: f()

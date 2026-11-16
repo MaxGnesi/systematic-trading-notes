@@ -90,14 +90,18 @@ When neighbours overlap by about 0.9, no weighting finds a second independent be
 
 ---
 
-# Timing the speeds did not help
+# When the speeds are not evenly spaced
 
-> Momentum lost clearly; reversal gained a little with no mechanism on our data, so the baseline keeps equal weights.
+> Fix the grid first; if the held speeds still bunch, share risk between the natural groups, then within each.
 
-- **Momentum** (tilt towards the recent best speeds): −0.06 / −0.11 at half / full strength, 3 months
-- **Reversal** (tilt towards the recent worst): +0.03 / +0.05, 6 months; bands only just exclude zero
-- Ranks persist slightly over three months (+0.06 to +0.08), and the persistence fades within the quarter the tilt holds
-- A volatility-state tilt did not survive the capstone futures (difference −0.02)
+Speeds 50, 60, 70 and 200 days; a fair split is 50 / 50:
+
+- **Equal weight, ERC:** the bunch gets 75-78%
+- **HRP as published:** 76%
+- **Minimum variance:** 52%, but picks inside the bunch on noise
+- **Grouped by region:** 50%, steady
+
+![](../figures/27_bunch_stability.png)
 
 ---
 
@@ -140,23 +144,11 @@ Groups found in the data instead of asset classes did a little better (0.52), bu
 
 ---
 
-# Taking profits: an option, not an improvement
-
-> A take-profit at four to five units of a speed's risk leaves the Sharpe ratio unchanged and raises skew.
-
-- Exit when the open gain exceeds k units of the speed's own risk
-- ETFs, k = 4: skew 0.24 → 0.41; 2020 crash −13.8% → −10.7%
-- Long bear markets give some gain back: 2022 +26% → +18%
-
-![](../figures/27_takeprofit.png)
-
----
-
 # Today's portfolio in past crises
 
 > The worst case is a quick crash that hits a long, levered position sized on calm years: in 2020 today's portfolio would lose 18%.
 
-| Episode | S&P 500 | Today's portfolio | With take-profit at k = 4 |
+| Episode | S&P 500 | Today's portfolio | With take-profit at k = 4 (Lecture 8) |
 |---|---|---|---|
 | 2007-09 | −57% | +35% | +38% |
 | Feb-Mar 2020 | −34% | **−18%** | −13% |
@@ -171,8 +163,10 @@ Groups found in the data instead of asset classes did a little better (0.52), bu
 
 1. **Equal risk at every level:** speeds, markets, classes; the total scaled to 10%
 2. **Speeds overlap by their ratio:** 20 streams make about 1.4 independent bets; equal weights matched the risk-based blends
-3. **Equal risk costs leverage:** equal capital holds a third less exposure and moves almost identically
-4. **Volatility target or constant leverage** is a choice between steady risk and steady exposure; scaling daily re-levers weak signals
-5. **Take-profit and crisis speeds** are options with known trade-offs; today's portfolio is most exposed to a quick reversal of a calm, levered long trend
+3. **Uneven speeds:** fix the grid first, then group at the natural gaps; HRP as published does not fix a bunch
+4. **Equal risk costs leverage:** equal capital holds a third less exposure and moves almost identically
+5. **State the correlations you assume and stress the total:** 15.6% in a harsh crisis scenario, 24.6% at most
+6. **Volatility target or constant leverage** is a choice between steady risk and steady exposure; scaling daily re-levers weak signals
+7. **Today's portfolio is most exposed to a quick reversal** of a calm, levered long trend, as in 2020
 
 > The baseline in one sentence: hold Lecture 12's speeds with equal risk in each market, the markets with equal risk in each asset class, the classes with equal risk, and scale the total each year to 10% volatility on its past three years.
