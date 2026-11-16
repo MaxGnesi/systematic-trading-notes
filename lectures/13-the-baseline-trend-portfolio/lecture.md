@@ -100,7 +100,20 @@ Equal weights, equal risk contributions and the cost-adjusted budgets give the s
 
 <sub><b>How to read the table.</b> Each cell is the share of the blend's risk carried by each region of speeds, in %. "Moves": the largest change in any weight, in percentage points, when one correlation inside a region shifts by 0.01. "Grouped by region": equal risk between regions, then equal risk contributions within each. Illustrative correlations, not estimates ([scripts/l27_edge_cases.py](scripts/l27_edge_cases.py)).</sub>
 
-Grouping by region is the only method that is fair and steady in every case. Equal weight and equal risk contributions are fine on an even grid but give a bunch or a near-copy too much risk, because each stream gets its own share. Minimum variance balances the regions surprisingly well when speeds bunch, but it always starves the middle and, inside a bunch, picks members almost at random. Grouping is the nesting of the build (§1) applied inside a market, which is what HRP does with groups it estimates.
+Grouping by region is the only method that is fair and steady in these four cases. Equal weight and equal risk contributions are fine on an even grid but give a bunch or a near-copy too much risk, because each stream gets its own share. Minimum variance balances the regions surprisingly well when speeds bunch, but it always starves the middle and, inside a bunch, picks members almost at random. Grouping is the nesting of the build (§1) applied inside a market, which is what HRP does with groups it estimates.
+
+**Grouping has problems of its own.** Someone has to draw the regions. A lone speed gets a whole region's share: with 50, 60 and 70 days and one speed at 500, grouping puts 50% of the risk on the 500-day speed alone (equal risk contributions, 25%), and a lone speed at the edge of the plateau is the least reliable place for it (Lecture 7 §6). And on an even grid the cut decides the weights: for 50, 70, 100, 140 and 200 days, the 100-day speed gets 17.1% if the cut falls after 70 or after 100 days, 32.6% if it stands as a region of its own, and 19.1% under equal risk contributions with no cut at all.
+
+| Method | Problem | When it bites |
+|---|---|---|
+| Equal weight | Bunches and near-copies get too much risk (78%, 52%) | Uneven speeds |
+| Equal risk contributions | The same: each stream gets its own share (75%, 50%) | Uneven speeds |
+| Minimum variance | Starves the middle speed (10%); erratic inside a bunch (moves up to 9.1 points); assumes equal returns | Always; worst when speeds bunch |
+| Grouping by region | A lone speed gets a whole region's share (50%); on an even grid the cut decides the weights (17% or 33%) | Lone outliers; grids with no natural gap |
+
+<sub><b>How to read the table.</b> One row per method; the numbers come from the edge cases above. "When it bites": the kind of speed set that exposes the problem.</sub>
+
+**The rule that follows.** Group only where there is a natural gap between regions, with the regions drawn in advance from the speeds themselves (their ratios), never tuned to results. On an even grid, do not cut: equal weight or equal risk contributions are fine there, and that is the baseline's case.
 
 In the baseline every held speed carries all three rules, so the speeds are triplicated equally; the exception, the 251-day speed held only as the EWMA crossover, gets a little less risk than its region would alone. Their correlations leave little to choose: when every pair of neighbours overlaps by about 0.9, no weighting finds a second independent bet that is not there. Maximum Sharpe ratio concentrates on five streams that changed from year to year (at the 2012 review mostly the 179-day crossover, at 2018 the 89-day crossover and the 127-day breakout) and earned 0.03 less.
 
