@@ -6,6 +6,20 @@
 
 Lecture 11 chose the markets and Lecture 12 the speeds of the trend rules that trade them. This lecture puts the two together into one portfolio: it blends the speeds inside each market, the markets inside each asset class, the classes into one account, and scales the total. Each step uses the same method, **equal risk**, and each could be done differently. The result is the **baseline**, which closes Part II: the portfolio every later lecture changes in one part and must beat out of sample. The lecture's question is which choices matter at each step and what each costs, not which portfolio is best. The plan was fixed before any result was computed, and every change made after seeing results is dated and labelled ([results/hypotheses.md](results/hypotheses.md)).
 
+**The build, end to end.** Lectures 11 to 13 are one process, run once a year on the past three years only. Each step uses the steps before it and nothing after it; profits judge the result at the end and never set a choice or a weight.
+
+| Step | Decision | What it uses | Result | Lecture |
+|---|---|---|---|---|
+| 1. Choose the markets | Which markets enter | Liquidity, history and overlap with the others, sign ignored; no strategy profits | 16 to 21 of 116 ETFs | 11 |
+| 2. Choose the speeds | Which trend streams run | Each asset class's in-sample results, read as a region of speeds, not a point | 16 to 20 of 36 streams per market | 12 |
+| **3. Weigh the speeds (this lecture)** | How much of each stream in a market | Risk only: each stream at equal risk; their correlations come from construction | One blended trend per market | 13 §2 |
+| **4. Weigh the markets and the classes (this lecture)** | How much of each market, then of each class | Risk only: equal standalone risk; no correlations across classes | Markets equal within a class, classes equal | 13 §3 |
+| **5. Scale the total (this lecture)** | How much leverage overall | The portfolio's volatility over three years, to 10% a year | The baseline trend portfolio | 13 §4 |
+
+<sub><b>How to read the table.</b> One row per decision, in the order they are taken; the rows in bold are this lecture's. "What it uses": the only information the step may use. Steps 1 and 2 choose; steps 3 to 5 weigh, by risk alone.</sub>
+
+**Why weigh in nested steps, not in one optimisation.** Steps 3 to 5 could be one optimisation over every stream in every market. They are kept apart for three reasons. (1) **The two kinds of correlation deserve different treatment:** across speeds the correlation comes from construction and is reliable; across markets and classes it is estimated and changes with regimes (§3.3). One matrix would mix the two, and the unreliable part would decide the answer. (2) **One large matrix is mostly noise:** about 20 streams in about 20 markets make some 400 streams and tens of thousands of correlations, far more than a few years of data can pin down. (3) **Nesting removes duplication:** in one step, a market with many held speeds would get more risk only because it has more streams; nested, each market first becomes one blended stream, and markets then compete on equal terms. It is the idea of HRP and NCO (§2.3, Appendix A), with the groups known in advance instead of estimated.
+
 ## 1. Equal risk at every level
 
 The lecture's result fits in one chart.
@@ -23,16 +37,7 @@ Two trend streams in the same market overlap by how far apart their speeds are, 
 | 5 | Taking profits | Does closing a trend after a large gain help? |
 | 6 | Crises | Which speeds work in crises, and how does today's portfolio fare in them? |
 
-**The workflow.** Lecture 11 (§1) set the order for the whole portfolio part: markets first, then weights from risk only, and the strategy's profit and loss last, as the judge.
-
-| Step | Uses | Lecture |
-|---|---|---|
-| Markets | Liquidity, history, overlap | 11 |
-| Speeds | Strategy performance, in sample, as a region rather than a point | 12 |
-| Weights | Risk only: volatilities, correlations, costs | **13** (the baseline and its rivals) |
-| Judge | Profit and loss, out of sample | every lecture |
-
-Profit and loss never feeds back into the weights silently: where a weight depends on past performance (maximum Sharpe ratio in §2, speed timing in §2.5), the lecture says so and shows the cost.
+**The workflow** is the build table above: markets first, then weights from risk only, and the strategy's profit and loss last, as the judge. Profit and loss never feeds back into the weights silently: where a weight depends on past performance (maximum Sharpe ratio in §2, speed timing in §2.5), the lecture says so and shows the cost.
 
 **The baseline in one sentence.** *Hold Lecture 12's speeds with equal risk in each market, the markets with equal risk in each asset class, the classes with equal risk, and scale the total each year to 10% volatility on its past three years.* All weights are set at each year end from 2012 on past data only and traded the following year; the results are out of sample, 2013-2026, on Lecture 11's markets (Sharpe ratio 0.49 after costs).
 
@@ -234,6 +239,21 @@ Asset classes are labels. Markets in different classes can trend together (gold 
 
 The groups did a little better, but no difference is distinguishable from zero, and none of the comparisons fixed in advance passes the Benjamini-Hochberg correction. The groups also changed from year to year (with average linkage, gold, gold miners, the yen and the Australian dollar formed one group in 2013; in 2014 gold sat with US equity), so each year's portfolio rests on three years of co-movement in a few dozen markets. Classes are kept: they are stable and equally good on our sample. Whether data-driven groups add something is a question for Lecture 16, with more markets.
 
+### 3.3 When correlations across classes change regime
+
+Steps 3 and 4 of the build use no correlations across classes. Step 5 does: the total is scaled on the portfolio's volatility over three years, and that volatility depends on how the classes move together. Correlations across classes come from the economy, not from construction, and they change with regimes. The stock-bond correlation is the classic case (Lecture 3 §8.3, Lecture 11 §3.5). This section asks three questions on five decades of monthly data, one series per class (equities, government bonds, credit, commodities, the dollar), each taken both as the asset and as its 12-month trend stream, which is what the portfolio holds (results/hypotheses.md).
+
+![Correlation regimes across classes, 1973-2024](figures/27_regimes.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: x, the correlation of US equities with US 10-year government bonds in each regime window; y, one row per window. Grey: the assets' monthly returns; blue: their 12-month trend streams. Right: x, the volatility the total would carry in each window if it had been scaled to 10% in the calm years 2003-2006, with equal risk across the five class trend streams; y, the same windows. Dotted line: the 10% target. Windows named before the data were loaded; 2020 holds 11 months and 2023-2024 holds 24, so their correlations are noisy. Our calculation ([results/regimes.json](results/regimes.json)).</sub>
+
+**1. The regimes are real, and trend sees them differently.** The stock-bond correlation of the assets was positive in 1973-1982 (+0.16) and 1983-1999 (+0.11), negative from 2000 to 2020 (down to −0.71 in 2020), and positive again in 2022-2024 (+0.26). Across all five classes the average overlap of the assets was highest in 2020 (0.68), 2007-2009 (0.42) and 2022-2024 (0.36). The trend streams overlap less in every window (0.06 to 0.46), and their correlation is not the assets': in 2000-2002 the assets were correlated −0.43, the trend streams +0.39, because trend was short equities and long bonds, and both earned.
+
+**2. Calm years overstate diversification, so choose markets on their bad regimes.** Measured on trend streams, the overlap of each class with the others rose from the recent three years to the worst window: credit from 0.18 to 0.38, equities from 0.18 to 0.33; government bonds (0.25 to 0.27) and commodities (0.13 to 0.20) changed least. A market that diversifies only in calm years should not earn its slot on them. For markets with a short history, such as thematic ETFs, three working assumptions keep this simple: a short history borrows the long one of its closest parent (here the Kenneth French industry portfolio it tracks best); it is judged in the parent's bad regimes; and its own past returns are never used, since themes tend to be launched after strong runs. Judged this way, the median overlap of 34 thematic ETFs with US equities rises from 0.41 on their last three years to 0.69 in their parents' worst windows: most are equity in another form. Biotech (0.39) and gold miners (0.22) stay separate bets. Where no parent fits, as for Chinese internet stocks, the method says so rather than guessing.
+
+**3. Size the total for the correlations it may face.** A total scaled to 10% on the calm years 2003-2006 would have carried 13.3% in 2007-2009 and 12.9% in 2022-2024, about a third more than its target; scaled on 2010-2019, 12.4% and 12.0%. Scaled on the baseline's own recent years, already a high-overlap period, the worst window gives 11.2%. The overshoot depends on how calm the measuring years were. Two defences follow, both design choices rather than caps: measure the target on a window long enough to hold a bad regime, or check the total against the worst windows before committing leverage. The baseline keeps its rule; any change is a proposal to be tested on data it was not built on.
+
+**The takeaway.** *Across speeds, correlation comes from construction; across classes it comes from the economy and changes regime. Choose markets on their bad-regime overlap, keep the weights of steps 3 and 4 independent of estimated cross-class correlations, and size the total for the correlations it may face, not only those it has seen.*
+
 ## 4. The total
 
 ![Scaling the total](figures/27_total.png)
@@ -326,6 +346,7 @@ The worst case is a quick crash that hits a long, levered position sized on calm
 - **The baseline:** equal risk at every level, for the speeds in each market, the markets in each class and the classes, with the total scaled each year to 10% on its past three years. Sharpe ratio 0.49 after costs, out of sample 2013-2026. Every later lecture changes one part and must beat it.
 - **Speeds overlap by their ratio.** Neighbouring speeds are 0.9 correlated, and different rules at the same speed are too; 20 streams make about 1.4 independent bets in a market. Equal weights, equal risk contributions and cost-adjusted budgets gave the same result; maximum Sharpe ratio concentrated on a few streams and did worse.
 - **Minimum variance drops the middle speed; equal risk contributions keep it.** The first equalises marginal risk, the second total contributions; on near-duplicates the first ends in a corner for about 3% less risk. For speeds, use the correlation, the input known best, to share risk out, not to hedge one speed against another. Every other method derives from these two (§2.3, Appendix A).
+- **Correlations across classes change regime.** The stock-bond correlation changed sign twice since 1973, and a total scaled to 10% in calm years carried about a third more in 2007-2009 and 2022-2024. Choose markets on their bad-regime overlap and size the total for the correlations it may face (§3.3).
 - **Timing the speeds did not help.** Momentum lost clearly; reversal's small gain has no mechanism on our data; a volatility-state tilt failed on the capstone futures.
 - **Equal risk costs leverage.** Equal capital holds a third less gross exposure, earns a little less, and moves almost identically.
 - **Volatility target or constant leverage** is a choice between steady risk and steady exposure, not a winner and a loser on our sample. Scaling daily on today's positions re-levers weak signals.
