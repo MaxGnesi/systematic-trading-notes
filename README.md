@@ -56,6 +56,10 @@ The detour into high frequency is deliberate. Part III and IV use crypto tick an
 
 The roadmap and the style and formula conventions for writing the notes are in [COURSE_GUIDE.md](COURSE_GUIDE.md).
 
+### How these notes were made
+
+These notes were written with an AI assistant (Claude, by Anthropic). The course design, the research questions, the expectations fixed before each test, and the judgment on methods and results are the author's. The assistant wrote most of the code, ran the analyses, drafted the text and checked references, under that direction and review. Several of the course's key choices came from the author's corrections of the assistant's first proposals: comparing bonds across countries, measuring equity carry from earnings, building value from fundamentals, weighing evidence instead of using fixed significance thresholds, and setting realistic expectations. Every plan was fixed and dated before its results (`results/hypotheses.md` in each lecture), every number can be rerun from the notebooks, and errors found later are corrected with dated notes. A lecture on research with AI (planned as Lecture 17) describes this process: what an assistant speeds up, and where it needs a human check.
+
 ## Lectures
 
 | # | Lecture | Companion notebook | What it covers |

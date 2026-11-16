@@ -11,10 +11,10 @@ The course teaches **the base layer of systematic research** first, then **a dee
 | I. Foundations | 1-4 | What is in the data; what different transformations of the same prices show; the research method | A strategy is only as good as its understanding of the data |
 | II. Trend | 5-13 | The base strategy, built once: what trend captures, the machinery, comparing, filtering and sizing systems, the futures test, then trend at portfolio scale (markets, speeds, the baseline portfolio) | Trend alone is one source of return; the next question is what else earns, and when |
 | III. Beyond trend | 14-15 | Two answers to trend's bad regimes: switching trend off (it does not pass), or holding strategies that earn for different reasons (carry adds; value needs fundamentals) | The parts are ready to be assembled |
-| IV. The portfolio | 16 | The base layer assembled: trend and carry, tested on untouched years, judged as an addition to stocks and bonds; the realistic expectation; how to improve on a fixed base | The base layer is complete; what remains is below the bar |
-| V. Deep dive: high frequency | 17-29 | The tape (17-22) and the order book (23-29) on crypto, the one market with free tick and book data: clocks, the path, order flow, costs, queues, other traders, market making | Back to Part IV: the execution of a daily portfolio, and where finer granularity adds breadth |
+| IV. The portfolio | 16-17 | The base layer assembled: trend and carry, tested on untouched years, judged as an addition to stocks and bonds; the realistic expectation; how to improve on a fixed base (16). Research with AI: what an AI assistant speeds up, where it fails silently, and the guardrails that kept this course honest, with the course's own record as the case study (17) | The base layer is complete; what remains is below the bar |
+| V. Deep dive: high frequency | 18-30 | The tape (18-23) and the order book (24-30) on crypto, the one market with free tick and book data: clocks, the path, order flow, costs, queues, other traders, market making | Back to Part IV: the execution of a daily portfolio, and where finer granularity adds breadth |
 
-**Renumbering (old → new).** 1-9 unchanged; 11 → 10 (Lecture 10 was merged into 11 and its number is freed); 25 → 11, 26 → 12, 27 → 13; 28 → 14, 29 → 15, 30 → 16; 12-24 → 17-29. Folders and notebooks are renamed to the new numbers; **script file names keep their original numbers** (`l25.py`, `l28_filters.py`, ...) as internal code names, since they are imported across lectures and name local result folders.
+**Renumbering (old → new).** 1-9 unchanged; 11 → 10 (Lecture 10 was merged into 11 and its number is freed); 25 → 11, 26 → 12, 27 → 13; 28 → 14, 29 → 15, 30 → 16; a new Lecture 17 (research with AI); 12-24 → 18-30. Folders and notebooks are renamed to the new numbers; **script file names keep their original numbers** (`l25.py`, `l28_filters.py`, ...) as internal code names, since they are imported across lectures and name local result folders.
 
 **What changes in the text, beyond the numbers.**
 - Part II's last three lectures (11-13) open as *trend at portfolio scale*, the natural continuation of Lectures 5-10, not as a restart after the high-frequency part.
@@ -22,6 +22,7 @@ The course teaches **the base layer of systematic research** first, then **a dee
 - Part V opens as an advanced deep dive that builds on the base layer, and closes by pointing its execution lessons back to Lecture 16.
 - Lecture 16 adds the cost link: the base layer judged with execution costs measured in Part V, not only a flat 5 bp.
 - Each part opens with a short paragraph: what it asks, and how it leads to the next.
+- Lecture 1 points to Lecture 17, since students use AI from the start; the README states how the notes were made (written with an AI assistant, under the author's direction and review).
 
 ## 1. Roadmap
 
