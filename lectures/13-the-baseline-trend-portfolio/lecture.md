@@ -95,6 +95,8 @@ Equal weights, equal risk contributions and the cost-adjusted budgets give the s
 
 ### 2.3 How optimisers choose: minimum variance against equal risk contributions
 
+> **This section in five lines.** (1) Two rules decide everything: minimum variance equalises each stream's *marginal* risk, equal risk contributions its *total* contribution. (2) On near-duplicate speeds the first drops or shorts the middle speed, for about 3% less risk; the second keeps it. (3) Every weighting implies a view on returns: minimum variance assumes all speeds earn exactly the same. (4) If returns differ, the best weights swing wildly, and neither rule is safer in every direction. (5) The middle speed sits in the centre of the plateau, so think before setting its weight to zero; use correlation to share risk, not to hedge.
+
 Maximum Sharpe ratio concentrated on a few streams and changed them from review to review. This is not bad luck in our data; it is how optimisers behave when the things they weigh are near-duplicates. The whole question comes down to two rules, minimum variance and equal risk contributions, and to why the first eliminates the middle of a group of similar streams while the second keeps it. Every other method is a variant of one of the two. This section is about the mechanism and the philosophy, not about which method happened to earn most; Appendix A summarises the methods for practical use.
 
 **The example.** Three speeds, 50, 100 and 200 days, each scaled to the same risk, with correlations of 0.8 between neighbours and 0.5 between the slowest and the fastest (an illustration):
@@ -139,12 +141,13 @@ Maximum Sharpe ratio concentrated on a few streams and changed them from review 
 |---|---|---|
 | Maximum Sharpe ratio | Minimum variance | Adds expected returns: $`w \propto C^{-1}\,\mathrm{SR}`$, so it inherits the inversion and adds the least reliable input (below) |
 | Shrinkage of returns | Maximum Sharpe ratio | Pulls the Sharpe ratios towards their average; when they cannot be told apart it falls back to minimum variance and its corner |
-| Denoising, shrinkage of correlations | Minimum variance, maximum Sharpe | Cleans the matrix before it is inverted; helps with many assets and short histories |
+| Shrinkage of correlations | Minimum variance, maximum Sharpe | Cleans the matrix before it is inverted; helps with many assets and short histories |
 | Equal weight, equal risk | Equal risk contributions | Ignore correlations entirely |
-| HRP, NCO | Equal risk contributions | Share risk between **groups** first, then within them: the fix for duplication (López de Prado, 2016, 2020) |
-| Spectral risk parity | Equal risk contributions | Shares risk equally across principal components instead of streams: diversified across components is not diversified across streams |
+| HRP | Equal risk contributions | Shares risk between **groups** first, then within them: the fix for duplication (López de Prado, 2016) |
 
 <sub><b>How to read the table.</b> Each method in terms of the two rules: the family it belongs to and what it adds or changes.</sub>
+
+Other methods met in the literature, nested clustered optimisation, maximum diversification and spectral risk parity, are variants of the same two rules; the course does not use them (Appendix A, last line).
 
 **Maximum Sharpe ratio: the minimum-variance corner, plus noise.** With two streams of correlation $`\rho`$, the maximum-Sharpe weights are $`w_1 \propto \mathrm{SR}_1 - \rho\,\mathrm{SR}_2`$ and $`w_2 \propto \mathrm{SR}_2 - \rho\,\mathrm{SR}_1`$. With $`\rho = 0.9`$ and past Sharpe ratios of 0.50 and 0.45, the second weight is $`0.45 - 0.9 \times 0.50 = 0`$: a difference of 0.05 sends all the weight to one stream. That difference is noise: the standard error of the gap between two Sharpe ratios correlated $`\rho`$ is about $`\sqrt{2(1-\rho)/T}`$, about 0.12 for $`\rho = 0.9`$ over 13 years ($`T`$ in years). Michaud (1989) called it an error maximiser.
 
@@ -194,7 +197,7 @@ The methods that use past returns scatter: maximum Sharpe ratio moves by tens of
 | The streams earn exactly the same, and their overlap is known exactly | Minimum variance, shorts allowed (the maximum-Sharpe portfolio under exactly these beliefs) |
 | The streams earn about the same, and only the broad shape of their overlap is trusted | Equal risk contributions (the maximum-Sharpe portfolio if Sharpe ratios and correlations were all equal; robust when they are only roughly so) |
 | The streams earn the same, and correlations are not worth using | Equal weight, equal risk |
-| Some streams are near-copies, and only groups are reliable | HRP, NCO |
+| Some streams are near-copies, and only groups are reliable | HRP |
 | The goal is the lowest risk, not return per unit of risk | Minimum variance, long only |
 | One stream earns more for a reason that should last | A modest tilt, stated in advance and tested elsewhere |
 
@@ -313,15 +316,7 @@ The real crises took the 10% portfolio to between 8.0% (2020, when its trend str
 
 **Splitting a class gave nothing.** Clustering could split an asset class into two more homogeneous groups. Tested at every review, the two-way split of equity was not stable from one year to the next (agreement 0.43, below the 0.5 fixed in advance). Government bonds, commodities and currencies did split stably, but only by setting one market apart (international bonds, gold, the yen), which equal risk within the class already treats fairly. The effective number of bets did not rise (equity 5.2 against 5.1; commodities 3.1 against 2.8). The classes are kept.
 
-**Where the clustering, spectral and denoising tools fit.** These tools appear across the course (§2.3, Appendix A). Pragmatically, each earns a place in some steps of the build and not in others:
-
-| Tool | What it does | Where it helps in the build | Why not in the other steps |
-|---|---|---|---|
-| **Hierarchical clustering** | Groups markets that move together | Step 1, as a check for duplicates and groups (Lecture 11); step 4, as an alternative to asset classes (§3.2) or to split a class (above) | Speeds need no grouping: their overlap is known by construction (§2.3) |
-| **Spectral methods (principal components)** | Splits co-movement into independent factors | Step 1: counting a class's independent bets, the factors above the noise band (Lecture 11) | As weights (spectral risk parity) they were unstable and put everything on one speed (§2.3) |
-| **Denoising (Marchenko-Pastur)** | Removes the part of a correlation matrix indistinguishable from noise | Already in step 1 in spirit: the noise band that counts the factors is the same idea | Steps 3 to 5 do not invert an estimated matrix of many markets; denoising cleans noise, not regime change, so for the total the stress test above matters more |
-
-<sub><b>How to read the table.</b> One row per tool. "Where it helps": the steps of the build table (§ at the top of the lecture) in which the tool adds information. "Why not": the reason it adds little elsewhere. A tool not used for weights can still be the right instrument for measuring.</sub>
+**Where clustering and related tools fit.** Pragmatically, and only as measurements or options: hierarchical clustering checks for duplicates and groups when markets are chosen (Lecture 11) and offers an alternative to asset classes as the groups (§3.2); principal components count a class's independent bets (Lecture 11). Denoising a correlation matrix would matter only if many markets were weighed with estimated correlations, which the baseline does not do; and it cleans noise, not regime change, so for the total the stress test above matters more.
 
 ## 4. The total
 
@@ -454,13 +449,11 @@ A practical guide to the methods of §2.3, one card each: what the method does, 
 | **Minimum variance** | The lowest-risk combination | The full correlation matrix, inverted; implicitly, equal expected returns | The goal really is the lowest risk | Near-duplicates: drops or shorts the middle one; concentrates in the calmest assets |
 | **Maximum Sharpe ratio (mean-variance)** | The highest expected return per unit of risk | Correlations, inverted, and expected returns | Expected returns are known far better than they ever are | Almost always in practice: corners, extreme long-short weights, choices that follow the noise (Michaud, 1989) |
 | **Shrinkage** | Pulls estimates towards a simple structure before optimising: Sharpe ratios towards their average, correlations towards a constant (Ledoit and Wolf, 2004) | The structure it shrinks towards | The structure is close to the truth | Shrinking returns alone does not help when the corner comes from the correlations (§2.3: the shrunk optimiser falls back to minimum variance) |
-| **Maximum diversification** | Maximises the ratio of the weighted average volatility to the portfolio's volatility (Choueifaty and Coignard, 2008) | Volatilities and correlations, inverted | Correlations are well estimated | As minimum variance with near-duplicates; not tested here |
 | **Hierarchical Risk Parity (HRP)** | Groups assets by correlation into a tree, then splits risk between and within the groups (López de Prado, 2016) | Correlations only to form groups | Many assets with a clear group structure; noisy or near-singular correlations | Groups are unclear; sizing by variance can concentrate in the calmest group |
-| **Nested Clustered Optimisation (NCO)** | Optimises inside each cluster, then across the clusters (López de Prado, 2020) | As its inner and outer methods | Run with equal risk contributions inside and across | Run with an inverting optimiser, it concentrates like one |
-| **Denoising (Marchenko–Pastur)** | Replaces the part of the correlation matrix indistinguishable from noise before any optimiser uses it (López de Prado, 2020) | Random-matrix theory: the noise band set by the number of assets relative to the history | Many assets, short history | Few assets: there is no band to estimate; a cleaner input, not a method |
-| **Spectral risk parity** | Spreads risk evenly over the principal components rather than over assets (Meucci, 2009) | The eigenvectors of the correlation matrix | The components have a stable meaning | Diversified across components is not diversified across assets: on three speeds it puts everything in one speed, and its weights jump between resampled histories |
 
 <sub><b>How to read the table.</b> One row per method, from those that use the least estimated information to those that use the most, then the methods that tame an optimiser. "Inverted": the weights depend on the inverse of the correlation matrix. Results on our data are in §2.3 and results/hypotheses.md.</sub>
+
+**Also met in the literature, not used here.** Nested clustered optimisation (López de Prado, 2020) optimises inside clusters and then across them, so it behaves like the optimiser it runs. Maximum diversification (Choueifaty and Coignard, 2008) inverts the correlations as minimum variance does. Spectral risk parity (Meucci, 2009) spreads risk over principal components; on three speeds it put everything on one speed and jumped between resampled histories (§2.3). Denoising (López de Prado, 2020) is a cleaner input rather than a method, useful with many assets and short histories.
 
 **How to choose, in two steps.** First rule out what fails tests that do not depend on opinion: weights that jump when the history is resampled, bets on differences smaller than their noise, trades nobody designed. Then choose among the rest by the belief you hold (the table at the end of §2.3), state it in advance, and keep it the same at every level of the portfolio.
 
