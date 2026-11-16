@@ -7,7 +7,7 @@ the notebook that tests its claims on real market data and the charts it cites.
 
 **In one sentence.** Build simple trading rules on reasons that should last, judge them against luck and on data they were not built on, count every try, and expect what such rules can honestly deliver.
 
-**What it builds.** A systematic portfolio from free data: trend following as the base strategy, carry next to it, judged as an addition to an ordinary portfolio of stocks and bonds. Along the way it looks inside the price bar and the order book, because that is where trading costs come from, and costs decide which strategies survive.
+**What it teaches.** The base layer of systematic research. First, the core cross-asset styles, **trend, carry and value**, built from free data across currencies, commodities, bonds and equities, tested honestly and combined into a portfolio judged as an addition to an ordinary portfolio of stocks and bonds. Second, a deeper dive into **higher frequency**: the tape and the order book, where trading costs are decided and where short-horizon edges live or die. The base layer is what every systematic portfolio starts from; the deeper parts show where more breadth, finer granularity and better execution come from.
 
 ### The arc
 
