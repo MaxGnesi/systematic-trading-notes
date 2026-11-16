@@ -11,7 +11,7 @@ Part IV moves from describing the order book to trading on it, one step per lect
 ![Part IV in one line: Lecture 25 measures the book as it stands](figures/19_01_part_iv.png)
 <sub><b>How to read the figure.</b> Each box is one lecture of Part IV, each building on the one before; this lecture is outlined, Lecture 24 is done. Above the boxes, the five stages: describing the book, measuring it, simulating our own orders in it, reading the other players, and trading strategies on it.</sub>
 
-The plot behind these lectures, and what each one settles: [Part IV roadmap](../PART_IV_ROADMAP.md).
+The plot behind these lectures, and what each one settles: [order-book roadmap](../ORDER_BOOK_ROADMAP.md).
 
 The idea of the lecture fits in one chart. On the left, a moment of Lecture 24: the best bid holds 28 times the size of the best ask. On the right, every update of our 45 days, sorted by that imbalance, and what the mid did next:
 

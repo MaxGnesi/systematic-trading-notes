@@ -11,7 +11,7 @@ Part IV moves from describing the order book to trading on it, one step per lect
 ![Part IV in one line: Lecture 27 puts our own orders into the recorded market](figures/21_01_part_iv.png)
 <sub><b>How to read the figure.</b> Each box is one lecture of Part IV, each building on the one before; this lecture is outlined, Lectures 24 to 26 are done. Above the boxes, the five stages: describing the book, measuring it, simulating our own orders in it, reading the other players, and trading strategies on it.</sub>
 
-The plot behind these lectures, and what each one settles: [Part IV roadmap](../PART_IV_ROADMAP.md).
+The plot behind these lectures, and what each one settles: [order-book roadmap](../ORDER_BOOK_ROADMAP.md).
 
 A **replay** runs the recorded book and trades forward in time and inserts hypothetical orders of ours into them. The recorded market does not react to our orders: nobody cancels because our bid appeared, and nobody sells into it because it is there. That reaction is left out on purpose here and is the subject of Lecture 28. A market order in a replay is simple to judge: it trades against the book that stands when it arrives. A resting order is not, because the data never say when it would have been filled. The replay has to supply a **fill rule**, and the three rules in common use give different answers:
 
@@ -576,7 +576,7 @@ Set beside a move of 16 bp in 10 s, these costs are small, while a miss is not: 
 
 ### 6.2 Where this leaves market making
 
-Lectures 24 to 27 prepare the ground for the rest of Part IV ([roadmap](../PART_IV_ROADMAP.md)). This lecture gives the first look at the sum a quote has to pass, and the literature's two classic reasons why a spread exists fit it well: a market maker is paid for facing better-informed traders (Glosten and Milgrom, 1985), which is the move after the fill, and for carrying a position it did not choose (Ho and Stoll, 1981), which is the term that decided the cascade.
+Lectures 24 to 27 prepare the ground for the rest of Part IV ([roadmap](../ORDER_BOOK_ROADMAP.md)). This lecture gives the first look at the sum a quote has to pass, and the literature's two classic reasons why a spread exists fit it well: a market maker is paid for facing better-informed traders (Glosten and Milgrom, 1985), which is the move after the fill, and for carrying a position it did not choose (Ho and Stoll, 1981), which is the term that decided the cascade.
 
 | Term of the sum | What it pays for | Our measure, 0.001 BTC at the best price |
 |---|---|---|
