@@ -1,6 +1,6 @@
 # Lecture 17: research with AI — plan fixed before any result
 
-Proposed 2026-11-16, before any count or test of this lecture was run. To be agreed with the user; every later change is dated below with its reason. The lecture practises what it teaches: its own scope is locked here first (Lecture 1 §5.5, guardrail 1).
+Fixed 2026-11-16, before any count or test of this lecture was run. Agreed with the user; every later change is dated below with its reason. The lecture practises what it teaches: its own scope is locked here first (Lecture 1 §5.5, guardrail 1).
 
 ## The question (one sentence)
 
@@ -65,3 +65,20 @@ Descriptive, read by the reader: the chart and the case studies, with a short la
 
 - Exercise: lock a scope for your own variant of a Lecture 15 rule, run it with an assistant, and log every try and correction in the same format.
 - Exercise: audit one of your own past projects with the same classification.
+
+## Changes to the scheme, 2026-11-16, while classifying (before any count)
+
+- **Two "found by" classes added:** *a check of a source or an intermediate result* (reading a data provider's notes, looking at signals before any return, comparing two numbers on matched months) and *a later lecture reusing the data*. The fixed list (user review, hand check, redrawing a figure, verification agent, rerun on new data) had no place for them; "rerun on new data" is replaced by the second. Entries with no record of what found them are classed *not recorded*.
+- **Stage:** "before any result" is read as *before the result the error affects*.
+- **Source:** one entry (R, reference details found by a verification agent) is known only from the session record, not from the plan files or commit messages. It is included and labelled; it shows a gap in the logging.
+- **Excluded as typo or layout:** the Lecture 1 "sign formula" commit (a rendering fix) and the Lecture 8 exercise cross-reference.
+
+## Results, 2026-11-16 (`scripts/l17_audit.py`, results/audit.csv, results/audit.json, figures/17_key.png, figures/17_stage.png)
+
+18 errors reached a result, a figure or the text in Lectures 1-16; 15 are logged in the plan files, 2 only in commit messages, 1 only in the session record. By type: method 8, claim 4, data 3, comparison 2, reference 1. By what found them: the user's review 5, a check of a source or an intermediate result 4, a hand check in the notebook 3, redrawing a figure 1, a verification agent 1, a later lecture reusing the data 1, not recorded 3. By stage: before the result 4, after results but before merging 11, after merging 2, not recorded 1. The four errors that changed a rule or a verdict (E, I, N, O) were all found after results and before merging, three of them by the user's review.
+
+1. **Silent errors: holds, but by construction.** All 18 were silent, including both found after merging (B, a number in the text; H, VUSTX). The unit selects them: an error that crashes stops the code and never reaches a result. The record shows that every error that got through was silent; it cannot compare silent with loud ones.
+2. **Who catches what: holds for method errors only.** Method errors: the user's review 4 of 8, including every method error that changed a rule or rebuilt a part (E, N, O); checks of intermediate results 2. Claims: one each by the user, a hand check, a redrawn figure and not recorded. Data errors were caught by a later reuse of the data, by reading the source, and one not recorded: none by an automated check. The one reference error was caught by a verification agent.
+3. **Early is cheap: partly.** Errors caught before the result they affect cost nothing in three of four cases (one meant redoing in-sample tables). The two found after merging changed no verdict, but one (H) meant rerunning three lectures. The costly fixes in substance (a rule changed, a group rebuilt with new data) were found in between: after results, before merging.
+
+**Limits (stated in the lecture):** Lectures 1-10 show only two errors, because they were written before plan files existed; a thinner record, not a cleaner one. One project, one assistant, one researcher; the classification is ours; errors never found are missing.
