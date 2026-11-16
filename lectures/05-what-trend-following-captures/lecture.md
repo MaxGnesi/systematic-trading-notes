@@ -356,7 +356,7 @@ Each bar splits the trend rule's return into the drift part (blue) and the timin
 
 ![Median timing contribution by decile of the month's absolute return](figures/05_02_timing_episodes.png)
 
-The timing contribution of each tenth of months, from the calmest to the largest moves, median across the 16 ETFs. The largest tenth contributes 2.1% a year; the others are close to zero, with the ninth slightly negative.
+The timing contribution of each tenth of months, from the calmest to the largest moves, median across the 16 ETFs. The largest tenth contributes 2.1% a year; the others are close to zero, with the ninth slightly negative. Table 2.3 gives 2.0 for the same idea because it cuts the months differently (all months at or above the 90th percentile of the move, rather than a tenth of the months by rank), and the median across ETFs moves with the cut.
 
 ## References
 
