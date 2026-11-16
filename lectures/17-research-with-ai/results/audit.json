@@ -1,0 +1,83 @@
+{
+ "n": 18,
+ "silent": 18,
+ "by_type": {
+  "method": 8,
+  "claim": 4,
+  "data": 3,
+  "comparison": 2,
+  "reference": 1
+ },
+ "by_found": {
+  "user review": 5,
+  "check of a source or an intermediate result": 4,
+  "not recorded": 3,
+  "hand check": 3,
+  "later reuse of the data": 1,
+  "redrawing a figure": 1,
+  "verification agent": 1
+ },
+ "by_stage": {
+  "after results (before merging)": 11,
+  "before the result": 4,
+  "after merging": 2,
+  "not recorded": 1
+ },
+ "by_cost": {
+  "text or a table": 8,
+  "results rerun": 5,
+  "nothing: caught before it was used": 3,
+  "new data, part rebuilt": 2
+ },
+ "type_x_found": {
+  "method": {
+   "user review": 4,
+   "check of a source or an intermediate result": 2,
+   "hand check": 1,
+   "not recorded": 1
+  },
+  "claim": {
+   "not recorded": 1,
+   "hand check": 1,
+   "user review": 1,
+   "redrawing a figure": 1
+  },
+  "data": {
+   "later reuse of the data": 1,
+   "not recorded": 1,
+   "check of a source or an intermediate result": 1
+  },
+  "comparison": {
+   "hand check": 1,
+   "check of a source or an intermediate result": 1
+  },
+  "reference": {
+   "verification agent": 1
+  }
+ },
+ "stage_x_cost": {
+  "before the result": {
+   "nothing: caught before it was used": 3,
+   "results rerun": 1
+  },
+  "after results (before merging)": {
+   "text or a table": 6,
+   "results rerun": 3,
+   "new data, part rebuilt": 2
+  },
+  "after merging": {
+   "text or a table": 1,
+   "results rerun": 1
+  },
+  "not recorded": {
+   "text or a table": 1
+  }
+ },
+ "rule_or_verdict_changed": [
+  "E",
+  "I",
+  "N",
+  "O"
+ ],
+ "logged_in_plan_files": 15
+}
