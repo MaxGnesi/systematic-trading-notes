@@ -116,3 +116,42 @@ s_i = \tfrac{1}{2}\Big[\tfrac{1}{2}\big(z(c_i) + z(c_i/\sigma_i)\big) + \tfrac{1
 <sub><b>How to read the table.</b> Each group's carry strategy on its own, scaled to 10% volatility, after costs, excess returns over cash; the last column holds the four at equal risk. Our calculation.</sub>
 
 No group alone is worth much: their Sharpe ratios of 0.18 to 0.46 come with drawdowns of 20% to 40%. Together they earn 0.57 with a shallower worst loss than three of the four. The income of a high-rate currency, a backwardated commodity, a steep yield curve and a cheap stock market are paid for different risks and do not fail together. That, not a cleverer signal, is where carry's result comes from.
+
+## 5. Value
+
+**Key message.** Value buys what is cheap against its own past and sells what is dear, betting that prices return towards a long-run level. In this period it did not earn, on our data or on AQR's. The lessons are about measurement (value must be measured on a price without income, against a trend rather than a flat average) and about patience: a slow strategy needs far more years than we have to show whether it works.
+
+### 5.1 Measuring cheap and dear
+
+| Step | What happens | Why |
+|---|---|---|
+| 1. A price without income | The real exchange rate (currencies), the front contract's own price (commodities), the 10-year yield (bonds), the index without dividends in local currency (equities) | A total-return series rises with its income; measured on it, a market that pays a lot always looks dear and one that costs a lot to hold always looks cheap |
+| 2. A trend line, not a flat average | A straight line through the past ten years of monthly log prices, extended to today; value is today's distance below the line | Prices that grow over time sit above their own past average most of the time; against a flat average the S&P 500 looked cheap in only 12-14% of months in 2006-2022, gold in 5% |
+| 3. A z-score | The distance divided by how far the market usually strays from its own line | A volatile market strays further; without this, natural gas was the most extreme commodity in 31% of months |
+| 4. Positions | Ranked within each group, long the cheapest, short the dearest; sized and scaled as carry (§4.2) | The same machinery for every strategy |
+
+<sub><b>How to read the table.</b> One row per step from prices to positions, with the reason for each. Steps 2 and 3 are our design; AQR's construction (the price against its average 4.5 to 5.5 years earlier) is reported alongside as the published variant (§3). For bonds a yield above its line means cheap.</sub>
+
+Step 1 was learned the hard way. The first version measured value on the series we trade, which include income. The rolled natural-gas series, which loses money on every roll in contango, was "cheap" on 100% of days, and value would have held it long throughout; the bond funds, whose price rises with every coupon, were never cheap. A signal that never changes is a fixed position, not a strategy.
+
+### 5.2 What value earned
+
+| Futures period, 2006 to October 2022, monthly | Currencies | Commodities | Government bonds | Equity indices | **All four** |
+|---|---|---|---|---|---|
+| Value, our rule (10-year line, z-score) | −0.14 | −0.12 | +0.28 | +0.04 | **−0.09** |
+| Value, AQR's construction | +0.10 | −0.04 | +0.19 | −0.28 | −0.01 |
+| AQR's published value factor | +0.11 | +0.33 | +0.07 | −0.40 | +0.16 |
+
+<sub><b>How to read the table.</b> Sharpe ratios, monthly, excess returns over cash. Our two rows: after costs, our markets (§3). AQR's row: its published factors, before costs, on more markets, the same months; its last column averages AQR's four asset-allocation groups. Our calculation; AQR Capital Management, LLC.</sub>
+
+Value lost a little with our rule and broke even with AQR's construction. Its correlation with trend is −0.35: it tends to earn when trend loses, as hoped, but it earned too little to help. Added to trend at equal risk it lowered the Sharpe ratio from 0.67 to 0.47, and it beat 48% of 1,000 random strategies: indistinguishable from luck.
+
+### 5.3 Why: three readings
+
+1. **The period.** AQR's own value across asset classes earned 0.35 in 1972-2005 and 0.16 in 2006-2022; equity-index value lost (−0.40). Within the period it came in bursts: 0.70 in 2016-2020, −0.57 in 2023-2026. Part of our result is the years, not the build.
+2. **Too few independent bets.** Value turns over in years. Sixteen years hold a handful of value cycles per market, and a Sharpe ratio over sixteen years has a standard error of about 0.25: −0.09 cannot be told apart from a modest real edge of +0.2, nor from zero.
+3. **Breadth.** Value is a cross-sectional style, and ranking works better with more markets. Where our universe matches AQR's (currencies, 9 of their 10) our value tracks theirs closely (0.78); with 7 commodities against their 27, much of what earned for AQR is missing.
+
+*Our reading (labelled).* Value is not shown to work here, and not shown not to work. Its role in a portfolio is the one the correlation suggests, a diversifier of trend, but on this sample it did not earn enough to pay for its place. Lecture 30 does not include it in the final portfolio unless it earns that place on data it was not tested on.
+
+One more observation links value to carry. In currencies and commodities the two point in opposite directions: the high-carry markets tend to be the dear ones (the signals' rank correlation is −0.12 and −0.24; the strategies' returns −0.31 and −0.43). A currency that pays a high rate attracts money and appreciates; a commodity in backwardation has usually just risen. §7 asks whether that can be used.
