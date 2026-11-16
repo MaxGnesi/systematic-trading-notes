@@ -34,7 +34,7 @@ Lecture 14 and this lecture answer the same problem, that trend loses money in s
 | What it needs | A forecast, on the day, of when trend will do badly | A different reason to earn; no forecast |
 | Idle capital | Stays idle: a switch can only take away | None: every strategy is always in |
 | Judged against | Random switching with the same time in the market | Random strategies on the same markets, added to trend the same way |
-| Result on our data | No switch passed; the strongest pattern ran against the plan | Carry adds to trend; value from fundamentals earns a little but does not add |
+| Result on our data | Promising leads beyond chance (the dollar: 94% of random switches beaten on untouched years), none yet a rule; the strongest pattern ran against the plan | Carry adds to trend; value from fundamentals earns a little but does not add |
 
 *Analogy (labelled):* a fisherman can stay in port when a storm is forecast, or also own an umbrella shop. The shop earns in storms without anyone forecasting them. A switch needs the forecast; a second business needs only that its customers come for a different reason.
 
