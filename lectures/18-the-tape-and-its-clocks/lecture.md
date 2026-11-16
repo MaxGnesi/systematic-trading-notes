@@ -345,7 +345,23 @@ The candle gets the direction of the flow right four times in five, and its size
 
 ### 8.2 Volatility from a candle
 
-Lecture 3, §4.4 argued that every range estimate is biased down. The tape gives the benchmark: realised volatility from five-minute returns (§7.2), compared over 28-day windows:
+A trader with only daily candles must estimate volatility from four prices a day. Lecture 3, §4 built the estimators and showed what each sees and misses (§4.6); it could not say how close they come to the truth, because the truth was not in the data. The tape provides it.
+
+**Why realised variance is the benchmark.** True volatility is never observed: it is the size of the moves the price actually went through. **Realised variance** comes closest: the sum of squared five-minute returns over the day, which adds up every move the price made rather than only where it ended. With enough small steps it converges to the variance the price really went through that day. Five minutes, not every trade, because at the shortest intervals the bid-ask bounce adds moves that are not price changes (§7.2). Comparing each candle estimator with realised variance therefore measures what a trader with only daily candles loses.
+
+**What each estimator tries to capture**, in the terms of Lecture 3 §4.6, and what changes on this market:
+
+| Estimator | The question it answers | What it misses |
+|---|---|---|
+| Close to close | How far does the price end from where it ended yesterday? | Everything inside the day: a day that swings widely and closes flat counts as calm |
+| Parkinson | How wide did the price swing within the day? | Assumes no drift; one stray print can set the high or the low |
+| Garman–Klass | The swing, plus where the day opened and closed: more information from the same candle | Assumes no drift: a strong trend day reads as volatile |
+| Rogers–Satchell | The same, measured so that a steady trend does not count as volatility | Noisier when there is no drift |
+| Yang–Zhang | The whole day, including the gap between yesterday's close and today's open | Bitcoin trades around the clock, so there is no gap to add |
+
+<sub><b>How to read the table.</b> One row per estimator, from the fewest prices used to the most. Middle: the plain question each one answers. Right: its blind spot. Formulas and results on ETFs are in Lecture 3 §4.2-§4.6.</sub>
+
+They are compared with realised volatility over 28-day windows:
 
 ![Range-based volatility against realised volatility](figures/12_14_range_estimators.png)
 <sub><b>How to read the figure.</b> <b>Axes.</b> Date (x); volatility over the past 28 days, % a year (y). Realised volatility from five-minute returns on the tape (black), the benchmark, against three estimators from daily candles: close to close (orange), Parkinson (blue) and Yang–Zhang (green). The arrow marks the 28 days after 6 September 2022, when one flagged print (§5.3) set the day's high.</sub>
@@ -357,9 +373,9 @@ Lecture 3, §4.4 argued that every range estimate is biased down. The tape gives
 | Garman–Klass, Rogers–Satchell | Open, high, low, close | 1.09, 1.12 | 12%, 14% | 0.92, 0.90 |
 | Yang–Zhang | All four, with the gap between the previous close and the open | 1.10 | 13% | — |
 
-<sub><b>How to read the table.</b> Level: the estimator's average variance over its windows relative to realised, as a volatility. Typical error: the standard deviation of the logarithm of the ratio. Yang–Zhang is defined over a window, not for one day.</sub>
+<sub><b>How to read the table.</b> Each column asks one question of the estimator, with realised volatility as the truth. <b>Level</b>: does it get the average size of volatility right? 1 means the same as realised; above 1 it overstates, and a position sized on it would be too small. Measured as the estimator's average variance over its windows relative to realised, as a volatility. <b>Typical error over 28 days</b>: how far a single 28-day estimate typically lands from the truth, the precision a sizing rule actually faces; the standard deviation of the logarithm of the ratio. <b>Correlation day by day</b>: does it rise and fall on the same days as realised variance, that is, does it see which days were risky? Yang–Zhang is defined over a window, not for one day, so it has no daily value.</sub>
 
-The range-based estimators track realised variance far better than the close alone, but on this market they overstate volatility by 6% to 12%: the tape records every trade, so the downward bias of discrete sampling is gone, and the high and low include brief extremes that realised variance at five minutes smooths away. **One print can dominate:** on 6 September 2022, the isolated print at $28,368 set the day's high. Parkinson's estimate for that day is 548% a year; realised volatility, 61%.
+**Reading.** The close alone gets the average level about right (0.97) but sees poorly which days were risky (correlation 0.53) and is the least precise. The range-based estimators see the risky days (0.90 to 0.92) and are more precise, but on this market they overstate volatility by 6% to 12%: the tape records every trade, so the downward bias of discrete sampling is gone, and the high and low include brief extremes that realised variance at five minutes smooths away. **One print can dominate:** on 6 September 2022, the isolated print at $28,368 set the day's high. Parkinson's estimate for that day is 548% a year; realised volatility, 61%.
 
 ### 8.3 The close against the average price
 
