@@ -187,7 +187,25 @@ The comparison above judges one strategy. But the rule was chosen from many vers
 
 <sub><b>How to read the table.</b> The tries are listed in [results/tries.json](results/tries.json) with their Sharpe ratios, on the months all of them cover (2008-2022). Effective tries: $`\bar\rho + (1-\bar\rho)M`$ for $`M`$ tries with average correlation $`\bar\rho`$. The deflated Sharpe ratio (Bailey and López de Prado 2014) is the probability that the rule's true Sharpe ratio is above what the best of that many tries of noise would show, taking into account the spread of the tries, the sample length and the fat tails of the returns. Our calculation.</sub>
 
-Two things lower the number. The tries: 6.8 independent attempts make a Sharpe ratio of 0.20 what luck alone would deliver. And the tails: carry's monthly returns have a kurtosis of 8.6, far above the normal's 3, so a Sharpe ratio overstates how reliable its returns are. The result, about 90%, is good evidence, not proof; the usual bar is 95%. The best of the 21 tries earned 0.61; reporting it as "the" result would have overstated carry by a tenth of a unit.
+Two things lower the number. The tries: 6.8 independent attempts make a Sharpe ratio of 0.20 what luck alone would deliver. And the tails: carry's monthly returns have a kurtosis of 8.6, far above the normal's 3, so a Sharpe ratio overstates how reliable its returns are. The best of the 21 tries earned 0.61; reporting it as "the" result would have overstated carry by a tenth of a unit.
+
+**How much evidence to expect.** About 90% is good evidence, and a stricter bar would mostly measure the length of the sample. To be 95% sure that a Sharpe ratio is above zero takes about $`(1.65/	ext{SR})^2`$ years:
+
+| Sharpe ratio | Years of data to clear 95% once |
+|---|---|
+| 1.0 | 3 |
+| 0.5 | 11 |
+| 0.3 | 30 |
+| 0.2 | 68 |
+
+<sub><b>How to read the table.</b> One row per true Sharpe ratio; the right column is the number of years after which a one-sided test at 95% would just reject zero, before counting any search. A definition, from the standard error of a Sharpe ratio, about $`1/\sqrt{T}`$ over $`T`$ years.</sub>
+
+Strategies that survive in competitive markets have Sharpe ratios of 0.3 to 0.5 after costs; an edge strong enough to clear the bar easily would be visible to everyone and competed away. So the evidence for a lasting edge is always noisy, and it is judged on several things together, not on one threshold:
+
+1. **The statistics, as a probability**, here 0.90 after counting the tries;
+2. **breadth**: carry earns in all four groups (§4.3);
+3. **a reason it persists although everyone knows it**: carry is paid for bearing crash risk, which is why it still earns though it has been published for decades; the losses of §6.3 are the price of the premium, not a flaw in it (Lecture 1 §5.4: lasting edges are uncomfortable rather than secret);
+4. **what it adds**: its value is next to trend (§6.3), not on its own.
 
 ### 6.3 What carry costs: crash measures
 
