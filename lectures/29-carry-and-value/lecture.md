@@ -64,3 +64,55 @@ The agreement follows the universe. Where ours is nearly the same as AQR's, curr
 - **Equities as two US indices.** The S&P 500 against the Nasdaq-100 is not a value universe either: agreement 0.07. Rebuilt as fifteen countries: 0.46.
 
 **What to take from this.** A published strategy is a family of choices, not a recipe (Lecture 1). Checking a rebuild against the published series early is cheap, and it catches errors that a backtest alone does not: both flaws above produced plausible-looking numbers.
+
+## 4. Carry
+
+**Key message.** Carry is what a position earns if prices stand still: the income of holding it, net of what holding it costs. Each group has its own measure of that income, but the strategy is the same everywhere: hold more of what pays more for its risk, and less of what pays less. Each group earns a little; the four together earn much more than any one, because their income comes from different places.
+
+### 4.1 What carry measures in each group
+
+| Group | Markets | Carry: what the position earns if prices stand still | Median carry, 2006-2022 |
+|---|---|---|---|
+| **Currencies** | 9 against the dollar: euro, yen, pound, Swiss franc, Canadian, Australian and New Zealand dollars, Norwegian and Swedish krona | The foreign 3-month rate minus the US rate: holding a currency earns its deposit rate and pays the dollar's | from −0.9% (Swiss franc) to +2.5% (New Zealand dollar) |
+| **Commodities** | 7: crude oil, natural gas, gold, corn, soybeans, wheat, cocoa | The gap between the front futures contract and the one about 12 months later: a future rolls towards the price of the nearer contract | from −11.2% (natural gas) to +0.7% (soybeans) |
+| **Government bonds** | 10-year bonds of 9 countries (US, Germany, Japan, UK, Canada, Australia, Norway, Sweden, Switzerland) | The 10-year yield minus the 3-month rate (the term spread): a bond earns its yield and is financed at cash | from +0.3% (Japan) to +1.4% (US) |
+| **Equity indices** | 15: the US and 14 country funds | The US: the earnings yield of the S&P 500 minus the real bill rate. Elsewhere: the dividend yield minus the real cash rate | from 1.4% (Japan) to 5.1% (UK) |
+
+<sub><b>How to read the table.</b> One row per group; the third column says in words what the carry number measures, the fourth gives the range of its median across the group's markets, a year. Our calculation from free data: FRED and OECD rates, the capstone futures, the central banks' 10-year yields, Shiller's S&P 500 earnings and the funds' distributions.</sub>
+
+Three choices in the table need a word.
+
+- **Commodities: 12 months, not the next contract.** Natural gas and grains have seasons: the gap between two nearby contracts often measures winter against summer, not the cost of holding. A contract twelve months away compares the same season. In 2022 the data hold no contract that far ahead, so the furthest contract at least six months ahead stands in until about mid-year (labelled in the data), and commodity carry stops after that.
+- **Currencies: built from spot rates and rate gaps.** A currency's return over cash is its spot change plus the gap between the two interest rates. Built this way from free FRED data, the euro and the yen match the capstone futures with a monthly correlation of 0.995.
+- **Equity carry: earnings, not dividends, in the US.** Holding a share at an unchanged price, the holder owns the year's earnings; the dividend is only the part the company chooses to pay out. In the US a large share of what companies return comes as buybacks, which the dividend yield misses. Earnings yield (E/P) is a real yield, since earnings grow with prices, so it is compared with the *real* bill rate (the bill rate minus past inflation), not the nominal one (Asness 2003 makes the same objection to comparing E/P with a nominal yield). Free earnings exist only for the S&P 500; elsewhere the dividend yield stands in, **a compromise**, labelled as such. Academic work calls E/P minus a rate the *yield gap* rather than carry; this is our definition, not the futures-implied one of Koijen et al. (2018), which uses the dividend yield.
+
+### 4.2 From carry to positions
+
+| Step | What happens | Why |
+|---|---|---|
+| 1. Measure | Carry in each market, averaged over the past month (daily data) or taken at the month end | Daily carry is noisy, about 2 to 3 points a year from day to day |
+| 2. Two views | The carry **level** today, and its **change** over three months | A market whose carry is rising tends to outperform one whose carry is falling (Davis et al. 2022; Boons and Porras Prado 2019 for commodity curves); the change is free of permanent gaps between markets |
+| 3. Score | For each view, half the carry in absolute terms and half per unit of the market's risk, each as a z-score within the group; then level and change averaged | A market paying much more should weigh more (absolute); a calm market paying a little can be worth as much as a wild one paying more (per unit of risk) |
+| 4. Weights | Each market's weight in proportion to its score, long the positive, short the negative, weights summing to one in absolute value | The basket collects as much carry as it can; risk is set once, at the end |
+| 5. Size | Each position: its weight × 10% ÷ the market's volatility over 36 months | Carry positions last many months; sizing on a short window would lever calm markets just before they move (Lecture 26) |
+| 6. Groups | Each group scaled each year to 10% on its past three years; groups at equal risk; the total scaled to 10% | As trend (Lecture 27): no group dominates |
+
+<sub><b>How to read the table.</b> One row per step from the carry numbers to the positions held each month; the right column gives the reason for each choice. Positions are set at the end of a month for the next, 5 bp per unit traded.</sub>
+
+In symbols, for market $`i`$ in a group, with carry $`c_i`$, its 3-month change $`\Delta c_i`$ and volatility $`\sigma_i`$, and $`z(\cdot)`$ the z-score across the group's markets:
+
+```math
+s_i = \tfrac{1}{2}\Big[\tfrac{1}{2}\big(z(c_i) + z(c_i/\sigma_i)\big) + \tfrac{1}{2}\big(z(\Delta c_i) + z(\Delta c_i/\sigma_i)\big)\Big],
+\qquad w_i = \frac{s_i}{\sum_j |s_j|}, \qquad \text{position}_i = w_i \,\frac{10\%}{\sigma_i}.
+```
+
+### 4.3 What each group earned
+
+| Futures period, 2006 to October 2022, monthly | Currencies | Commodities | Government bonds | Equity indices | **All four** |
+|---|---|---|---|---|---|
+| Sharpe ratio | 0.24 | 0.18 | 0.28 | 0.46 | **0.57** |
+| Worst drawdown | −35.5% | −39.5% | −19.2% | −27.3% | **−22.7%** |
+
+<sub><b>How to read the table.</b> Each group's carry strategy on its own, scaled to 10% volatility, after costs, excess returns over cash; the last column holds the four at equal risk. Our calculation.</sub>
+
+No group alone is worth much: their Sharpe ratios of 0.18 to 0.46 come with drawdowns of 20% to 40%. Together they earn 0.57 with a shallower worst loss than three of the four. The income of a high-rate currency, a backwardated commodity, a steep yield curve and a cheap stock market are paid for different risks and do not fail together. That, not a cleverer signal, is where carry's result comes from.
