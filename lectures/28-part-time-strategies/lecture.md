@@ -27,9 +27,9 @@ The lecture's central point fits in one chart: the best regime filter we found, 
 ![A higher Sharpe ratio, a lower return](figures/28_key.png)
 <sub><b>How to read the figure.</b> <b>Axes.</b> x: time, 2006 to 18 November 2022 (the capstone futures run out market by market in December 2022); y: the value of 100 invested, excess return over cash, after costs. Black: the baseline trend portfolio, always in. Solid blue: the same portfolio switched off while US growth stands still (the growth filter of §2.3), as it would have been run. Dashed blue: the solid blue line scaled after the fact to the same volatility as always-in (× 1.33), a comparison, not a strategy that could have been run. Grey bands: the periods the filter was off. At the right: each line's Sharpe ratio and excess return a year. Our calculation.</sub>
 
-Switched off for 41% of the time, the part-time strategy has the higher Sharpe ratio (0.63 against 0.55) and the smaller losses, yet ends with less money (5.3% a year against 6.1%): its capital is idle during the grey bands. It earns more only when scaled up to the same risk. Whether that is worth it depends on what the idle capital could do, and on whether the filter's timing is information or luck (§2).
+Switched off for 41% of the time, the part-time strategy has the higher Sharpe ratio (0.60 against 0.53) and the smaller losses, yet ends with less money (5.0% a year against 5.8%): its capital is idle during the grey bands. It earns more only when scaled up to the same risk. Whether that is worth it depends on what the idle capital could do, and on whether the filter's timing is information or luck (§2).
 
-Over all twelve filters and both datasets, under the verdict fixed in advance (beat 90% of random switches with the same time in the market on both datasets, Benjamini-Hochberg at 10% within each family), **no filter works** on our data. Even this one beats 96% of its random switches on the futures but only 50% on the ETFs. The lecture shows how this was measured and what the data say about why, so that readers can judge the evidence themselves.
+Over all twelve filters and both datasets, under the verdict fixed in advance (beat 90% of random switches with the same time in the market on both datasets, Benjamini-Hochberg at 10% within each family), **no filter works** on our data. Even this one beats 95% of its random switches on the futures but only 50% on the ETFs. The lecture shows how this was measured and what the data say about why, so that readers can judge the evidence themselves.
 
 | § | Topic | Question |
 |---|---|---|
@@ -62,7 +62,7 @@ A filter that knew nothing would leave the Sharpe ratio while on unchanged and l
 
 <sub><b>How to read the table.</b> Each column is a filter that keeps trend on for the given share of days. The middle row is $`1/\sqrt{p}`$: how much better than always-in the days kept must be for the part-time strategy to match always-in over all days. The bottom row applies it to the ETF baseline. A definition, from the formula above.</sub>
 
-The bar rises quickly: a filter that is off half the time must pick days on which trend earns a Sharpe ratio 41% higher than its average. Random filters show the bar in practice: switched on and off at random with the same time in the market, their median Sharpe ratio sits close to what the formula predicts. For the growth filter of §2.3 (on 59% of days on the futures) the formula gives 0.55 × √0.59 = 0.42 and its random filters' median is 0.43; on the ETFs (on 54% of days) 0.36 against 0.33.
+The bar rises quickly: a filter that is off half the time must pick days on which trend earns a Sharpe ratio 41% higher than its average. Random filters show the bar in practice: switched on and off at random with the same time in the market, their median Sharpe ratio sits close to what the formula predicts. For the growth filter of §2.3 (on 59% of days on the futures) the formula gives 0.53 × √0.59 = 0.41 and its random filters' median is 0.41; on the ETFs (on 54% of days) 0.36 against 0.33.
 
 The formula is a guide, not an identity. Positions move a tenth of the way each day, so the portfolio is still partly invested in the first days of an off spell and not yet fully invested in the first days of an on spell; switching also costs. The **random filter** with the same time in the market, the same spell lengths and the same attachment (Lecture 8 §4.5) includes all of this, which is why it, not the formula, is the yardstick of the verdict.
 
@@ -88,20 +88,20 @@ The growth filter switches trend off while US industrial production growth is st
 | | Always in | Growth filter (part-time) |
 |---|---|---|
 | Share of days on | 100% | 59% |
-| Sharpe ratio while on | 0.55 | 0.70 |
-| Sharpe ratio over all days | 0.55 | **0.63** |
-| Volatility | 11.1% | 8.3% |
-| Excess return a year, as run | **6.1%** | 5.3% |
-| Excess return a year, scaled to 11.1% volatility (× 1.33) | 6.1% | 7.0% |
-| Worst drawdown, as run / scaled to 11.1% | −21.8% | −12.5% / −16.5% |
-| Random filters with the same time in the market: median, 95th percentile | | 0.43, 0.62 |
-| Share of random filters beaten | | 96% |
-| Alpha over always-in, a year (t-statistic) | | 1.6% (1.3) |
+| Sharpe ratio while on | 0.53 | 0.67 |
+| Sharpe ratio over all days | 0.53 | **0.60** |
+| Volatility | 11.0% | 8.3% |
+| Excess return a year, as run | **5.8%** | 5.0% |
+| Excess return a year, scaled to 11.0% volatility (× 1.33) | 5.8% | 6.6% |
+| Worst drawdown, as run / scaled to 11.0% | −20.9% | −12.7% / −16.8% |
+| Random filters with the same time in the market: median, 95th percentile | | 0.41, 0.60 |
+| Share of random filters beaten | | 95% |
+| Alpha over always-in, a year (t-statistic) | | 1.5% (1.2) |
 | The same filter on the ETFs: Sharpe ratio over all days, random filters beaten | 0.49 | 0.33, 50% |
 
 <sub><b>How to read the table.</b> Capstone futures 2006 to November 2022, after costs; excess returns over cash; idle days earn zero excess return. "Scaled" multiplies the part-time strategy's daily returns by the ratio of the two volatilities over the whole sample (1.33), a comparison, not a strategy that could have been run. The last row is the same filter on the ETFs, 2013-2026. Our calculation.</sub>
 
-The example shows the trade-off a part-time strategy brings. Over all days its Sharpe ratio is higher than always-in's (0.63 against 0.55), its drawdowns smaller and it beats 96% of random filters; **yet it earns less**: 5.3% a year against 6.1%, because 41% of the time its capital is idle. It earns more only when scaled up to the same risk, which means running it with a third more leverage on the days it is on, or giving its idle budget to something else. On the ETFs the same rule beats half its random filters, no better than a coin.
+The example shows the trade-off a part-time strategy brings. Over all days its Sharpe ratio is higher than always-in's (0.60 against 0.53), its drawdowns smaller and it beats 95% of random filters; **yet it earns less**: 5.0% a year against 5.8%, because 41% of the time its capital is idle. It earns more only when scaled up to the same risk, which means running it with a third more leverage on the days it is on, or giving its idle budget to something else. On the ETFs the same rule beats half its random filters, no better than a coin.
 
 ### 2.4 What the comparison cannot settle
 
@@ -146,10 +146,10 @@ How much does this matter? The growth × inflation quadrant (whether each is ris
 
 | Quadrant | ETFs: first published | ETFs: revised | Futures: first published | Futures: revised |
 |---|---|---|---|---|
-| Growth down, inflation down | 0.50 | 0.26 | 0.06 | 0.12 |
-| Growth down, inflation up | 0.12 | −0.04 | **1.16** | **0.41** |
-| Growth up, inflation down | 0.26 | 0.28 | 0.44 | 0.28 |
-| Growth up, inflation up | **0.77** | **1.17** | **0.50** | **1.25** |
+| Growth down, inflation down | 0.50 | 0.26 | 0.08 | 0.08 |
+| Growth down, inflation up | 0.12 | −0.04 | **1.12** | **0.41** |
+| Growth up, inflation down | 0.26 | 0.28 | 0.37 | 0.32 |
+| Growth up, inflation up | **0.77** | **1.17** | **0.46** | **1.18** |
 
 <sub><b>How to read the table.</b> Rows: the four growth × inflation quadrants, each the sign of the 12-month change in US industrial production growth and in CPI inflation. Cells: the baseline trend portfolio's Sharpe ratio after costs on the days in that quadrant, with the quadrant read from data as first published (as a trader would have seen it) or from today's revised data. Bold: pairs that differ by 0.4 or more. ETFs 2013-2026, futures 2006-2022. Our calculation.</sub>
 
@@ -164,12 +164,12 @@ Before switching anything, the scan splits the baseline's days by each variable'
 
 **Result.** No variable separates the days in the planned direction on both datasets with a 90% band (block bootstrap over months) that excludes zero. Two separate in the **opposite** direction:
 
-- **Dollar.** Trend earned more when the dollar stood still: ETFs 1.06 against 0.11, futures 1.27 against 0.33; both bands exclude zero.
-- **Fed.** Trend earned more with the Fed on hold: ETFs 1.13 against 0.01 (band excludes zero); futures 0.69 against 0.43.
+- **Dollar.** Trend earned more when the dollar stood still: ETFs 1.06 against 0.11, futures 1.31 against 0.28; both bands exclude zero.
+- **Fed.** Trend earned more with the Fed on hold: ETFs 1.13 against 0.01 (band excludes zero); futures 0.70 against 0.36.
 
-The yield curve goes the planned way on the futures (still 0.09, moving 0.75; band of the difference −0.13 to 1.41) but not on the ETFs. Growth, inflation, turning points and correlation show no clear difference.
+The yield curve goes the planned way on the futures (still 0.07, moving 0.71; band of the difference −0.16 to 1.41) but not on the ETFs. Growth, inflation, turning points and correlation show no clear difference.
 
-**ETFs against futures.** The two datasets seem to disagree on several variables. On the years they share, 2013-2022, they do not: the two baselines are 0.75 correlated and give nearly the same picture for growth, the Fed, volatility and the dollar. The differences come from the futures' years 2006-2012, when several relations ran the other way (volatility still −0.59 against moving 0.97). The effect of a regime on trend changes between periods; with a handful of macro episodes, this is what a reader should expect.
+**ETFs against futures.** The two datasets seem to disagree on several variables. On the years they share, 2013-2022, they do not: the two baselines are 0.77 correlated and give nearly the same picture for growth, the Fed, volatility, correlation and the dollar. The differences come from the futures' years 2006-2012, when several relations ran the other way (volatility still −0.66 against moving 0.90). The effect of a regime on trend changes between periods; with a handful of macro episodes, this is what a reader should expect.
 
 ## 5. The filters against luck
 
@@ -182,11 +182,11 @@ Each filter now switches the baseline off in its unfavourable state, with the co
 
 | | ETFs 2013-2026 | Capstone futures 2006-2022 |
 |---|---|---|
-| Always in | 0.49 | 0.55 |
-| Filters above always-in | none | growth still (0.63), both agree (0.57), yield curve still (0.57) |
-| Best against luck | correlation high: 0.52, beats 85% | growth still: beats 96% (on the ETFs: 50%) |
-| Worst against luck | Fed on hold: −0.05, beats 2% | dollar still: 0.29, beats 6% |
-| Threshold grid (quarter, third, half) | every filter below always-in at every threshold except correlation (0.48, 0.52, 0.51) | growth 0.54, **0.63**, 0.56: above always-in at two of three |
+| Always in | 0.49 | 0.53 |
+| Filters above always-in | none | growth still (0.60), both agree (0.54), yield curve still (0.54) |
+| Best against luck | correlation high: 0.52, beats 85% | growth still: beats 95% (on the ETFs: 50%) |
+| Worst against luck | Fed on hold: −0.05, beats 2% | dollar still: 0.24, beats 4% |
+| Threshold grid (quarter, third, half) | every filter below always-in at every threshold except correlation (0.48, 0.52, 0.51) | growth 0.51, **0.60**, 0.52: above always-in at one of three |
 
 <sub><b>How to read the table.</b> Sharpe ratios after costs over all days. "Beats" is the share of the filter's 1,000 random filters with a lower Sharpe ratio. The threshold grid moves the cut-off between the bottom quarter, third and half of the variable's history (top quarter, third and half for correlation and turning points). Our calculation; every filter and every measure in [results/filters.json](results/filters.json).</sub>
 
@@ -215,8 +215,8 @@ A level alone may hide what matters: whether volatility or correlation is buildi
 ![Trend by the level and direction of volatility and correlation](figures/28_volatility.png)
 <sub><b>How to read the figure.</b> <b>Axes.</b> x: the level of the VIX (top) or of the average correlation across markets (bottom), as a fifth of its own history to date; y: the baseline trend portfolio's Sharpe ratio after costs on the days in that cell. Orange: the level rose over the past three months; blue: it fell. Left: ETFs 2013-2026; right: capstone futures 2006-2022. Both known the day before. Cells hold between 0% and 32% of days. Our calculation.</sub>
 
-- **Volatility.** Rising volatility helps at moderate levels and stops helping at the highest (ETFs: −0.42, 2.52, 0.83, 0.79, −0.81 from the lowest to the highest fifth; futures 0.02, 0.56, 0.24, 1.02, 0.26). The best cell on both datasets is the highest fifth while volatility falls, after a spike (1.29 and 1.75).
-- **Correlation.** Rising correlation from a middle level is the best cell on both (1.68 and 1.56). Unlike volatility, correlation falling from its highest level is not good.
+- **Volatility.** Rising volatility helps at moderate levels and stops helping at the highest (ETFs: −0.42, 2.52, 0.83, 0.79, −0.81 from the lowest to the highest fifth; futures −0.07, 0.67, 0.31, 0.91, 0.21). The best cell on both datasets is the highest fifth while volatility falls, after a spike (1.29 and 1.66).
+- **Correlation.** Rising correlation from a low or middle level is the best cell on both (ETFs: the middle fifth, 1.68; futures: the second fifth, 1.98). Unlike volatility, correlation falling from its highest level is not good.
 
 ### 6.3 Four quadrants, and two ways to see them
 
@@ -244,7 +244,7 @@ Two charts show the quadrants: the **volatility clock** shows how a crisis moves
 | 2 | The number in each quadrant | What trend earned in that state over the whole sample, and how much evidence it rests on (share of days) |
 | 3 | The black line, following the arrows | How one crisis moved through the states, month by month |
 
-In June 2008 the VIX sits near its average. By October 2008 it is far above and still climbing (top right, stress building). Through 2009 it stays high but falls (bottom right, stress fading), and by December 2009 it is back near the centre. A crisis runs **clockwise**: building, peak, fading, calm. *Analogy (labelled):* the chart is what physicists call a phase portrait, the position of a system against its speed; a variable that swings up and back down traces a clockwise loop in it, as a pendulum does. Trend earned most in "stress fading" (1.56), after the positions built during the shock had turned in its direction.
+In June 2008 the VIX sits near its average. By October 2008 it is far above and still climbing (top right, stress building). Through 2009 it stays high but falls (bottom right, stress fading), and by December 2009 it is back near the centre. A crisis runs **clockwise**: building, peak, fading, calm. *Analogy (labelled):* the chart is what physicists call a phase portrait, the position of a system against its speed; a variable that swings up and back down traces a clockwise loop in it, as a pendulum does. Trend earned most in "stress fading" (1.48), after the positions built during the shock had turned in its direction.
 
 What the clock cannot show: how long each visit lasted, and whether the numbers would hold on other years (§6.4 checks this).
 
@@ -260,7 +260,7 @@ What the clock cannot show: how long each visit lasted, and whether the numbers 
 | 3 | Read down from a coloured spell | Which line moved during that spell, and in which direction |
 | 4 | The totals at the right | Where trend's money came from over the whole sample; compare with the share of days in the clock |
 
-For example, volatility was above average and rising (orange) from July to December 2008. Reading down, the orange line first falls, from +14% to +1% between July and September, as markets turned against the positions held, then climbs back to +15% in the October-December crash, once the positions had turned. The blue spells of 2010-2011 (high and fading) are where the blue line climbs, from +17% to +31%. One quadrant can hold both a loss and a gain within the same episode. Over the whole sample, volatility above average and falling gave +47% on 18% of days; below average and falling, +18% on 37% of days. For correlation, below average and rising gave +55%, earned steadily from 2014 on rather than in one episode.
+For example, volatility was above average and rising (orange) from July to December 2008. Reading down, the orange line first falls, from +13% to −1% between July and September, as markets turned against the positions held, then climbs back to +13% in the October-December crash, once the positions had turned. The blue spells of 2010-2011 (high and fading) are where the blue line climbs, from +14% to +29%. One quadrant can hold both a loss and a gain within the same episode. Over the whole sample, volatility above average and falling gave +44% on 18% of days; below average and falling, +16% on 37% of days. For correlation, below average and rising gave +45%, earned steadily from 2014 on rather than in one episode.
 
 What the timeline cannot show: whether a line's rise could have been known in advance. The quadrant on each day was known the day before, but which quadrant would pay was learned only by looking at the whole chart.
 
