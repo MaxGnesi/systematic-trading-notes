@@ -45,6 +45,24 @@ def groups():
     return out
 
 
+def value5(Gs):
+    """Value against each market's own 5-year trend line (z; positive = cheap), per group, monthly."""
+    import l29 as L_
+    V = {}
+    Vt = L_.value_trend(5)
+    for g in ("fx", "commod"): V[g] = TO_M(Vt[g])
+    Y, _ = G.data(); V["bonds"] = G.trend_z(Y, 5)
+    _, P, _, _, _ = Q.data(); V["equity"] = L.trend_gap(np.log(P), 5)
+    return V
+
+
+def tilted(Gs, w, V5=None):
+    """Carry tilted by value: score = carry score + w x z(value against the 5-year line)."""
+    V5 = V5 or value5(Gs)
+    return {g: score(Gs[g]["C"], Gs[g]["R"]).add(w * G.zrow(V5[g].reindex(Gs[g]["R"].index)), fill_value=0)
+              .where(score(Gs[g]["C"], Gs[g]["R"]).notna()) for g in Gs}
+
+
 def scale_total(r):
     out = []
     for y in sorted(set(r.index.year)):
