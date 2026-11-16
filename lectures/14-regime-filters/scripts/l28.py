@@ -1,4 +1,4 @@
-"""Lecture 14, part-time strategies: the regime series of both families and the two baselines (results/hypotheses.md).
+"""Lecture 14, regime filters: the regime series of both families and the two baselines (results/hypotheses.md).
 
 Baselines: Lecture 13's ETF portfolio (out of sample 2013-2026, from its daily file) and the capstone futures portfolio (Lecture 12's end-2025
 held speeds, equal weights, markets equal risk in a class, classes equal risk, total scaled yearly to 10%), with each day's gross exposure,

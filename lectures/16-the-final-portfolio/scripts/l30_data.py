@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 import numpy as np, pandas as pd
 HERE = Path(__file__).resolve().parent; REPO = HERE.parents[2]
-for d in ("15-carry-and-value", "14-part-time-strategies"): sys.path.insert(0, str(REPO / "lectures" / d / "scripts"))
+for d in ("15-carry-and-value", "14-regime-filters"): sys.path.insert(0, str(REPO / "lectures" / d / "scripts"))
 import l29 as L, l29_combined as M, l29_bonds_g10 as G
 FX = L.FX
 SPOT = FX.SPOT; RATE3 = FX.RATE

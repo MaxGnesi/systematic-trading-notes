@@ -4,7 +4,7 @@ import json, os, sys
 from pathlib import Path
 import numpy as np, pandas as pd
 HERE = Path(__file__).resolve().parent; REPO = HERE.parents[1]
-sys.path.insert(0, str(HERE)); sys.path.insert(0, str(REPO / "lectures" / "14-part-time-strategies" / "scripts"))
+sys.path.insert(0, str(HERE)); sys.path.insert(0, str(REPO / "lectures" / "14-regime-filters" / "scripts"))
 import l29_combined as M, l29_grids as Gr, l29_bonds_g10 as G, l29 as L
 import l28 as L28
 from l28_regime_charts import series

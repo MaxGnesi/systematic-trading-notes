@@ -1,4 +1,4 @@
-# Lecture 14: Part-Time Strategies
+# Lecture 14: Regime Filters: When to Hold Trend
 
 *Systematic Trading: Lecture Notes (MSc) · draft, Nov 15, 2026 · Max Gnesi*
 
@@ -6,7 +6,7 @@
 
 **Part III: beyond trend.** Trend loses money in some regimes. Part III tries the two answers: switch trend off when the regime is bad (this lecture), or hold strategies that earn for different reasons next to it (Lecture 15, carry and value). In the stages of Lecture 1 §2.1, a switch is risk management, an overlay that decides when trend is held; carry and value are new signals.
 
-Lecture 13's baseline trend portfolio is always in the market. A **regime filter** turns it into a **part-time strategy**: it steps aside when the economy or the markets are in a state where trend is expected to fail. This lecture asks whether that works with information known on the day, and, before that, how a strategy that is out of the market part of the time should be compared with one that never is. Two families of regime variables are tested side by side: **macro** (growth, inflation, the Fed; monthly, published late, revised) and **market state** (volatility, correlation, turning points, the yield curve, the dollar; daily, never revised). The scale is the opposite of high-frequency data (Part V), where a strategy sees millions of events a day and a test has thousands of independent trials; here a regime lasts months, and twenty years hold a handful of episodes. The plan was fixed before any result was computed, and every change made after seeing results is dated and labelled ([results/hypotheses.md](results/hypotheses.md)).
+Lecture 13's baseline trend portfolio is always in the market. A **regime filter** turns it into **filtered trend**: trend that steps aside when the economy or the markets are in a state where trend is expected to fail. This lecture asks whether that works with information known on the day, and, before that, how a strategy that is out of the market part of the time should be compared with one that never is. Two families of regime variables are tested side by side: **macro** (growth, inflation, the Fed; monthly, published late, revised) and **market state** (volatility, correlation, turning points, the yield curve, the dollar; daily, never revised). The scale is the opposite of high-frequency data (Part V), where a strategy sees millions of events a day and a test has thousands of independent trials; here a regime lasts months, and twenty years hold a handful of episodes. The plan was fixed before any result was computed, and every change made after seeing results is dated and labelled ([results/hypotheses.md](results/hypotheses.md)).
 
 ## 1. Regime information as a switch
 
@@ -31,13 +31,13 @@ The lecture's central point fits in one chart: the best regime filter we found, 
 ![A higher Sharpe ratio, a lower return](figures/28_key.png)
 <sub><b>How to read the figure.</b> <b>Axes.</b> x: time, 2006 to 18 November 2022 (the capstone futures run out market by market in December 2022); y: the value of 100 invested, excess return over cash, after costs. Black: the baseline trend portfolio, always in. Solid blue: the same portfolio switched off while US growth stands still (the growth filter of §2.3), as it would have been run. Dashed blue: the solid blue line scaled after the fact to the same volatility as always-in (× 1.33), a comparison, not a strategy that could have been run. Grey bands: the periods the filter was off. At the right: each line's Sharpe ratio and excess return a year. Our calculation.</sub>
 
-Switched off for 41% of the time, the part-time strategy has the higher Sharpe ratio (0.60 against 0.53) and the smaller losses, yet ends with less money (5.0% a year against 5.8%): its capital is idle during the grey bands. It earns more only when scaled up to the same risk. Whether that is worth it depends on what the idle capital could do, and on whether the filter's timing is information or luck (§2).
+Switched off for 41% of the time, filtered trend has the higher Sharpe ratio (0.60 against 0.53) and the smaller losses, yet ends with less money (5.0% a year against 5.8%): its capital is idle during the grey bands. It earns more only when scaled up to the same risk. Whether that is worth it depends on what the idle capital could do, and on whether the filter's timing is information or luck (§2).
 
 Several regime filters did clearly better than a coin flip, and some research paths are promising. The strongest: switching trend off after large dollar moves beat 94% of random switches on years never used to find it, and pointed the same way in all three samples (§6.5); the growth filter above beat 95% of its random switches on the futures, though only 50% on the ETFs. None cleared the strict bar fixed in advance (90% of random switches on both datasets, with a multiple-testing correction), so none is ready to be a rule; with a handful of regime episodes a decade, a real but modest effect would often miss that bar. Evidence is graded, not yes or no (§5), and §6.6 lists the paths worth pursuing. The lecture shows how this was measured and what the data say about why, so that readers can judge the evidence themselves.
 
 | § | Topic | Question |
 |---|---|---|
-| 2 | Comparing part-time with always-in | Which numbers answer which question, and what does each hide? |
+| 2 | Comparing filtered trend with always-in | Which numbers answer which question, and what does each hide? |
 | 3 | The regime variables | What do macro and market-state variables measure, and what does data revised later do to them? |
 | 4 | The scan | Does trend earn less on the days a regime stands still? |
 | 5 | The filters against luck | Does switching on these regimes beat always-in and random switching? |
@@ -45,9 +45,9 @@ Several regime filters did clearly better than a coin flip, and some research pa
 | 7 | One class at a time | A worked example: commodity trend by the shape of the futures curve |
 | 8 | Summary | Takeaways, exercises, reading |
 
-## 2. Comparing a part-time strategy with always-in
+## 2. Comparing filtered trend with always-in
 
-A part-time strategy and an always-in strategy do not use their capital the same way, so no single number compares them. Lecture 7 (§4.3) showed the basic arithmetic for a system in the market a share $`p`$ of the time:
+Filtered trend and always-in trend do not use their capital the same way, so no single number compares them. Lecture 7 (§4.3) showed the basic arithmetic for a system in the market a share $`p`$ of the time:
 
 ```math
 \text{Sharpe ratio, all days} \;\approx\; \text{Sharpe ratio while on} \times \sqrt{p}, \qquad \text{return per unit of capital} \;\approx\; p \times \text{return while on}.
@@ -64,7 +64,7 @@ A filter that knew nothing would leave the Sharpe ratio while on unchanged and l
 | Sharpe ratio needed while on, as a multiple of always-in | 1.05 | 1.15 | 1.29 | 1.41 |
 | For the ETF baseline (0.49) | 0.51 | 0.56 | 0.63 | 0.69 |
 
-<sub><b>How to read the table.</b> Each column is a filter that keeps trend on for the given share of days. The middle row is $`1/\sqrt{p}`$: how much better than always-in the days kept must be for the part-time strategy to match always-in over all days. The bottom row applies it to the ETF baseline. A definition, from the formula above.</sub>
+<sub><b>How to read the table.</b> Each column is a filter that keeps trend on for the given share of days. The middle row is $`1/\sqrt{p}`$: how much better than always-in the days kept must be for filtered trend to match always-in over all days. The bottom row applies it to the ETF baseline. A definition, from the formula above.</sub>
 
 The bar rises quickly: a filter that is off half the time must pick days on which trend earns a Sharpe ratio 41% higher than its average. Random filters show the bar in practice: switched on and off at random with the same time in the market, their median Sharpe ratio sits close to what the formula predicts. For the growth filter of §2.3 (on 59% of days on the futures) the formula gives 0.53 × √0.59 = 0.41 and its random filters' median is 0.41; on the ETFs (on 54% of days) 0.36 against 0.33.
 
@@ -81,7 +81,7 @@ The formula is a guide, not an identity. Positions move a tenth of the way each 
 | Is the timing information or chance? | Share of random filters with the same time in the market that it beats | Lecture 8 §4.5 | Nothing on its own about size: a filter can beat luck and still lose to always-in |
 | Does it add what always-in cannot give? | Alpha: the intercept of its returns regressed on always-in's, with its t-statistic | Definition (Lecture 8, step 4) | Few independent episodes: macro regimes give wide bands |
 
-<sub><b>How to read the table.</b> One row per question a reader may ask of a part-time strategy, the number that answers it, whether that number is a definition or a convention, and what it leaves out. No row settles the comparison alone.</sub>
+<sub><b>How to read the table.</b> One row per question a reader may ask of filtered trend, the number that answers it, whether that number is a definition or a convention, and what it leaves out. No row settles the comparison alone.</sub>
 
 The order matters. The first two numbers describe the strategy; the next two say what it does to an account; the last two say whether the timing carries information. A filter can pass the first and fail the fifth: it then earns its higher Sharpe ratio from being out of the market at random times, which any coin would do.
 
@@ -89,7 +89,7 @@ The order matters. The first two numbers describe the strategy; the next two say
 
 The growth filter switches trend off while US industrial production growth is still: the size of the 12-month change in its year-on-year growth rate is in the bottom third of its history to date, on data as first published (§3). It is the filter that came closest to working, so it shows every number of §2.2 at once.
 
-| | Always in | Growth filter (part-time) |
+| | Always in | Growth filter (filtered trend) |
 |---|---|---|
 | Share of days on | 100% | 59% |
 | Sharpe ratio while on | 0.53 | 0.67 |
@@ -103,9 +103,9 @@ The growth filter switches trend off while US industrial production growth is st
 | Alpha over always-in, a year (t-statistic) | | 1.5% (1.2) |
 | The same filter on the ETFs: Sharpe ratio over all days, random filters beaten | 0.49 | 0.33, 50% |
 
-<sub><b>How to read the table.</b> Capstone futures 2006 to November 2022, after costs; excess returns over cash; idle days earn zero excess return. "Scaled" multiplies the part-time strategy's daily returns by the ratio of the two volatilities over the whole sample (1.33), a comparison, not a strategy that could have been run. The last row is the same filter on the ETFs, 2013-2026. Our calculation.</sub>
+<sub><b>How to read the table.</b> Capstone futures 2006 to November 2022, after costs; excess returns over cash; idle days earn zero excess return. "Scaled" multiplies filtered trend's daily returns by the ratio of the two volatilities over the whole sample (1.33), a comparison, not a strategy that could have been run. The last row is the same filter on the ETFs, 2013-2026. Our calculation.</sub>
 
-The example shows the trade-off a part-time strategy brings. Over all days its Sharpe ratio is higher than always-in's (0.60 against 0.53), its drawdowns smaller and it beats 95% of random filters; **yet it earns less**: 5.0% a year against 5.8%, because 41% of the time its capital is idle. It earns more only when scaled up to the same risk, which means running it with a third more leverage on the days it is on, or giving its idle budget to something else. On the ETFs the same rule beats half its random filters, no better than a coin.
+The example shows the trade-off a regime filter brings. Over all days its Sharpe ratio is higher than always-in's (0.60 against 0.53), its drawdowns smaller and it beats 95% of random filters; **yet it earns less**: 5.0% a year against 5.8%, because 41% of the time its capital is idle. It earns more only when scaled up to the same risk, which means running it with a third more leverage on the days it is on, or giving its idle budget to something else. On the ETFs the same rule beats half its random filters, no better than a coin.
 
 ### 2.4 What the comparison cannot settle
 
@@ -359,7 +359,7 @@ Two cautions. Seven markets were scanned with no correction for multiple tests, 
 
 ### 8.1 Takeaways
 
-1. **A part-time strategy is compared on several numbers, not one.** Out of the market a share $`1-p`$ of the time, a filter with no information lowers the Sharpe ratio over all days by $`\sqrt{p}`$; a filter must beat random switching with the same time in the market to show information; a higher Sharpe ratio can come with a lower return, because the capital is idle while the filter is off (§2).
+1. **Filtered trend is compared on several numbers, not one.** Out of the market a share $`1-p`$ of the time, a filter with no information lowers the Sharpe ratio over all days by $`\sqrt{p}`$; a filter must beat random switching with the same time in the market to show information; a higher Sharpe ratio can come with a lower return, because the capital is idle while the filter is off (§2).
 2. **Macro data must be used as first published.** On revised data, a fifth of the days fall in a different growth × inflation quadrant, and the ranking of the quadrants changes (§3.2).
 3. **Several regime filters beat chance clearly; none yet clears a strict bar fixed in advance.** The most promising pattern ran against the plan: trend did worse after large dollar moves, on both datasets and on untouched years, beating 94% of random switches there (§6.5). Growth on the futures, the Fed and the commodity curve are further leads; most relations changed between periods, so each needs confirmation on other years (§4-§6.6).
 4. **Patterns found after looking need data they were not found in.** Volatility and correlation quadrants looked consistent on 2006-2026 and did not repeat on 1990-2005 (§6).

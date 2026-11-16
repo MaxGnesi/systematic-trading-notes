@@ -85,7 +85,7 @@ Equal weights, equal risk contributions and the cost-adjusted budgets give the s
 
 ### 2.3 Streams that are not always in the market
 
-The breakout rule is flat after the price crosses back over its half-length channel (Lecture 12 §3.1), so its streams are **part-time**: on Lecture 11's markets the held breakout speeds had a signal on 71% of days over 2007-2026 (median over markets and speeds). This raises a question that has no single answer: are the flat days zeros or missing?
+The breakout rule is flat after the price crosses back over its half-length channel (Lecture 12 §3.1), so its streams are **often flat**: on Lecture 11's markets the held breakout speeds had a signal on 71% of days over 2007-2026 (median over markets and speeds). This raises a question that has no single answer: are the flat days zeros or missing?
 
 | Purpose | Flat days count as | Why | Label |
 |---|---|---|---|

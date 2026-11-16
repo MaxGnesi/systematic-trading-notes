@@ -14,8 +14,8 @@ if __name__ == "__main__":
     apply_theme(); B = pd.read_parquet(L.OUT / "l28_base.parquet"); base = B["futures"].dropna().loc[L.FUT_START:L.END["futures"]]
     G = pd.read_parquet(L.OUT / "l28_regimes_futures.parquet").reindex(base.index); off = offs(G, 1)["growth"]
     part = pd.Series(switched(base.ret.to_numpy(), base.gross.to_numpy(), off.to_numpy(), L.LAMBDA, L.COST_BP / 1e4), base.index)
-    k = base.ret.std() / part.std(); lines = (("Always in", "Always in", base.ret, INK, "solid"), ("Part-time: growth filter, as run", "Part-time, as run", part, SERIES[0], "solid"),
-                                               (f"Part-time, scaled after the fact to the same risk (× {k:.2f})", "Part-time, same risk", part * k, SERIES[0], "dash"))
+    k = base.ret.std() / part.std(); lines = (("Always in", "Always in", base.ret, INK, "solid"), ("Filtered trend: growth filter, as run", "Filtered, as run", part, SERIES[0], "solid"),
+                                               (f"Filtered trend, scaled after the fact to the same risk (× {k:.2f})", "Filtered, same risk", part * k, SERIES[0], "dash"))
     fig = go.Figure()
     g = (off != off.shift()).cumsum()
     for _, s in off.groupby(g):
