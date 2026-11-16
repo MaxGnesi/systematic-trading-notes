@@ -294,6 +294,28 @@ Three limits keep the arithmetic honest:
 
 The course is built this way. Lectures 11-13 hold many markets and many trend speeds at equal risk instead of picking the best; Lectures 14-15 ask whether other strategies add to trend because they fail at different times.
 
+### 5.5 Working with an AI assistant
+
+Research is now done with AI assistants, and these notes were too (see the README). An assistant makes a try cheap: it writes the code, downloads the data, runs a grid of backtests and drafts the text in minutes. That is a large gain, and it changes where the researcher's effort belongs.
+
+| Delegate | Keep |
+|---|---|
+| Data pipelines and downloads; code; backtests and robustness grids; notebooks; literature searches; checks of a result against a published series | The question; the expectation, written down before the test; the judgment on method, mechanism and evidence; the decision to keep or drop a change |
+
+<sub><b>How to read the table.</b> Left: work an assistant does well and fast. Right: decisions that stay with the researcher, because the assistant can produce a confident, plausible answer to a badly posed question.</sub>
+
+**A brief, not a wish.** State the goal, what is already ruled out and the constraints (free data, no look-ahead, the plan fixed in advance). A vague brief returns a polished answer to a different question.
+
+**Guardrails used throughout this course:**
+
+1. **The plan first.** Hypotheses, rules and expectations are written and dated before any result (`results/hypotheses.md` in each lecture).
+2. **Every try is logged and counted.** Cheap tries make overfitting cheap (§5.3); the deflated Sharpe ratio corrects for the search (Lecture 15).
+3. **Hand checks.** Each notebook recomputes a lecture's key numbers by hand from the raw data.
+4. **Provenance.** Every dataset has a recorded source; a silently missing series is the most dangerous error an assistant makes, because everything still runs.
+5. **References checked at the source.** Assistants can invent plausible details: pages, initials, claims a paper does not make.
+
+**Adapt on findings, with discipline.** Changing a strategy because of what the research found is not a fault; it is how AI-assisted research is used well. Each change is judged by its cost against its benefit (complexity, one more try, trading cost, against a measured gain) and by its robustness (a plateau, other periods and markets, a mechanism). A robust finding would be foolish to ignore, whoever or whatever found it. Lecture 17 returns to all of this with the course's own record as the case study.
+
 ## 6. Worked case study: a diversified trend-following model
 
 This case walks one strategy through every stage of the pipeline. All parameters are illustrative design choices for teaching, not recommendations, and no performance claim is made; students are asked to produce the results themselves in the exercises.
