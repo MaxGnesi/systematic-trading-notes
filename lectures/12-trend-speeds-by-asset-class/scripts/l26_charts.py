@@ -22,11 +22,11 @@ if __name__ == "__main__":
     G = np.array([[1 if (i in A_m and j in A_q) else (2 if (i not in A_m and j not in A_q) else 0) for j in range(len(quarters))] for i in range(len(mk))], float)
     fig = make_subplots(rows=3, cols=3, column_widths=[0.4, 0.3, 0.3], horizontal_spacing=0.08, vertical_spacing=0.12,
                         specs=[[{"rowspan": 3}, {}, {}], [None, {}, {}], [None, {}, {}]],
-                        subplot_titles=["One random split, end of 2025: choose on blue, check on orange"] + [TITLE.get(g, g) for g in GROUPS])
+                        subplot_titles=["One random split (2025): choose on blue,<br>check on orange"] + [TITLE.get(g, g) for g in GROUPS])
     fig.add_heatmap(z=G, x=[str(q) for q in quarters], y=mk, colorscale=[[0, "#efeee8"], [0.5, SERIES[0]], [1, SERIES[1]]], zmin=0, zmax=2, showscale=False,
                     hovertemplate="%{y}, %{x}<extra></extra>", row=1, col=1)
     fig.update_yaxes(showticklabels=False, title_text=f"{len(mk)} markets above the floor", row=1, col=1)
-    fig.update_xaxes(tickvals=[str(q) for q in quarters[::8]], tickangle=0, title_text="quarter", row=1, col=1)
+    fig.update_xaxes(tickvals=[str(q) for q in quarters if q.quarter == 1 and q.year % 4 == 3], ticktext=[str(q.year) for q in quarters if q.quarter == 1 and q.year % 4 == 3], tickangle=0, title_text="quarter", row=1, col=1)
     W = S["2025"]["weights"]
     for i, g in enumerate(GROUPS):
         r, c = divmod(i, 2); w = pd.Series(W[g]); Z = np.array([[w[f"{rule}_{h}"] for h in L.SPEEDS] for rule in L.RULES])
@@ -36,7 +36,7 @@ if __name__ == "__main__":
         fig.update_xaxes(type="category", title_text="speed, days" if r == 2 else None, tickfont=dict(size=9), row=r + 1, col=c + 2)
     fig.update_layout(title="Random halves and the areas they leave<br><sup>Left: grey cells are left out of this split; a stream works on a half if its Sharpe "
                             "ratio after costs is in the top half of the 36 there. Right: the share of 500 splits in which each stream works on both halves, "
-                            "end-2025 review, excess returns, 5 bp</sup>", height=760, width=1250, margin=dict(t=110, l=70, r=60, b=60))
+                            "end-2025 review, excess returns, 5 bp</sup>", height=780, width=1250, margin=dict(t=140, l=70, r=60, b=60))
     save_figure(fig, L.PREFIX + "26_halves", L.FIG)
 
     years = sorted(S); fig = make_subplots(rows=2, cols=3, horizontal_spacing=0.06, vertical_spacing=0.18, subplot_titles=[TITLE.get(g, g) for g in GROUPS])
