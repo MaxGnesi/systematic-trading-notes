@@ -183,6 +183,16 @@ C("""CF = result("confirm.json", SHIPPED)
 print(f"1990-2005 portfolio: {len(CF['markets'])} markets, Sharpe ratio {CF['sharpe']:.2f}")
 display(pd.DataFrame({k: {q: f"{v['sharpe']:+.2f} ({v['share']:.0%})" for q, v in CF[k].items()} for k in ("volatility", "correlation")}))
 print("E1:", CF["E1"]); print("E2:", CF["E2"])"""),
+M("""### 6.5 Three candidates on 1990-2005
+
+Correlation high as it stands, the Fed and the dollar reversed, each fixed before these years were used (`l28_confirm_corr.py`, `l28_confirm_reversed.py`); 1,000 random filters each."""),
+C("""if FUTURES:
+    run("l28_confirm_corr.py"); run("l28_confirm_reversed.py")
+CC, CR = result("confirm_corr.json", SHIPPED), result("confirm_reversed.json", SHIPPED)
+rows = {"correlation high": CC, "Fed moving": CR["fed moving"], "dollar moving": CR["dollar moving"]}
+display(pd.DataFrame({k: {"share off": f"{v['share_off']:.0%}", "trend on kept / off days": f"{v['sharpe_on']:+.2f} / {v['sharpe_off']:+.2f}",
+                          "filter": f"{v['filter']:+.2f}", "random beaten": f"{v['beaten']:.0%}"} for k, v in rows.items()}))
+print(f"always in, 1990-2005: {CC['always_in']:.2f}")"""),
 M("""## 7. Commodity curves
 
 Each commodity's trend stream in backwardation and in contango, and the sleeve. Then one curve gap by hand: crude oil on 1 July 2008, from the contract files."""),
