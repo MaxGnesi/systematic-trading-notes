@@ -385,7 +385,7 @@ One matrix over the whole history says the two streams are unrelated (−0.03). 
 
 **Step 3. If correlations are to move the weights, use them in a form that survives instability.** Three forms, beside the naive one:
 
-- **Structure, not pairs:** one average correlation for every pair, or one within each class and one across, instead of every pair; the idea of shrinking towards constant correlation (Ledoit and Wolf, 2004). A few averages are far more stable than many pairs. With one correlation for every pair and every stream at the same risk, equal risk contributions are exactly equal risk, so this form adds nothing across five classes; it matters when the classes hold different numbers of markets.
+- **Structure, not pairs:** one average correlation for every pair, or one within each class and one across, instead of every pair; the idea of shrinking towards constant correlation (Ledoit and Wolf, 2004). A few averages are far more stable than many pairs. With one correlation for every pair and every stream at the same risk, equal risk contributions are exactly equal risk, so this form adds nothing across five classes. The block form, one correlation within each class and one across, does matter when markets are weighed directly across classes that hold different numbers of markets.
 - **A regime matrix, not a blend:** estimate the matrix of a turbulent regime separately from the calm ones (Chow, Jacquier, Kritzman and Lowry, 1999).
 - **Min-max:** the long-only weights whose risk in the worst of all the regimes is lowest.
 
