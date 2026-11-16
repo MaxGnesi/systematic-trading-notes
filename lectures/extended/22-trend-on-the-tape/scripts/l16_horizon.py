@@ -7,7 +7,7 @@ import numpy as np, polars as pl
 import os, sys
 if hasattr(sys.stdout, "reconfigure"): sys.stdout.reconfigure(encoding="utf-8", errors="replace")   # tables print on any console; Jupyter handles its own
 HERE = Path(__file__).resolve().parent                                     # lectures/16-.../scripts
-sys.path[:0] = [str(HERE), str(HERE.parents[1] / "19-bars-not-cut-by-time" / "scripts"), str(HERE.parents[1] / "18-tick-data-the-tape"), str(HERE.parents[2])]
+sys.path[:0] = [str(HERE), str(HERE.parents[1] / "19-bars-not-cut-by-time" / "scripts"), str(HERE.parents[1] / "18-tick-data-the-tape"), str(HERE.parents[3])]
 import tape
 L16_RESULTS = tape.ROOT / "interim" / "l16"; L16_RESULTS.mkdir(parents=True, exist_ok=True)          # results: in the data folder, never committed
 FIG = Path(os.environ.get("L16_FIG", HERE.parent / "figures")); FIG.mkdir(parents=True, exist_ok=True)

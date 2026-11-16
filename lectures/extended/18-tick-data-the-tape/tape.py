@@ -26,7 +26,7 @@ import pyarrow as pa
 import pyarrow.csv as pacsv
 import pyarrow.parquet as papq
 
-ROOT = Path(os.environ.get("TAPE_ROOT", Path(__file__).resolve().parents[2] / "data"))
+ROOT = Path(os.environ.get("TAPE_ROOT", Path(__file__).resolve().parents[3] / "data"))
 ARCHIVE = "https://data.binance.vision/data/futures/um/{freq}/aggTrades/{symbol}/{name}.zip"
 COLS = ["agg_trade_id", "price", "quantity", "first_trade_id", "last_trade_id", "transact_time", "is_buyer_maker"]
 TYPES = {"agg_trade_id": pa.int64(), "price": pa.float64(), "quantity": pa.float64(), "first_trade_id": pa.int64(),
