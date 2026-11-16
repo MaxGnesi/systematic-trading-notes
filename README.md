@@ -11,13 +11,13 @@ the notebook that tests its claims on real market data and the charts it cites.
 
 ### The arc
 
-| Part | Lectures | The question | Why it leads to the next part |
-|---|---|---|---|
-| I. Foundations | 1-4 | What is in the data, and what do different transformations of the same prices show? | A strategy is only as good as its understanding of the data |
-| II. Trend | 5-13 | What does trend capture; how are trend systems built, compared, filtered and sized; do they hold on futures; and how is trend run at portfolio scale (markets, speeds, the baseline portfolio)? | Trend alone is one source of return; the next question is what else earns, and when |
-| III. Beyond trend | 14-15 | Switch trend off in bad regimes, or hold strategies that earn for different reasons: carry and value? | The parts are ready to be assembled |
-| IV. The portfolio | 16-17 | What can the assembled base layer honestly earn, how is it improved, and how is such research done well with AI? | The base layer is complete; what remains is below the daily bar |
-| V. Deep dive: high frequency | 18-30 | What do individual trades and the order book add: clocks, the path, order flow, costs, queues, other traders, market making? | Back to Part IV: the execution of a daily portfolio, and where finer granularity adds breadth |
+| Part | Lectures | Stages (Lecture 1 §2.1) | The question | Why it leads to the next part |
+|---|---|---|---|---|
+| I. Foundations | 1-4 | Data; first signals | What is in the data, and what do different transformations of the same prices show? | A strategy is only as good as its understanding of the data |
+| II. Trend | 5-13 | Signals, sizing and risk, end to end | What does trend capture; how are trend systems built, compared, filtered and sized; do they hold on futures; and how is trend run at portfolio scale (markets, speeds, the baseline portfolio)? | Trend alone is one source of return; the next question is what else earns, and when |
+| III. Beyond trend | 14-15 | Risk overlay (switches); new signals (carry, value) | Switch trend off in bad regimes, or hold strategies that earn for different reasons: carry and value? | The parts are ready to be assembled |
+| IV. The portfolio | 16-17 | Allocation and risk; the research loop | What can the assembled base layer honestly earn, how is it improved, and how is such research done well with AI? | The base layer is complete; what remains is below the daily bar |
+| V. Deep dive: high frequency | 18-30 | Data and execution at the finest grain | What do individual trades and the order book add: clocks, the path, order flow, costs, queues, other traders, market making? | Back to Part IV: the execution of a daily portfolio, and where finer granularity adds breadth |
 
 Part V is a deep dive on purpose. It uses bitcoin tick and order-book data, the one market where such data are free at that depth, to set the stage for the analysis one should also do on traditional markets: it is an example and the beginning of a direction. Its lessons on execution matter for the base layer too: a daily portfolio is still traded order by order, and its costs decide whether a small edge survives.
 

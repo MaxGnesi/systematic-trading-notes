@@ -2,6 +2,8 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 18, 2026 · Max Gnesi*
 
+*Pipeline stage (Lecture 1 §2.1): the feedback loop (how systems are compared and judged).*
+
 Two trend systems with different Sharpe ratios may not differ at all: one may simply trade at a different speed, the gap may be noise, or the better one may have been picked from many tries. This lecture builds a fair way to compare trend systems, in five questions: compared at what speed, does a system add anything, what do its trades show, is the difference real, and will it last?
 
 Data: the 16 ETFs of Lectures 5 and 6, daily, 2000–2026; every result comes from the notebook.

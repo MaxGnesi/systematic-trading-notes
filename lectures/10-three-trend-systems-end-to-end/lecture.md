@@ -2,6 +2,8 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 20, 2026 · Max Gnesi*
 
+*Pipeline stage (Lecture 1 §2.1): all five stages, end to end on futures.*
+
 Part II built the pieces one at a time: what a market offers (Lecture 5), how a design decides what is captured (Lecture 6), how to compare systems (Lecture 7), filters (Lecture 8) and sizing (Lecture 9). This capstone puts them together, building three trend systems end to end on futures, from the raw data to a combined portfolio. Data: twelve futures markets from Kaggle and two Treasury funds, 1999–2022; results from 2001, after two years of warm-up.
 
 ## 1. The question of this lecture

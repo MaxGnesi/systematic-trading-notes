@@ -2,6 +2,8 @@
 
 *Systematic Trading: Lecture Notes (MSc) · draft, Nov 13, 2026 · Max Gnesi*
 
+*Pipeline stage (Lecture 1 §2.1): data (the universe of markets).*
+
 Lectures 5 to 10 built trend systems and tested them market by market, ending with three systems on futures. This lecture and the next two run trend at portfolio scale: many markets, one set of speeds, one portfolio. The first question comes before any weight: **which markets should be in it at all?** We start from 116 exchange-traded funds listed in the United States, covering equity countries, sectors and themes, government bonds, credit, commodities and currencies, and ask which of them form a universe that is diverse and tradable, chosen without looking at any strategy's results. The plan was fixed before any result was computed, and every change made after seeing results is dated and labelled ([results/hypotheses.md](results/hypotheses.md)).
 
 ## 1. 116 ETFs, a few bets

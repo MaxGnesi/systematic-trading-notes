@@ -2,6 +2,8 @@
 
 *Systematic Trading: Lecture Notes (MSc) · draft, Nov 16, 2026 · Max Gnesi*
 
+*Pipeline stage (Lecture 1 §2.1): the feedback loop (the research method).*
+
 **Part IV: the portfolio, closing.** Lectures 1-16 built the base layer. This lecture is about the method behind them: the notes were researched and written with an AI assistant, and doing that well is now part of the craft. Part V then goes below the daily bar.
 
 An AI assistant makes a try cheap: it writes the code, downloads the data, runs a grid of backtests and drafts the text in minutes. The researcher's time moves from doing the work to deciding what the work should be and checking what comes back. This lecture is a practical guide to that shift: what to delegate, how to brief, how to lock the scope before a search, and which habits catch the errors an assistant makes. It uses the course's own record as the case study: every error in Lectures 1-16 that reached a result, a figure or the text, what kind it was, what found it and what fixing it cost. The plan, including the classification, was fixed before anything was counted, and the changes made while classifying are dated and labelled ([results/hypotheses.md](results/hypotheses.md)).

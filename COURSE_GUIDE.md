@@ -19,6 +19,7 @@ The course teaches **the base layer of systematic research** first, then **a dee
 **What changes in the text, beyond the numbers.**
 - Part II's last three lectures (11-13) open as *trend at portfolio scale*, the natural continuation of Lectures 5-10, not as a restart after the high-frequency part.
 - Lectures 14-16 lose their "after the high-frequency part" framing; forward references to execution point to Part V.
+- **The pipeline is the map (2026-11-16, user).** Lecture 1 §2.1's five stages (data, signals, allocation, risk, execution, plus the feedback loop) locate every lecture: a stage line under each title, a stage table in Lecture 1, part openings naming their stages, and Lecture 16 assembling the portfolio stage by stage. Combining strategies is allocation and risk management, not a new signal.
 - Part V opens as an advanced deep dive that builds on the base layer, and closes by pointing its execution lessons back to Lecture 16.
 - Lecture 16 adds the cost link: the base layer judged with execution costs measured in Part V, not only a flat 5 bp.
 - Each part opens with a short paragraph: what it asks, and how it leads to the next.

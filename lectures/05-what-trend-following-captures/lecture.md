@@ -2,7 +2,9 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 18, 2026 · Max Gnesi*
 
-**Part II: trend, the base strategy.** Part II builds trend once, in order: what it captures (this lecture), the machinery (6), how to compare systems (7), filter them (8) and size them (9), three systems end to end on futures (10), and trend at portfolio scale: the markets (11), the speeds (12) and the baseline portfolio (13). Every later part adds to that portfolio.
+*Pipeline stage (Lecture 1 §2.1): signal generation (what a trend signal captures).*
+
+**Part II: trend, the base strategy.** Part II builds trend once, in order: what it captures (this lecture), the machinery (6), how to compare systems (7), filter them (8) and size them (9), three systems end to end on futures (10), and trend at portfolio scale: the markets (11), the speeds (12) and the baseline portfolio (13). Every later part adds to that portfolio. In the five stages of Lecture 1 §2.1, Part II builds signal generation (5-8, 12), data (11), and portfolio construction and risk management (9, 13); Lecture 10 runs all five end to end.
 
 Before building a trend system, it pays to know what a trend system earns. This lecture splits trend profits into two sources, the drift of a market and the persistence of its returns, shows that the second is concentrated in a few episodes, turns both into questions to ask about any market before trading it, chooses what to capture, and closes with the evidence and the business of trend following. Data: 16 liquid ETFs across equities, bonds, commodities and real estate. Companion notebook: [05_what_trend_following_captures.ipynb](05_what_trend_following_captures.ipynb).
 

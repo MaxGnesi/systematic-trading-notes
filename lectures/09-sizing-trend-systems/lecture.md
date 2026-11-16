@@ -2,6 +2,8 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 18, 2026 · Max Gnesi*
 
+*Pipeline stage (Lecture 1 §2.1): portfolio construction and risk management (how much to hold).*
+
 A signal says which way to trade; sizing says how much. The literature offers many sizing methods, but fewer genuinely different ones. This lecture maps them, measures which ones actually change the result, and explains those in depth, applying each to the same signals on the 16 ETFs of Lectures 5 and 6. Companion notebook: [09_sizing_trend_systems.ipynb](09_sizing_trend_systems.ipynb).
 
 ## 1. The question of this lecture

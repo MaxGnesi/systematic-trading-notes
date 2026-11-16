@@ -2,6 +2,8 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 10, 2026 · Max Gnesi*
 
+*Pipeline stage (Lecture 1 §2.1): signal generation (the level and slope of a hidden trend).*
+
 Lecture 2 smoothed prices from the bottom up, by averaging past bars. The Kalman filter works from the top down: it keeps an explicit model of the hidden quantities behind prices and revises it as each new bar arrives. This lecture builds the linear filter from a single level up to trend speed and acceleration, examines the information each hidden state carries, and covers the nonlinear extensions, the extended and unscented filters, for tracking unobserved volatility. Companion notebook: [04_tracking_hidden_states.ipynb](04_tracking_hidden_states.ipynb).
 
 ## 1. Bottom-up versus top-down

@@ -2,6 +2,8 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 10, 2026 · Max Gnesi*
 
+*Pipeline stage (Lecture 1 §2.1): data, and the inputs to risk management: volatility, flow, correlation and tails from the same bars.*
+
 Volatility, flow, correlation and tails. The same bars and the same causal window that smooth price can also estimate volatility, trend strength, order flow, co-movement and distribution shape. This lecture works through each on a toy series and on 30 years of SPY, QQQ, GLD and AGG. Companion notebook: [03_same_bars_different_questions.ipynb](03_same_bars_different_questions.ipynb).
 
 ## 1. Recap: same bars, different questions
