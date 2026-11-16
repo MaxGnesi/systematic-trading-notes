@@ -179,7 +179,7 @@ Price against its own past is a proxy: it needs no data beyond prices, which is 
 | Random strategies beaten: alone / added to trend | 48% / – | 77% / 90% |
 | 2013-2026: value; trend + value (trend alone 0.41) | −0.13; 0.37 | +0.12; 0.32 |
 
-<sub><b>How to read the table.</b> Sharpe ratios after costs, excess returns over cash; the two value strategies use the same machinery and differ only in how cheap and dear are measured. "Random strategies": 1,000 per strategy with the same holding periods, as in §6.1. Our calculation ([results/value_fund.json](results/value_fund.json)).</sub>
+<sub><b>How to read the table.</b> Sharpe ratios after costs, excess returns over cash; the two value strategies use the same machinery and differ only in how cheap and dear are measured. Each comparison with trend covers only the months both exist, so "trend alone" differs slightly between tables (2013-2026: 0.41 here, 0.48 in §6.5). "Random strategies": 1,000 per strategy with the same holding periods, as in §6.1. Our calculation ([results/value_fund.json](results/value_fund.json)).</sub>
 
 Fundamentals turn value from a small loss into a small gain (0.14, close to AQR's own 0.16 in this period), better in three of the four groups, as expected in the plan; bonds, where the price version was already a yield, are the exception. Its correlation with trend stays negative, so next to trend it now roughly holds trend's Sharpe ratio instead of costing a fifth of it, and it beats 90% of random strategies added to trend, which dilute trend more. It still does not add to trend, and in 2013-2026 it costs. *Our reading (labelled):* value was mismeasured by the proxy, and measured properly it is a small diversifier of trend, the weakest of the three styles in these years.
 
@@ -229,7 +229,7 @@ Two things lower the number. The tries: 6.8 independent attempts make a Sharpe r
 
 <sub><b>How to read the table.</b> One row per true Sharpe ratio; the right column is the number of years after which a one-sided test at 95% would just reject zero, before counting any search. A definition, from the standard error of a Sharpe ratio, about $`1/\sqrt{T}`$ over $`T`$ years.</sub>
 
-Strategies that survive in competitive markets have Sharpe ratios of 0.3 to 0.5 after costs; an edge strong enough to clear the bar easily would be visible to everyone and competed away. So the evidence for a lasting edge is always noisy, and it is judged on several things together, not on one threshold:
+The strategies that held up in this course, trend and carry, have Sharpe ratios of 0.5 to 0.7 after costs, and published styles are typically in that range or below; an edge strong enough to clear the bar easily would be visible to everyone and competed away. So the evidence for a lasting edge is always noisy, and it is judged on several things together, not on one threshold:
 
 1. **The statistics, as a probability**, here 0.90 after counting the tries;
 2. **breadth**: carry earns in all four groups (§4.3);
@@ -263,7 +263,7 @@ The plan fixed, from Lecture 28, the two quadrants of each regime variable in wh
 | Growth down, inflation down | 0.25 | 0.30 | 63 |
 | Growth up, inflation down | **1.69** | 0.27 | 27 |
 
-<sub><b>How to read the table.</b> Rows: the six quadrants named in the plan before any carry result (Lecture 28's definitions, each month classified by its quadrant at the end of the month before). Monthly Sharpe ratios on the months in each quadrant, futures 2006 to October 2022. With 27 to 81 months a cell has a standard error of about 0.4 to 0.7, so single cells are weak evidence; the count across cells is the reading. Our calculation ([results/quadrants.json](results/quadrants.json)).</sub>
+<sub><b>How to read the table.</b> Rows: the six quadrants named in the plan before any carry result (Lecture 28's definitions, each month classified by its quadrant at the end of the month before). Monthly Sharpe ratios on the months in each quadrant, futures 2006 to October 2022; trend's numbers here are monthly, so they differ from Lecture 28's daily ones, and a quadrant weak for trend there is not always weak here. With 27 to 81 months a cell has a standard error of about 0.4 to 0.7, so single cells are weak evidence; the count across cells is the reading. Our calculation ([results/quadrants.json](results/quadrants.json)).</sub>
 
 Carry beat trend in four of the six regimes where trend was weak, and lost narrowly in the other two. It is what a second business should do: earn when the first one does not, without a forecast of when that will be. The cells are small; the pattern across them, not any one number, is the evidence.
 
