@@ -386,7 +386,7 @@ When A spikes, correlation **falls** to 0.42 while beta **rises** to 3.3 and the
 
 ### 8.3 Real data: the stock–bond correlation changed sign
 
-The correlation between SPY and AGG returns, over 63 bars (§5), is one of the most consequential numbers in portfolio construction: a negative value means bonds hedge equity sell-offs. On 16 March 2020 it was $`0.002856/\sqrt{0.052762 	imes 0.002835}`$ = **+0.23**.
+The correlation between SPY and AGG returns, over 63 bars (§5), is one of the most consequential numbers in portfolio construction: a negative value means bonds hedge equity sell-offs. On 16 March 2020 it was $`0.002856/\sqrt{0.052762 \times 0.002835}`$ = **+0.23**.
 
 | Period | Share of days with negative SPY–AGG correlation |
 |---|---|

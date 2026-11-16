@@ -6,6 +6,18 @@
 
 Lectures 5 to 10 built trend systems and tested them market by market, ending with three systems on futures. This lecture and the next two run trend at portfolio scale: many markets, one set of speeds, one portfolio. The first question comes before any weight: **which markets should be in it at all?** We start from 116 exchange-traded funds listed in the United States, covering equity countries, sectors and themes, government bonds, credit, commodities and currencies, and ask which of them form a universe that is diverse and tradable, chosen without looking at any strategy's results. The plan was fixed before any result was computed, and every change made after seeing results is dated and labelled ([results/hypotheses.md](results/hypotheses.md)).
 
+**The build, end to end.** Lectures 11 to 13 are one process, run once a year on the past three years only. Each step uses the steps before it and nothing after it; profits judge the result at the end and never set a choice or a weight.
+
+| Step | Decision | What it uses | Result | Lecture |
+|---|---|---|---|---|
+| **1. Choose the markets (this lecture)** | Which markets enter | Liquidity, history and overlap with the others, sign ignored; no strategy profits | 16 to 21 of 116 ETFs | 11 |
+| 2. Choose the speeds | Which trend streams run | Each asset class's in-sample results, read as a region of speeds, not a point | 16 to 20 of 36 streams per market | 12 |
+| 3. Weigh the speeds | How much of each stream in a market | Risk only: each stream at equal risk; their correlations come from construction | One blended trend per market | 13 §2 |
+| 4. Weigh the markets and the classes | How much of each market, then of each class | Risk only: equal standalone risk; no correlations across classes | Markets equal within a class, classes equal | 13 §3 |
+| 5. Scale the total | How much leverage overall | The portfolio's volatility over three years, to 10% a year | The baseline trend portfolio | 13 §4 |
+
+<sub><b>How to read the table.</b> One row per decision, in the order they are taken; the rows in bold are this lecture's. "What it uses": the only information the step may use. Steps 1 and 2 choose; steps 3 to 5 weigh, by risk alone.</sub>
+
 ## 1. 116 ETFs, a few bets
 
 The lecture's result fits in one chart: the 116 ETFs move together far more than their number suggests.
@@ -403,6 +415,8 @@ On their screen volume, the currency funds cap the whole portfolio at about USD 
 The next step for a growing account is therefore to change the instrument where the wrapper binds, for example currencies through futures or forwards and short-dated bonds through Treasury futures. These are different instruments, with rolls, margin and no income, so their correlations, trend phases and costs would have to be measured again; our free data cannot do that for futures volume. Large funds go further and trade as many markets as they can, not for bets, which stop growing early, but to spread their trading and its impact; that trade-off belongs to the lecture on constraints and capacity.
 
 **What the free data cannot do.** Four limits apply to everything in this lecture. Only surviving funds are in the data (§2.1), which flatters the themes most. We trade a fund, not the market: a fund of foreign shares can trade at a premium or a discount to the value of its holdings while the home market is shut, and every fund charges a fee. The total return of a bond or currency fund includes its interest income, which enters any trend signal computed on it (§4.1). And screen volume is a poor measure of capacity in both directions (above). None of these changes which classes and how many markets; each would shift individual choices.
+
+**Next in the build.** With the markets chosen, step 2 decides which trend speeds run in them (Lecture 12); steps 3 to 5 then weigh the speeds, the markets and the classes by risk alone (Lecture 13).
 
 ## 9. Summary
 

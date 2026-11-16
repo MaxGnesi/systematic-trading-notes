@@ -1,0 +1,1102 @@
+{
+ "first_month": {
+  "Equity": "1972-01-31",
+  "Government bonds": "1972-01-31",
+  "Credit": "1972-01-31",
+  "Commodities": "1972-01-31",
+  "Dollar": "1972-01-31"
+ },
+ "windows": {
+  "1973-1982 high inflation": {
+   "months": 120,
+   "stock_bond_assets": 0.16169072374602347,
+   "stock_bond_trend": -0.01574978047765488,
+   "avg_abs_assets": 0.1999947942589925,
+   "avg_abs_trend": 0.0735869421269241,
+   "stress_ratio_trend": 0.9322407043197638,
+   "stress_ratio_assets": 0.8626199348268739,
+   "corr_assets": {
+    "Equity": {
+     "Equity": 1.0,
+     "Government bonds": 0.162,
+     "Credit": 0.14,
+     "Commodities": -0.005,
+     "Dollar": -0.231
+    },
+    "Government bonds": {
+     "Equity": 0.162,
+     "Government bonds": 1.0,
+     "Credit": -0.746,
+     "Commodities": -0.151,
+     "Dollar": -0.234
+    },
+    "Credit": {
+     "Equity": 0.14,
+     "Government bonds": -0.746,
+     "Credit": 1.0,
+     "Commodities": 0.181,
+     "Dollar": 0.077
+    },
+    "Commodities": {
+     "Equity": -0.005,
+     "Government bonds": -0.151,
+     "Credit": 0.181,
+     "Commodities": 1.0,
+     "Dollar": -0.073
+    },
+    "Dollar": {
+     "Equity": -0.231,
+     "Government bonds": -0.234,
+     "Credit": 0.077,
+     "Commodities": -0.073,
+     "Dollar": 1.0
+    }
+   },
+   "corr_trend": {
+    "Equity": {
+     "Equity": 1.0,
+     "Government bonds": -0.016,
+     "Credit": 0.124,
+     "Commodities": 0.19,
+     "Dollar": -0.091
+    },
+    "Government bonds": {
+     "Equity": -0.016,
+     "Government bonds": 1.0,
+     "Credit": -0.112,
+     "Commodities": 0.081,
+     "Dollar": 0.044
+    },
+    "Credit": {
+     "Equity": 0.124,
+     "Government bonds": -0.112,
+     "Credit": 1.0,
+     "Commodities": -0.006,
+     "Dollar": 0.049
+    },
+    "Commodities": {
+     "Equity": 0.19,
+     "Government bonds": 0.081,
+     "Credit": -0.006,
+     "Commodities": 1.0,
+     "Dollar": 0.023
+    },
+    "Dollar": {
+     "Equity": -0.091,
+     "Government bonds": 0.044,
+     "Credit": 0.049,
+     "Commodities": 0.023,
+     "Dollar": 1.0
+    }
+   }
+  },
+  "1983-1999 disinflation": {
+   "months": 204,
+   "stock_bond_assets": 0.10857619032710303,
+   "stock_bond_trend": 0.08159866739542525,
+   "avg_abs_assets": 0.16521968215286859,
+   "avg_abs_trend": 0.058544235305963574,
+   "stress_ratio_trend": 0.9384339724671291,
+   "stress_ratio_assets": 0.883641133018909,
+   "corr_assets": {
+    "Equity": {
+     "Equity": 1.0,
+     "Government bonds": 0.109,
+     "Credit": 0.157,
+     "Commodities": -0.109,
+     "Dollar": 0.124
+    },
+    "Government bonds": {
+     "Equity": 0.109,
+     "Government bonds": 1.0,
+     "Credit": -0.782,
+     "Commodities": -0.103,
+     "Dollar": -0.125
+    },
+    "Credit": {
+     "Equity": 0.157,
+     "Government bonds": -0.782,
+     "Credit": 1.0,
+     "Commodities": 0.011,
+     "Dollar": 0.026
+    },
+    "Commodities": {
+     "Equity": -0.109,
+     "Government bonds": -0.103,
+     "Credit": 0.011,
+     "Commodities": 1.0,
+     "Dollar": -0.108
+    },
+    "Dollar": {
+     "Equity": 0.124,
+     "Government bonds": -0.125,
+     "Credit": 0.026,
+     "Commodities": -0.108,
+     "Dollar": 1.0
+    }
+   },
+   "corr_trend": {
+    "Equity": {
+     "Equity": 1.0,
+     "Government bonds": 0.082,
+     "Credit": 0.088,
+     "Commodities": 0.066,
+     "Dollar": 0.061
+    },
+    "Government bonds": {
+     "Equity": 0.082,
+     "Government bonds": 1.0,
+     "Credit": -0.017,
+     "Commodities": 0.024,
+     "Dollar": -0.057
+    },
+    "Credit": {
+     "Equity": 0.088,
+     "Government bonds": -0.017,
+     "Credit": 1.0,
+     "Commodities": -0.057,
+     "Dollar": 0.129
+    },
+    "Commodities": {
+     "Equity": 0.066,
+     "Government bonds": 0.024,
+     "Credit": -0.057,
+     "Commodities": 1.0,
+     "Dollar": 0.007
+    },
+    "Dollar": {
+     "Equity": 0.061,
+     "Government bonds": -0.057,
+     "Credit": 0.129,
+     "Commodities": 0.007,
+     "Dollar": 1.0
+    }
+   }
+  },
+  "2000-2002 equity bear market": {
+   "months": 36,
+   "stock_bond_assets": -0.4326536310375576,
+   "stock_bond_trend": 0.38758887094874167,
+   "avg_abs_assets": 0.2961339939801621,
+   "avg_abs_trend": 0.18106499396059111,
+   "stress_ratio_trend": 1.03119122359527,
+   "stress_ratio_assets": 0.760754768622365,
+   "corr_assets": {
+    "Equity": {
+     "Equity": 1.0,
+     "Government bonds": -0.433,
+     "Credit": 0.56,
+     "Commodities": -0.082,
+     "Dollar": -0.071
+    },
+    "Government bonds": {
+     "Equity": -0.433,
+     "Government bonds": 1.0,
+     "Credit": -0.769,
+     "Commodities": 0.166,
+     "Dollar": -0.254
+    },
+    "Credit": {
+     "Equity": 0.56,
+     "Government bonds": -0.769,
+     "Credit": 1.0,
+     "Commodities": -0.179,
+     "Dollar": 0.134
+    },
+    "Commodities": {
+     "Equity": -0.082,
+     "Government bonds": 0.166,
+     "Credit": -0.179,
+     "Commodities": 1.0,
+     "Dollar": -0.313
+    },
+    "Dollar": {
+     "Equity": -0.071,
+     "Government bonds": -0.254,
+     "Credit": 0.134,
+     "Commodities": -0.313,
+     "Dollar": 1.0
+    }
+   },
+   "corr_trend": {
+    "Equity": {
+     "Equity": 1.0,
+     "Government bonds": 0.388,
+     "Credit": 0.175,
+     "Commodities": 0.038,
+     "Dollar": -0.013
+    },
+    "Government bonds": {
+     "Equity": 0.388,
+     "Government bonds": 1.0,
+     "Credit": 0.327,
+     "Commodities": 0.32,
+     "Dollar": 0.034
+    },
+    "Credit": {
+     "Equity": 0.175,
+     "Government bonds": 0.327,
+     "Credit": 1.0,
+     "Commodities": -0.299,
+     "Dollar": 0.079
+    },
+    "Commodities": {
+     "Equity": 0.038,
+     "Government bonds": 0.32,
+     "Credit": -0.299,
+     "Commodities": 1.0,
+     "Dollar": -0.138
+    },
+    "Dollar": {
+     "Equity": -0.013,
+     "Government bonds": 0.034,
+     "Credit": 0.079,
+     "Commodities": -0.138,
+     "Dollar": 1.0
+    }
+   }
+  },
+  "2003-2006 calm": {
+   "months": 48,
+   "stock_bond_assets": -0.028563651155010014,
+   "stock_bond_trend": -0.14906953648459553,
+   "avg_abs_assets": 0.24577825916218182,
+   "avg_abs_trend": 0.1712902600203708,
+   "stress_ratio_trend": 0.8447223269345053,
+   "stress_ratio_assets": 0.6971878183062553,
+   "corr_assets": {
+    "Equity": {
+     "Equity": 1.0,
+     "Government bonds": -0.029,
+     "Credit": 0.262,
+     "Commodities": -0.151,
+     "Dollar": -0.209
+    },
+    "Government bonds": {
+     "Equity": -0.029,
+     "Government bonds": 1.0,
+     "Credit": -0.729,
+     "Commodities": 0.141,
+     "Dollar": -0.341
+    },
+    "Credit": {
+     "Equity": 0.262,
+     "Government bonds": -0.729,
+     "Credit": 1.0,
+     "Commodities": -0.149,
+     "Dollar": 0.105
+    },
+    "Commodities": {
+     "Equity": -0.151,
+     "Government bonds": 0.141,
+     "Credit": -0.149,
+     "Commodities": 1.0,
+     "Dollar": -0.341
+    },
+    "Dollar": {
+     "Equity": -0.209,
+     "Government bonds": -0.341,
+     "Credit": 0.105,
+     "Commodities": -0.341,
+     "Dollar": 1.0
+    }
+   },
+   "corr_trend": {
+    "Equity": {
+     "Equity": 1.0,
+     "Government bonds": -0.149,
+     "Credit": 0.018,
+     "Commodities": 0.097,
+     "Dollar": 0.132
+    },
+    "Government bonds": {
+     "Equity": -0.149,
+     "Government bonds": 1.0,
+     "Credit": -0.419,
+     "Commodities": 0.126,
+     "Dollar": 0.148
+    },
+    "Credit": {
+     "Equity": 0.018,
+     "Government bonds": -0.419,
+     "Credit": 1.0,
+     "Commodities": -0.2,
+     "Dollar": -0.194
+    },
+    "Commodities": {
+     "Equity": 0.097,
+     "Government bonds": 0.126,
+     "Credit": -0.2,
+     "Commodities": 1.0,
+     "Dollar": 0.229
+    },
+    "Dollar": {
+     "Equity": 0.132,
+     "Government bonds": 0.148,
+     "Credit": -0.194,
+     "Commodities": 0.229,
+     "Dollar": 1.0
+    }
+   }
+  },
+  "2007-2009 financial crisis": {
+   "months": 36,
+   "stock_bond_assets": -0.3362062744082392,
+   "stock_bond_trend": -0.034579036884875076,
+   "avg_abs_assets": 0.4201690100251877,
+   "avg_abs_trend": 0.2616082951026054,
+   "stress_ratio_trend": 1.123596488004394,
+   "stress_ratio_assets": 0.8078303773001045,
+   "corr_assets": {
+    "Equity": {
+     "Equity": 1.0,
+     "Government bonds": -0.336,
+     "Credit": 0.713,
+     "Commodities": 0.443,
+     "Dollar": -0.494
+    },
+    "Government bonds": {
+     "Equity": -0.336,
+     "Government bonds": 1.0,
+     "Credit": -0.645,
+     "Commodities": -0.186,
+     "Dollar": -0.221
+    },
+    "Credit": {
+     "Equity": 0.713,
+     "Government bonds": -0.645,
+     "Credit": 1.0,
+     "Commodities": 0.405,
+     "Dollar": -0.239
+    },
+    "Commodities": {
+     "Equity": 0.443,
+     "Government bonds": -0.186,
+     "Credit": 0.405,
+     "Commodities": 1.0,
+     "Dollar": -0.521
+    },
+    "Dollar": {
+     "Equity": -0.494,
+     "Government bonds": -0.221,
+     "Credit": -0.239,
+     "Commodities": -0.521,
+     "Dollar": 1.0
+    }
+   },
+   "corr_trend": {
+    "Equity": {
+     "Equity": 1.0,
+     "Government bonds": -0.035,
+     "Credit": 0.64,
+     "Commodities": -0.204,
+     "Dollar": 0.448
+    },
+    "Government bonds": {
+     "Equity": -0.035,
+     "Government bonds": 1.0,
+     "Credit": 0.297,
+     "Commodities": 0.24,
+     "Dollar": -0.066
+    },
+    "Credit": {
+     "Equity": 0.64,
+     "Government bonds": 0.297,
+     "Credit": 1.0,
+     "Commodities": -0.229,
+     "Dollar": 0.35
+    },
+    "Commodities": {
+     "Equity": -0.204,
+     "Government bonds": 0.24,
+     "Credit": -0.229,
+     "Commodities": 1.0,
+     "Dollar": 0.107
+    },
+    "Dollar": {
+     "Equity": 0.448,
+     "Government bonds": -0.066,
+     "Credit": 0.35,
+     "Commodities": 0.107,
+     "Dollar": 1.0
+    }
+   }
+  },
+  "2010-2019 low rates": {
+   "months": 120,
+   "stock_bond_assets": -0.45391227102396814,
+   "stock_bond_trend": -0.23145537939718494,
+   "avg_abs_assets": 0.2898026816207627,
+   "avg_abs_trend": 0.10262491574950135,
+   "stress_ratio_trend": 0.9075376641566472,
+   "stress_ratio_assets": 0.7985946035157662,
+   "corr_assets": {
+    "Equity": {
+     "Equity": 1.0,
+     "Government bonds": -0.454,
+     "Credit": 0.444,
+     "Commodities": 0.216,
+     "Dollar": -0.247
+    },
+    "Government bonds": {
+     "Equity": -0.454,
+     "Government bonds": 1.0,
+     "Credit": -0.713,
+     "Commodities": -0.074,
+     "Dollar": 0.131
+    },
+    "Credit": {
+     "Equity": 0.444,
+     "Government bonds": -0.713,
+     "Credit": 1.0,
+     "Commodities": 0.102,
+     "Dollar": -0.231
+    },
+    "Commodities": {
+     "Equity": 0.216,
+     "Government bonds": -0.074,
+     "Credit": 0.102,
+     "Commodities": 1.0,
+     "Dollar": -0.286
+    },
+    "Dollar": {
+     "Equity": -0.247,
+     "Government bonds": 0.131,
+     "Credit": -0.231,
+     "Commodities": -0.286,
+     "Dollar": 1.0
+    }
+   },
+   "corr_trend": {
+    "Equity": {
+     "Equity": 1.0,
+     "Government bonds": -0.231,
+     "Credit": 0.1,
+     "Commodities": -0.208,
+     "Dollar": 0.104
+    },
+    "Government bonds": {
+     "Equity": -0.231,
+     "Government bonds": 1.0,
+     "Credit": 0.013,
+     "Commodities": 0.147,
+     "Dollar": 0.117
+    },
+    "Credit": {
+     "Equity": 0.1,
+     "Government bonds": 0.013,
+     "Credit": 1.0,
+     "Commodities": 0.052,
+     "Dollar": -0.003
+    },
+    "Commodities": {
+     "Equity": -0.208,
+     "Government bonds": 0.147,
+     "Credit": 0.052,
+     "Commodities": 1.0,
+     "Dollar": 0.052
+    },
+    "Dollar": {
+     "Equity": 0.104,
+     "Government bonds": 0.117,
+     "Credit": -0.003,
+     "Commodities": 0.052,
+     "Dollar": 1.0
+    }
+   }
+  },
+  "2020 pandemic": {
+   "months": 11,
+   "stock_bond_assets": -0.7087953871455845,
+   "stock_bond_trend": -0.6574939965947952,
+   "avg_abs_assets": 0.6816220591965777,
+   "avg_abs_trend": 0.4582720605574101,
+   "stress_ratio_trend": 0.594047566216262,
+   "stress_ratio_assets": 0.7988495786057066,
+   "corr_assets": {
+    "Equity": {
+     "Equity": 1.0,
+     "Government bonds": -0.709,
+     "Credit": 0.982,
+     "Commodities": 0.691,
+     "Dollar": -0.63
+    },
+    "Government bonds": {
+     "Equity": -0.709,
+     "Government bonds": 1.0,
+     "Credit": -0.77,
+     "Commodities": -0.717,
+     "Dollar": 0.451
+    },
+    "Credit": {
+     "Equity": 0.982,
+     "Government bonds": -0.77,
+     "Credit": 1.0,
+     "Commodities": 0.728,
+     "Dollar": -0.694
+    },
+    "Commodities": {
+     "Equity": 0.691,
+     "Government bonds": -0.717,
+     "Credit": 0.728,
+     "Commodities": 1.0,
+     "Dollar": -0.444
+    },
+    "Dollar": {
+     "Equity": -0.63,
+     "Government bonds": 0.451,
+     "Credit": -0.694,
+     "Commodities": -0.444,
+     "Dollar": 1.0
+    }
+   },
+   "corr_trend": {
+    "Equity": {
+     "Equity": 1.0,
+     "Government bonds": -0.657,
+     "Credit": 0.872,
+     "Commodities": -0.68,
+     "Dollar": -0.247
+    },
+    "Government bonds": {
+     "Equity": -0.657,
+     "Government bonds": 1.0,
+     "Credit": -0.677,
+     "Commodities": 0.348,
+     "Dollar": 0.152
+    },
+    "Credit": {
+     "Equity": 0.872,
+     "Government bonds": -0.677,
+     "Credit": 1.0,
+     "Commodities": -0.518,
+     "Dollar": -0.196
+    },
+    "Commodities": {
+     "Equity": -0.68,
+     "Government bonds": 0.348,
+     "Credit": -0.518,
+     "Commodities": 1.0,
+     "Dollar": 0.235
+    },
+    "Dollar": {
+     "Equity": -0.247,
+     "Government bonds": 0.152,
+     "Credit": -0.196,
+     "Commodities": 0.235,
+     "Dollar": 1.0
+    }
+   }
+  },
+  "2022-2024 inflation's return": {
+   "months": 36,
+   "stock_bond_assets": 0.25571073292780866,
+   "stock_bond_trend": -0.15044655516589334,
+   "avg_abs_assets": 0.3608946332490229,
+   "avg_abs_trend": 0.19058029875977472,
+   "stress_ratio_trend": 1.087077864172676,
+   "stress_ratio_assets": 0.9259299455891752,
+   "corr_assets": {
+    "Equity": {
+     "Equity": 1.0,
+     "Government bonds": 0.256,
+     "Credit": 0.354,
+     "Commodities": -0.081,
+     "Dollar": -0.204
+    },
+    "Government bonds": {
+     "Equity": 0.256,
+     "Government bonds": 1.0,
+     "Credit": -0.611,
+     "Commodities": -0.431,
+     "Dollar": -0.794
+    },
+    "Credit": {
+     "Equity": 0.354,
+     "Government bonds": -0.611,
+     "Credit": 1.0,
+     "Commodities": 0.26,
+     "Dollar": 0.372
+    },
+    "Commodities": {
+     "Equity": -0.081,
+     "Government bonds": -0.431,
+     "Credit": 0.26,
+     "Commodities": 1.0,
+     "Dollar": 0.246
+    },
+    "Dollar": {
+     "Equity": -0.204,
+     "Government bonds": -0.794,
+     "Credit": 0.372,
+     "Commodities": 0.246,
+     "Dollar": 1.0
+    }
+   },
+   "corr_trend": {
+    "Equity": {
+     "Equity": 1.0,
+     "Government bonds": -0.15,
+     "Credit": 0.242,
+     "Commodities": -0.142,
+     "Dollar": 0.239
+    },
+    "Government bonds": {
+     "Equity": -0.15,
+     "Government bonds": 1.0,
+     "Credit": 0.101,
+     "Commodities": 0.131,
+     "Dollar": 0.441
+    },
+    "Credit": {
+     "Equity": 0.242,
+     "Government bonds": 0.101,
+     "Credit": 1.0,
+     "Commodities": -0.015,
+     "Dollar": 0.218
+    },
+    "Commodities": {
+     "Equity": -0.142,
+     "Government bonds": 0.131,
+     "Credit": -0.015,
+     "Commodities": 1.0,
+     "Dollar": 0.226
+    },
+    "Dollar": {
+     "Equity": 0.239,
+     "Government bonds": 0.441,
+     "Credit": 0.218,
+     "Commodities": 0.226,
+     "Dollar": 1.0
+    }
+   }
+  },
+  "2023-2025 the baseline's three years": {
+   "months": 24,
+   "stock_bond_assets": 0.19349534590587827,
+   "stock_bond_trend": -0.4225697112706003,
+   "avg_abs_assets": 0.3955884893356947,
+   "avg_abs_trend": 0.1884308958012948,
+   "stress_ratio_trend": 1.0,
+   "stress_ratio_assets": 1.0,
+   "corr_assets": {
+    "Equity": {
+     "Equity": 1.0,
+     "Government bonds": 0.193,
+     "Credit": 0.317,
+     "Commodities": 0.037,
+     "Dollar": -0.193
+    },
+    "Government bonds": {
+     "Equity": 0.193,
+     "Government bonds": 1.0,
+     "Credit": -0.69,
+     "Commodities": -0.433,
+     "Dollar": -0.825
+    },
+    "Credit": {
+     "Equity": 0.317,
+     "Government bonds": -0.69,
+     "Credit": 1.0,
+     "Commodities": 0.499,
+     "Dollar": 0.428
+    },
+    "Commodities": {
+     "Equity": 0.037,
+     "Government bonds": -0.433,
+     "Credit": 0.499,
+     "Commodities": 1.0,
+     "Dollar": 0.341
+    },
+    "Dollar": {
+     "Equity": -0.193,
+     "Government bonds": -0.825,
+     "Credit": 0.428,
+     "Commodities": 0.341,
+     "Dollar": 1.0
+    }
+   },
+   "corr_trend": {
+    "Equity": {
+     "Equity": 1.0,
+     "Government bonds": -0.423,
+     "Credit": -0.039,
+     "Commodities": 0.044,
+     "Dollar": 0.196
+    },
+    "Government bonds": {
+     "Equity": -0.423,
+     "Government bonds": 1.0,
+     "Credit": 0.38,
+     "Commodities": -0.127,
+     "Dollar": 0.066
+    },
+    "Credit": {
+     "Equity": -0.039,
+     "Government bonds": 0.38,
+     "Credit": 1.0,
+     "Commodities": 0.044,
+     "Dollar": 0.27
+    },
+    "Commodities": {
+     "Equity": 0.044,
+     "Government bonds": -0.127,
+     "Credit": 0.044,
+     "Commodities": 1.0,
+     "Dollar": 0.296
+    },
+    "Dollar": {
+     "Equity": 0.196,
+     "Government bonds": 0.066,
+     "Credit": 0.27,
+     "Commodities": 0.296,
+     "Dollar": 1.0
+    }
+   }
+  }
+ },
+ "class_overlap": {
+  "Equity": {
+   "recent": 0.17532384850781546,
+   "worst": 0.33164411815576517
+  },
+  "Government bonds": {
+   "recent": 0.24874637804068717,
+   "worst": 0.2673035379641072
+  },
+  "Credit": {
+   "recent": 0.18310079482204691,
+   "worst": 0.37920305779592256
+  },
+  "Commodities": {
+   "recent": 0.1279826346060863,
+   "worst": 0.19875979833584545
+  },
+  "Dollar": {
+   "recent": 0.2070008230298382,
+   "worst": 0.28109118833125407
+  }
+ },
+ "stress_pairs": {
+  "1973-1982 high inflation": {
+   "1973-1982 high inflation": 10.0,
+   "1983-1999 disinflation": 9.93,
+   "2000-2002 equity bear market": 9.04,
+   "2003-2006 calm": 11.04,
+   "2007-2009 financial crisis": 8.3,
+   "2010-2019 low rates": 10.27,
+   "2020 pandemic": 15.69,
+   "2022-2024 inflation's return": 8.58
+  },
+  "1983-1999 disinflation": {
+   "1973-1982 high inflation": 10.07,
+   "1983-1999 disinflation": 10.0,
+   "2000-2002 equity bear market": 9.1,
+   "2003-2006 calm": 11.11,
+   "2007-2009 financial crisis": 8.35,
+   "2010-2019 low rates": 10.34,
+   "2020 pandemic": 15.8,
+   "2022-2024 inflation's return": 8.63
+  },
+  "2000-2002 equity bear market": {
+   "1973-1982 high inflation": 11.06,
+   "1983-1999 disinflation": 10.99,
+   "2000-2002 equity bear market": 10.0,
+   "2003-2006 calm": 12.21,
+   "2007-2009 financial crisis": 9.18,
+   "2010-2019 low rates": 11.36,
+   "2020 pandemic": 17.36,
+   "2022-2024 inflation's return": 9.49
+  },
+  "2003-2006 calm": {
+   "1973-1982 high inflation": 9.06,
+   "1983-1999 disinflation": 9.0,
+   "2000-2002 equity bear market": 8.19,
+   "2003-2006 calm": 10.0,
+   "2007-2009 financial crisis": 7.52,
+   "2010-2019 low rates": 9.31,
+   "2020 pandemic": 14.22,
+   "2022-2024 inflation's return": 7.77
+  },
+  "2007-2009 financial crisis": {
+   "1973-1982 high inflation": 12.05,
+   "1983-1999 disinflation": 11.97,
+   "2000-2002 equity bear market": 10.9,
+   "2003-2006 calm": 13.3,
+   "2007-2009 financial crisis": 10.0,
+   "2010-2019 low rates": 12.38,
+   "2020 pandemic": 18.91,
+   "2022-2024 inflation's return": 10.34
+  },
+  "2010-2019 low rates": {
+   "1973-1982 high inflation": 9.74,
+   "1983-1999 disinflation": 9.67,
+   "2000-2002 equity bear market": 8.8,
+   "2003-2006 calm": 10.74,
+   "2007-2009 financial crisis": 8.08,
+   "2010-2019 low rates": 10.0,
+   "2020 pandemic": 15.28,
+   "2022-2024 inflation's return": 8.35
+  },
+  "2020 pandemic": {
+   "1973-1982 high inflation": 6.37,
+   "1983-1999 disinflation": 6.33,
+   "2000-2002 equity bear market": 5.76,
+   "2003-2006 calm": 7.03,
+   "2007-2009 financial crisis": 5.29,
+   "2010-2019 low rates": 6.55,
+   "2020 pandemic": 10.0,
+   "2022-2024 inflation's return": 5.46
+  },
+  "2022-2024 inflation's return": {
+   "1973-1982 high inflation": 11.66,
+   "1983-1999 disinflation": 11.58,
+   "2000-2002 equity bear market": 10.54,
+   "2003-2006 calm": 12.87,
+   "2007-2009 financial crisis": 9.67,
+   "2010-2019 low rates": 11.98,
+   "2020 pandemic": 18.3,
+   "2022-2024 inflation's return": 10.0
+  }
+ },
+ "themes": {
+  "SMH": {
+   "parent": "Chips",
+   "years": 26.4,
+   "own_recent": 0.5021075372960931,
+   "parent_worst": 0.6721175384955494,
+   "track": 0.9233293610535345
+  },
+  "SOXX": {
+   "parent": "Chips",
+   "years": 25.3,
+   "own_recent": 0.5030264864821502,
+   "parent_worst": 0.6721175384955494,
+   "track": 0.9080272024029844
+  },
+  "IBB": {
+   "parent": "Drugs",
+   "years": 25.8,
+   "own_recent": 0.34244386417796274,
+   "parent_worst": 0.3923537335494884,
+   "track": 0.7977130056748748
+  },
+  "XBI": {
+   "parent": "Drugs",
+   "years": 20.8,
+   "own_recent": 0.41862034241450585,
+   "parent_worst": 0.3923537335494884,
+   "track": 0.7426274612033569
+  },
+  "ARKG": {
+   "parent": "LabEq",
+   "years": 12.1,
+   "own_recent": 0.35310396382231435,
+   "parent_worst": 0.7767398620278062,
+   "track": 0.7329340758671109
+  },
+  "ICLN": {
+   "parent": "ElcEq",
+   "years": 18.4,
+   "own_recent": 0.23422954252496697,
+   "parent_worst": 0.6873750025403832,
+   "track": 0.6998632469659977
+  },
+  "TAN": {
+   "parent": "ElcEq",
+   "years": 18.6,
+   "own_recent": 0.41698629468398235,
+   "parent_worst": 0.6873750025403832,
+   "track": 0.6468001763850931
+  },
+  "FAN": {
+   "parent": "Chems",
+   "years": 18.4,
+   "own_recent": 0.3061222883076362,
+   "parent_worst": 0.6566677480686607,
+   "track": 0.698082195840055
+  },
+  "LIT": {
+   "parent": "Mines",
+   "years": 16.3,
+   "own_recent": 0.3146309600139908,
+   "parent_worst": 0.6569420377590531,
+   "track": 0.6718751790621652
+  },
+  "URA": {
+   "parent": "Mines",
+   "years": 16.0,
+   "own_recent": 0.3220376727860364,
+   "parent_worst": 0.6569420377590531,
+   "track": 0.6231002852557025
+  },
+  "NLR": {
+   "parent": "Steel",
+   "years": 19.2,
+   "own_recent": 0.3295649894990895,
+   "parent_worst": 0.7104909991390314,
+   "track": 0.621873967759758
+  },
+  "GDX": {
+   "parent": "Gold",
+   "years": 20.5,
+   "own_recent": 0.20284015874544123,
+   "parent_worst": 0.2218511693104547,
+   "track": 0.9178499894038866
+  },
+  "XME": {
+   "parent": "Steel",
+   "years": 20.4,
+   "own_recent": 0.416840319856346,
+   "parent_worst": 0.7104909991390314,
+   "track": 0.8824130236082955
+  },
+  "OIH": {
+   "parent": "Oil",
+   "years": 25.8,
+   "own_recent": 0.5254877707915682,
+   "parent_worst": 0.6612835851279519,
+   "track": 0.8847623703926671
+  },
+  "ITB": {
+   "parent": "Cnstr",
+   "years": 20.5,
+   "own_recent": 0.3605024974665843,
+   "parent_worst": 0.6395642136331008,
+   "track": 0.8723132623276314
+  },
+  "ITA": {
+   "parent": "Aero",
+   "years": 20.5,
+   "own_recent": 0.40364928540738004,
+   "parent_worst": 0.7432734971669612,
+   "track": 0.9538799838294039
+  },
+  "PAVE": {
+   "parent": "BldMt",
+   "years": 9.7,
+   "own_recent": 0.5592104849068744,
+   "parent_worst": 0.6994537889670771,
+   "track": 0.9225415932671382
+  },
+  "PHO": {
+   "parent": "BldMt",
+   "years": 20.9,
+   "own_recent": 0.4489579649626976,
+   "parent_worst": 0.6994537889670771,
+   "track": 0.87090792887386
+  },
+  "WOOD": {
+   "parent": "Chems",
+   "years": 18.4,
+   "own_recent": 0.33450216458874704,
+   "parent_worst": 0.6566677480686607,
+   "track": 0.8263262566087202
+  },
+  "KWEB": {
+   "parent": "Toys",
+   "years": 13.2,
+   "own_recent": 0.16105095287265245,
+   "parent_worst": 0.668802052691855,
+   "track": 0.36174047748194527
+  },
+  "HACK": {
+   "parent": "Softw",
+   "years": 12.0,
+   "own_recent": 0.3367231659444539,
+   "parent_worst": 0.7685890172839746,
+   "track": 0.7201585227131074
+  },
+  "CIBR": {
+   "parent": "Softw",
+   "years": 11.3,
+   "own_recent": 0.2600556692764143,
+   "parent_worst": 0.7685890172839746,
+   "track": 0.7311574834928544
+  },
+  "SKYY": {
+   "parent": "Softw",
+   "years": 15.3,
+   "own_recent": 0.44899801926128274,
+   "parent_worst": 0.7685890172839746,
+   "track": 0.8811680807620035
+  },
+  "CLOU": {
+   "parent": "Softw",
+   "years": 7.6,
+   "own_recent": 0.34236788069335794,
+   "parent_worst": 0.7685890172839746,
+   "track": 0.7910201090256126
+  },
+  "FINX": {
+   "parent": "BusSv",
+   "years": 10.2,
+   "own_recent": 0.5166968523480651,
+   "parent_worst": 0.7804883926192973,
+   "track": 0.8770617793252743
+  },
+  "ARKK": {
+   "parent": "Softw",
+   "years": 12.1,
+   "own_recent": 0.43542221419246574,
+   "parent_worst": 0.7685890172839746,
+   "track": 0.7497300309575132
+  },
+  "BOTZ": {
+   "parent": "Softw",
+   "years": 10.2,
+   "own_recent": 0.5042848375303561,
+   "parent_worst": 0.7685890172839746,
+   "track": 0.7820456612783279
+  },
+  "ROBO": {
+   "parent": "ElcEq",
+   "years": 13.1,
+   "own_recent": 0.5828593148021062,
+   "parent_worst": 0.6873750025403832,
+   "track": 0.8430368928071894
+  },
+  "AIQ": {
+   "parent": "Softw",
+   "years": 8.5,
+   "own_recent": 0.46358866590414055,
+   "parent_worst": 0.7685890172839746,
+   "track": 0.8805400226022648
+  },
+  "DRIV": {
+   "parent": "ElcEq",
+   "years": 8.6,
+   "own_recent": 0.5003696105024887,
+   "parent_worst": 0.6873750025403832,
+   "track": 0.8674426406654808
+  },
+  "BLOK": {
+   "parent": "ElcEq",
+   "years": 8.8,
+   "own_recent": 0.4958281889905773,
+   "parent_worst": 0.6873750025403832,
+   "track": 0.739743044215551
+  },
+  "ESPO": {
+   "parent": "Softw",
+   "years": 8.1,
+   "own_recent": 0.17633839468555684,
+   "parent_worst": 0.7685890172839746,
+   "track": 0.6787700066705373
+  },
+  "UFO": {
+   "parent": "ElcEq",
+   "years": 7.6,
+   "own_recent": 0.40685458843102273,
+   "parent_worst": 0.6873750025403832,
+   "track": 0.6805567713693834
+  },
+  "MJ": {
+   "parent": "BusSv",
+   "years": 10.9,
+   "own_recent": 0.10212121357305591,
+   "parent_worst": 0.7804883926192973,
+   "track": 0.444076490241166
+  }
+ }
+}

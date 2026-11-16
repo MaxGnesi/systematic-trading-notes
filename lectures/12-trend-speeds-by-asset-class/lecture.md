@@ -6,6 +6,18 @@
 
 Lecture 11 chose the markets without looking at any strategy's results. This lecture takes the next step of trend at portfolio scale (the workflow of Lecture 11, §1): it chooses the **speeds** of the trend rules that will trade them. It is the one step that may look at how a strategy performed, so it is also where a portfolio is most easily fitted to the accidents of the past. The question is how to choose speeds that work across the board, on all asset classes and their markets, and how much the choice is worth once it is judged on years it never saw. The plan was fixed before any result was computed, and every change made after seeing results is dated and labelled ([results/hypotheses.md](results/hypotheses.md)).
 
+**The build, end to end.** Lectures 11 to 13 are one process, run once a year on the past three years only. Each step uses the steps before it and nothing after it; profits judge the result at the end and never set a choice or a weight.
+
+| Step | Decision | What it uses | Result | Lecture |
+|---|---|---|---|---|
+| 1. Choose the markets | Which markets enter | Liquidity, history and overlap with the others, sign ignored; no strategy profits | 16 to 21 of 116 ETFs | 11 |
+| **2. Choose the speeds (this lecture)** | Which trend streams run | Each asset class's in-sample results, read as a region of speeds, not a point | 16 to 20 of 36 streams per market | 12 |
+| 3. Weigh the speeds | How much of each stream in a market | Risk only: each stream at equal risk; their correlations come from construction | One blended trend per market | 13 §2 |
+| 4. Weigh the markets and the classes | How much of each market, then of each class | Risk only: equal standalone risk; no correlations across classes | Markets equal within a class, classes equal | 13 §3 |
+| 5. Scale the total | How much leverage overall | The portfolio's volatility over three years, to 10% a year | The baseline trend portfolio | 13 §4 |
+
+<sub><b>How to read the table.</b> One row per decision, in the order they are taken; the rows in bold are this lecture's. "What it uses": the only information the step may use. Steps 1 and 2 choose; steps 3 to 5 weigh, by risk alone.</sub>
+
 ## 1. Speeds that work across the board
 
 The lecture's result fits in one chart.
@@ -171,6 +183,8 @@ Three results, all expected before the run:
 Two frameworks were checked in the same way. Sizing positions by volatility over 36 days, each stream's own speed or six months gave the rule 0.47, 0.50 and 0.49: the six months used here is the simplest, and a short window was a real hazard in quiet markets (in a calm spell of early 2026 the 36-day version held the high-yield fund HYG at three to five times its value, and lost about 11% in a year when HYG fell less than 3%). And credit is the class where the rule earned least (0.02): a credit fund's rise is mostly coupon income, which a long position collects and a trend rule gives back when it is short (HYG's price fell 18% from 2013 to 2026 while it paid 5.4% a year).
 
 What these numbers leave for later lectures: how much each class and market should weigh (the allocation lectures), whether larger markets should carry more risk, and how the trend portfolio sits next to simply holding the markets. The second kind of overfitting of §2, a future unlike the past, remains, and nothing here removes it: the rule is reviewed every year, which follows a change after it shows but does not foresee it.
+
+**Next in the build.** The markets (Lecture 11) and the speeds (this lecture) are chosen; Lecture 13 weighs them, by risk alone: the speeds inside each market, the markets inside each class, the classes, and the total.
 
 ## 8. Summary
 
