@@ -37,9 +37,21 @@ def data():
     return Y.loc["1990":], C.loc["1990":]
 
 
-def returns(Y, C):
-    y0 = Y.shift(1); D = (1 - (1 + y0) ** -10) / y0
-    return y0 / 12 - D * (Y - y0) - C.shift(1) / 12
+def month_end():
+    """Month-end 10-year yields: FRED DGS10 for the US, each central bank's daily series for the others (data/raw/l29_bonds/daily, SOURCES.md);
+    New Zealand's central bank blocks automated downloads, so New Zealand has no month-end series (left out of the returns)."""
+    E = {"US": L.fred_local("DGS10")}
+    for c in ("DE", "GB", "CA", "AU", "NO", "SE", "CH", "JP"):
+        E[c] = pd.read_csv(DIR / "daily" / f"{c}.csv", index_col=0, parse_dates=True)["yield"]
+    E = pd.DataFrame({c: x.resample("ME").last() for c, x in E.items()}) / 100; E.index = E.index.to_period("M")
+    return E
+
+
+def returns(Y, C, E=None):
+    """Return over local cash from month-end yields E where given (rule); from the OECD monthly averages Y otherwise (the check)."""
+    X = (E if E is not None else Y).reindex(columns=Y.columns)
+    y0 = X.shift(1); D = (1 - (1 + y0) ** -10) / y0
+    return y0 / 12 - D * (X - y0) - C.shift(1) / 12
 
 
 def zrow(X):
@@ -86,11 +98,12 @@ def aqr():
 
 
 if __name__ == "__main__":
-    Y, C = data(); R = returns(Y, C)
+    Y, C = data(); E = month_end().reindex(Y.index); R = returns(Y, C, E)
     print("first month with yield and cash:", {c: str(pd.concat([Y[c], C[c]], axis=1).dropna().index[0]) for c in Y})
     # check 1: US synthetic vs VFITX (monthly, over US cash)
     vf = L.FT.bond_funds()["VFITX"].resample("ME").last().pct_change(); vf.index = vf.index.to_period("M")
     us = pd.concat([R["US"], vf - C["US"].shift(1) / 12], axis=1).loc["1999":"2022"].dropna()
+    print("countries with month-end returns:", [c for c in R if R[c].loc["2006":].notna().any()])
     print(f"check 1: synthetic US 10-year vs VFITX, monthly corr {us.corr().iat[0, 1]:.2f}; return a year {us.iloc[:, 0].mean() * 12:+.2%} vs {us.iloc[:, 1].mean() * 12:+.2%}")
     A = aqr(); S, E = "2006-01", "2022-10"
     mom = (np.log1p(R).rolling(11).sum()).shift(1)                                     # months t-12..t-2
