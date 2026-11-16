@@ -158,7 +158,7 @@ One more observation links value to carry. In currencies and commodities the two
 
 ## 6. Results
 
-**Key message.** Carry passes every test of luck we set, but less comfortably once the search that chose it is counted: about 90% likely to be a real edge, not the 100% that a single comparison suggests. It adds to trend on every measure in 2006-2022, at a price, sudden losses, and it did not help in 2013-2026.
+**Key message.** Carry passes every test of luck we set, but less comfortably once the search that chose it is counted: about 90% likely to be more than luck, not the near-certainty that a single comparison suggests. It adds to trend on every measure in 2006-2022, at a price, sudden losses, and it did not help in 2013-2026.
 
 ### 6.1 Against luck
 
@@ -185,7 +185,7 @@ The comparison above judges one strategy. But the rule was chosen from many vers
 | The rule, on the same months | 0.53 |
 | **Deflated Sharpe ratio** | **0.90** (0.83 if all 21 counted as independent) |
 
-<sub><b>How to read the table.</b> The tries are listed in [results/tries.json](results/tries.json) with their Sharpe ratios, on the months all of them cover (2008-2022). Effective tries: $`\bar\rho + (1-\bar\rho)M`$ for $`M`$ tries with average correlation $`\bar\rho`$. The deflated Sharpe ratio (Bailey and López de Prado 2014) is the probability that the rule's true Sharpe ratio is above zero once the number of tries, their spread, the sample length and the fat tails of the returns are taken into account. Our calculation.</sub>
+<sub><b>How to read the table.</b> The tries are listed in [results/tries.json](results/tries.json) with their Sharpe ratios, on the months all of them cover (2008-2022). Effective tries: $`\bar\rho + (1-\bar\rho)M`$ for $`M`$ tries with average correlation $`\bar\rho`$. The deflated Sharpe ratio (Bailey and López de Prado 2014) is the probability that the rule's true Sharpe ratio is above what the best of that many tries of noise would show, taking into account the spread of the tries, the sample length and the fat tails of the returns. Our calculation.</sub>
 
 Two things lower the number. The tries: 6.8 independent attempts make a Sharpe ratio of 0.20 what luck alone would deliver. And the tails: carry's monthly returns have a kurtosis of 8.6, far above the normal's 3, so a Sharpe ratio overstates how reliable its returns are. The result, about 90%, is good evidence, not proof; the usual bar is 95%. The best of the 21 tries earned 0.61; reporting it as "the" result would have overstated carry by a tenth of a unit.
 
@@ -222,4 +222,4 @@ Carry beat trend in four of the six regimes where trend was weak, and lost narro
 
 ### 6.5 The weak spot: 2013-2026
 
-On the ETF years the picture changes. Over 2013-2026 carry earned a Sharpe ratio of 0.23, with no commodity group after 2022, and trend plus carry (0.45) did slightly worse than trend alone (0.48), with a deeper worst loss (−28.1% against −20.1%). Two readings, neither tested here: the commodity group, carry's second-best diversifier, drops out after 2022; and 2022's rate shock hit bond and currency carry together. A strategy that helps in one period and not in the next is what Lecture 1 calls the normal case: an edge of this size can disappear for a decade by chance alone.
+On the ETF years the picture changes. Over 2013-2026 carry earned a Sharpe ratio of 0.23, with no commodity group after 2022, and trend plus carry (0.45) did slightly worse than trend alone (0.48), with a deeper worst loss (−28.1% against −20.1%). Two possible readings, neither tested here: the commodity group drops out after 2022, so carry rests on three groups instead of four; and the rate shock of 2022 may have hit several groups at once. A strategy that helps in one period and not in the next is what Lecture 1 calls the normal case: an edge of this size can disappear for a decade by chance alone.
