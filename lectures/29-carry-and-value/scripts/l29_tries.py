@@ -5,11 +5,12 @@ returns: each Sharpe ratio, their average pairwise correlation, the effective nu
     SR0 = sqrt(V[SR]) * ((1 - g) Phi^-1(1 - 1/N) + g Phi^-1(1 - 1/(N e))),  g = 0.5772 (Euler-Mascheroni),
     DSR = Phi((SR - SR0) sqrt(T - 1) / sqrt(1 - skew SR + (kurt - 1) / 4 SR^2)),  SR per month.
 Output: results/tries.json."""
-import json, sys
+import json, os, sys
 from pathlib import Path
 import numpy as np, pandas as pd
 from scipy.stats import norm
 HERE = Path(__file__).resolve().parent; sys.path.insert(0, str(HERE)); import l29_combined as M, l29_grids as Gr, l29_bonds_g10 as G
+RESD = Path(os.environ.get("L29_RESULTS", HERE.parent / "results")); RESD.mkdir(parents=True, exist_ok=True)
 A, B = "2006-01", "2022-10"
 
 
@@ -48,4 +49,4 @@ if __name__ == "__main__":
                best=str(D.columns[np.argmax(srm)]), best_sharpe=float(srm.max() * np.sqrt(12)))
     print(json.dumps({k: v for k, v in out.items() if k != "sharpe"}, indent=1))
     print("Sharpe ratios:", {k: round(v, 2) for k, v in sorted(out["sharpe"].items(), key=lambda x: -x[1])})
-    (HERE.parent / "results" / "tries.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+    (RESD / "tries.json").write_text(json.dumps(out, indent=1), encoding="utf-8")

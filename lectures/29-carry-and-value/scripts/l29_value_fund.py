@@ -9,10 +9,11 @@ Commodities: half inventories against the same calendar month's average of the p
 later; USDA US stocks-to-use, the marketing year's value used from the month after it ends), low = long; half the real price (World Bank / US CPI)
 against its own 20-year history; gold and cocoa the real price only.
 Caveats: PPP and USDA data are revised history (no point-in-time vintages). Output: results/value_fund.json, printed table."""
-import json, sys
+import json, os, sys
 from pathlib import Path
 import numpy as np, pandas as pd
 HERE = Path(__file__).resolve().parent; sys.path.insert(0, str(HERE)); import l29_combined as M, l29_bonds_g10 as G, l29_equity_countries as Q, l29_grids as Gr, l29 as L
+RESD = Path(os.environ.get("L29_RESULTS", HERE.parent / "results")); RESD.mkdir(parents=True, exist_ok=True)
 FD = L.RAW / "l29_fundamentals"; A, B = "2006-01", "2022-10"
 PPP_ISO = {"EUR": "DEU", "JPY": "JPN", "GBP": "GBR", "CHF": "CHE", "CAD": "CAN", "AUD": "AUS", "NZD": "NZL", "NOK": "NOR", "SEK": "SWE"}
 
@@ -98,4 +99,4 @@ if __name__ == "__main__":
         out[name] = row
         print(name, {g: round(row[g], 2) for g in S}, "|", {pn: {k: round(v, 2) for k, v in row[pn].items()} for pn in ("2006-2022", "2013-2026")})
     print("coverage, first month with a signal:", {g: str(F[g].dropna(how="all").index[0]) for g in F})
-    (HERE.parent / "results" / "value_fund.json").write_text(json.dumps(out, indent=1, default=float), encoding="utf-8")
+    (RESD / "value_fund.json").write_text(json.dumps(out, indent=1, default=float), encoding="utf-8")

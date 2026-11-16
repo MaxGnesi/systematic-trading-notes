@@ -1,13 +1,14 @@
 """Lecture 29, §1 key chart: the value of 100 invested, monthly, futures period 2006 to October 2022: trend (Lecture 27's baseline across all its
 markets, with both Treasury funds), carry (the four groups together, the rule), and the two at equal risk, scaled on their past to trend's risk.
 Excess returns over cash, after costs. Output: figures/29_key.png, results/key.json."""
-import json, sys
+import json, os, sys
 from pathlib import Path
 import numpy as np, pandas as pd
 import plotly.graph_objects as go
 HERE = Path(__file__).resolve().parent; sys.path.insert(0, str(HERE)); import l29_combined as M, l29_grids as Gr, l29_bonds_g10 as G, l29 as L
+RESD = Path(os.environ.get("L29_RESULTS", HERE.parent / "results")); RESD.mkdir(parents=True, exist_ok=True)
 from trading_models.plotting import INK, MUTED, SERIES, apply_theme, save_figure
-FIG, RES = HERE.parent / "figures", HERE.parent / "results"; FIG.mkdir(exist_ok=True)
+FIG, RES = HERE.parent / "figures", RESD; FIG.mkdir(exist_ok=True)
 A, B = "2006-01", "2022-10"
 
 if __name__ == "__main__":
@@ -30,6 +31,6 @@ if __name__ == "__main__":
     fig.update_layout(title="Carry next to trend<br><sup>capstone futures period, monthly, after costs; trend = the whole baseline portfolio; carry = currencies, commodities, "
                             "government bonds and equity indices of ten to fifteen countries</sup>",
                       height=560, width=1250, margin=dict(t=90, l=80, r=210, b=110), legend=dict(orientation="h", y=-0.12, x=0))
-    save_figure(fig, "29_key", FIG)
+    save_figure(fig, os.environ.get("L29_PREFIX", "") + "29_key", FIG)
     out["corr_trend_carry"] = float(carry.loc[idx].corr(trend.loc[idx])); out["start"] = str(idx[0]); out["end"] = str(idx[-1])
     (RES / "key.json").write_text(json.dumps(out, indent=1), encoding="utf-8"); print(json.dumps(out, indent=1))

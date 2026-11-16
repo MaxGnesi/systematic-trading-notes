@@ -3,10 +3,11 @@ carry only (markets trend does not trade, or months trend holds nothing there), 
 Trend's markets map onto carry's: euro and yen futures -> EUR, JPY; the 7 commodity futures -> the same; the S&P 500 future -> US equity;
 the US Treasury funds -> the US 10-year bond. Trend's position sign: Lecture 27's held speeds averaged, at the end of the month before.
 Output: results/split.json."""
-import json, sys
+import json, os, sys
 from pathlib import Path
 import numpy as np, pandas as pd
 HERE = Path(__file__).resolve().parent; sys.path.insert(0, str(HERE)); import l29_combined as M, l29_grids as Gr, l29_bonds_g10 as G, l29_split as S0, l29 as L
+RESD = Path(os.environ.get("L29_RESULTS", HERE.parent / "results")); RESD.mkdir(parents=True, exist_ok=True)
 A, B = "2006-01", "2022-10"
 MAP = {("fx", "EUR"): "cme-euro", ("fx", "JPY"): "cme-jpy", ("equity", "US"): "cme-es", ("bonds", "US"): "VFITX",
        **{("commod", t): t for t in L.COMMOD}}
@@ -50,4 +51,4 @@ if __name__ == "__main__":
     print(f"check: rebuilt vs rule, corr {tot.corr(ref):.4f}, return a year {tot.mean() * 12:+.2%} vs {ref.mean() * 12:+.2%}")
     out = {k: dict(ret=float(D[k].mean() * 12), share=float(D[k].mean() / tot.mean()), sharpe=float(G.sharpe_m(D[k]))) for k in D}
     for k, v in out.items(): print(f"  {k:10s} return a year {v['ret']:+.2%}  share of carry's return {v['share']:+.0%}  Sharpe {v['sharpe']:+.2f}")
-    (HERE.parent / "results" / "split.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+    (RESD / "split.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
