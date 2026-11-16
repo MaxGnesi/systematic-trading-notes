@@ -170,7 +170,7 @@ The order follows cost and certainty. Execution improves what is already known t
 ### 9.3 Reading
 
 - Lecture 1 §5.3-5.4 (overfitting; many small edges), Lecture 25 (markets and capacity), Lectures 26-27 (trend), Lecture 28 (regimes), Lecture 29 (carry and value), Part IV (execution).
-- Grinold, R. C. (1989). The fundamental law of active management. *Journal of Portfolio Management* 15(3), 30-37.
+- Grinold, R. C. (1989). The fundamental law of active management. *Journal of Portfolio Management* 15(3).
 - Koijen, R. S. J., Moskowitz, T. J., Pedersen, L. H. and Vrugt, E. B. (2018). Carry. *Journal of Financial Economics* 127(2), 197-225.
 - Asness, C. S., Moskowitz, T. J. and Pedersen, L. H. (2013). Value and momentum everywhere. *Journal of Finance* 68(3), 929-985.
 - Bailey, D. H. and López de Prado, M. (2014). The deflated Sharpe ratio: correcting for selection bias, backtest overfitting, and non-normality. *Journal of Portfolio Management* 40(5), 94-107.
