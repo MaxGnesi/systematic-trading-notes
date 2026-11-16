@@ -18,7 +18,7 @@ Lecture 11 chose the markets without looking at any strategy's results. This lec
 
 <sub><b>How to read the table.</b> One row per decision, in the order they are taken; the rows in bold are this lecture's. "What it uses": the only information the step may use. Steps 1 and 2 choose; steps 3 to 5 weigh, by risk alone.</sub>
 
-**Two directions, one portfolio.** The risk budget is planned **top-down**: the total gets 10% a year; it is split equally across the asset classes; each class's share is split equally across its markets; each market's share across its speeds. The portfolio is computed **bottom-up**, because each level can be sized only once the level below exists: diversification makes a blend calmer than its parts, so its risk must be measured before it can be scaled. The held speeds are blended into one stream per market; each market stream is scaled to equal risk and combined into one stream per class; each class stream is scaled to equal risk and combined; the total is scaled to 10%. The groups can be the asset classes, known in advance and stable, or clusters of markets found each year in the data; Lecture 13 §3.2 compares the two (no difference beyond the noise on our sample, and the clusters changed from year to year), so the baseline uses the classes and treats clusters as a check.
+**Two directions, one portfolio.** The risk budget is planned **top-down**: the total gets 10% a year; it is split equally across the asset classes; each class's share is split equally across its markets; each market's share across its speeds. The portfolio is computed **bottom-up**, because each level can be sized only once the level below exists: diversification makes a blend calmer than its parts, so its risk must be measured before it can be scaled. The held speeds are blended into one stream per market; each market stream is scaled to equal risk and combined into one stream per class; each class stream is scaled to equal risk and combined; the total is scaled to 10%. The groups can be the asset classes, known in advance and stable, or clusters of markets found each year in the data; Lecture 13 §4.2 compares the two (no difference beyond the noise on our sample, and the clusters changed from year to year), so the baseline uses the classes and treats clusters as a check.
 
 ![The build: one rule, equal risk, at every level](../13-the-baseline-trend-portfolio/figures/27_build.png)
 <sub><b>How to read the figure.</b> A stylised diagram, not data. From top to bottom: the total, the five groups (asset classes in the baseline), the markets of one group, the speeds of one market; every box at a level gets the same risk. Left arrow: the risk budget is shared out from the total downwards. Right arrow: the portfolio is computed from the speeds upwards.</sub>
@@ -78,16 +78,7 @@ These are not new ideas. The classic studies of trend following apply one rule t
 
 What makes two speeds different is mainly their ratio, not their divisibility: 59 and 61 are both prime and almost the same rule. So the grid is spaced by ratio first and made of primes second.
 
-**Why space by ratio: an example.** The correlation between two speeds depends on their ratio, not their difference (Lecture 13 §1), so evenly spaced should mean evenly spaced in ratio. With six speeds between 40 and 400 days, each held with equal weight:
-
-| Six speeds, 40 to 400 days | Risk in the fast / middle / slow third, equal weight |
-|---|---|
-| Same ratio: 40, 63, 100, 159, 252, 400 | 32 / 35 / 32 |
-| Same day difference: 40, 112, 184, 256, 328, 400 | 13 / 34 / 52 |
-
-<sub><b>How to read the table.</b> The range is split into three thirds by ratio: fast 40-86 days, middle 86-186, slow 186-400. Cells: the share of the blend's risk in each third, in %; 33 each would be fair. Correlations from the speed ratio as measured in Lecture 13 §1; illustrative, not estimates ([scripts](../13-the-baseline-trend-portfolio/scripts/l27_edge_cases.py), [results](../13-the-baseline-trend-portfolio/results/spacing.json)).</sub>
-
-Spaced by days, 150 and 200 days are nearly the same speed (a ratio of 1.33) while 40 and 100 are very different (2.5), so the slow third ends up with half the risk. On a same-ratio grid even the simplest method is fair, which is why this grid steps each speed up by about 1.4 times. Lecture 13 §2.4 shows what each weighting method does when the held speeds end up unevenly spaced anyway.
+Spacing by days instead would crowd the slow end: 150 and 200 days are nearly the same speed (a ratio of 1.33), while 40 and 100 are very different (2.5). Lecture 13 §3.2 shows what that does to the weights. 
 
 **Rules.** Three trend rules from Lecture 6, each taking a position of +1 (long) or −1 (short) at the close of each day, computed with `trading_models`:
 
@@ -255,7 +246,7 @@ Trend following is often sold as crisis insurance. If some speeds outside the he
 - **Quick crashes** (2018 Q4, Feb-Mar 2020, Feb-Apr 2025: one to three months): fast speeds of 11 to 31 days earned up to 5%; the held speeds earned little or lost, the slowest the most. A trend measured over months cannot turn within a five-week crash; it enters the crash long.
 - **Long bear markets** (2007-09 and 2022: a year or more): the held speeds earned most (89 to 251 days: +7% to +13%), the fast speeds about half as much or less. 2000-02 shows the same shape on the futures; on the ETFs only 42 funds, mostly equity, existed and every speed earned about 1%.
 
-A fast sleeve would have paid in the quick crashes and cost in the long ones, and in the years between, where §5 showed the fast speeds lose to costs. Crisis protection here is a matter of which kind of crisis comes, which is not known in advance. How today's whole portfolio would fare in these falls is in Lecture 13 §5.
+A fast sleeve would have paid in the quick crashes and cost in the long ones, and in the years between, where §5 showed the fast speeds lose to costs. Crisis protection here is a matter of which kind of crisis comes, which is not known in advance. How today's whole portfolio would fare in these falls is in Lecture 13 §6.
 
 **Static, on our data.** Neither recent performance nor the market's state nor the kind of crisis gave a dynamic choice of speeds that beat the static rule out of sample. The speeds that work are a region that moves slowly, which the yearly review follows.
 
