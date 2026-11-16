@@ -138,7 +138,7 @@ The base layer stays as it is: trend and carry on the rules of Lectures 27 and 2
 
 | Order | What to add | Why it should help | What it needs | Course |
 |---|---|---|---|---|
-| 1 | **Cheaper execution of what is already held** | Carry's edge falls from 0.84 to 0.36 between 5 and 20 bp (§6): costs are the cheapest gain | Rebalancing thresholds, slower carry signals, Part IV's execution | Lectures 19-24 |
+| 1 | **Cheaper execution of what is already held** | Trend + carry falls from 0.84 to 0.36 between 5 and 20 bp in 2006-2022 (§6): costs are the cheapest gain | Rebalancing thresholds, slower carry signals, Part IV's execution | Lectures 19-24 |
 | 2 | **More markets for the same styles** | Breadth: by Grinold's law, four times the independent markets doubles the information ratio of a style | More free data: emerging-market currencies, more commodity futures and bond countries, equity sectors | Lectures 25, 29 (exercises) |
 | 3 | **New strategies that earn for different reasons** | A second business next to the first (Lecture 29 §2), ideally market-neutral and uncorrelated with trend and carry | A mechanism stated in advance; the same tests | Lecture 28 (economic trend, the Fed day), Lecture 29 (value, equity factors) |
 | 4 | **Finer granularity** | Single names and intraday horizons hold many more independent bets | Tick data, infrastructure, capacity limits | Part IV |
