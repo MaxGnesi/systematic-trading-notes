@@ -119,7 +119,7 @@ No group alone is worth much: their Sharpe ratios of 0.18 to 0.46 come with draw
 
 ## 5. Value
 
-**Key message.** Value buys what is cheap against its own past and sells what is dear, betting that prices return towards a long-run level. In this period it did not earn, on our data or on AQR's. The lessons are about measurement (value must be measured on a price without income, against a trend rather than a flat average) and about patience: a slow strategy needs far more years than we have to show whether it works.
+**Key message.** Value buys what is cheap and sells what is dear, betting that prices return towards what the asset is worth. Measured by price against its own past, the simple proxy of the literature, it did not earn in this period, on our data or on AQR's. Measured from fundamentals (real yields, purchasing power, the yield gap of stocks over bonds, inventories) it earned a little and held trend's Sharpe ratio steady. Carry's income is visible; value has to estimate worth, and that needs a stronger arsenal (§5.4).
 
 ### 5.1 Measuring cheap and dear
 
@@ -152,7 +152,36 @@ Value lost a little with our rule and broke even with AQR's construction. Its co
 2. **Too few independent bets.** Value turns over in years. Sixteen years hold a handful of value cycles per market, and a Sharpe ratio over sixteen years has a standard error of about 0.25: −0.09 cannot be told apart from a modest real edge of +0.2, nor from zero.
 3. **Breadth.** Value is a cross-sectional style, and ranking works better with more markets. Where our universe matches AQR's (currencies, 9 of their 10) our value tracks theirs closely (0.78); with 7 commodities against their 27, much of what earned for AQR is missing.
 
-*Our reading (labelled).* Value is not shown to work here, and not shown not to work. Its role in a portfolio is the one the correlation suggests, a diversifier of trend, but on this sample it did not earn enough to pay for its place. Whether it belongs in Lecture 30's final portfolio is a question for that lecture, to be decided before looking at data it was not tested on.
+*Our reading (labelled), for the price version.* Value is not shown to work here, and not shown not to work. Its role in a portfolio is the one the correlation suggests, a diversifier of trend, but on this sample it did not earn enough to pay for its place. Whether it belongs in Lecture 30's final portfolio is a question for that lecture, to be decided before looking at data it was not tested on.
+
+### 5.4 Value from fundamentals
+
+Price against its own past is a proxy: it needs no data beyond prices, which is why the literature uses it where fundamentals are missing. Real value compares a price with what the asset is worth. Each group has a natural free measure; each was fixed in the plan before its data were loaded, as a change after the first results, and is counted in §6.2.
+
+| Group | What makes it cheap | Measured as | Free source |
+|---|---|---|---|
+| Government bonds | It pays more after inflation | The 10-year yield minus the past year's inflation, compared across countries | Central banks, OECD |
+| Currencies | It buys more than its price level justifies, and less than usual | Half the gap between the spot rate and purchasing-power parity, compared across currencies; half the real exchange rate against its trend (§5.1) | World Bank PPP, BIS |
+| Equity indices | Stocks pay more over bonds than usual | The earnings yield (US: ten years of real earnings, the inverse of the CAPE) or the dividend yield (elsewhere), minus the real 10-year yield, against its own 10-year history | Shiller, OECD, the funds |
+| Commodities | Stocks are scarce, or the price is low after inflation | Half inventories against the same month of the past five years, low = long (Gorton, Hayashi and Rouwenhorst 2013); half the real price against its 20-year history (gold and cocoa: the real price only) | EIA, USDA, World Bank |
+
+<sub><b>How to read the table.</b> One row per group: in words, what makes a market cheap; the measure; the free source. Each measure is known at the end of the month before the position. PPP and USDA stocks are revised history with no point-in-time versions, so those parts carry some look-ahead; fundamental currency value starts in 2004.</sub>
+
+| 2006 to October 2022, monthly | Price version (§5.2) | **Fundamental version** |
+|---|---|---|
+| Currencies | −0.14 | +0.08 |
+| Commodities | −0.12 | +0.05 |
+| Government bonds | +0.28 | +0.10 |
+| Equity indices | +0.04 | +0.17 |
+| **All four** | **−0.09** | **+0.14** |
+| Correlation with trend | −0.35 | −0.32 |
+| Trend + value (trend alone 0.67) | 0.47 | **0.65** |
+| Random strategies beaten: alone / added to trend | 48% / – | 77% / 90% |
+| 2013-2026: value; trend + value (trend alone 0.41) | −0.13; 0.37 | +0.12; 0.32 |
+
+<sub><b>How to read the table.</b> Sharpe ratios after costs, excess returns over cash; the two value strategies use the same machinery and differ only in how cheap and dear are measured. "Random strategies": 1,000 per strategy with the same holding periods, as in §6.1. Our calculation ([results/value_fund.json](results/value_fund.json)).</sub>
+
+Fundamentals turn value from a small loss into a small gain (0.14, close to AQR's own 0.16 in this period), better in three of the four groups, as expected in the plan; bonds, where the price version was already a yield, are the exception. Its correlation with trend stays negative, so next to trend it now roughly holds trend's Sharpe ratio instead of costing a fifth of it, and it beats 90% of random strategies added to trend, which dilute trend more. It still does not add to trend, and in 2013-2026 it costs. *Our reading (labelled):* value was mismeasured by the proxy, and measured properly it is a small diversifier of trend, the weakest of the three styles in these years.
 
 One more observation links value to carry. In currencies and commodities the two point in opposite directions: the high-carry markets tend to be the dear ones (the signals' rank correlation is −0.12 and −0.24; the strategies' returns −0.31 and −0.43). A currency that pays a high rate attracts money and appreciates; a commodity in backwardation has usually just risen. §7 asks whether that can be used.
 
@@ -279,7 +308,7 @@ Most of carry's return came from the markets trend also trades, in the months wh
 1. **A second strategy needs no forecast.** Lecture 28's switches had to know, on the day, when trend would fail, and none passed. A strategy that earns for a different reason helps without that knowledge (§2).
 2. **Check a rebuild against the published series early.** It exposed two design flaws, bonds and equities as two US instruments each, that the backtests alone did not show; where our markets match AQR's, our series track theirs (0.69 to 0.78) (§3).
 3. **Carry earns little in any one group and much more in four.** Each group's Sharpe ratio is 0.18 to 0.46; together 0.57, because the income of currencies, commodities, bonds and equities is paid for different risks (§4).
-4. **Value did not earn in this period**, on our data or AQR's; a slow, cross-sectional style needs more years and more markets than we have to show whether it works (§5).
+4. **Value needs fundamentals.** Measured by price against its past it lost, as AQR's did in this period; built from real yields, purchasing power, the yield gap and inventories it earned a little (0.14) and held trend steady, but did not add to it (§5).
 5. **Evidence is weighed, not passed.** Carry beats all of 1,000 random strategies, but counting the 21 versions tried leaves a deflated Sharpe ratio of 0.90. Realistic edges are noisy by nature; they are judged on the probability, the breadth, a reason they persist, and what they add (§6).
 6. **Carry's price is in the tail, and its profits lean on trend.** It improves trend on every measure in 2006-2022 at the cost of sudden losses, does not help in 2013-2026, and made most of its money where it agreed with trend (§6, §7).
 
