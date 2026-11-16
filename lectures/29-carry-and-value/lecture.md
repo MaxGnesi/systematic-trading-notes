@@ -271,3 +271,38 @@ Carry and trend trade some of the same markets: the euro and the yen, the seven 
 <sub><b>How to read the table.</b> Carry's monthly return (the rule, four groups) split by market and month according to trend's position at the end of the month before: on the same side, on the opposite side, or none. The three parts add up to carry's return (the rebuild matches it at 0.9997). Our calculation ([results/split.json](results/split.json)).</sub>
 
 Most of carry's return came from the markets trend also trades, in the months when trend held the same side: a short in a commodity whose curve was in contango while its price fell, a long in a currency whose rate was rising while it rose. In the many markets trend never trades, carry earned little (0.15). So on this sample carry worked largely as **an amplifier of trend where the curve agreed**, a carry filter that adds rather than takes away, more than as an independent source of return. The split does not say which signal deserves the credit, since a return earned where both agree belongs to both; but it tempers §1's picture of two unrelated businesses. Their *timing* is unrelated (correlation 0.06), their *profits* are not.
+
+## 8. Summary
+
+### 8.1 Takeaways
+
+1. **A second strategy needs no forecast.** Lecture 28's switches had to know, on the day, when trend would fail, and none passed. A strategy that earns for a different reason helps without that knowledge (§2).
+2. **Check a rebuild against the published series early.** It exposed two design flaws, bonds and equities as two US instruments each, that the backtests alone did not show; where our markets match AQR's, our series track theirs (0.69 to 0.78) (§3).
+3. **Carry earns little in any one group and much more in four.** Each group's Sharpe ratio is 0.18 to 0.46; together 0.57, because the income of currencies, commodities, bonds and equities is paid for different risks (§4).
+4. **Value did not earn in this period**, on our data or AQR's; a slow, cross-sectional style needs more years and more markets than we have to show whether it works (§5).
+5. **Evidence is weighed, not passed.** Carry beats all of 1,000 random strategies, but counting the 21 versions tried leaves a deflated Sharpe ratio of 0.90. Realistic edges are noisy by nature; they are judged on the probability, the breadth, a reason they persist, and what they add (§6).
+6. **Carry's price is in the tail, and its profits lean on trend.** It improves trend on every measure in 2006-2022 at the cost of sudden losses, does not help in 2013-2026, and made most of its money where it agreed with trend (§6, §7).
+
+**From strategies to a portfolio.** Trend, carry and value are now built on the same machinery and judged the same way. Lecture 30 puts them together once, on fixed rules, with the questions this lecture leaves open: how much of each to hold, what to do with a strategy that earns in one period and not the next, and whether value earns a place.
+
+### 8.2 Exercises
+
+1. **Emerging-market carry.** Add the Mexican peso and the South African rand (spot and 3-month rates free on FRED) and the zloty, forint and koruna (Yahoo spot, OECD rates) to the currency group. Fix your expectation first: does carry earn more, and what did 2008 cost?
+2. **Carry on the ETFs.** Build carry for the bond and credit funds of Lecture 25 from their distributions (the last regular payment annualised) and for the equity funds from their dividend yields. Rank them in one fixed-income group and in two classes. Which works, and why might the answer depend on the grouping?
+3. **Value on more commodities.** The World Bank's free monthly prices cover dozens of commodities from 1960. Measure value on them against their 10-year trend lines. Without tradable returns, what can and cannot be concluded?
+4. **Economic trend.** Turn Lecture 28's real-time growth and inflation directions into positions (bonds long when both fall; commodities long when both rise; equities and credit by growth minus inflation). Judge it as this lecture judged carry, and count your tries.
+5. **Carry where trend is flat.** §7.1 found most of carry's return where it agreed with trend. Restrict carry to the markets trend does not trade and to the months trend is flat. What is left, and what does that say about combining the two?
+6. **Your own construction.** Choose one group and one published construction (Asness, Moskowitz and Pedersen 2013, or Koijen et al. 2018). Write down every choice you must make to rebuild it from free data, make them before looking at results, and report your series' correlation with AQR's.
+
+### 8.3 Reading
+
+- Lecture 1 §5.3-5.4 (overfitting, many small edges), Lecture 26 (the risk horizon), Lecture 27 (the baseline), Lecture 28 (regimes as a switch).
+- Asness, C. S., Moskowitz, T. J. and Pedersen, L. H. (2013). Value and momentum everywhere. *Journal of Finance* 68(3), 929-985.
+- Koijen, R. S. J., Moskowitz, T. J., Pedersen, L. H. and Vrugt, E. B. (2018). Carry. *Journal of Financial Economics* 127(2).
+- Davis, J., Dorsten, P., Gillmann, J. and Tsai, H. (2022). Carry momentum. *Financial Analysts Journal* 78(1), 5-38.
+- Boons, M. and Porras Prado, M. (2019). Basis-momentum. *Journal of Finance* 74(1), 239-279.
+- Asness, C. S. (2003). Fight the Fed model. *Journal of Portfolio Management* 30(1), 11-24.
+- Jordà, Ò. and Taylor, A. M. (2012). The carry trade and fundamentals: nothing to fear but FEER itself. *Journal of International Economics* 88(1).
+- Bailey, D. H. and López de Prado, M. (2014). The deflated Sharpe ratio: correcting for selection bias, backtest overfitting and non-normality. *Journal of Portfolio Management* 40(5).
+- Bailey, D. H., Borwein, J. M., López de Prado, M. and Zhu, Q. J. (2014). Pseudo-mathematics and financial charlatanism: the effects of backtest overfitting on out-of-sample performance. *Notices of the American Mathematical Society* 61(5).
+- AQR Capital Management, LLC. Value and Momentum Everywhere: Factors, Monthly. AQR Data Library (free).
