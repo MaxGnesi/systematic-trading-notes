@@ -29,7 +29,7 @@ The lecture's central point fits in one chart: the best regime filter we found, 
 
 Switched off for 41% of the time, the part-time strategy has the higher Sharpe ratio (0.60 against 0.53) and the smaller losses, yet ends with less money (5.0% a year against 5.8%): its capital is idle during the grey bands. It earns more only when scaled up to the same risk. Whether that is worth it depends on what the idle capital could do, and on whether the filter's timing is information or luck (§2).
 
-Over all twelve filters and both datasets, under the verdict fixed in advance (beat 90% of random switches with the same time in the market on both datasets, Benjamini-Hochberg at 10% within each family), **no filter works** on our data. Even this one beats 95% of its random switches on the futures but only 50% on the ETFs. The lecture shows how this was measured and what the data say about why, so that readers can judge the evidence themselves.
+Over all twelve filters and both datasets, under the verdict fixed in advance (beat 90% of random switches with the same time in the market on both datasets, Benjamini-Hochberg at 10% within each family), **no filter passed** on our data. Even this one beats 95% of its random switches on the futures but only 50% on the ETFs. Evidence is graded, not yes or no (§5): the strongest pattern runs against the plan, trend did worse after large dollar moves, in three samples (§6.5). The lecture shows how this was measured and what the data say about why, so that readers can judge the evidence themselves.
 
 | § | Topic | Question |
 |---|---|---|
@@ -178,7 +178,19 @@ Each filter now switches the baseline off in its unfavourable state, with the co
 ![Regime filters against random filters](figures/28_filters.png)
 <sub><b>How to read the figure.</b> <b>Axes.</b> y: one row per filter (macro first, then market state, then the two combinations of both families); x: the share of 1,000 random switches, with the same time in the market and the same spell lengths, whose Sharpe ratio after costs the filter beats. Blue: ETFs 2013-2026; orange: capstone futures 2006-2022. Dotted line: 50%, what a coin would do; dashed line: 90%, the bar fixed in advance, to be cleared on both datasets. Fixed thresholds. Our calculation.</sub>
 
-**Verdict (as fixed): no filter works.** None beats 90% of its random filters on both datasets, and none passes Benjamini-Hochberg at 10% within its family.
+**Verdict (as fixed): no filter passed.** None beats 90% of its random filters on both datasets, and none passes Benjamini-Hochberg at 10% within its family. A fail here means *not shown*, not *shown not to work*: a regime filter acts on a handful of episodes a decade, so even a real but modest effect would often miss a fixed bar on 13 to 17 years of data.
+
+**Graded evidence** (added after the results, labelled). A single bar is crude, so each candidate is also read on several kinds of evidence together. A filter beating at least 70% of its random filters on both datasets is named *worth digging into*; by luck alone a filter gets there with probability about 0.3 × 0.3 = 9%, so about one of the twelve would by chance.
+
+| Evidence | Growth still | Correlation high | Dollar still (reversed: dollar moving) | Fed on hold (reversed: Fed moving) |
+|---|---|---|---|---|
+| Random filters beaten, ETFs / futures | 50% / 95% | 85% / 72% | 25% / 4% (the reverse wins) | 2% / 21% (the reverse wins) |
+| Same direction on both datasets | no | yes | yes, against the plan | yes, against the plan |
+| Repeats on untouched years, 1990-2005 (§6.5) | not tested | no: 54% | **yes: reversed filter 94%** | partly: reversed filter 78% |
+| Mechanism | weak | crowding (plausible) | open (§6.5) | weak |
+| **Reading** | one dataset only | promising, then not repeated | **the strongest pattern, against the plan** | weak, against the plan |
+
+<sub><b>How to read the table.</b> One column per filter that stood out; rows are kinds of evidence, read together. "Beaten": the share of 1,000 random filters with the same time in the market whose Sharpe ratio the filter beats. "Reversed": the opposite rule, switching trend off while the variable moves, found after seeing the results and therefore judged only on 1990-2005. Our reading in the last row.</sub>
 
 | | ETFs 2013-2026 | Capstone futures 2006-2022 |
 |---|---|---|
@@ -206,7 +218,7 @@ This section is **exploration after the results**, labelled as such. It asks wha
 
 **Fed on hold.** On the ETFs the pattern is one episode. The Fed was on hold all year in 2013-2015 and 2021, years of zero rates, and 2014 alone gave +24.9% on hold days. Every asset class earned a little more on hold days, so no single market explains it. On the futures 2006-2012 the relation ran the other way: the fast cuts of 2007-2008 were good for trend. A regime label that stands for one or two episodes describes history; it does not identify a mechanism.
 
-**Dollar still.** Here the pattern is spread over many years: still days beat moving days in 2017-2021 and 2024-2026, mostly through equity and currency trends, and the sign is the same in all three windows of §4 (ETFs, futures, shared years). Why sharp dollar moves coincide with weak trend returns is an **open question** (§8.2).
+**Dollar still.** Here the pattern is spread over many years: still days beat moving days in 2017-2021 and 2024-2026, mostly through equity and currency trends, and the sign is the same in all three windows of §4 (ETFs, futures, shared years). Whether this holds on years not used to find it is checked in §6.5; why sharp dollar moves coincide with weak trend returns is an **open question** (§8.2).
 
 ### 6.2 Level and direction
 
@@ -282,6 +294,25 @@ The third sample is 1990-2005, years no test of this course had used for this qu
 
 **Our reading (labelled).** On our data, quadrant patterns in volatility and correlation are specific to the period in which they were found. The lesson is the method: look, state the pattern before checking it, check it on years it was not found in, and report what happened.
 
+### 6.5 Three candidates, checked on untouched years
+
+§5 named three patterns worth a closer look after the results: correlation high (the one filter above 70% on both datasets) and the Fed and the dollar, which pointed the opposite way to the plan. Each was fixed before the 1990-2005 portfolio of §6.4 was used: correlation as it stands; the Fed and the dollar **reversed**, trend off while the Fed changed its target in the past six months, or while the dollar's 12-month move is in the top third of its history (the dollar against major currencies, FRED). 1,000 random filters each, as in §5.
+
+| 1990-2005 (always in: 0.64) | Correlation high | Fed moving | Dollar moving |
+|---|---|---|---|
+| Share of days switched off | 43% | 75% | 19% |
+| Trend on the days kept / switched off | 0.55 / 0.76 | 1.07 / 0.47 | **0.83 / −0.11** |
+| Filter, Sharpe ratio over all days | 0.47 | 0.47 | **0.69** |
+| Random filters beaten | 54% | 78% | **94%** |
+
+<sub><b>How to read the table.</b> One column per rule, fixed before this sample was used. "Days kept / switched off": always-in trend's own Sharpe ratio on the days the rule keeps trend on, and on the days it switches trend off. The filter's Sharpe ratio counts idle days as zero excess return. Benjamini-Hochberg at 10% across the Fed and the dollar: not passed (dollar p = 0.06 against 0.05). Our calculation ([results/confirm_corr.json](results/confirm_corr.json), [results/confirm_reversed.json](results/confirm_reversed.json)).</sub>
+
+- **Correlation high did not repeat**: on 1990-2005 trend did *better* when correlation was high (0.76 against 0.55).
+- **The dollar repeated**, reversed: on untouched years trend lost money after large dollar moves (−0.11) and earned 0.83 on the other days. It is the one pattern that held in all three samples, ETFs, futures and 1990-2005, and it misses the multiple-testing bar only narrowly.
+- **The Fed points the same way, weakly**: trend did better with the Fed on hold (1.07 against 0.47), but the Fed moved on three days in four, so the evidence is thin.
+
+**Our reading (labelled).** The plan expected trend to do better when the Fed and the dollar move; the data say the opposite, three times for the dollar. One possible mechanism, a hypothesis: the measure flags a dollar trend that is already *mature*; after a large dollar move, reversals are more likely, and since most markets are priced against the dollar, a dollar reversal turns many trend positions at once. Whether a dollar trend that is just *starting* helps trend is not tested here (§8.2, exercise 5).
+
 ## 7. One class at a time: commodity curves
 
 Every filter so far switched the whole portfolio. Some regimes belong to one asset class only. The shape of a commodity futures curve is one: it says something about oil or wheat, nothing about bonds. This section is a worked example of a **per-class** regime, labelled exploratory and kept outside the Benjamini-Hochberg families (decided before any result, 2026-11-15).
@@ -310,7 +341,7 @@ Two cautions. Seven markets were scanned with no correction for multiple tests, 
 
 1. **A part-time strategy is compared on several numbers, not one.** Out of the market a share $`1-p`$ of the time, a filter with no information lowers the Sharpe ratio over all days by $`\sqrt{p}`$; a filter must beat random switching with the same time in the market to show information; a higher Sharpe ratio can come with a lower return, because the capital is idle while the filter is off (§2).
 2. **Macro data must be used as first published.** On revised data, a fifth of the days fall in a different growth × inflation quadrant, and the ranking of the quadrants changes (§3.2).
-3. **On our data, no regime filter beat random switching on both datasets**, macro or market state, alone or combined. The relations seen in the scan changed between periods (§4, §5).
+3. **On our data, no regime filter passed the test fixed in advance**, macro or market state, alone or combined; evidence is graded, and most relations changed between periods (§4, §5). The strongest pattern ran against the plan: trend did worse after large dollar moves, on both datasets and on untouched years (§6.5).
 4. **Patterns found after looking need data they were not found in.** Volatility and correlation quadrants looked consistent on 2006-2026 and did not repeat on 1990-2005 (§6).
 5. **Some regimes belong to one class.** Crude oil trend did better when its curve was backwardated; the portfolio-wide version of the question has little to say (§7).
 
@@ -322,7 +353,7 @@ Two cautions. Seven markets were scanned with no correction for multiple tests, 
 2. **Halving instead of switching off.** Repeat §5 with the filters halving the position instead of closing it. How do the six numbers change, and why does the bar of §2.1 move?
 3. **A cleaner curve.** Measure the commodity curve between contracts a year apart (removing the seasons) and redo §7. Fix your expectation for each market before running it.
 4. **Trend with or against carry.** Split each commodity's trend returns by whether the trend position and the curve agree (long in backwardation, short in contango) or disagree. Is the crude-oil result of §7 a result about agreement with carry?
-5. **The dollar, an open question.** Trend earned more when the dollar stood still, in every window of §4. Write down one mechanism, derive one testable prediction from it (for example: fast dollar moves coincide with many markets reversing at once), fix it, and test it on the 1990-2005 portfolio of §6.4.
+5. **The dollar: mature or starting trends?** §6.5's measure flags a dollar trend that is already large (the size of its 12-month move). Separate a dollar trend that is just *starting* (a small 12-month move but a large 3-month move) from a *mature* one. Fix your rule and expectation first: does a starting dollar trend help trend following, as one might expect, while a mature one hurts? Test it on all three samples.
 
 ### 8.3 Reading
 
