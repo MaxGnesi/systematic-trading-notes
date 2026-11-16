@@ -197,13 +197,13 @@ Trends end, and a trend follower gives back part of every large gain before its 
 | ETFs: skew of monthly returns | 0.24 | 0.38 | 0.41 | 0.38 |
 | ETFs: Covid crash 2020 | −13.8% | −10.2% | −10.7% | −11.3% |
 | ETFs: rate shock 2022 | +26.1% | +13.7% | +17.7% | +20.1% |
-| Futures: Sharpe ratio | 0.47 | 0.45 | 0.49 | 0.49 |
-| Futures: difference, 90% band | | −0.01 (−0.10 to +0.08) | +0.02 (−0.04 to +0.09) | +0.03 (−0.01 to +0.07) |
-| Futures: skew of monthly returns | 0.22 | 0.45 | 0.41 | 0.36 |
+| Futures: Sharpe ratio | 0.45 | 0.46 | 0.48 | 0.48 |
+| Futures: difference, 90% band | | +0.01 (−0.07 to +0.09) | +0.03 (−0.02 to +0.09) | +0.03 (−0.00 to +0.07) |
+| Futures: skew of monthly returns | 0.18 | 0.39 | 0.35 | 0.31 |
 
 <sub><b>How to read the table.</b> Differences in Sharpe ratio against no take-profit; 90% band from a block bootstrap over calendar months. Episode rows: return from the peak to the trough of the S&P 500. Our calculation.</sub>
 
-At k = 4 to 5 the Sharpe ratio is unchanged, on both datasets; at k = 2 to 3 it falls, because the exit cuts too many trends that would have run on. Skew rises at every threshold: the take-profit removes the giving-back at the end of a trend, the part of a large win that would have been returned. Quick crashes that follow a run-up lose less (ETFs 2020: −13.8% to −10.7% at k = 4), and long bear markets give some of their gain back (2022: +26% to +18%). Re-entering after a one-unit pullback did not improve on waiting for the signal to change. No difference is distinguishable from zero: the take-profit is **an option with known trade-offs**, not an improvement. The baseline does without it, and §6 shows what it does to today's portfolio in crises.
+At k = 4 to 5 the Sharpe ratio is unchanged, on both datasets; at lower thresholds it falls (ETFs at k = 2 to 3, futures at k = 2), because the exit cuts too many trends that would have run on. Skew rises at every threshold: the take-profit removes the giving-back at the end of a trend, the part of a large win that would have been returned. Quick crashes that follow a run-up lose less (ETFs 2020: −13.8% to −10.7% at k = 4), and long bear markets give some of their gain back (2022: +26% to +18%). Re-entering after a one-unit pullback did not improve on waiting for the signal to change. No difference is distinguishable from zero: the take-profit is **an option with known trade-offs**, not an improvement. The baseline does without it, and §6 shows what it does to today's portfolio in crises.
 
 ## 6. Crises
 
