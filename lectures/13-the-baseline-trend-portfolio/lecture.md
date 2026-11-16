@@ -467,7 +467,7 @@ The worst case is a quick crash that hits a long, levered position sized on calm
 
 ### 7.1 Choosing the settings
 
-**When methods built on different assumptions agree, the choice does not matter: take the simplest, and look for the risk elsewhere.** Agreement shows that the result does not hinge on one assumption, the plateau of Lecture 7 applied to methods instead of parameters. It does not show that the portfolio is safe. Across speeds the methods agree because there is little to choose (about 1.4 independent bets in 20 streams, §3.1); across classes every method agreed and every one still carried 6% to 12% on a 10% target (§4.5).
+**When methods built on different assumptions agree, the choice does not matter: take the simplest, and look for the risk elsewhere.** Agreement shows that the result does not hinge on one assumption, the plateau of Lecture 7 applied to methods instead of parameters. It does not show that the portfolio is safe, and it can give false comfort: methods agree because they share something, the same history, the same markets, the same calm years, and if what they share is wrong they fail together. Across speeds the methods agree because there is little to choose (about 1.4 independent bets in 20 streams, §3.1); across classes every method agreed, and every one carried 6% to 12% on a 10% target, too much in the same regimes (§4.5). Agreement says where the risk is not, in the choice of method; the risk sits in what all methods share.
 
 Sensible settings come from the order in which the questions are asked, not from trying every combination and keeping the best backtest, which with hundreds of combinations is mostly luck (Lecture 12 §2):
 
