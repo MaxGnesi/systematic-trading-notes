@@ -19,7 +19,7 @@ The base layer ends with one portfolio and an honest number. The portfolio is th
 | 5 | The investor's view | How much of a 60/40 portfolio's risk should it get, and what does that buy? |
 | 6 | What it costs | Costs, crashes and the period |
 | 7 | The realistic number | What remains after each haircut? |
-| 8 | Where higher Sharpe ratios come from | What larger funds add, and how to improve on a fixed base layer |
+| 8 | Where higher Sharpe ratios come from | What larger funds add, how to improve on a fixed base layer, and where to focus next |
 | 9 | Summary | Takeaways, exercises, reading |
 
 ![The final portfolio on years it was not built on](figures/30_key.png)
@@ -163,6 +163,24 @@ The base layer stays as it is: trend and carry on the rules of Lectures 13 and 1
 <sub><b>How to read the table.</b> One row per kind of addition, in the order we would pursue them: cheapest and most certain first. "Course": where the ideas and tools were introduced. Our proposal, not a result.</sub>
 
 The order follows cost and certainty. Execution improves what is already known to earn; more markets extend a known edge; new strategies need new evidence; granularity needs new infrastructure; allocation pays only once there is more to allocate between. Each step is a small edge added to a fixed base, which is the course's idea of a systematic portfolio: many robust small edges, not one ace.
+
+### 8.2 Where to focus next: seven research directions
+
+The course ends with questions its results raise but do not answer. They are ranked by what they would add to the fixed base layer, cheapest and surest first, and each is phrased as a question a reader can test, with the plan fixed in advance (Lecture 1 §5.5, Lecture 17).
+
+| # | Direction | The question | Set up in |
+|---|---|---|---|
+| 1 | **Cheaper execution of what is held** | Do resting orders that chase their misses, trading in the deep hours and reading the book before an order cut the portfolio's own costs on futures and ETFs, as they do on bitcoin? Trend + carry falls from 0.84 to 0.36 between 5 and 20 bp in 2006-2022 (§6) | Lectures 18, 19, 21 |
+| 2 | **Regime information as a tilt, not a switch** | Does scaling trend's size by a regime signal keep the information without leaving capital idle? Does trend suffer after mature dollar moves, and is crude oil's curve effect trend and carry agreeing? | Lecture 14 §6.6 |
+| 3 | **More breadth for the same styles** | How much independent breadth do free data add (emerging-market currencies, more commodities and bond countries, equity sectors), after costs and capacity? | Lectures 11, 15; §8 |
+| 4 | **A faster horizon next to slow trend** | Is a trend held for days correlated weakly enough with the base layer's trend to pass $`\mathrm{SR}_B > \rho \times \mathrm{SR}_A`$, after funding and costs? | Lecture 20 |
+| 5 | **Construction that uses only what is known** | Across markets, where correlations must be estimated, do grouping methods (HRP, NCO) or denoising beat equal risk contributions by more than the noise as the universe grows? How should near-copies be handled? | Lecture 13 §2.3, Appendix A |
+| 6 | **Kill switches from the book and the flow** | Can a rule read from liquidity pause a strategy before liquidity breaks, with a gain above the cost of being out? Nothing in our data warned before the news of 10 October | Lectures 21, 22 |
+| 7 | **The live strategy against its backtest** | How far do live fills and results drift from the backtest, and which assumption breaks first? | Lecture 24 |
+
+<sub><b>How to read the table.</b> One row per direction, in the order we would pursue them. "The question": what a study would have to answer; open, not a result. "Set up in": where the course introduced the tools and the evidence.</sub>
+
+Directions 1, 6 and 7 make what is held cheaper and safer; 2, 3 and 4 add small edges that earn for other reasons; 5 decides how to combine them without betting on noise. Underneath all seven is the method of Lecture 17: lock the scope before the search, count every try, check on data the idea was not found in, and ask for a mechanism.
 
 ## 9. Summary
 

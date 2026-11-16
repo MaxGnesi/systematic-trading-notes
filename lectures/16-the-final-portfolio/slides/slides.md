@@ -131,6 +131,20 @@ $$IR \approx IC \times \sqrt{\text{breadth}}$$
 
 ---
 
+# Where to focus next
+
+> Seven open questions, ranked by what they would add to the fixed base layer: cheapest and surest first.
+
+1. **Cheaper execution** of what is held (Lectures 18, 19, 21)
+2. **Regime information as a tilt**, not a switch (Lecture 14)
+3. **More breadth** for the same styles (Lectures 11, 15)
+4. **A faster horizon** next to slow trend (Lecture 20)
+5. **Construction that uses only what is known** (Lecture 13)
+6. **Kill switches** from the book and the flow (Lectures 21, 22)
+7. **The live strategy against its backtest** (Lecture 24)
+
+---
+
 # Takeaways
 
 1. **Set the expectation first:** comparable to long-only, moving differently
