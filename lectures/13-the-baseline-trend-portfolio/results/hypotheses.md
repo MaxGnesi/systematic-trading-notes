@@ -1,0 +1,150 @@
+# Lecture 13: the baseline trend portfolio (first planned as "when positions lose together", then "putting the portfolio together") — plan fixed before any result
+
+Fixed 2026-11-13, before any number of this lecture was computed. Every later change is dated below with its reason.
+
+## The question
+
+Lecture 11 removed the markets that duplicate each other; Lecture 12 chose the speeds. What is left is not "which markets are alike?" but **"when do our positions lose together?"** A trend portfolio's risk depends on today's positions: two markets that move together are a double bet when both are held long and a hedge when one is long and the other short. Does it pay to size the portfolio with that in mind, or is volatility alone enough?
+
+This is step 2 of the workflow (Lecture 11, §1): weights from the risk of positioned returns only; profit and loss only to judge, out of sample.
+
+## The rule (one sentence)
+
+**Every market at equal risk within its asset class, every class at equal risk, and the whole scaled to 10% a year on its own past volatility: volatility only, no correlations** — exactly Lecture 12's out-of-sample portfolio, so it reproduces its Sharpe ratio of 0.49 first, as a check.
+
+## Two rivals
+
+| Rival | One sentence | What changes against the rule |
+|---|---|---|
+| **Position-aware risk** | Forecast the portfolio's risk each day from today's positions and the markets' correlations over the past three years, and scale the whole to 10% on that forecast | Only the total's scale: up when positions offset, down when they stack the same way |
+| **Groups by trend phase** | Group the markets by how often their trend positions point the same way (concordance, Lecture 11 §4), into as many groups as there are classes (five), and give each group equal risk | Only the grouping: by behaviour instead of by label |
+
+Fixed details, so that each rival is finite by construction rather than capped:
+
+- **Correlations.** Weekly returns of the markets (not of the trend streams, which flip sign and give unstable estimates) over the past three years, shrunk towards the identity with the Ledoit-Wolf intensity. Shrinkage keeps the smallest eigenvalue away from zero, so a forecast never collapses to zero and the scale stays finite.
+- **Positions.** Each market's signed risk position today: its trend position from Lecture 12's rule times its volatility over six months (Lecture 12 §3).
+- **Trading.** The new scale is reached a tenth of the way each day (as positions in Lecture 12), and every change of position costs 5 bp.
+- **Groups.** Average-linkage clustering on 1 − concordance of the markets' trend phases (Lecture 11 §4: sign of the 26-week return, weekly; sign ignored, since a market that always trends the opposite way is the same bet for a trader who can be long or short) over the past three years, cut into five groups; recomputed at each year end.
+- **Out of sample.** Reviews at each year end 2012-2025, traded the following year, 2013-2026, on Lecture 11's markets and Lecture 12's speeds chosen at the same review.
+
+## Measures (the same for all three)
+
+1. Sharpe ratio after costs, total and per year.
+2. Worst drawdown, and the loss in the 12 worst months of the rule.
+3. **Risk forecast**: the realised volatility of each next month divided by the 10% target. Good: close to 1 on average and with a small spread.
+
+Differences against the rule: block bootstrap over calendar months (2,000 resamples), 90% bands; Benjamini-Hochberg at 5% over the two rivals and three measures.
+
+## Three expectations
+
+1. **Position-aware risk keeps the realised risk closer to target** (smaller spread of realised over target) and **cuts the worst drawdowns**, because it scales down when positions stack in the same direction before a reversal hits them all.
+2. **On Sharpe ratio, volatility only is hard to beat**: neither rival differs from the rule by more than about 0.05 (DeMiguel, Garlappi and Uppal 2009: estimation error eats most of what correlations promise).
+3. **Groups by trend phase add little**, because Lecture 11 already removed the duplicates; the groups will look much like the asset classes.
+
+## Kept short (a section and exercises, not tested here)
+
+- **Losing together in stress**: how often two streams are in drawdown at the same time; each stream's share of the portfolio's worst days (expected shortfall).
+- **Stress scenarios**: today's positions priced through 2008, March 2020 and the 2022 rate shock, as a bound rather than a weight.
+
+## Sources to check before use
+
+- DeMiguel, V., Garlappi, L. and Uppal, R. (2009). Optimal versus naive diversification. *Review of Financial Studies*.
+- Ledoit, O. and Wolf, M. (2004). A well-conditioned estimator for large-dimensional covariance matrices. *Journal of Multivariate Analysis*.
+- López de Prado, M. (2016). Building diversified portfolios that outperform out of sample. *Journal of Portfolio Management* (hierarchical risk parity, the idea behind grouping).
+
+## Clarifications before results
+
+- 2026-11-13: the groups use Lecture 11's trend-phase concordance with the sign ignored (wording above made precise). The user agreed that a standalone covariance lecture is too much: covariance is one way of measuring dependence, and maybe not the smartest for trend positions; this lecture asks the narrower question of when positions lose together.
+
+## Changes before the full run
+
+- 2026-11-13, after a design check on two reviews (2024-2025), before any full result: average linkage left one group of 14 markets and three single markets (XLV, TLT, EWZ in 2025), so equal risk per group would give one fund a fifth of the risk. **Ward linkage**, which forms groups of similar size, is now rival 2 (agreed with the user); average linkage stays reported as first fixed. The same check found a bug in the risk forecast (exposures and correlations in different column orders), fixed before any result.
+
+## Changes after results
+
+- **2026-11-13, exploratory ideas after seeing the results (the user), labelled as such.** Position-aware risk levered up in 2023-2025 because offsetting positions read as a hedge, while they were a sign of choppy markets. Three ideas follow; each is first checked descriptively (no portfolio profit and loss), and only an idea whose mechanism shows up earns a grid test, ideally confirmed on the capstone futures 2000-2022:
+  1. **Trend strength**: scale up when the speeds agree within markets (sign-free). Check: its correlation with the position-aware scale; strongly negative would mean it is mostly that rival turned upside down.
+  2. **Two kinds of low volatility** (the user): low volatility with chop (compression) is not low volatility with a smooth trend (drift, carry: crowded and vulnerable). Check: per market and month, low or high volatility (against its three-year median) by low or high efficiency ratio (six months); what follows over three months (volatility jump, trend return per unit of risk).
+  3. **Calm and stacked in risk assets** (the user): when the risk assets (equity, credit, commodities) are mostly held long and their volatility is low, cut the risk of those positions only; bonds and currencies untouched; never lever up. Check: list the episodes 2013-2026 and what followed each.
+- **2026-11-13, constant leverage (the user), added after results as a second legitimate way to run the same portfolio, not a rival to beat.** Same proportions (equal risk per market and class); the total scaled each day so that gross exposure stays at the rule's median of the past three years, reached a tenth of the way each day, 5 bp on every change. Presented neutrally (the user): performance, risk over time, drawdowns, storm-after-calm windows, each class's share of capital and of risk; one is called better only if the data show it clearly.
+- **2026-11-14, the overlay isolated (the user: with a correlation overlay, which base is best?).** A 2x2: volatility target set daily on a forecast without correlations, and constant leverage, each with and without the overlay (multiplier: forecast risk ignoring correlations over forecast with them). **Correction of an earlier reading:** the multiplier was above 1 on only 4.4% of days (median 0.7), so the overlay almost never levered up; the 2023 leverage of position-aware risk came from targeting volatility daily on today's positions, which scales small net positions (speeds disagreeing in choppy markets) back up to full risk. The version without correlations did the same (2023: -15.6% against -6.3% for the yearly-scaled rule). The overlay's Sharpe effect is +0.01 and +0.02 (bands about +-0.09); its smaller drawdowns match its lower risk (drawdown over volatility 2.4 in all four).
+- **2026-11-14, equal capital inside the classes (the user), added after results, presented neutrally.** Inside each class every market gets the same average gross exposure (instead of the same risk); classes still at equal risk, the total scaled yearly as in the rule.
+
+## Restructure, 2026-11-14 (the user)
+
+**The lecture becomes "Putting the Portfolio Together": blending speeds inside each market, then markets and classes, then scaling the total.** The correlation overlay and the ideas that grew from it (trend strength, two kinds of low volatility, calm and stacked risk assets) move to the allocation lecture, which deals with correlations across markets; their results stay above. Allocation across markets stays equal risk here (the user: that method was right; the methods are compared in the next lecture). Equal capital inside a class is kept only as a remark on leverage, because it breaks the rule of one method at every level.
+
+**New step, fixed before its results: blending the speeds.** Equal weight per held stream piles risk into the medium band, where neighbouring speeds are nearly the same bet.
+
+- **Rule (one sentence):** inside each market, give the held streams equal risk contributions on their correlation, pooled over all markets, with each stream's risk budget cut by its cost.
+- **Correlation:** gross daily returns of the 36 streams, standardised per market, all in-sample data up to the review; the average of the markets' correlation matrices, each asset class the same total weight (as the vote of Lecture 12). It is mechanical (overlapping look-back windows on the same price), so it should be stable.
+- **Cost:** each stream's marginal cost in the combined position (5 bp times its contribution to the blend's turnover, which nets fast against slow trades) per unit of its risk, in Sharpe-ratio units; the budget is 0.3 minus that cost, where 0.3 is an assumed Sharpe ratio before costs common to all speeds (a prior, not fitted; 0.2 and 0.5 reported as a grid).
+- **Rivals:** equal per stream (the current rule), and correlation only (equal budgets), to separate the two effects.
+- **Measures:** Sharpe ratio after costs out of sample 2013-2026, cost a year, the effective number of independent streams (squared diversification ratio), skew and the 12 worst months of the rule; shown descriptively: skew and behaviour in the worst months by speed.
+- **Expectations:** (1) the effective number of independent streams rises and weight moves from the medium band to the distinct speeds; (2) the Sharpe ratio differs by less than about 0.05; (3) cost falls a little.
+
+**Speed blend, results (2026-11-14).** Equal per stream reproduces the rule (0.486). Correlation between streams depends almost only on the ratio of speeds (EWMA: 0.93 at 1.4x, 0.81 at 2x, 0.53 at 4x, 0.33 at 8x, 0.09 at 46x); rules at the same speed are 0.90 correlated. The held band (43-359 days) has average correlation 0.70: about 1.4 effective independent streams of 20. Equal risk contributions move weights only between 0.045 and 0.058 (bets 1.38 to 1.40); costs at these speeds are 0.003-0.03 in Sharpe units, so the cost budget changes nothing at any prior; out of sample 0.482 against 0.486. Expectation 1 not met, 2 met, 3 not meaningful. Reading: the speed blend is robustness (not knowing which speed), not diversification.
+
+**Speed blend, added 2026-11-14 (the user): maximum Sharpe ratio as a demonstration with a warning.** Long only, in-sample Sharpe ratios after costs pooled like the correlation. In-sample Sharpe ratios of the held streams differ only between 0.14 and 0.23, yet the weights concentrate in two to five streams (EWMA 89 days 58-82% in most years) and swing between reviews; out of sample 0.455 against 0.486 for equal weights, effective streams 1.29. The error maximiser of Michaud (1989).
+
+**Two steps, not one (the user: keep two steps, say why).** Speeds inside each market, then markets. One step (every market x speed as its own stream, about 400) is possible; two steps are chosen because the speed overlap is the same in every market (estimated once, pooled), netting gives one position per market, streams inside a market are far more alike than markets (nested allocation is then close to one step: the logic of HRP and NCO), and limits are set per market. One step is an exercise.
+
+**General, not only our speeds (the user):** the cost term matters little at 43-359 days but decides the blend for fast systems; the method is described generally.
+
+**Literature checked (2026-11-14):** Levine and Pedersen (2016), FAJ 72(3) 51-66 (crossovers and time-series momentum are equivalent filters); Goulding, Harvey and Mazzoleni (2023), JFE 149(3) 378-406 (slow-fast disagreement marks turning points; dynamic blend modest gains); Michaud (1989), FAJ 45(1) 31-42 (estimation-error maximisers). Carver's handcrafting and forecast diversification multiplier seen only in secondary sources: check the book before quoting.
+
+**Timing the speeds (the user, 2026-11-14: choose the worst speeds, if performance mean-reverts).** Descriptive check, nothing fitted: per market, the Spearman correlation of the 21 band streams' (43-359 days) Sharpe ratios relative to their window average, in one window against the next. 1-year windows: -0.03 (1,946 pairs, 47% positive); 3-year: -0.02 (485 pairs, 49% positive); commodities -0.09 at 1 year. Markets in a class move together, so the effective sample is near 90 (standard error about 0.02): neither persistence (chase the best) nor reversal (buy the worst) is measurable. Supports holding the band evenly. Goulding, Harvey and Mazzoleni (2023) condition on the state (slow and fast agree or not), not on past performance. Ehsani and Linnainmaa (2022, Journal of Finance) find factor returns persist: to be checked at source before quoting.
+
+**Timing the speeds inside the plateau, follow-up (the user, 2026-11-14; brief in the lecture).** Rank persistence of relative performance within the held set: +0.06-0.08 at 3 months (standard error 0.014), +0.04 at 6 months, about 0 at 12 months. Tilts out of sample (rank tilt, weights within [0, 2/n], quarterly, reweighting costs charged): momentum -0.05 (k 0.5) and -0.11 (k 1), bands exclude zero; reversal +0.02 to +0.05, bands at or just above zero; eight variants tested after looking, so the reversal gain is weak evidence. **Volatility state (the user's idea: calm -> faster, storm -> slower):** the data show the reverse: very calm (< 0.75 of the 3-year norm) slow speeds lead (fast ahead in 35% of cases); very stormy (> 1.33) fast speeds lead on average (+0.36 per unit risk, standard error 0.11) though in only 48% of cases (a few large wins). Descriptive, found after looking. Message: no timing method reliably beats holding the plateau evenly.
+
+**Fixed 2026-11-14 for an independent test on the capstone futures 2000-2022 (not run in this lecture; open question here).** The volatility-state tilt was only described on the ETFs, on years that include the out-of-sample period, so a strategy test there would not be clean. Rule, fixed before any futures result: **no new selection on the futures** (the user): the plateau is Lecture 12's held set at the end-2025 review (20 streams, 43-359 days), kept fixed; the tilt moves weight only within it: fast = 43-89 days, slow = 179-359 days (as in the description). This also checks Lecture 12's choice on markets it never saw. Each day, a market's six-month volatility over its three-year median above 1.33 tilts towards fast, below 0.75 towards slow, otherwise equal; rank tilt with weights within [0, 2/n], reached a tenth of the way each day, 5 bp on every change. Judged against equal weights within the plateau: Sharpe ratio after costs, worst drawdown, losses in the 12 worst months; block bootstrap over months.
+
+**Futures test, result (2026-11-14, run as fixed above).** 12 capstone futures (observed rolls, ratio back-adjusted) and VFITX, VUSTX, 2003-2022; breakout on closes (the cache holds no highs and lows). Equal weights in Lecture 12's held set: Sharpe 0.45, drawdown -24.7%; volatility-state tilt: 0.43, -23.8%; difference -0.02 (90% band -0.07 to +0.03); 12 worst months the same (-69%). States: calm 13% of days, storm 16%. **Verdict: the tilt does not help on independent markets.** Side result: Lecture 12's speeds, chosen on ETFs only, earned 0.45 on markets and years they never saw.
+
+## Crisis speeds, fixed 2026-11-14 before any result (the user: check which speeds work in stress and maybe add them)
+
+- **Episodes, by rule:** every fall of the S&P 500 of more than 15% from a peak, from the peak to the trough, 2000-2026 (Yahoo ^GSPC). The ETFs see the episodes from 2007, the futures those of 2000-2022. Crises are global, so the two datasets share most episodes; only 2000-2002 is the futures' own. This is said openly.
+- **Per episode:** the return of each of the 36 streams (including the fast speeds Lecture 12 excluded) over the episode, averaged over the markets with each class the same weight; per speed, the average over the three rules; against the return of Lecture 12's held set (equal weights) in the same episode.
+- **A speed works in crises** if it beats the held set in at least two thirds of the episodes on the ETFs and on the futures.
+- **If any speed works:** a sleeve of those speeds (all three rules, equal weights) at 0%, 10%, 20% and 30% of each market's weight; on the ETFs out of sample 2013-2026 with the rule's structure, and on the futures 2003-2022; measures: Sharpe ratio after costs, worst drawdown, loss in the 12 worst months, the sleeve's cost a year. A real effect shows as a smooth trade-off across the sleeve sizes.
+- **Expectation:** the fast speeds (11-31 days) beat the held set in most episodes; the sleeve cuts the worst months and drawdowns at a small cost in Sharpe ratio.
+
+**Crisis speeds, result (2026-11-14).** Six S&P 500 falls of more than 15%: 2000-02 (-49%), 2007-09 (-57%), 2018 Q4 (-20%), Feb-Mar 2020 (-34%), 2022 (-25%), Feb-Apr 2025 (-19%); futures cover the first five. **No speed beats the held set in two thirds of the episodes on both datasets, so no sleeve is added (as fixed).** The pattern instead depends on the speed of the crisis: in the quick crashes (2018 Q4, 2020, 2025) the fast speeds (11-43 days) earned and the held set lost (ETFs 2020: fast +0.04, held -0.025); in the long bear markets (2000-02, 2008, 2022) the medium speeds earned most (ETFs 2008 and 2022: 89-127 days +0.11 to +0.13) and the held set earned well (+0.085, +0.109). Expectation not met: fast speeds help only when the crisis is fast.
+
+## Take-profit per speed, fixed 2026-11-14 before any result (the user)
+
+- **Rule:** for each stream, the open gain since its signal last changed (sum of sign x daily return), in units of that speed's risk (six-month daily volatility at entry x square root of the speed); above k units the stream goes flat until its signal changes. Positions otherwise as in Lecture 12 (10% / volatility, a tenth of the way each day, 5 bp).
+- **Grid:** k = 2, 3, 4, 5 and none. Only within Lecture 12's held set.
+- **Judged:** ETFs out of sample 2013-2026 with the rule's structure; capstone futures 2003-2022 (Lecture 12's end-2025 held set). Sharpe ratio after costs, worst drawdown, the 12 worst months of the plain version, skew of monthly returns, and the return in each crisis episode inside each period.
+- **Expectations:** (1) it helps in the quick crashes that follow run-ups; (2) it lowers Sharpe ratio and skew overall, because it cuts the large winners; (3) slightly lower Sharpe at k = 2-3, about unchanged at 5.
+- **Exercise, not tested:** halve the position instead of exiting.
+- **Added 2026-11-14 before any result (the user): re-entry after a pullback of one unit.** After a take-profit, the stream re-enters when the price has pulled back one unit from its best level since the exit; the re-entry is a new trade (gain reset, next take-profit after another k units). Reported next to exit-until-the-signal-changes.
+
+**Reproducibility fix (2026-11-14).** The Treasury funds VFITX and VUSTX and the S&P 500 were downloaded from Yahoo on every run, and two downloads differed (futures baseline 0.45 on one run, 0.42 on the next). Both are now saved once locally (data/raw/l27_vfitx_vustx.csv, l27_spx.csv) and the three futures scripts rerun on the same files. Futures test now: equal 0.47, tilt 0.44, difference -0.02 (90% band -0.07 to +0.03): verdict unchanged. Crisis speeds: still no speed passes; verdict unchanged.
+
+**Take-profit, result (2026-11-14, on the saved data).** Breakout on closes in all versions, so the plain ETF version earns 0.465 here (0.486 with highs and lows).
+
+| | none | k=2 | k=3 | k=4 | k=5 | k=3, re-entry | k=5, re-entry |
+|---|---|---|---|---|---|---|---|
+| ETFs: Sharpe | 0.465 | 0.370 | 0.417 | 0.464 | 0.477 | 0.414 | 0.467 |
+| ETFs: volatility | 10.7% | 7.7% | 9.0% | 9.5% | 9.9% | 9.7% | 10.3% |
+| ETFs: drawdown / volatility | 2.12 | 2.25 | 2.06 | 1.99 | 2.00 | 2.18 | 2.14 |
+| ETFs: skew, monthly | 0.24 | 0.32 | 0.38 | 0.41 | 0.38 | 0.13 | 0.27 |
+| Futures: Sharpe | 0.466 | 0.422 | 0.454 | 0.491 | 0.494 | 0.461 | 0.477 |
+| Futures: drawdown / volatility | 2.45 | 3.21 | 2.78 | 2.52 | 2.44 | 2.67 | 2.46 |
+| Futures: 12 worst months / volatility | 6.23 | 5.05 | 5.55 | 5.76 | 5.96 | 5.98 | 6.15 |
+| Futures: skew, monthly | 0.22 | 0.51 | 0.45 | 0.41 | 0.36 | 0.28 | 0.26 |
+
+Reading: at k = 4-5 the Sharpe ratio is unchanged or slightly higher on both datasets (bands not yet computed), skew rises, and most of the smaller raw drawdowns comes from carrying less risk; per unit of risk the gain is small (ETFs) to modest in the worst months (futures). Quick crashes lose less (ETFs 2020: -13.8% to -10.7% at k=4), long bear markets give some back (ETFs 2022: +26% to +18%). Re-entry after a one-unit pullback does not improve on exiting until the signal changes. Expectation 1 met mildly; 2 not met (skew rises); 3 partly (lower at k=2-3, unchanged or higher at 4-5). Nine variants tested.
+
+**Take-profit, bands (2026-11-14).** Sharpe ratio difference against no take-profit, 90% band, block bootstrap over months: ETFs k=3 -0.05 (-0.17 to +0.07), k=4 -0.00 (-0.09 to +0.09), k=5 +0.01 (-0.06 to +0.08); futures k=3 -0.01 (-0.10 to +0.08), k=4 +0.02 (-0.04 to +0.09), k=5 +0.03 (-0.01 to +0.07). No difference is distinguishable from zero: the take-profit is an option with known trade-offs (higher skew, smaller losses in quick crashes, less in long bear markets), not an improvement in return.
+
+**Stress scenarios (2026-11-14).** Today's portfolio (end-2025 markets, held speeds, all scales from 2023-2025) replayed through the six episodes; breakout on closes. Plain / take-profit 4: 2007-09 +35% / +38% (drawdown inside -13% / -11%); 2018 Q4 -3% / -2%; Feb-Mar 2020 **-18% / -13%** (drawdown -24% / -17%, worst day -7.3% / -4.8%; credit -16% / -12%, commodities +8%); 2022 +41% / +33%; Feb-Apr 2025 -7% / -7%. 2000-02 covers only 5 of 20 markets (equity), not comparable. Reading: the worst case is a quick crash hitting long, levered credit sized on calm years; the take-profit cuts that case by about a third and gives up about a fifth of the 2022 gain.
+
+## Renamed and placed, 2026-11-14 (the user)
+
+**"The Baseline Trend Portfolio".** The user: "we talk about putting together portfolios but we don't really put it together, we put it together again later". This lecture builds the baseline (equal risk at every level: speeds, markets, classes, total), with its choices and trade-offs; every later lecture changes one part and must beat it out of sample. The portfolio is assembled only in the last lecture. Part V order agreed: L14 part-time strategies (with their statistics); L15 combining part-time and always-in strategies; L16 allocation methods (across everything; takes the overlay and the parked ideas); L31 constraints, capacity and trading; L32 capstone: putting it all together, judged with the full set of statistics and a real-time regime scan (growth x inflation, Fed, volatility, contango or backwardation, dollar); course close.
+
+**L14 scope refined (2026-11-14, the user agreed).** The statistics, macro episodes and filter tests already exist (Lecture 7 §4-§6, Lecture 10 §4 and §9-§10, Lecture 8) and are not repeated. Lecture 14 links them: a regime filter turns an always-in strategy into a part-time one. A real-time regime scan (growth x inflation quadrant, the Fed, volatility, contango or backwardation) proposes candidate filters; they are tested with Lecture 8's procedure and judged with Lecture 7's statistics. Lecture 32 judges the final portfolio with Lecture 7's statistics, Lecture 10's episodes and Lecture 14's scan.
+
+**Data correction, 2026-11-16: VUSTX was missing from the futures checks.** The Treasury-fund file saved once on 2026-11-14 (reproducibility fix above) held no VUSTX prices: the Yahoo download had failed for that fund without an error, so the futures checks ran with one Treasury fund (VFITX). Re-downloaded (VFITX identical to six decimals) and rerun: futures test, equal weights, Sharpe 0.466 → 0.451, worst drawdown −26.6% → −24.7%; volatility-state tilt difference −0.02 (90% band −0.07 to +0.03), unchanged; take-profit on the futures: none 0.47 → 0.45, k = 3 0.45 → 0.46, k = 4 and 5 0.49 → 0.48, differences +0.01 / +0.03 / +0.03, all bands still include zero; skew 0.22 → 0.18 without, 0.39 / 0.35 / 0.31 with. Crisis speeds: no speed passes, as before (futures beat shares changed at 43 days, 0.6 → 0.4, and 179 days, 0.6 → 0.8; 179 days beats the held set in half the ETF falls). Text, table and figures updated; no conclusion changes. The ETF results are unaffected.

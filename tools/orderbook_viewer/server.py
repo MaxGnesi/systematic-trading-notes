@@ -1,6 +1,6 @@
-"""Order-book viewer for Part IV: a small local web app to scan through the Bybit BTCUSDT book and trades of Lecture 18.
+"""Order-book viewer for Part IV: a small local web app to scan through the Bybit BTCUSDT book and trades of Lecture 24.
 
-Reads the Parquet tables written by bybit_to_parquet.py (Lecture 18, §3). The book can only be reconstructed from a day's midnight snapshot, so the
+Reads the Parquet tables written by bybit_to_parquet.py (Lecture 24, §3). The book can only be reconstructed from a day's midnight snapshot, so the
 first time a day is opened the server replays it once and caches (next to the data) a checkpoint of the book every minute and a summary of every
 second (best bid and ask, depth within 5 bp); later requests start from the nearest checkpoint.
 Run:  python server.py   then open http://127.0.0.1:8077
@@ -19,7 +19,7 @@ CACHE = ROOT / "viewer_cache" / SYM; CACHE.mkdir(parents=True, exist_ok=True)
 HERE = Path(__file__).parent
 DAY_MS, BAND = 86_400_000, 5e-4                                                    # depth is measured within 5 bp of the mid
 EVENTS = {"2025-10-10": [(14 * 3600_000 + 57 * 60_000 + 52_308, "Truth Social post: 'a massive increase of Tariffs' on China"),
-                         (20 * 3600_000 + 50 * 60_000 + 1_702, "Truth Social post: an additional 100% tariff on China")]}   # times from the post IDs (Lecture 20)
+                         (20 * 3600_000 + 50 * 60_000 + 1_702, "Truth Social post: an additional 100% tariff on China")]}   # times from the post IDs (Lecture 26)
 app = FastAPI(title="Order-book viewer")
 
 

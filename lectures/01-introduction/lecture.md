@@ -74,7 +74,7 @@ A systematic strategy is a chain of five stages, each with its own inputs, outpu
 - **Signal generation.** Convert data into a forecast of return or relative value, usually normalised to a bounded score such as $`s_{i,t} \in [-1, +1]`$ for asset $`i`$.
 - **Portfolio construction and allocation.** Map signals to target positions, balancing expected return, risk, factor exposures, leverage and transaction costs.
 - **Risk management.** Enforce constraints: volatility targets, position and sector limits, drawdown rules, liquidity buffers.
-- **Execution.** Route orders with execution algorithms (e.g. TWAP, VWAP, smart order routing) to minimise slippage and market impact. Parts I and II trade at daily prices with a cost per trade; the order types themselves, and what each costs, start in Lecture 12, §3.4.
+- **Execution.** Route orders with execution algorithms (e.g. TWAP, VWAP, smart order routing) to minimise slippage and market impact. Parts I and II trade at daily prices with a cost per trade; the order types themselves, and what each costs, start in Lecture 18, §3.4.
 
 ### 2.2 Allocation and risk are one problem
 
@@ -228,7 +228,7 @@ with $`T`$ the number of return periods per year. A high backtest Sharpe ratio i
 
 ### 5.3 Overfitting: the gap between the past and the future
 
-Every rule is chosen on the past and used in the future. **If the future were an exact copy of the past, there would be no overfitting:** the rule that did best in the sample would also do best afterwards. An exact copy means the same path, not only the same market: even if markets never changed, the future would be a new draw from the same process, and the noise a rule fitted in the past would not repeat. Overfitting is the name for the gap between the two, and it has two sources (Lecture 26 §2 treats them in detail):
+Every rule is chosen on the past and used in the future. **If the future were an exact copy of the past, there would be no overfitting:** the rule that did best in the sample would also do best afterwards. An exact copy means the same path, not only the same market: even if markets never changed, the future would be a new draw from the same process, and the noise a rule fitted in the past would not repeat. Overfitting is the name for the gap between the two, and it has two sources (Lecture 12 §2 treats them in detail):
 
 | Source | What it means | Can it be checked in advance? |
 |---|---|---|
@@ -241,7 +241,7 @@ It is plausible that markets keep evolving, so the useful question is not whethe
 
 | Warning sign | Why it points to overfitting | What to prefer |
 |---|---|---|
-| **The exact best parameter of an optimisation** | The peak of a search is where noise helped most. Its neighbours usually did worse, and the future will not land on the peak again. Bailey, Borwein, López de Prado and Zhu (2017) estimate how often the best rule in a sample does worse than the median out of sample | A region of parameters that all work (a plateau), held together (Lecture 7 §6; Lecture 26) |
+| **The exact best parameter of an optimisation** | The peak of a search is where noise helped most. Its neighbours usually did worse, and the future will not land on the peak again. Bailey, Borwein, López de Prado and Zhu (2017) estimate how often the best rule in a sample does worse than the median out of sample | A region of parameters that all work (a plateau), held together (Lecture 7 §6; Lecture 12) |
 | **Outlier performance** | A result far above what similar strategies earn is most often a mistake (look-ahead, survivorship, missing costs, a data error), and otherwise more often luck than skill: the best of many zero-edge strategies (random strategies with no edge by construction) can look excellent (Lecture 7 §5.2). And a real outlier attracts competitors | First look for a bug; then compare with a **luck baseline**, many random versions of the same strategy with no information (zero-edge strategies in Lecture 7, random filters in Lecture 8), and with published evidence; distrust the best result in a list |
 | **A strategy that works in one market only** | One market's history is the least evidence there is. A real mechanism usually shows wherever it should apply, unless the mechanism itself is local (a commodity's seasons, one exchange's rules) | Test across markets and asset classes; accept a rule where its mechanism says it should work, and only there |
 
@@ -264,9 +264,9 @@ It is plausible that markets keep evolving, so the useful question is not whethe
 | Data not used to find it | It fades | It remains, larger or smaller |
 | Mechanism | None, or found after seeing the result | Stated before the test: who pays, and why |
 
-<sub><b>How to read the table.</b> One row per check that can be run on a backtest result; the middle column is what a result fitted to noise tends to show, the right column what a lasting effect tends to show. Our summary, with the evidence of Lectures 7 and 28.</sub>
+<sub><b>How to read the table.</b> One row per check that can be run on a backtest result; the middle column is what a result fitted to noise tends to show, the right column what a lasting effect tends to show. Our summary, with the evidence of Lectures 7 and 14.</sub>
 
-Lecture 7 shows the difference on the same data. The Sharpe ratios of 31 trend systems in 2000-2012 and in 2013-2026 are correlated at 0.62; those of 1,000 zero-edge strategies at 0.02, and the 31 luckiest of them fall from 0.60 to −0.01. Lecture 28 shows the other outcome: a regime filter that beat 96% of its random filters on one dataset beat 50% on another, the "one place only" fingerprint. When a result was **chosen as the best of several tries** (the best parameter, the best of many strategies), it is expected to look worse out of sample on average, because the choice favoured the luckiest. A rule fixed in advance, or a whole plateau held without choosing among results, carries no selection bias from our own search (Lecture 11 §12.1). It is not free of selection altogether: what we fix in advance rests on experience and on the literature, both drawn from the same history. A 12-month lookback is popular partly because it worked, and published strategies are the survivors of many searches nobody reports. The only clean test is data nobody had seen: years before the sample, as in Lecture 28's check on 1990-2005, or live trading. Either way, any single edge can do better or worse out of sample, since the future is not known (in Lecture 7 the five best trend systems went from 0.47 to 0.56). The question is not whether it shrinks but whether something remains. Each check passed lowers the odds of noise; none removes them.
+Lecture 7 shows the difference on the same data. The Sharpe ratios of 31 trend systems in 2000-2012 and in 2013-2026 are correlated at 0.62; those of 1,000 zero-edge strategies at 0.02, and the 31 luckiest of them fall from 0.60 to −0.01. Lecture 14 shows the other outcome: a regime filter that beat 96% of its random filters on one dataset beat 50% on another, the "one place only" fingerprint. When a result was **chosen as the best of several tries** (the best parameter, the best of many strategies), it is expected to look worse out of sample on average, because the choice favoured the luckiest. A rule fixed in advance, or a whole plateau held without choosing among results, carries no selection bias from our own search (Lecture 10 §12.1). It is not free of selection altogether: what we fix in advance rests on experience and on the literature, both drawn from the same history. A 12-month lookback is popular partly because it worked, and published strategies are the survivors of many searches nobody reports. The only clean test is data nobody had seen: years before the sample, as in Lecture 14's check on 1990-2005, or live trading. Either way, any single edge can do better or worse out of sample, since the future is not known (in Lecture 7 the five best trend systems went from 0.47 to 0.56). The question is not whether it shrinks but whether something remains. Each check passed lowers the odds of noise; none removes them.
 
 ### 5.4 Many small edges, not one ace
 
@@ -292,7 +292,7 @@ Three limits keep the arithmetic honest:
 - **Correlations are not constant.** Strategies that look independent in calm years can fail together in a crisis, when many funds sell the same positions at once, as quantitative equity funds did in August 2007 (Khandani and Lo, 2011). The $`\rho`$ of the formula is an average that hides its worst days.
 - **Lasting edges are often uncomfortable rather than secret.** An edge that rests on information is competed away once it is known. Trend, carry and value have survived decades of publication because holding them hurts: long drawdowns, sudden crashes. Few investors sit through the pain, which is why the premium remains, and why such edges are modest and best held together.
 
-The course is built this way. Lectures 25-27 hold many markets and many trend speeds at equal risk instead of picking the best; Lectures 28-29 ask whether other strategies add to trend because they fail at different times.
+The course is built this way. Lectures 11-13 hold many markets and many trend speeds at equal risk instead of picking the best; Lectures 14-15 ask whether other strategies add to trend because they fail at different times.
 
 ## 6. Worked case study: a diversified trend-following model
 

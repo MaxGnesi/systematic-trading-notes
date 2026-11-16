@@ -94,7 +94,7 @@ Recent changes count most. The 12-month return sign weights the last 252 returns
 - **At equal frequency, the families are close.** The gaps between families, about 0.1–0.3, are far smaller than the spread across parameters within any one of them.
 - **How trading frequency is counted is itself a choice.** EWMAC adjusts its position continuously between changes of sign, and a Donchian system passes through flat; a change of direction is not the same trade in every family.
 
-This is a first look, kept deliberately simple. Which point on these curves to choose, and whether the gaps between families are real, are questions for [Lecture 7, Comparing Trend Systems](../07-comparing-trend-systems/lecture.md) and for Part V: picking the best point on a curve is the multiple-testing problem of Lecture 5, §4.3.
+This is a first look, kept deliberately simple. Which point on these curves to choose, and whether the gaps between families are real, are questions for [Lecture 7, Comparing Trend Systems](../07-comparing-trend-systems/lecture.md) and for Lectures 11-16: picking the best point on a curve is the multiple-testing problem of Lecture 5, §4.3.
 
 ### 2.4 Time series or cross-sectional
 
@@ -137,11 +137,11 @@ The literature began with stocks: Jegadeesh and Titman (1993) found that past wi
 | Comparing trend systems fairly | Lecture 7 |
 | Filters and overlays, regime models, pullback entries | Lecture 8 |
 | Sizing: per trade, per asset, over time, after losses, by edge | Lecture 9 |
-| The trend portfolio, with time-series and cross-sectional systems | Lecture 11 |
-| Trends on bars cut by price (point-and-figure, Renko) | Part III |
+| The trend portfolio, with time-series and cross-sectional systems | Lecture 10 |
+| Trends on bars cut by price (point-and-figure, Renko) | Part V |
 | Machine learning | Later in the course, once honest testing is in place |
 
-The trend portfolio, planned as Lecture 10, is built in the capstone, Lecture 11.
+The trend portfolio, planned as Lecture 13, is built in the capstone, Lecture 10.
 
 ## 3. Design choices and what they capture
 

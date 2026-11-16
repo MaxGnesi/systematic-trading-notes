@@ -1,8 +1,8 @@
 # Order-book viewer
 
-A small local web app to scan through the Bybit BTCUSDT order book and trades of Part IV (Lecture 18 onwards): the book over time as a heatmap with every trade, the ladder and the tape at any moment, and the liquidity measures of Lecture 18, §5, through the day.
+A small local web app to scan through the Bybit BTCUSDT order book and trades of Part IV (Lecture 24 onwards): the book over time as a heatmap with every trade, the ladder and the tape at any moment, and the liquidity measures of Lecture 24, §5, through the day.
 
-**Before you start.** Download and convert the data as in Lecture 18, §3.4, so that `parquet/orderbook/BTCUSDT/` and `parquet/trades/BTCUSDT/` exist under one folder. The app needs `fastapi` and `uvicorn` (`pip install fastapi uvicorn`) besides `polars` and `numpy`.
+**Before you start.** Download and convert the data as in Lecture 24, §3.4, so that `parquet/orderbook/BTCUSDT/` and `parquet/trades/BTCUSDT/` exist under one folder. The app needs `fastapi` and `uvicorn` (`pip install fastapi uvicorn`) besides `polars` and `numpy`.
 
 **Start it.**
 
