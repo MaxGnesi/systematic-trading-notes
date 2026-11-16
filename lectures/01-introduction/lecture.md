@@ -308,11 +308,22 @@ Research is now done with AI assistants, and these notes were too (see the READM
 
 **Guardrails used throughout this course:**
 
-1. **The plan first.** Hypotheses, rules and expectations are written and dated before any result (`results/hypotheses.md` in each lecture).
-2. **Every try is logged and counted.** Cheap tries make overfitting cheap (§5.3); the deflated Sharpe ratio corrects for the search (Lecture 15).
-3. **Hand checks.** Each notebook recomputes a lecture's key numbers by hand from the raw data.
-4. **Provenance.** Every dataset has a recorded source; a silently missing series is the most dangerous error an assistant makes, because everything still runs.
-5. **References checked at the source.** Assistants can invent plausible details: pages, initials, claims a paper does not make.
+1. **Lock the scope and the tests before the search starts.** An assistant can run a hundred variants before lunch, so what is tested must be decided before anything runs, not discovered along the way. Written down and dated first:
+
+   | Locked in advance | Example from this course |
+   |---|---|
+   | The question and the rule | "Hold trend and carry at equal risk, judged as an addition to 60/40" (Lecture 16) |
+   | The variants and the **search budget**: which versions, how many tries | Lecture 15's robustness grid, fixed before its results; every later try added to the count |
+   | The tests and what counts as success | Luck baseline with 1,000 random strategies; the expectations stated in advance; evidence weighed as a probability |
+   | The data held back | 1990-2005, untouched until Lecture 16's test |
+   | What would change the plan, and how it is recorded | A change after the results is allowed, dated, labelled, counted as a try and judged on new data |
+
+   Without the lock, the search decides what is reported, and the best of many tries looks like skill (§5.3).
+2. **The plan first.** Hypotheses, rules and expectations are written and dated before any result (`results/hypotheses.md` in each lecture).
+3. **Every try is logged and counted.** Cheap tries make overfitting cheap (§5.3); the deflated Sharpe ratio corrects for the search (Lecture 15).
+4. **Hand checks.** Each notebook recomputes a lecture's key numbers by hand from the raw data.
+5. **Provenance.** Every dataset has a recorded source; a silently missing series is the most dangerous error an assistant makes, because everything still runs.
+6. **References checked at the source.** Assistants can invent plausible details: pages, initials, claims a paper does not make.
 
 **Adapt on findings, with discipline.** Changing a strategy because of what the research found is not a fault; it is how AI-assisted research is used well. Each change is judged by its cost against its benefit (complexity, one more try, trading cost, against a measured gain) and by its robustness (a plateau, other periods and markets, a mechanism). A robust finding would be foolish to ignore, whoever or whatever found it. Lecture 17 returns to all of this with the course's own record as the case study.
 
