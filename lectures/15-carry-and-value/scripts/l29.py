@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 import numpy as np, pandas as pd
 HERE = Path(__file__).resolve().parent; ROOT = HERE.parents[2]; RAW = ROOT.parent / "data" / "raw"
-sys.path.insert(0, str(HERE)); sys.path.insert(0, str(ROOT / "lectures" / "14-part-time-strategies" / "scripts"))
+sys.path.insert(0, str(HERE)); sys.path.insert(0, str(ROOT / "lectures" / "14-regime-filters" / "scripts"))
 import l29_fx as FX, l29_commodity_check as CC, l28 as L28
 FT, L26 = L28.FT, L28.L26
 DAYS = pd.bdate_range("1999-01-04", "2022-11-18")

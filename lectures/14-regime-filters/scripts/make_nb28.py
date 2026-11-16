@@ -1,4 +1,4 @@
-"""Builds lectures/14-part-time-strategies/14_part_time_strategies.ipynb. Usage: python make_nb28.py <output path>."""
+"""Builds lectures/14-regime-filters/14_regime_filters.ipynb. Usage: python make_nb28.py <output path>."""
 import sys
 from pathlib import Path
 import nbformat as nbf
@@ -6,7 +6,7 @@ import nbformat as nbf
 OUT = Path(sys.argv[1])
 M, C = nbf.v4.new_markdown_cell, nbf.v4.new_code_cell
 cells = [
-M("""# Lecture 14 notebook: part-time strategies
+M("""# Lecture 14 notebook: regime filters
 
 This notebook replays Lecture 14. Every figure and number of the lecture comes from a script in `scripts/`, next to this notebook; each runs in a fresh process. The data are free: Lecture 13's baseline (built by its notebook), FRED series (VIX, VXO, the Fed's target, the yield curve, the dollar, Treasury yields, exchange rates, oil and gas prices), the Philadelphia Fed's Real-Time Data Set (industrial production and CPI as first published), equity indices from Yahoo Finance, and the capstone futures of Lecture 10 (local, not committed). Downloads are saved once in `data/raw/l28_realtime`.
 
@@ -16,7 +16,7 @@ By default the notebook builds the regime series if they are not there yet, redr
 |---|---|---|
 | 0 | Settings and data | |
 | 1 | The key chart; the switch by hand | §1 |
-| 2 | Comparing part-time with always-in: the six numbers, random filters and the square-root link by hand | §2 |
+| 2 | Comparing filtered trend with always-in: the six numbers, random filters and the square-root link by hand | §2 |
 | 3 | Data as first published: the share of days in another quadrant, by hand | §3 |
 | 4 | The scan | §4 |
 | 5 | The filters against luck; Benjamini-Hochberg by hand | §5 |
@@ -90,7 +90,7 @@ for r_, g_, o in zip(base.ret, base.gross, off):
 part = pd.Series(out, base.index)
 lib = LF.switched(base.ret.to_numpy(), base.gross.to_numpy(), off.to_numpy(), L.LAMBDA, L.COST_BP / 1e4)
 print(f"growth filter off on {off.mean():.0%} of days; largest daily difference from the library: {np.abs(part.to_numpy() - lib).max():.1e}")"""),
-M("""## 2. Comparing part-time with always-in
+M("""## 2. Comparing filtered trend with always-in
 
 ### 2.1 The six numbers by hand
 

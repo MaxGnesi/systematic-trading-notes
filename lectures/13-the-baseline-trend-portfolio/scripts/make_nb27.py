@@ -10,13 +10,13 @@ M("""# Lecture 13 notebook: the baseline trend portfolio
 
 This notebook replays Lecture 13. Every figure and number of the lecture comes from a script in `scripts/`, next to this notebook; each runs in a fresh process. The data are free and the same as Lecture 12's: the daily prices of Lecture 11's ETFs from Yahoo Finance, the 3-month Treasury bill rate from FRED, and Lecture 12's 36 daily trend streams per market (built by Lecture 12's notebook or here if missing). The futures checks of §2.4, §5 and §6 also use the capstone futures of Lecture 10 (local, not committed) and two Treasury funds and the S&P 500 from Yahoo, saved once.
 
-By default the notebook builds the baseline's daily returns if they are not there yet, redraws every figure of the lecture as `figures/nb_*.png` from the shipped results, and checks the lecture's mechanics by hand: the baseline rebuilt for one year, the equal-risk-contribution weights, the number of independent bets, the part-time statistics and the take-profit rule. `RUN_ALL` also reruns every analysis (about an hour, one script at a time) and compares the key numbers with the shipped ones. Recomputed results never overwrite the shipped ones.
+By default the notebook builds the baseline's daily returns if they are not there yet, redraws every figure of the lecture as `figures/nb_*.png` from the shipped results, and checks the lecture's mechanics by hand: the baseline rebuilt for one year, the equal-risk-contribution weights, the number of independent bets, the statistics of often-flat streams and the take-profit rule. `RUN_ALL` also reruns every analysis (about an hour, one script at a time) and compares the key numbers with the shipped ones. Recomputed results never overwrite the shipped ones.
 
 | § | Content | Lecture |
 |---|---|---|
 | 0 | Settings and data | |
 | 1 | The key chart; the baseline rebuilt for one year | §1 |
-| 2 | Speeds inside a market: overlap by speed ratio, equal risk contributions by hand, the blends, part-time streams, timing | §2 |
+| 2 | Speeds inside a market: overlap by speed ratio, equal risk contributions by hand, the blends, often-flat streams, timing | §2 |
 | 3 | Markets and classes: equal capital, groups | §3 |
 | 4 | The total: volatility target and constant leverage, daily rescaling | §4 |
 | 5 | Taking profits, with the rule by hand | §5 |

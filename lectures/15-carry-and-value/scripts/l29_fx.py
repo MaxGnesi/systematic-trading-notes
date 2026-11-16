@@ -60,7 +60,7 @@ if __name__ == "__main__":
     for c in R:
         r = R[c].dropna(); print(f"  {c}: {r.index[0].date()} to {r.index[-1].date()}  carry now {C[c].dropna().iloc[-1]:+.2%}")
     # check against the capstone futures: returns over cash should match (covered interest parity), apart from the time of the close
-    sys.path.insert(0, str(ROOT / "lectures" / "14-part-time-strategies" / "scripts")); import l28 as L
+    sys.path.insert(0, str(ROOT / "lectures" / "14-regime-filters" / "scripts")); import l28 as L
     F = pd.read_pickle(L.FT.CACHE)
     for c, t, sign in (("EUR", "cme-euro", 1), ("JPY", "cme-jpy", 1)):
         f = F[t]["ratio"].pct_change() * sign
