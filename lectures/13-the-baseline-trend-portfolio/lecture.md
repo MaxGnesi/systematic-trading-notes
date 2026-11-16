@@ -18,7 +18,7 @@ Lecture 11 chose the markets and Lecture 12 the speeds of the trend rules that t
 
 <sub><b>How to read the table.</b> One row per decision, in the order they are taken; the rows in bold are this lecture's. "What it uses": the only information the step may use. Steps 1 and 2 choose; steps 3 to 5 weigh, by risk alone.</sub>
 
-**Two directions, one portfolio.** The risk budget is planned **top-down**: the total gets 10% a year; it is split equally across the asset classes; each class's share is split equally across its markets; each market's share across its speeds. The portfolio is computed **bottom-up**, because each level can be sized only once the level below exists: diversification makes a blend calmer than its parts, so its risk must be measured before it can be scaled. The held speeds are blended into one stream per market; each market stream is scaled to equal risk and combined into one stream per class; each class stream is scaled to equal risk and combined; the total is scaled to 10%. The groups can be the asset classes, known in advance and stable, or clusters of markets found each year in the data; Lecture 13 §3.2 compares the two (no difference beyond the noise on our sample, and the clusters changed from year to year), so the baseline uses the classes and treats clusters as a check. **The build is a hierarchical risk parity with the tree fixed in advance:** equal risk at each level of total, classes, markets and speeds. HRP (López de Prado, 2016) does the same with a tree estimated from correlations; fix the tree where the structure is known, and estimate it only where it can be estimated reliably.
+**Two directions, one portfolio.** The risk budget is planned **top-down**: the total gets 10% a year; it is split equally across the asset classes; each class's share is split equally across its markets; each market's share across its speeds. The portfolio is computed **bottom-up**, because each level can be sized only once the level below exists: diversification makes a blend calmer than its parts, so its risk must be measured before it can be scaled. The held speeds are blended into one stream per market; each market stream is scaled to equal risk and combined into one stream per class; each class stream is scaled to equal risk and combined; the total is scaled to 10%. The groups can be the asset classes, known in advance and stable, or clusters of markets found each year in the data; Lecture 13 §3.2 compares the two (no difference beyond the noise on our sample, and the clusters changed from year to year), so the baseline uses the classes and treats clusters as a check. **The build is a hierarchical risk parity in the general sense, with the tree fixed in advance:** equal risk at each level of total, classes, markets and speeds. It is not López de Prado's HRP (2016), which estimates a tree from correlations but then splits the sorted list in halves by count; §2.2 shows that this does not fix bunched speeds, while equal risk between natural groups does.
 
 ![The build: one rule, equal risk, at every level](figures/27_build.png)
 <sub><b>How to read the figure.</b> A stylised diagram, not data. From top to bottom: the total, the five groups (asset classes in the baseline), the markets of one group, the speeds of one market; every box at a level gets the same risk. Left arrow: the risk budget is shared out from the total downwards. Right arrow: the portfolio is computed from the speeds upwards.</sub>
@@ -89,44 +89,38 @@ whose solution has risk contributions proportional to the budgets $`b_i`$ (all e
 
 <sub><b>How to read the table.</b> Each method blends the held speeds inside every market; the rest of the portfolio (markets, classes, total) is the baseline's. Sharpe ratio after 5 bp per trade, excess returns over cash. Independent bets: the number of uncorrelated streams of equal risk that would give the blend's diversification, $`(\sum_i w_i)^2 / w^\top C w`$ with the streams at unit risk. Our calculation.</sub>
 
-Equal weights, equal risk contributions and the cost-adjusted budgets give the same portfolio in practice: the equal-risk weights at the end-2025 review range from 4.5% to 5.8% around the equal 5%. That depends on the grid. The speeds are spaced geometrically, each about 1.4 times the last, so neighbours overlap about equally everywhere and equal weight gives each region of speeds a fair share. If the held speeds were not evenly spread, the methods would part ways. Four edge cases, with correlations taken from the speed ratio as measured in §2.1:
+Equal weights, equal risk contributions and the cost-adjusted budgets give the same portfolio in practice: the equal-risk weights at the end-2025 review range from 4.5% to 5.8% around the equal 5%. That depends on the grid. The speeds are spaced geometrically, each about 1.4 times the last, so neighbours overlap about equally everywhere and equal weight gives each region of speeds a fair share. If the held speeds were not evenly spread, the methods would part ways. To see how, seven patterns of spacing and bunching are each weighed by five methods, with correlations taken from the speed ratio as measured in §2.1:
 
-| Speed set | Equal weight | Equal risk contributions | Minimum variance, long only | Grouped by region |
-|---|---|---|---|---|
-| Even: 50, 100, 200 days | Fair (33 / 35 / 33) | Fair (33 / 33 / 33) | Starves the middle (45 / 10 / 45) | Fair (33 / 35 / 33) |
-| Bunched: 50, 60, 70 and 200 (bunch / far) | 78 / 22 | 75 / 25 | 53 / 47, erratic inside (moves 5.5 points) | 50 / 50, steady |
-| A near-copy: 50, 50, 100, 200 (50 / 100 / 200) | 52 / 26 / 23 | 50 / 25 / 25 | 45 / 10 / 45 | 33 / 35 / 33 |
-| Two bunches: 50, 55, 60 and 180, 200, 220 | 50 / 50 | 50 / 50 | 50 / 50, erratic inside (moves 9.1 points) | 50 / 50, steady |
+| Pattern | Regions (days) | Equal weight | Equal risk contributions | Minimum variance, long only | HRP, as published | Grouped at the natural gaps |
+|---|---|---|---|---|---|---|
+| Same ratio (geometric) | 40,63 / 100,159 / 252,400 | 32 / 35 / 32 | 33 / 33 / 33 | 44 / 12 / 44 | 24 / 39 / 36 | 32 / 36 / 32 |
+| Same day difference | 40 / 112,184 / 256,328,400 | 13 / 34 / 52 | 17 / 33 / 50 | 42 / 16 / 43 | 23 / 30 / 48 | 31 / 36 / 33 |
+| U-shaped (no middle) | 40,45,52 / none / 310,355,400 | 50 / 0 / 50 | 50 / 0 / 50 | 50 / 0 / 50 | 50 / 0 / 50 | 50 / 0 / 50 |
+| Erratic | 40,48,57 / 90 / 230,400 | 52 / 18 / 30 | 50 / 17 / 33 | 42 / 9 / 48 | 52 / 24 / 24 (moves 14 pts) | 33 / 35 / 31 |
+| A bunch: 50, 60, 70 and 200 | 50,60,70 / 200 | 78 / 22 | 75 / 25 | 52 / 48 | 76 / 24 | 50 / 50 |
+| A near-copy: 50, 50, 100, 200 | 50,50 / 100 / 200 | 52 / 26 / 23 | 50 / 25 / 25 | 45 / 10 / 45 | 48 / 27 / 24 | 32 / 35 / 32 |
+| Two bunches: 50-60 and 180-220 | 50,55,60 / 180,200,220 | 50 / 50 | 50 / 50 | 50 / 50 | 50 / 50 (moves 12 pts) | 50 / 50 |
 
-<sub><b>How to read the table.</b> Each cell is the share of the blend's risk carried by each region of speeds, in %. "Moves": the largest change in any weight, in percentage points, when one correlation inside a region shifts by 0.01. "Grouped by region": equal risk between regions, then equal risk contributions within each. Illustrative correlations, not estimates ([scripts/l27_edge_cases.py](scripts/l27_edge_cases.py)).</sub>
+<sub><b>How to read the table.</b> One row per pattern; the first three patterns place six speeds between 40 and 400 days, cut into three thirds by ratio (40-86, 86-186, 186-400 days). Each cell is the share of the blend's risk in each region, in %. "Moves": the largest change in any weight, in percentage points, when one correlation inside a region shifts by 0.01, shown when it exceeds 5 points. "Grouped at the natural gaps": equal risk between the regions, then equal risk contributions within each. Illustrative correlations, not estimates ([scripts/l27_edge_cases.py](scripts/l27_edge_cases.py), [results/bunching.json](results/bunching.json)).</sub>
 
-Grouping by region is the only method that is fair and steady in these four cases. Equal weight and equal risk contributions are fine on an even grid but give a bunch or a near-copy too much risk, because each stream gets its own share. Minimum variance balances the regions surprisingly well when speeds bunch, but it always starves the middle and, inside a bunch, picks members almost at random. Grouping is the nesting of the build (§1) applied inside a market, which is what HRP does with groups it estimates.
+The problems that arise, method by method:
 
-**Grouping has problems of its own.** Someone has to draw the regions. A lone speed gets a whole region's share: with 50, 60 and 70 days and one speed at 500, grouping puts 50% of the risk on the 500-day speed alone (equal risk contributions, 25%), and a lone speed at the edge of the plateau is the least reliable place for it (Lecture 7 §6). And on an even grid the cut decides the weights: for 50, 70, 100, 140 and 200 days, the 100-day speed gets 17.1% if the cut falls after 70 or after 100 days, 32.6% if it stands as a region of its own, and 19.1% under equal risk contributions with no cut at all.
-
-| Method | Problem | When it bites |
+| Method | Problem | Where the matrix shows it |
 |---|---|---|
-| Equal weight | Bunches and near-copies get too much risk (78%, 52%) | Uneven speeds |
-| Equal risk contributions | The same: each stream gets its own share (75%, 50%) | Uneven speeds |
-| Minimum variance | Starves the middle speed (10%); erratic inside a bunch (moves up to 9.1 points); assumes equal returns | Always; worst when speeds bunch |
-| Grouping by region | A lone speed gets a whole region's share (50%); on an even grid the cut decides the weights (17% or 33%) | Lone outliers; grids with no natural gap |
+| Equal weight | Dense regions and near-copies get too much risk, because each stream counts once | Same day difference (slow third 52%), erratic (fast third 53%), a bunch (78%), a near-copy (52%) |
+| Equal risk contributions | The same: each stream gets its own share of risk | Same day difference (50%), a bunch (75%), a near-copy (50%) |
+| Minimum variance, long only | Starves the middle speed even on a fair grid; assumes equal returns | Same ratio (middle third 12%), a near-copy (the 100-day speed 10%) |
+| HRP, as published | Splits the sorted list in halves by count, not at the natural gaps, so it does not fix bunching; can unbalance a fair grid; jumps when a correlation shifts slightly | A bunch (76%), same ratio (24 / 39 / 36), erratic and two bunches (moves 14 and 12 points) |
+| Grouped at the natural gaps | Needs regions drawn by hand: a lone speed gets a whole region's share, and on an even grid the cut decides the weights | Below |
+| All five | None can put back speeds that are not there | U-shaped (middle third 0) |
 
-<sub><b>How to read the table.</b> One row per method; the numbers come from the edge cases above. "When it bites": the kind of speed set that exposes the problem.</sub>
+<sub><b>How to read the table.</b> One row per method; the right column points to the rows of the matrix where the problem appears.</sub>
 
-**How to space the speeds matters more than how to weigh them.** Since the correlation between two speeds depends on their ratio (§2.1), "evenly spaced" should mean evenly spaced in ratio. Four ways to place six speeds between 40 and 400 days:
+**And on random grids?** One erratic pattern is a single example. Across 500 grids of six speeds drawn at random between 40 and 400 days (grids with an empty third left out, since no method repairs those), the largest gap between a third's share of the risk and an even third was, typically and in the worst tenth of grids: equal weight 19 and 36 points; equal risk contributions 17 and 33; HRP as published 18 and 29; minimum variance 22 and 26, with weights that move by up to 5.4 points when one correlation shifts by 0.01; grouping by third 2 and 2. HRP helps a little in the most bunched grids but not in the typical one; only grouping repairs a random grid ([results/random_grids.json](results/random_grids.json)).
 
-| Spacing | Speeds per third (fast / middle / slow) | Equal weight | Equal risk contributions | Grouped by third | Verdict |
-|---|---|---|---|---|---|
-| Same ratio (geometric): 40, 63, 100, 159, 252, 400 | 2 / 2 / 2 | 32 / 35 / 32 | 33 / 33 / 33 | 32 / 35 / 32 | Fair with every method |
-| Same day difference (arithmetic): 40, 112, 184, 256, 328, 400 | 1 / 2 / 3 | 13 / 34 / 52 | 17 / 33 / 50 | 31 / 36 / 33 | Crowds the slow end; only grouping repairs it |
-| U-shaped: 40, 45, 52 and 310, 355, 400 | 3 / 0 / 3 | 50 / 0 / 50 | 50 / 0 / 50 | 50 / 0 / 50 | No method can repair it: the centre of the plateau is missing |
-| Erratic: 40, 48, 57, 90, 230, 400 | 3 / 1 / 2 | 53 / 18 / 30 | 50 / 17 / 33 | 33 / 35 / 31 | Grouping repairs it |
+Grouping has problems of its own, because someone has to draw the regions. A lone speed gets a whole region's share: with 50, 60 and 70 days and one speed at 500, grouping puts 50% of the risk on the 500-day speed alone (equal risk contributions, 25%), and a lone speed at the edge of the plateau is the least reliable place for it (Lecture 7 §6). On an even grid the cut decides the weights: for 50, 70, 100, 140 and 200 days, the 100-day speed gets 17.1% if the cut falls after 70 or after 100 days, 32.6% if it stands as a region of its own, and 19.1% under equal risk contributions with no cut at all.
 
-<sub><b>How to read the table.</b> The range from 40 to 400 days is cut into three thirds by ratio (40-86, 86-186, 186-400 days). Middle columns: the share of the blend's risk in the fast, middle and slow third, in %, under each method. Correlations from the speed ratio, as in the edge cases ([results/spacing.json](results/spacing.json)).</sub>
-
-Spacing in days crowds the slow end: 150 and 200 days are almost the same speed (a ratio of 1.33), while 40 and 100 are very different (2.5), so half the risk ends up in the slowest third. A U-shaped grid leaves the centre of the plateau empty, and no weighting can put back speeds that are not there. Grouping repairs uneven grids but cannot create missing speeds. On a same-ratio grid every method is fair, which is why Lecture 12's grid steps each speed up by about 1.4 times.
-
-**The rule that follows.** Group only where there is a natural gap between regions, with the regions drawn in advance from the speeds themselves (their ratios), never tuned to results. On an even grid, do not cut: equal weight or equal risk contributions are fine there, and that is the baseline's case.
+**What the matrix recommends, row by row.** (1) **Fix the grid first.** The same-ratio row is the only pattern in which the simple methods, equal weight and equal risk contributions, are already fair; spacing by days crowds the slow end because the correlation between speeds depends on their ratio, not their difference. (2) **If the held set ends up uneven anyway**, because some speeds fail the selection of Lecture 12, group at the natural gaps: in the matrix it is the only method that repairs the uneven rows (same day difference, erratic, a bunch, a near-copy), with regions drawn in advance from the speeds themselves, never tuned to results. (3) **Never leave the middle empty**: no method repairs the U-shaped row. Lecture 12's grid steps each speed up by about 1.4 times and its held speeds are contiguous, so the baseline sits in the first row, where equal weight is fair.
 
 In the baseline every held speed carries all three rules, so the speeds are triplicated equally; the exception, the 251-day speed held only as the EWMA crossover, gets a little less risk than its region would alone. Their correlations leave little to choose: when every pair of neighbours overlaps by about 0.9, no weighting finds a second independent bet that is not there. Maximum Sharpe ratio concentrates on five streams that changed from year to year (at the 2012 review mostly the 179-day crossover, at 2018 the 89-day crossover and the 127-day breakout) and earned 0.03 less.
 
@@ -182,7 +176,7 @@ Maximum Sharpe ratio concentrated on a few streams and changed them from review 
 | Shrinkage of returns | Maximum Sharpe ratio | Pulls the Sharpe ratios towards their average; when they cannot be told apart it falls back to minimum variance and its corner |
 | Shrinkage of correlations | Minimum variance, maximum Sharpe | Cleans the matrix before it is inverted; helps with many assets and short histories |
 | Equal weight, equal risk | Equal risk contributions | Ignore correlations entirely |
-| HRP | Equal risk contributions | Shares risk between **groups** first, then within them: the fix for duplication (López de Prado, 2016) |
+| Grouping at the natural gaps | Equal risk contributions | Shares risk equally between natural groups first, then within them: the fix for duplication (§2.2). HRP as published (López de Prado, 2016) estimates the groups but splits them by count and did not fix it in §2.2 |
 
 <sub><b>How to read the table.</b> Each method in terms of the two rules: the family it belongs to and what it adds or changes.</sub>
 
@@ -236,7 +230,7 @@ The methods that use past returns scatter: maximum Sharpe ratio moves by tens of
 | The streams earn exactly the same, and their overlap is known exactly | Minimum variance, shorts allowed (the maximum-Sharpe portfolio under exactly these beliefs) |
 | The streams earn about the same, and only the broad shape of their overlap is trusted | Equal risk contributions (the maximum-Sharpe portfolio if Sharpe ratios and correlations were all equal; robust when they are only roughly so) |
 | The streams earn the same, are spread evenly (a geometric grid of speeds, no bunching), and correlations are not worth using | Equal weight, equal risk |
-| The streams earn the same but bunch or include near-copies | Group them into regions first, then share risk within each: a hierarchical risk parity, with regions fixed in advance or estimated (HRP) |
+| The streams earn the same but bunch or include near-copies | Group them at the natural gaps, drawn in advance, then share risk within each; HRP as published does not do this (§2.2) |
 | Some streams are near-copies, and only groups are reliable | HRP |
 | The goal is the lowest risk, not return per unit of risk | Minimum variance, long only |
 | One stream earns more for a reason that should last | A modest tilt, stated in advance and tested elsewhere |
@@ -489,7 +483,7 @@ A practical guide to the methods of §2.3, one card each: what the method does, 
 | **Minimum variance** | The lowest-risk combination | The full correlation matrix, inverted; implicitly, equal expected returns | The goal really is the lowest risk | Near-duplicates: drops or shorts the middle one; concentrates in the calmest assets |
 | **Maximum Sharpe ratio (mean-variance)** | The highest expected return per unit of risk | Correlations, inverted, and expected returns | Expected returns are known far better than they ever are | Almost always in practice: corners, extreme long-short weights, choices that follow the noise (Michaud, 1989) |
 | **Shrinkage** | Pulls estimates towards a simple structure before optimising: Sharpe ratios towards their average, correlations towards a constant (Ledoit and Wolf, 2004) | The structure it shrinks towards | The structure is close to the truth | Shrinking returns alone does not help when the corner comes from the correlations (§2.3: the shrunk optimiser falls back to minimum variance) |
-| **Hierarchical Risk Parity (HRP)** | Groups assets by correlation into a tree, then splits risk between and within the groups (López de Prado, 2016) | Correlations only to form groups | Many assets with a clear group structure; noisy or near-singular correlations | Groups are unclear; sizing by variance can concentrate in the calmest group |
+| **Hierarchical Risk Parity (HRP)** | Sorts assets by a correlation tree, then splits the sorted list in halves recursively, sizing each half by inverse variance (López de Prado, 2016) | Correlations, to sort the assets | Many assets and noisy or near-singular correlations: no matrix is inverted | Near-copies and bunches: it splits by count, not at the natural gaps, so a bunch keeps most of the risk; small changes in correlations can reorder the tree (§2.2) |
 
 <sub><b>How to read the table.</b> One row per method, from those that use the least estimated information to those that use the most, then the methods that tame an optimiser. "Inverted": the weights depend on the inverse of the correlation matrix. Results on our data are in §2.3 and results/hypotheses.md.</sub>
 

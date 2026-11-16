@@ -1,0 +1,427 @@
+{
+ "Same ratio (geometric)": {
+  "speeds": [
+   40,
+   63,
+   100,
+   159,
+   252,
+   400
+  ],
+  "regions": [
+   [
+    40,
+    63
+   ],
+   [
+    100,
+    159
+   ],
+   [
+    252,
+    400
+   ]
+  ],
+  "Equal weight": {
+   "region_risk": [
+    0.323,
+    0.354,
+    0.323
+   ],
+   "max_move": 0.0
+  },
+  "Equal risk contributions": {
+   "region_risk": [
+    0.333,
+    0.333,
+    0.333
+   ],
+   "max_move": 0.0002
+  },
+  "Minimum variance, long only": {
+   "region_risk": [
+    0.439,
+    0.122,
+    0.439
+   ],
+   "max_move": 0.0214
+  },
+  "HRP, as published": {
+   "region_risk": [
+    0.244,
+    0.394,
+    0.362
+   ],
+   "max_move": 0.0005
+  },
+  "Grouped at the natural gaps": {
+   "region_risk": [
+    0.323,
+    0.355,
+    0.323
+   ],
+   "max_move": 0.0003
+  }
+ },
+ "Same day difference": {
+  "speeds": [
+   40,
+   112,
+   184,
+   256,
+   328,
+   400
+  ],
+  "regions": [
+   [
+    40
+   ],
+   [
+    112,
+    184
+   ],
+   [
+    256,
+    328,
+    400
+   ]
+  ],
+  "Equal weight": {
+   "region_risk": [
+    0.133,
+    0.344,
+    0.523
+   ],
+   "max_move": 0.0
+  },
+  "Equal risk contributions": {
+   "region_risk": [
+    0.167,
+    0.333,
+    0.5
+   ],
+   "max_move": 0.0002
+  },
+  "Minimum variance, long only": {
+   "region_risk": [
+    0.416,
+    0.155,
+    0.429
+   ],
+   "max_move": 0.0054
+  },
+  "HRP, as published": {
+   "region_risk": [
+    0.227,
+    0.295,
+    0.478
+   ],
+   "max_move": 0.0005
+  },
+  "Grouped at the natural gaps": {
+   "region_risk": [
+    0.309,
+    0.358,
+    0.332
+   ],
+   "max_move": 0.0003
+  }
+ },
+ "U-shaped (no middle)": {
+  "speeds": [
+   40,
+   45,
+   52,
+   310,
+   355,
+   400
+  ],
+  "regions": [
+   [
+    40,
+    45,
+    52
+   ],
+   [],
+   [
+    310,
+    355,
+    400
+   ]
+  ],
+  "Equal weight": {
+   "region_risk": [
+    0.5,
+    0.0,
+    0.5
+   ],
+   "max_move": 0.0
+  },
+  "Equal risk contributions": {
+   "region_risk": [
+    0.5,
+    0.0,
+    0.5
+   ],
+   "max_move": 0.0002
+  },
+  "Minimum variance, long only": {
+   "region_risk": [
+    0.5,
+    0.0,
+    0.5
+   ],
+   "max_move": 0.0175
+  },
+  "HRP, as published": {
+   "region_risk": [
+    0.5,
+    0.0,
+    0.5
+   ],
+   "max_move": 0.0005
+  },
+  "Grouped at the natural gaps": {
+   "region_risk": [
+    0.5,
+    0.0,
+    0.5
+   ],
+   "max_move": 0.0003
+  }
+ },
+ "Erratic": {
+  "speeds": [
+   40,
+   48,
+   57,
+   90,
+   230,
+   400
+  ],
+  "regions": [
+   [
+    40,
+    48,
+    57
+   ],
+   [
+    90
+   ],
+   [
+    230,
+    400
+   ]
+  ],
+  "Equal weight": {
+   "region_risk": [
+    0.525,
+    0.176,
+    0.299
+   ],
+   "max_move": 0.0
+  },
+  "Equal risk contributions": {
+   "region_risk": [
+    0.5,
+    0.167,
+    0.333
+   ],
+   "max_move": 0.0002
+  },
+  "Minimum variance, long only": {
+   "region_risk": [
+    0.425,
+    0.092,
+    0.483
+   ],
+   "max_move": 0.0234
+  },
+  "HRP, as published": {
+   "region_risk": [
+    0.515,
+    0.241,
+    0.245
+   ],
+   "max_move": 0.1415
+  },
+  "Grouped at the natural gaps": {
+   "region_risk": [
+    0.334,
+    0.352,
+    0.314
+   ],
+   "max_move": 0.0002
+  }
+ },
+ "A bunch: 50, 60, 70 and 200": {
+  "speeds": [
+   50,
+   60,
+   70,
+   200
+  ],
+  "regions": [
+   [
+    50,
+    60,
+    70
+   ],
+   [
+    200
+   ]
+  ],
+  "Equal weight": {
+   "region_risk": [
+    0.782,
+    0.218
+   ],
+   "max_move": 0.0
+  },
+  "Equal risk contributions": {
+   "region_risk": [
+    0.75,
+    0.25
+   ],
+   "max_move": 0.0003
+  },
+  "Minimum variance, long only": {
+   "region_risk": [
+    0.525,
+    0.475
+   ],
+   "max_move": 0.0253
+  },
+  "HRP, as published": {
+   "region_risk": [
+    0.756,
+    0.244
+   ],
+   "max_move": 0.0
+  },
+  "Grouped at the natural gaps": {
+   "region_risk": [
+    0.5,
+    0.5
+   ],
+   "max_move": 0.0003
+  }
+ },
+ "A near-copy: 50, 50, 100, 200": {
+  "speeds": [
+   50,
+   50,
+   100,
+   200
+  ],
+  "regions": [
+   [
+    50,
+    50
+   ],
+   [
+    100
+   ],
+   [
+    200
+   ]
+  ],
+  "Equal weight": {
+   "region_risk": [
+    0.517,
+    0.255,
+    0.228
+   ],
+   "max_move": 0.0
+  },
+  "Equal risk contributions": {
+   "region_risk": [
+    0.5,
+    0.25,
+    0.25
+   ],
+   "max_move": 0.0003
+  },
+  "Minimum variance, long only": {
+   "region_risk": [
+    0.453,
+    0.099,
+    0.448
+   ],
+   "max_move": 0.0039
+  },
+  "HRP, as published": {
+   "region_risk": [
+    0.483,
+    0.272,
+    0.245
+   ],
+   "max_move": 0.0006
+  },
+  "Grouped at the natural gaps": {
+   "region_risk": [
+    0.325,
+    0.35,
+    0.325
+   ],
+   "max_move": 0.0003
+  }
+ },
+ "Two bunches: 50-60 and 180-220": {
+  "speeds": [
+   50,
+   55,
+   60,
+   180,
+   200,
+   220
+  ],
+  "regions": [
+   [
+    50,
+    55,
+    60
+   ],
+   [
+    180,
+    200,
+    220
+   ]
+  ],
+  "Equal weight": {
+   "region_risk": [
+    0.5,
+    0.5
+   ],
+   "max_move": 0.0
+  },
+  "Equal risk contributions": {
+   "region_risk": [
+    0.5,
+    0.5
+   ],
+   "max_move": 0.0002
+  },
+  "Minimum variance, long only": {
+   "region_risk": [
+    0.499,
+    0.501
+   ],
+   "max_move": 0.0135
+  },
+  "HRP, as published": {
+   "region_risk": [
+    0.5,
+    0.5
+   ],
+   "max_move": 0.1221
+  },
+  "Grouped at the natural gaps": {
+   "region_risk": [
+    0.5,
+    0.5
+   ],
+   "max_move": 0.0003
+  }
+ }
+}

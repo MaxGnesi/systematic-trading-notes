@@ -93,3 +93,77 @@ def spacing():
 
 if __name__ == "__main__":
     for k, v in spacing().items(): print(k, v)
+
+
+# --- the full matrix: seven ways the speeds can be spaced or bunched, five ways to weigh them ---------------------------------------
+def matrix():
+    import pandas as pd
+    import sys as _s
+    _s.path.insert(0, str(Path(__file__).resolve().parents[3]))
+    from trading_models.allocation.hrp import hrp
+    lo, hi = 40, 400; edges = np.geomspace(lo, hi, 4)
+    thirds = lambda sp: [[i for i, s in enumerate(sp) if min(2, int(np.searchsorted(edges, s, side="right") - 1)) == k] for k in range(3)]
+    P = {"Same ratio (geometric)": ([int(x) for x in np.round(np.geomspace(lo, hi, 6))], None, []),
+         "Same day difference": ([int(x) for x in np.round(np.linspace(lo, hi, 6))], None, []),
+         "U-shaped (no middle)": ([40, 45, 52, 310, 355, 400], None, []),
+         "Erratic": ([40, 48, 57, 90, 230, 400], None, []),
+         "A bunch: 50, 60, 70 and 200": ([50, 60, 70, 200], [[0, 1, 2], [3]], []),
+         "A near-copy: 50, 50, 100, 200": ([50, 50, 100, 200], [[0, 1], [2], [3]], [(0, 1)]),
+         "Two bunches: 50-60 and 180-220": ([50, 55, 60, 180, 200, 220], [[0, 1, 2], [3, 4, 5]], [])}
+    out = {}
+    for name, (sp, R, copies) in P.items():
+        R = R or thirds(sp); C = corr(sp, copies); Rn = [g for g in R if g]
+        def hrp_w(C):
+            cov = pd.DataFrame(C, index=range(len(C)), columns=range(len(C)))
+            return hrp(cov, method="single").weights.reindex(cov.index).to_numpy()
+        M = {"Equal weight": lambda C: np.ones(len(C)) / len(C), "Equal risk contributions": erc, "Minimum variance, long only": minvar,
+             "HRP, as published": hrp_w, "Grouped at the natural gaps": lambda C: grouped(C, Rn)}
+        out[name] = {"speeds": sp, "regions": [[sp[i] for i in g] for g in R]}
+        g = next((g for g in R if len(g) > 1), None)
+        for m, f in M.items():
+            w = f(C); rc = w * (C @ w); rc = rc / rc.sum(); move = None
+            if g:
+                C2 = C.copy(); i, j = g[0], g[1]; C2[i, j] = C2[j, i] = min(0.999, C[i, j] + 0.01); move = float(np.abs(f(C2) - w).max())
+            out[name][m] = dict(region_risk=[round(float(rc[q].sum()), 3) if q else 0.0 for q in R], max_move=round(move, 4) if move is not None else None)
+    (Path(__file__).resolve().parent.parent / "results" / "bunching.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+    return out
+
+
+if __name__ == "__main__":
+    for k, v in matrix().items():
+        print(k, {m: (v[m]["region_risk"], v[m]["max_move"]) for m in v if m not in ("speeds", "regions")})
+
+
+# --- random grids: six speeds drawn log-uniformly between 40 and 400 days, 500 draws ---------------------------------------------------
+def random_grids(n=500, seed=13):
+    import pandas as pd, sys as _s
+    _s.path.insert(0, str(Path(__file__).resolve().parents[3]))
+    from trading_models.allocation.hrp import hrp
+    rng = np.random.default_rng(seed); lo, hi = 40, 400; edges = np.geomspace(lo, hi, 4)
+    def hrp_w(C):
+        cov = pd.DataFrame(C, index=range(len(C)), columns=range(len(C)))
+        return hrp(cov, method="single").weights.reindex(cov.index).to_numpy()
+    res = {m: {"gap": [], "move": []} for m in ["Equal weight", "Equal risk contributions", "Minimum variance, long only", "HRP, as published", "Grouped by third"]}
+    done = 0
+    while done < n:
+        sp = sorted(int(x) for x in np.exp(rng.uniform(np.log(lo), np.log(hi), 6)))
+        if len(set(sp)) < 6: continue
+        R = [[i for i, s in enumerate(sp) if min(2, int(np.searchsorted(edges, s, side="right") - 1)) == k] for k in range(3)]
+        if any(len(g) == 0 for g in R): continue                      # a missing third cannot be repaired by any method (the U-shaped row)
+        C = corr(sp, []); i, j = 0, 1; C2 = C.copy(); C2[i, j] = C2[j, i] = min(0.999, C[i, j] + 0.01)
+        M = {"Equal weight": lambda C: np.ones(len(C)) / len(C), "Equal risk contributions": erc, "Minimum variance, long only": minvar,
+             "HRP, as published": hrp_w, "Grouped by third": lambda C: grouped(C, R)}
+        for m, f in M.items():
+            w = f(C); rc = w * (C @ w); rc = rc / rc.sum(); sh = np.array([rc[g].sum() for g in R])
+            res[m]["gap"].append(float(np.abs(sh - 1 / 3).max())); res[m]["move"].append(float(np.abs(f(C2) - w).max()))
+        done += 1
+    out = {m: dict(median_gap=float(np.median(v["gap"])), p90_gap=float(np.percentile(v["gap"], 90)),
+                   median_move=float(np.median(v["move"])), p90_move=float(np.percentile(v["move"], 90))) for m, v in res.items()}
+    (Path(__file__).resolve().parent.parent / "results" / "random_grids.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+    return out
+
+
+if __name__ == "__main__":
+    for m, v in random_grids().items():
+        print(f"{m:28s} largest gap from an even third: median {100 * v['median_gap']:.0f} pts, worst tenth {100 * v['p90_gap']:.0f} pts | "
+              f"weight move for a 0.01 correlation change: median {100 * v['median_move']:.1f}, worst tenth {100 * v['p90_move']:.1f} pts")
