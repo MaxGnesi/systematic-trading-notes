@@ -74,10 +74,10 @@ def trend_z(Y, years=10):
     return out
 
 
-def stream(W, R):
+def stream(W, R, vol_months=36):
     """Monthly group return from weights W (known at the end of the month before), vol-scaled, net of costs, scaled yearly to 10%."""
     W = W.div(W.abs().sum(axis=1), axis=0)
-    vol = R.rolling(36, min_periods=24).std().shift(1) * np.sqrt(12)
+    vol = R.rolling(vol_months, min_periods=max(6, int(vol_months * 2 / 3))).std().shift(1) * np.sqrt(12)
     pos = (W * TARGET / vol).shift(1)                                                   # held during month m, set at the end of m-1
     r = (pos * R).sum(axis=1, min_count=1) - pos.diff().abs().sum(axis=1) * COST
     r = r.where(pos.notna().any(axis=1))
