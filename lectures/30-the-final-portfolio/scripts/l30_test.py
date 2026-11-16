@@ -78,7 +78,7 @@ if __name__ == "__main__":
     (RES / "test.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
     # key chart: 1990-2005, money over time
     o = out["1990-2005"]; tr, a, b = periods["1990-2005"]; rule = combine([tr.loc[a:b], carry.loc[a:b]], tr.loc[a:b]); lo = LO.reindex(rule.index)
-    lines = (("60/40 with 30% of its risk in the rule", blend(lo["60/40"], rule, 0.3), SERIES[0], "solid"), ("60/40", lo["60/40"], INK, "solid"),
+    lines = (("60/40 + 30% risk in the rule", blend(lo["60/40"], rule, 0.3), SERIES[0], "solid"), ("60/40", lo["60/40"], INK, "solid"),
              ("The rule: trend + carry", rule, SERIES[1], "dot"))
     fig = go.Figure()
     for (name, r, col, dash), dy in zip(lines, (12, -12, 0)):
@@ -87,7 +87,8 @@ if __name__ == "__main__":
         fig.add_annotation(x=x[-1], y=w.iloc[-1], text=f"<b>{name.split(':')[0]}</b><br>Sharpe {st['sharpe']:.2f} · worst {st['maxdd']:.0%}", showarrow=False,
                            xanchor="left", xshift=8, yshift=dy, align="left", font=dict(size=12, color=col))
     fig.update_yaxes(title_text="value of 100 invested (excess return over cash)")
-    fig.update_layout(title="The final portfolio on years it was not built on<br><sup>1990-2005, monthly, after costs; 60/40 = S&P 500 and US 10-year bonds; "
+    fig.update_xaxes(range=[rule.index[0].to_timestamp(), rule.index[-1].to_timestamp() + pd.Timedelta(days=40)])
+    fig.update_layout(title="The final portfolio on years it was not built on<br><sup>1993-2005 (carry needs three years of history from 1990), monthly, after costs; 60/40 = S&P 500 and US 10-year bonds; "
                             "the rule = trend and carry at equal risk; the blend keeps 60/40's volatility</sup>",
                       height=560, width=1250, margin=dict(t=90, l=80, r=230, b=110), legend=dict(orientation="h", y=-0.12, x=0))
     save_figure(fig, os.environ.get("L30_PREFIX", "") + "30_key", FIG)
