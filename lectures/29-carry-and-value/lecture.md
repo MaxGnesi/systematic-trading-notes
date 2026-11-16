@@ -125,7 +125,7 @@ No group alone is worth much: their Sharpe ratios of 0.18 to 0.46 come with draw
 
 | Step | What happens | Why |
 |---|---|---|
-| 1. A price without income | The real exchange rate (currencies), the front contract's own price (commodities), the 10-year yield (bonds), the index without dividends in local currency (equities) | A total-return series rises with its income; measured on it, a market that pays a lot always looks dear and one that costs a lot to hold always looks cheap |
+| 1. A price without income | The real exchange rate (currencies), the spot price (commodities: the World Bank's monthly prices, whose longer history allows a 10-year line from 2004), the 10-year yield (bonds), the index without dividends in local currency (equities) | A total-return series rises with its income; measured on it, a market that pays a lot always looks dear and one that costs a lot to hold always looks cheap |
 | 2. A trend line, not a flat average | A straight line through the past ten years of monthly log prices, extended to today; value is today's distance below the line | Prices that grow over time sit above their own past average most of the time; against a flat average the S&P 500 looked cheap in only 12-14% of months in 2006-2022, gold in 5% |
 | 3. A z-score | The distance divided by how far the market usually strays from its own line | A volatile market strays further; without this, natural gas was the most extreme commodity in 31% of months |
 | 4. Positions | Ranked within each group, long the cheapest, short the dearest; sized and scaled as carry (§4.2) | The same machinery for every strategy |
