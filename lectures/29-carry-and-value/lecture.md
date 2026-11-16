@@ -2,7 +2,7 @@
 
 *Systematic Trading: Lecture Notes (MSc) · draft, Nov 16, 2026 · Max Gnesi*
 
-Lecture 28 tried to avoid trend's bad regimes by switching trend off, and no switch passed the test fixed in advance. This lecture takes the other answer to the same problem: hold, next to trend, strategies that earn for different reasons, so that they tend to earn when trend does not, without anyone forecasting the regime. The two best-documented candidates across asset classes are **carry**, what a position earns if prices stand still, and **value**, buying what is cheap against its own past. Both are built across four groups, currencies, commodities, government bonds and equity indices, and judged by what they add to trend. Where a published version exists, ours is checked against it, and every difference is shown with what it costs in agreement. The plan was fixed before any result was computed, and every change made after seeing results is dated and labelled ([results/hypotheses.md](results/hypotheses.md)).
+Lecture 28 tried to avoid trend's bad regimes by switching trend off, and no switch passed the test fixed in advance. This lecture takes the other answer to the same problem: hold, next to trend, strategies that earn for different reasons, so that they tend to earn when trend does not, without anyone forecasting the regime. The two best-documented candidates across asset classes are **carry**, what a position earns if prices stand still, and **value**, buying what is cheap against what it is worth. Both are built across four groups, currencies, commodities, government bonds and equity indices, and judged by what they add to trend. Where a published version exists, ours is checked against it, and every difference is shown with what it costs in agreement. The plan was fixed before any result was computed, and every change made after seeing results is dated and labelled ([results/hypotheses.md](results/hypotheses.md)).
 
 ## 1. A second business next to trend
 
@@ -12,7 +12,7 @@ Lecture 28 tried to avoid trend's bad regimes by switching trend off, and no swi
 | 2 | Why after Lecture 28 | Why hold another strategy rather than switch trend off? |
 | 3 | The published versions and ours | How does AQR build carry and value, and where do we differ? |
 | 4 | Carry | What does each group earn, and how is the signal built? |
-| 5 | Value | Why is value weak in this period? |
+| 5 | Value | How should value be measured, and does it earn? |
 | 6 | Results | Does carry beat luck, and what does it cost in crashes? |
 | 7 | What did not add | Which refinements failed, and what does that teach? |
 | 8 | Summary | Takeaways, exercises, reading |
@@ -22,7 +22,7 @@ The lecture's central result fits in one chart.
 ![Carry next to trend](figures/29_key.png)
 <sub><b>How to read the figure.</b> <b>Axes.</b> x: time, January 2007 to October 2022, monthly (the capstone futures run out in December 2022); y: the value of 100 invested, excess return over cash, after costs. Black: trend, Lecture 27's baseline portfolio **across all its markets** (not trend on the carry markets). Dotted orange: carry alone, currencies, commodities, government bonds and equity indices together (§4). Blue: trend and carry at equal risk, the total scaled on its past to trend's risk. At the right: each line's Sharpe ratio and compound return a year, from January 2007, when the combination's scaling has a year of history (carry over 2006-2022, as in §4 and §6: 0.57). Our calculation ([results/key.json](results/key.json)).</sub>
 
-Carry alone earned about what trend did (Sharpe ratio 0.59 against 0.67), but at different times: the two are almost uncorrelated (0.06). Held together at the same total risk, they earned more than either (0.86, 9.7% a year against 6.7%), with a worst loss about as deep as trend's alone (−20.6% against −19.3%). That is the whole case for a second strategy: not a better forecast, but returns that arrive at different times (§7.1 asks how independent the source really is). The rest of the lecture asks whether the result is real (it beats all of 1,000 random strategies, §6), what it costs (carry adds sudden losses, §6), where it fails (the ETF years 2013-2026, §6), and which refinements did not help (§7). Value, the second candidate, did not earn in this period (§5).
+Carry alone earned about what trend did (Sharpe ratio 0.59 against 0.67), but at different times: the two are almost uncorrelated (0.06). Held together at the same total risk, they earned more than either (0.86, 9.7% a year against 6.7%), with a worst loss about as deep as trend's alone (−20.6% against −19.3%). That is the whole case for a second strategy: not a better forecast, but returns that arrive at different times (§7.1 asks how independent the source really is). The rest of the lecture asks whether the result is real (it beats all of 1,000 random strategies, §6), what it costs (carry adds sudden losses, §6), where it fails (the ETF years 2013-2026, §6), and which refinements did not help (§7). Value, the second candidate, lost when measured by price against its past and earned a little when measured from fundamentals, without adding to trend (§5).
 
 ## 2. Why after Lecture 28: a switch against a second business
 
@@ -34,7 +34,7 @@ Lecture 28 and this lecture answer the same problem, that trend loses money in s
 | What it needs | A forecast, on the day, of when trend will do badly | A different reason to earn; no forecast |
 | Idle capital | Stays idle: a switch can only take away | None: every strategy is always in |
 | Judged against | Random switching with the same time in the market | Random strategies on the same markets, added to trend the same way |
-| Result on our data | No switch passed; the strongest pattern ran against the plan | Carry passes; value does not |
+| Result on our data | No switch passed; the strongest pattern ran against the plan | Carry adds to trend; value from fundamentals earns a little but does not add |
 
 *Analogy (labelled):* a fisherman can stay in port when a storm is forecast, or also own an umbrella shop. The shop earns in storms without anyone forecasting them. A switch needs the forecast; a second business needs only that its customers come for a different reason.
 
@@ -54,7 +54,7 @@ Carry and value have published constructions. Rebuilding them from free data for
 | **Commodities** | Value: price today against its average 4.5 to 5.5 years ago (5-year reversal); 27 commodities. Carry: slope of the futures curve | 7 commodities (capstone futures). Value: the same on the front contract's price. Carry: front against the contract 12 months later | No free clean futures for more commodities; 12 months removes the seasons | 0.56 |
 | **Government bonds** | Value: 5-year change in 10-year yields; 10 countries, futures. Carry: term spread plus roll-down | 9 countries, returns built from each central bank's 10-year yield (no free bond futures). Carry: the term spread | No free bond futures; month-end yields from nine central banks | 0.69 |
 | **Equity indices** | Value: book-to-market; 18 countries, futures. Carry: dividend yield minus the rate, from the futures | 15 country funds, hedged into dollars. Value: price against its past. Carry: the S&P 500's **earnings yield** minus the real bill rate; elsewhere the dividend yield minus the real cash rate | Book values are not free per country; earnings, not dividends, are what a holder accrues (buybacks), but free earnings exist only for the US | 0.46 |
-| **Across groups** | Ranked within each group, equal risk across groups | The same, but weighted by a carry *score* rather than a rank (§4), and value against a 10-year trend line (§5) | Our design choices, tested against the published versions (§5, §7) | – |
+| **Across groups** | Ranked within each group, equal risk across groups | The same, but weighted by a carry *score* rather than a rank (§4), and value against a 10-year trend line or from fundamentals (§5) | Our design choices, tested against the published versions (§5, §7) | – |
 
 <sub><b>How to read the table.</b> One row per group. "Published": Asness, Moskowitz and Pedersen (2013) for value, Koijen et al. (2018) for carry. "Ours": what this lecture builds from free data. The last column is the correlation of the monthly returns of our value strategy, built with the published construction, with AQR's published value factor for the same group, 2006 to October 2022. Our calculation.</sub>
 
@@ -197,7 +197,7 @@ The rule was compared with 1,000 random strategies on the same markets, each mar
 |---|---|---|---|---|
 | Carry alone | 0.57 | −0.11 | 0.28 | 100% |
 | Trend + carry | 0.86 | 0.36 | 0.65 | 100% |
-| Value alone | −0.09 | −0.08 | 0.34 | 48% |
+| Value alone (price version) | −0.09 | −0.08 | 0.34 | 48% |
 
 <sub><b>How to read the table.</b> Sharpe ratios after costs, 2006 to October 2022. The random strategies have no information by construction; added to trend at equal risk, they dilute it (median 0.36 against trend's 0.67 alone), which is the bar a real strategy must clear. Our calculation.</sub>
 
