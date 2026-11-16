@@ -31,7 +31,7 @@ The lecture's central point fits in one chart: the best regime filter we found, 
 
 Switched off for 41% of the time, the part-time strategy has the higher Sharpe ratio (0.60 against 0.53) and the smaller losses, yet ends with less money (5.0% a year against 5.8%): its capital is idle during the grey bands. It earns more only when scaled up to the same risk. Whether that is worth it depends on what the idle capital could do, and on whether the filter's timing is information or luck (§2).
 
-Over all twelve filters and both datasets, under the verdict fixed in advance (beat 90% of random switches with the same time in the market on both datasets, Benjamini-Hochberg at 10% within each family), **no filter passed** on our data. Even this one beats 95% of its random switches on the futures but only 50% on the ETFs. Evidence is graded, not yes or no (§5): the strongest pattern runs against the plan, trend did worse after large dollar moves, in three samples (§6.5). The lecture shows how this was measured and what the data say about why, so that readers can judge the evidence themselves.
+Several regime filters did clearly better than a coin flip, and some research paths are promising. The strongest: switching trend off after large dollar moves beat 94% of random switches on years never used to find it, and pointed the same way in all three samples (§6.5); the growth filter above beat 95% of its random switches on the futures, though only 50% on the ETFs. None cleared the strict bar fixed in advance (90% of random switches on both datasets, with a multiple-testing correction), so none is ready to be a rule; with a handful of regime episodes a decade, a real but modest effect would often miss that bar. Evidence is graded, not yes or no (§5), and §6.6 lists the paths worth pursuing. The lecture shows how this was measured and what the data say about why, so that readers can judge the evidence themselves.
 
 | § | Topic | Question |
 |---|---|---|
@@ -180,7 +180,7 @@ Each filter now switches the baseline off in its unfavourable state, with the co
 ![Regime filters against random filters](figures/28_filters.png)
 <sub><b>How to read the figure.</b> <b>Axes.</b> y: one row per filter (macro first, then market state, then the two combinations of both families); x: the share of 1,000 random switches, with the same time in the market and the same spell lengths, whose Sharpe ratio after costs the filter beats. Blue: ETFs 2013-2026; orange: capstone futures 2006-2022. Dotted line: 50%, what a coin would do; dashed line: 90%, the bar fixed in advance, to be cleared on both datasets. Fixed thresholds. Our calculation.</sub>
 
-**Verdict (as fixed): no filter passed.** None beats 90% of its random filters on both datasets, and none passes Benjamini-Hochberg at 10% within its family. A fail here means *not shown*, not *shown not to work*: a regime filter acts on a handful of episodes a decade, so even a real but modest effect would often miss a fixed bar on 13 to 17 years of data.
+**Verdict on the bar fixed in advance: none cleared it.** None beats 90% of its random filters on both datasets, and none passes Benjamini-Hochberg at 10% within its family. That bar was strict, and missing it means *not shown yet*, not *shown not to work*: a regime filter acts on a handful of episodes a decade, so even a real but modest effect would often miss a fixed bar on 13 to 17 years of data. Several filters did clearly better than chance on at least one dataset, and the graded evidence below separates the promising from the weak.
 
 **Graded evidence** (added after the results, labelled). A single bar is crude, so each candidate is also read on several kinds of evidence together. A filter beating at least 70% of its random filters on both datasets is named *worth digging into*; by luck alone a filter gets there with probability about 0.3 × 0.3 = 9%, so about one of the twelve would by chance.
 
@@ -313,7 +313,23 @@ The third sample is 1990-2005, years no test of this course had used for this qu
 - **The dollar repeated**, reversed: on untouched years trend lost money after large dollar moves (−0.11) and earned 0.83 on the other days. It is the one pattern that held in all three samples, ETFs, futures and 1990-2005, and it misses the multiple-testing bar only narrowly.
 - **The Fed points the same way, weakly**: trend did better with the Fed on hold (1.07 against 0.47), but the Fed moved on three days in four, so the evidence is thin.
 
-**Our reading (labelled).** The plan expected trend to do better when the Fed and the dollar move; the data say the opposite, three times for the dollar. One possible mechanism, a hypothesis: the measure flags a dollar trend that is already *mature*; after a large dollar move, reversals are more likely, and since most markets are priced against the dollar, a dollar reversal turns many trend positions at once. Whether a dollar trend that is just *starting* helps trend is not tested here (§8.2, exercise 5).
+**Our reading (labelled).** The plan expected trend to do better when the Fed and the dollar move; the data say the opposite, three times for the dollar. Beating 94% of random switches on untouched years, after pointing the same way on two other datasets, is well beyond what a coin flip gives; it is the most promising lead of this lecture (§6.6). One possible mechanism, a hypothesis: the measure flags a dollar trend that is already *mature*; after a large dollar move, reversals are more likely, and since most markets are priced against the dollar, a dollar reversal turns many trend positions at once. Whether a dollar trend that is just *starting* helps trend is not tested here (§8.2, exercise 5).
+
+### 6.6 Promising paths
+
+None of the filters is ready to be a rule, but several are well beyond chance and worth further research. They are listed from the strongest evidence to the weakest, each as a question a reader can test independently.
+
+| Path | Evidence on our data | The research question |
+|---|---|---|
+| **Trend after large dollar moves** | Reversed dollar filter beat 94% of random switches on 1990-2005, untouched years; same direction on ETFs and futures; multiple-testing p = 0.06 against 0.05 | Does trend suffer at the end of mature dollar trends, when a dollar reversal turns many positions at once? Separate starting from mature dollar trends (exercise 5) |
+| **Commodity trend and the curve** | Crude oil trend 0.81 in backwardation, −0.10 in contango; 90% band of the difference 0.13 to 1.74 (§7) | Is this trend and carry agreeing? Tilt commodity trend towards positions the curve supports, and test it per market (exercise 4) |
+| **Growth standing still** | Beat 95% of random switches on the futures, 50% on the ETFs | Is the effect specific to futures markets (commodities, rates), where growth drives demand? Test it per class, as exercise 1 does for inflation |
+| **The Fed moving** | Reversed Fed filter beat 78% on 1990-2005; trend 1.07 with the Fed on hold against 0.47 while it moved | Does trend suffer around policy turns? The Fed moved on three days in four in that sample: more episodes are needed |
+| **Scaling instead of switching** | A switch leaves capital idle (§2): every switch gives up return while it is off, whatever its timing | Do the same signals add value as a tilt of trend's size, half or one and a half, rather than an on-off switch (exercise 2)? |
+
+<sub><b>How to read the table.</b> One row per path, strongest evidence first. "Beat x%": the share of 1,000 random switches with the same time in the market whose Sharpe ratio the filter beats; a coin flip beats 50%. The last column is the next test, to be fixed in a dated plan before it is run, on data it was not found in. Our reading; a reader may rank them differently.</sub>
+
+The lesson is not that regimes do not matter. A regime pattern found on twenty years of data rests on a few episodes, so it has to be found, stated in advance and confirmed on other years, one step at a time; the dollar is the one path that has already passed a step of that kind.
 
 ## 7. One class at a time: commodity curves
 
@@ -343,11 +359,11 @@ Two cautions. Seven markets were scanned with no correction for multiple tests, 
 
 1. **A part-time strategy is compared on several numbers, not one.** Out of the market a share $`1-p`$ of the time, a filter with no information lowers the Sharpe ratio over all days by $`\sqrt{p}`$; a filter must beat random switching with the same time in the market to show information; a higher Sharpe ratio can come with a lower return, because the capital is idle while the filter is off (§2).
 2. **Macro data must be used as first published.** On revised data, a fifth of the days fall in a different growth × inflation quadrant, and the ranking of the quadrants changes (§3.2).
-3. **On our data, no regime filter passed the test fixed in advance**, macro or market state, alone or combined; evidence is graded, and most relations changed between periods (§4, §5). The strongest pattern ran against the plan: trend did worse after large dollar moves, on both datasets and on untouched years (§6.5).
+3. **Several regime filters beat chance clearly; none yet clears a strict bar fixed in advance.** The most promising pattern ran against the plan: trend did worse after large dollar moves, on both datasets and on untouched years, beating 94% of random switches there (§6.5). Growth on the futures, the Fed and the commodity curve are further leads; most relations changed between periods, so each needs confirmation on other years (§4-§6.6).
 4. **Patterns found after looking need data they were not found in.** Volatility and correlation quadrants looked consistent on 2006-2026 and did not repeat on 1990-2005 (§6).
 5. **Some regimes belong to one class.** Crude oil trend did better when its curve was backwardated; the portfolio-wide version of the question has little to say (§7).
 
-**From switch to strategy.** This lecture asked the regimes *when* to hold trend, and on our data they could not say better than chance. A switch could not have done more than that: switched off, trend's capital sits idle and earns nothing. Lecture 15 takes the other answer: it holds, next to trend, two strategies that earn for different reasons, **carry** and **value**, the cross-asset styles of Asness, Moskowitz and Pedersen (2013), and judges each by what it adds to trend. This lecture's quadrants are reused there only to show where each strategy earned, above all in the regimes where trend lost.
+**From switch to strategy.** This lecture asked the regimes *when* to hold trend. On our data they gave promising leads, the dollar above all, but no rule ready to trade, and even a good switch has a cost: switched off, trend's capital sits idle and earns nothing. Lecture 15 takes the other answer: it holds, next to trend, two strategies that earn for different reasons, **carry** and **value**, the cross-asset styles of Asness, Moskowitz and Pedersen (2013), and judges each by what it adds to trend. This lecture's quadrants are reused there only to show where each strategy earned, above all in the regimes where trend lost.
 
 ### 8.2 Exercises
 
