@@ -22,7 +22,8 @@ The course teaches **the base layer of systematic research** first, then **a dee
 - Part V opens as an advanced deep dive that builds on the base layer, and closes by pointing its execution lessons back to Lecture 16.
 - Lecture 16 adds the cost link: the base layer judged with execution costs measured in Part V, not only a flat 5 bp.
 - Each part opens with a short paragraph: what it asks, and how it leads to the next.
-- Lecture 1 points to Lecture 17, since students use AI from the start; the README states how the notes were made (written with an AI assistant, under the author's direction and review).
+- **Research with AI, in two places** (user, 2026-11-16: leveraging AI is crucial for researchers today). Lecture 1 gains a short practical section, *working with an AI assistant in this course*: what to delegate and what not (the question, the expectation, the judgment), how to brief an assistant, and a guardrails checklist (plan fixed and dated first, every try logged, hand checks, data provenance, references checked at the source). Lecture 17 is the full lecture at the end of the base layer, a practical guide with the course's own record as the case study: what to delegate, how to brief, speed with discipline (cheap tries must still count), verification habits, where an assistant failed here (a silent data error, a confident wrong claim, invented reference details, first proposals the researcher corrected), and the workflow to copy.
+- The README states how the notes were made (written with an AI assistant, under the author's direction and review).
 
 ## 1. Roadmap
 
