@@ -154,11 +154,11 @@ The base layer stays as it is: trend and carry on the rules of Lectures 13 and 1
 
 | Order | What to add | Why it should help | What it needs | Course |
 |---|---|---|---|---|
-| 1 | **Cheaper execution of what is already held** | **Trend + carry falls from 0.84 to 0.36 between 5 and 20 bp in 2006-2022 (§6): costs are the cheapest gain** | Rebalancing thresholds, slower carry signals, Part V's execution | Lectures 21-23 |
-| 2 | **More markets for the same styles** | **Breadth: by Grinold's law, four times the independent markets doubles the information ratio of a style** | More free data: emerging-market currencies, more commodity futures and bond countries, equity sectors | Lectures 11, 15 (exercises) |
-| 3 | **New strategies that earn for different reasons** | **A second business next to the first (Lecture 15 §2), ideally market-neutral and uncorrelated with trend and carry** | A mechanism stated in advance; the same tests | Lecture 14 (economic trend, the Fed day), Lecture 15 (value, equity factors) |
-| 4 | **Finer granularity** | **Single names and intraday horizons hold many more independent bets** | Tick data, infrastructure, capacity limits | Part V |
-| 5 | **Smarter allocation between strategies** | **Small gains once the parts differ; little to gain while they are few (Lecture 13)** | More strategies first | Lecture 13 |
+| 1 | **Cheaper execution of what is already held** | Trend + carry falls from 0.84 to 0.36 between 5 and 20 bp in 2006-2022 (§6): costs are the cheapest gain | Rebalancing thresholds, slower carry signals, Part V's execution | Lectures 21-23 |
+| 2 | **More markets for the same styles** | Breadth: by Grinold's law, four times the independent markets doubles the information ratio of a style | More free data: emerging-market currencies, more commodity futures and bond countries, equity sectors | Lectures 11, 15 (exercises) |
+| 3 | **New strategies that earn for different reasons** | A second business next to the first (Lecture 15 §2), ideally market-neutral and uncorrelated with trend and carry | A mechanism stated in advance; the same tests | Lecture 14 (economic trend, the Fed day), Lecture 15 (value, equity factors) |
+| 4 | **Finer granularity** | Single names and intraday horizons hold many more independent bets | Tick data, infrastructure, capacity limits | Part V |
+| 5 | **Smarter allocation between strategies** | Small gains once the parts differ; little to gain while they are few (Lecture 13) | More strategies first | Lecture 13 |
 
 <sub><b>How to read the table.</b> One row per kind of addition, in the order we would pursue them: cheapest and most certain first. "Course": where the ideas and tools were introduced. Our proposal, not a result.</sub>
 
