@@ -2,6 +2,27 @@
 
 The working reference for writing and revising these lecture notes. Read it before editing any lecture, so every lecture looks and reads the same.
 
+## 0. The course structure (design, 2026-11-16)
+
+The course teaches **the base layer of systematic research** first, then **a deep dive into high frequency**. The base layer is built once, in order: understand the data, build the base strategy (trend), add strategies that earn for different reasons (carry, value, with regimes as the alternative that failed), assemble the portfolio and set a realistic expectation. The deep dive then goes below the daily bar, where costs and short-horizon edges are decided, and points back to the portfolio's execution.
+
+| Part | Lectures | Purpose | Leads to the next part because |
+|---|---|---|---|
+| I. Foundations | 1-4 | What is in the data; what different transformations of the same prices show; the research method | A strategy is only as good as its understanding of the data |
+| II. Trend | 5-13 | The base strategy, built once: what trend captures, the machinery, comparing, filtering and sizing systems, the futures test, then trend at portfolio scale (markets, speeds, the baseline portfolio) | Trend alone is one source of return; the next question is what else earns, and when |
+| III. Beyond trend | 14-15 | Two answers to trend's bad regimes: switching trend off (it does not pass), or holding strategies that earn for different reasons (carry adds; value needs fundamentals) | The parts are ready to be assembled |
+| IV. The portfolio | 16 | The base layer assembled: trend and carry, tested on untouched years, judged as an addition to stocks and bonds; the realistic expectation; how to improve on a fixed base | The base layer is complete; what remains is below the bar |
+| V. Deep dive: high frequency | 17-29 | The tape (17-22) and the order book (23-29) on crypto, the one market with free tick and book data: clocks, the path, order flow, costs, queues, other traders, market making | Back to Part IV: the execution of a daily portfolio, and where finer granularity adds breadth |
+
+**Renumbering (old → new).** 1-9 unchanged; 11 → 10 (Lecture 10 was merged into 11 and its number is freed); 25 → 11, 26 → 12, 27 → 13; 28 → 14, 29 → 15, 30 → 16; 12-24 → 17-29. Folders and notebooks are renamed to the new numbers; **script file names keep their original numbers** (`l25.py`, `l28_filters.py`, ...) as internal code names, since they are imported across lectures and name local result folders.
+
+**What changes in the text, beyond the numbers.**
+- Part II's last three lectures (11-13) open as *trend at portfolio scale*, the natural continuation of Lectures 5-10, not as a restart after the high-frequency part.
+- Lectures 14-16 lose their "after the high-frequency part" framing; forward references to execution point to Part V.
+- Part V opens as an advanced deep dive that builds on the base layer, and closes by pointing its execution lessons back to Lecture 16.
+- Lecture 16 adds the cost link: the base layer judged with execution costs measured in Part V, not only a flat 5 bp.
+- Each part opens with a short paragraph: what it asks, and how it leads to the next.
+
 ## 1. Roadmap
 
 The course follows one pipeline throughout (data → signal → position → evaluation). What changes from part to part is **what counts as one observation**: a daily bar, a trade or quote, a probability. Each part opens with a short "what is the data here?" lecture and then goes straight to models. Each strategy lecture ends with a short *How we judge it* section that flags the evaluation problems specific to that data and points forward to the portfolio part (Part V).
