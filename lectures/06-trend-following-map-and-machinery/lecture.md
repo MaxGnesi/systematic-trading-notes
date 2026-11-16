@@ -137,11 +137,11 @@ The literature began with stocks: Jegadeesh and Titman (1993) found that past wi
 | Comparing trend systems fairly | Lecture 7 |
 | Filters and overlays, regime models, pullback entries | Lecture 8 |
 | Sizing: per trade, per asset, over time, after losses, by edge | Lecture 9 |
-| The trend portfolio, with time-series and cross-sectional systems | Lecture 11 |
+| The trend portfolio, with time-series and cross-sectional systems | Lecture 10 |
 | Trends on bars cut by price (point-and-figure, Renko) | Part III |
 | Machine learning | Later in the course, once honest testing is in place |
 
-The trend portfolio, planned as Lecture 10, is built in the capstone, Lecture 11.
+The trend portfolio, planned as Lecture 13, is built in the capstone, Lecture 10.
 
 ## 3. Design choices and what they capture
 

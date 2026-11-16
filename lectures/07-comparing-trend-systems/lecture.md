@@ -116,7 +116,7 @@ A looks better while it trades; over the whole period it has the lower Sharpe ra
 
 Switching allocations is rarely easy. When A becomes active, capital must be pulled from other strategies at short notice, which disturbs their positions, costs money to trade, and runs into margin, mandate and liquidity limits; when A goes flat, the capital must find a use again. In practice the first row of the table is the exception, and the second is the common case.
 
-There is no single right number. Report time in the market, the Sharpe ratio both while invested and over the whole period, and the return per unit of capital, and decide with the capital and leverage constraints in view. Capital that one system leaves idle can be used by another, which turns the comparison into a portfolio question (Lecture 10); how much leverage to run is a sizing question (Lecture 9).
+There is no single right number. Report time in the market, the Sharpe ratio both while invested and over the whole period, and the return per unit of capital, and decide with the capital and leverage constraints in view. Capital that one system leaves idle can be used by another, which turns the comparison into a portfolio question (Lecture 13); how much leverage to run is a sizing question (Lecture 9).
 
 ### 4.4 A framework: marginal contribution, measured in what is scarce
 
@@ -145,7 +145,7 @@ The 16-ETF results of Lectures 5, 6 and 9 size every position to a volatility ta
 
 **Step 2: decide by marginal contribution.** Whatever the unit, the question that matters for allocation is not how good a system is on its own but what it adds to the systems already run. Take the system's returns over the whole period, zero or the cash rate when it is flat, and regress them on the returns of the existing portfolio, as in §3. The intercept is what the system adds; its idle time is accounted for automatically. A system that is often flat but strong and uncorrelated when active shows a positive intercept; one whose Sharpe ratio while invested only looks good shows none.
 
-Marginal contribution is the criterion that runs through the rest of Part II: it decides which systems to combine, how much risk each receives, and whether a filter or a new market earns its place (Lectures 8 to 10).
+Marginal contribution is the criterion that runs through the rest of Part II: it decides which systems to combine, how much risk each receives, and whether a filter or a new market earns its place (Lectures 8 to 13).
 
 **Trades at matched speed** (notebook §4; a trade is a spell of one asset in one direction, its return in units of the 10% risk target):
 
@@ -310,7 +310,7 @@ The best point on a curve combines skill with luck, and the luck does not repeat
 | Chandelier | 0.26 | 0.09 | 0.20 | 0.08 | 0.12 |
 
 - **The median lies far below the peak** ([chart F.11](#f11-median-against-peak-6)), because every grid includes fast rules that lose money after costs.
-- **Blending all parameters inherits those losses.** A blend diversifies only once the region that does not work has been dropped; Lecture 11 does exactly that, and blends what remains.
+- **Blending all parameters inherits those losses.** A blend diversifies only once the region that does not work has been dropped; Lecture 10 does exactly that, and blends what remains.
 - **Walk-forward choice comes close to the peak**, because the ranking of speeds is stable (§5): each year it picks one of the slow rules.
 - **Several measures at once** ([chart F.12](#f12-trade-offs-6)): 10 of the 31 systems are beaten by no other on Sharpe ratio, monthly skewness and maximum drawdown together, mostly the slow ends of the families. The fastest EWMAC is among them on its skewness alone, with a Sharpe ratio of −0.72: the undominated set removes systems, it does not choose one.
 
@@ -349,7 +349,7 @@ The best point on a curve combines skill with luck, and the luck does not repeat
 
 ### 8.3 Reading
 
-The comparison methods of this lecture are applied in full to three systems on futures in Lecture 11. For the tests of §5, Ledoit and Wolf (2008) and Bailey et al. (2017) are the practical starting points; Romano and Wolf (2005) for many strategies at once.
+The comparison methods of this lecture are applied in full to three systems on futures in Lecture 10. For the tests of §5, Ledoit and Wolf (2008) and Bailey et al. (2017) are the practical starting points; Romano and Wolf (2005) for many strategies at once.
 
 ## Appendix: charts
 

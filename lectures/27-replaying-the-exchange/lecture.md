@@ -1,0 +1,625 @@
+# Lecture 27: Replaying the Exchange: Fill Rules, Queue Position, Latency and Adverse Fills
+
+*Systematic Trading: Lecture Notes (MSc) · Nov 1, 2026 · Max Gnesi*
+
+Lectures 24 to 26 described Bybit's BTCUSDT book, measured its state and measured its flow. This lecture puts our own orders into the recorded market and asks what would have happened to them: when a resting order is filled, at what price a market order is executed, and what the price does afterwards. A replay is only useful if it tells the truth, so the lecture builds one piece by piece and then tests it on the same 45 days, 20 September to 3 November 2025. The hypotheses were fixed before any result was computed ([results/hypotheses.md](results/hypotheses.md)). Companion notebook: [27_replaying_the_exchange.ipynb](27_replaying_the_exchange.ipynb).
+
+## 1. Three replays of one order
+
+Part IV moves from describing the order book to trading on it, one step per lecture:
+
+![Part IV in one line: Lecture 27 puts our own orders into the recorded market](figures/21_01_part_iv.png)
+<sub><b>How to read the figure.</b> Each box is one lecture of Part IV, each building on the one before; this lecture is outlined, Lectures 24 to 26 are done. Above the boxes, the five stages: describing the book, measuring it, simulating our own orders in it, reading the other players, and trading strategies on it.</sub>
+
+The plot behind these lectures, and what each one settles: [Part IV roadmap](../PART_IV_ROADMAP.md).
+
+A **replay** runs the recorded book and trades forward in time and inserts hypothetical orders of ours into them. The recorded market does not react to our orders: nobody cancels because our bid appeared, and nobody sells into it because it is there. That reaction is left out on purpose here and is the subject of Lecture 28. A market order in a replay is simple to judge: it trades against the book that stands when it arrives. A resting order is not, because the data never say when it would have been filled. The replay has to supply a **fill rule**, and the three rules in common use give different answers:
+
+| Rule | Our resting bid is filled when | What it assumes |
+|---|---|---|
+| Touch | the first sell trade occurs at our price | we are first in line at our price |
+| Queue | the size that stood ahead of us when we joined has been traded or cancelled, and a sell trade then reaches us | we join at the back of the line; how the cancellations split between ahead of us and behind us is unknown |
+| Trade-through | a sell trade occurs below our price | everyone at our price has been filled, us included; Lecture 23's rule |
+
+<sub><b>How to read the table.</b> A sell trade is a trade started by a seller (a taker selling into the bids). The same rules apply to a resting ask with buy trades and prices above. Touch and trade-through need only the trades; the queue rule also needs the size displayed at our price, from the book.</sub>
+
+The idea of the lecture fits in one chart. On the left, one real moment followed under each rule; on the right, the same order placed again and again over one day:
+
+![Three replays of one order: when a resting bid at the best is filled under the touch, queue and trade-through rules, and the price after the fill](figures/21_02_three_replays.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: time (x); price (top) and size ahead of our bid (bottom); vertical lines = fills. Right: share filled and price after the fill (y), by rule. Bybit BTCUSDT, a resting bid of 0.001 BTC (Bybit's minimum) placed at the best bid; it becomes active 50 ms after the decision and is held up to 120 s, not moved. <b>Left, top:</b> 1 October 2025 from 09:33:15 UTC: the best bid (black) and ask (grey, one tick above), our price (dotted), sell trades at our price (circles) and below it (crosses); a vertical line marks the fill under each rule, labelled with the wait and with the mid 10 s after the fill minus our price, in basis points (bp, hundredths of a percent; 1 bp is about USD 11.6 here). <b>Left, bottom:</b> the size displayed at our price (grey) and the size ahead of us under the queue rule, with cancellations split evenly over the line (dark blue, a = 1) and with every cancellation put behind us where possible (light blue, dashed, a = ∞); vertical lines mark the two queue fills. <b>Right:</b> the same order placed every 15 s over all of 1 October, 5,760 orders. Top, the share filled within 120 s under each rule; bottom, the average over fills of the mid 1 s and 10 s after the fill minus our price, in bp. Below zero means the price fell after our bid was filled. One day of the in-sample period.</sub>
+
+The bid joined at USD 116,165.90 behind 10.2 BTC already displayed there. Four moments decide the story:
+
+| Seconds after 09:33:15 | What happened | Touch | Queue | Trade-through |
+|---|---|---|---|---|
+| 0.3 | A seller takes 0.003 BTC at our price | **filled** | 10.2 BTC ahead of us | waiting |
+| 0.3 to 5.0 | Sellers take 0.26 BTC at our price; some size is cancelled | | ahead: 8.2 BTC (a = 1), 9.7 BTC (a = ∞) | waiting |
+| 5.1 to 5.2 | 9.9 BTC is cancelled at our price within two book updates | | ahead: 0.13 BTC (a = 1), 0.16 BTC (a = ∞) | waiting |
+| 7.8 and 10.7 | Sellers take 0.05 BTC, then 0.38 BTC at our price | | **filled** at 7.8 s (a = 1), at 10.7 s (a = ∞) | waiting |
+| 15.7 | A seller trades below our price | | | **filled** |
+
+<sub><b>How to read the table.</b> One row per event that moves our order; "ahead" is the size in front of our bid under the queue rule, for the two ends of the unknown split of cancellations. Ten seconds after the trade-through, the best bid stood USD 30.7 below our price.</sub>
+
+Under the touch rule the order was filled within a third of a second by the first small seller, at a moment when the price had not moved; the 10.2 BTC ahead of us would in fact have been filled first. Under the queue rule it waited until the line in front of it had gone, and was filled 5 to 8 seconds before the price fell through its level. Under trade-through it was filled only as the fall began, and 10 seconds later the mid was 2.6 bp below its price. The same order, in the same recorded market, earned a 10-second markout of 0.0 bp, −0.9 bp or −2.6 bp, depending only on the rule the replay used.
+
+The moment also shows what the queue rule cannot know. The book reports how much is displayed at our price, not whose orders left. When 9.9 BTC vanished at 5.1 seconds, the rule had to decide how much of it stood ahead of us. Here the answer hardly mattered: only 0.3 BTC stood behind us, so at least 9.6 BTC of the cancelled size must have been ahead, whatever the split. In calmer moments the split decides how long we wait, which is why the lecture carries both ends of it, and the values between, through every result (hypothesis H3).
+
+Over the whole day the picture is the same, and it explains why the naive rule flatters:
+
+| Rule | Filled within 120 s | Median wait (filled orders) | Mid 1 s after, bp | Mid 10 s after, bp | Fills that came only when the price ran through |
+|---|---|---|---|---|---|
+| Touch | 96% | 0.6 s | −0.13 | −0.12 | |
+| Queue, a = 1 | 87% | 5.5 s | −0.55 | −0.65 | 61% |
+| Queue, a = ∞ | 86% | 6.1 s | −0.61 | −0.71 | 77% |
+| Trade-through | 84% | 6.8 s | −0.68 | −0.78 | 100% |
+
+<sub><b>How to read the table.</b> The order of the figure, placed every 15 s on 1 October 2025, 5,760 orders. "Mid 1 s after" and "Mid 10 s after": the average over fills of the mid 1 s or 10 s after the fill minus our price, in bp; the bid starts half a tick (0.004 bp) above zero, so values near zero mean the price did not move. Last column: the share of the queue rule's fills that came at the trade-through itself, because the line had not been used up before. The fee is not included. Our calculation for these notes.</sub>
+
+The touch rule fills almost every order and quickly, and its fills see the price barely move. The rules that respect the line fill a few orders fewer, later and at worse prices, and most of their fills come only when the price runs through the level. The fills the touch rule adds are the good ones: a seller arrived while the line was long and the price stable. A replay that uses it reports fills a real order at the back of the line would not have had. Lalor and Swishchuk (2024) make the same point for futures: simulations that assume every fill is non-adverse and at the front of the queue are "over-inflated".
+
+Two cautions keep the chart in proportion. First, it is one day of the in-sample period, and the order is held rather than re-posted, so it shows the mechanism, not a result; whether the touch rule flatters out of sample, with the test order of Section 4, is hypothesis H1. Second, all three rules leave out two things that act on a real order: the time our order needs to reach the exchange, during which the book changes, and the market's reaction to our order itself. The first is part of this lecture; the second is Lecture 28.
+
+This lecture runs as follows:
+
+| § | Step | Question |
+|---|---|---|
+| 1 | Three replays of one order | Does the fill rule change what a replay reports? |
+| 2 | The pieces of the puzzle | What is a replay made of: the latency gap, the queue, adverse fills, our footprint, and the families of models used for each? |
+| 3 | The replay on our data | How are trades ordered against the book, how does a market order walk the book after a delay, and how is a resting order's place in the line tracked? |
+| 4 | Does the replay tell the truth? | Hypotheses H1 to H9: do the naive rules flatter, are trade-through fills the bad ones, does the unknown split decide the answer, is the replay kinder than real fills, and up to what order size does it hold? |
+| 5 | 10 October | What would the replay have done to our orders in the cascade? |
+| 6 | Summary, exercises and reading | |
+
+## 2. The pieces of the puzzle
+
+Section 1 showed that one choice, the fill rule, changes what a replay reports. A replay rests on several such choices, and this section lays them out before any of them is measured. Each piece gets the same card: the key message, how it is computed, an invented example and what it misses. The examples share one invented book, so each card adds to the last; Section 3 builds the same pieces on our data.
+
+| § | Piece | The question it answers | Built on our data in |
+|---|---|---|---|
+| 2.1 | What a replay is | What do the recorded data say, and what must a replay infer? | §3.1 |
+| 2.2 | The latency gap | What changes between the moment we decide and the moment our order arrives? | §3.2 |
+| 2.3 | The queue | How much stands ahead of our resting order, and when does our turn come? | §3.3 |
+| 2.4 | Adverse fills | Why are the fills we do get the worse ones? | §3.4 |
+| 2.5 | Our footprint | What does a replay leave out on purpose? | Lecture 28 |
+| 2.6 | The models side by side | Which families of models exist for each piece, and where is each used? | |
+
+### 2.1 What a replay is
+
+**Key message.** A replay runs the recorded book and trades forward in one time order and inserts our orders into them. Part of what it needs is recorded; the rest, such as how much was cancelled at our price, it must infer. And the recorded market never responds to our orders.
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | Merge the two recorded streams in time order: the book updates (every 100 ms on Bybit's feed of 200 levels, Lecture 24) and the trades (to the millisecond) | One clock for everything that happened at our price |
+| 2 | Between two book updates, every trade at our price lowers the size there by its own size | The part of the change we know: it was filled |
+| 3 | At the next update, the change beyond those trades: a decrease was cancelled, an increase was added | The part we infer: the book shows how much is there, not who came or left |
+| 4 | Our order, decided at time $`t`$, becomes active at $`t + L`$ and meets what stands then | $`L`$ is the latency: the time our order needs to reach the matching engine (§2.2) |
+| 5 | Our resting order is filled by the recorded trades, under a fill rule (§1); the recorded streams themselves stay as they were | Non-reactive: nobody responds to our order, and our fills take nothing out of the recorded book (§2.5) |
+
+<sub><b>How to read the table.</b> Steps 1 to 3 rebuild what happened at one price; steps 4 and 5 add our order. The book's clock is the matching engine's time (cts, Lecture 24); trades between two updates are applied before the update, the event order fixed in [results/hypotheses.md](results/hypotheses.md).</sub>
+
+![What a replay is: two recorded streams at one price, and the size traded, cancelled and added inferred from them](figures/21_03_replay_card.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time in ms (x). Top: what is recorded. Bottom: size at our price (y), coloured by cause. An invented bid at USD 100,000.0. <b>Top:</b> what is recorded: the book, every 100 ms, reports the size displayed at that price (squares); the trades, to the millisecond, report each sale at that price (triangles). <b>Bottom:</b> the size at that price as the replay infers it, with each change coloured by its cause: a trade (orange), a decrease beyond the trades, counted as cancelled (grey), an increase, counted as added (green). Dotted: a bid of ours decided at 10 ms and arriving 50 ms later.</sub>
+
+Between the first two updates the displayed size fell from 2.0 to 1.2 BTC. Trades account for 0.5 of it, 0.3 and then 0.2, so the replay counts the other 0.3 as cancelled. Between the next two, 0.4 BTC was sold and yet the size rose from 1.2 to 1.6: 0.8 was added. Our bid, decided at 10 ms, arrives at 60 ms. The last book the replay has seen still reports 2.0 BTC, but 0.3 has been sold since, so 1.7 BTC stands ahead of our bid when it joins.
+
+**Net, not gross.** The book reports only the net change between two updates. The 0.8 BTC added could have been 1.0 added and 0.2 cancelled, or an order placed and withdrawn twice; a replay built on 100 ms updates cannot tell. Lecture 24 (§4.4) met the same blind spot from the other side: a tenth of the trades happened at prices that the book of up to 100 ms earlier never showed, orders that arrived and were filled between two updates.
+
+**What it misses.** First, the gross flow inside each update, as above. Second, who cancelled: the book says that 0.3 BTC left the price, not whether it stood ahead of our bid or behind it; §2.3 shows why that matters. Third, the exact order of events within the same millisecond, and any difference between the clocks of the two streams, such as Bybit's publish delay (Lecture 25, §4). Fourth, our footprint: in the replay our bid takes part in no trade's record, and its presence changes nobody's behaviour (§2.5).
+
+### 2.2 The latency gap
+
+**Key message.** Our order meets a later book than the one we decided on. In that gap faster traders act, and they act most when the price is about to move: the trades we miss are disproportionately the ones that would have paid.
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | The book we decide on was published at the last update and reached us after a delay | Feed latency: our picture is already old when we look at it |
+| 2 | An order decided at $`t`$ reaches the matching engine at $`t + L`$ | Order-entry latency $`L`$: the time it takes to get our decision to the exchange |
+| 3 | A market order walks the book that stands at $`t + L`$; slippage = the average price expected from the book seen at $`t`$ minus the average price paid (for a buy) | The cost of the gap for an order that must be filled |
+| 4 | A limit order at the best price seen at $`t`$ (immediate-or-cancel) takes only what stands at that price at $`t + L`$; the rest is not filled | The gap as missed trades, for an order that must not pay more |
+| 5 | A cancellation also takes $`L`$ to arrive: a resting order can be filled after we decided to withdraw it | The gap for a resting order: a stale quote picked off |
+
+<sub><b>How to read the table.</b> Steps 1 and 2 add up to the gap between the book we saw and the book our order meets. Steps 3 to 5 are its cost for the three kinds of order of this lecture. A replay applies them by evaluating every order of ours against the recorded book at $`t + L`$, never at $`t`$.</sub>
+
+![The latency gap: the book we decide on and the book our order meets, on the invented book; and how often live market orders on Bybit missed the best price, by the return that followed](figures/21_04_latency_card.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left and middle: size (x) at each ask price (y). Right: share of orders that missed (y), by the later return (x). <b>Left and middle:</b> the ask side of the invented book of §2.1, best three levels. At 10 ms we decide to buy 0.5 BTC on the book last seen (light blue: what we expect to buy); a faster buyer takes 0.4 BTC at the best ask at 40 ms; our order arrives at 60 ms and buys what stands then (dark blue). Grey: size left in the book. <b>Right:</b> from Albers, Cucuringu, Howison and Shestopaloff (2025), eq. 17 with their Table 6: the share of their own minimum-size market orders on Bybit that could not be filled at the best ask or bid they had seen, against the return over the next ten trigger events of their experiment (a median of 1.14 s), positive when the price moved in the order's favour.</sub>
+
+On the book we saw, 0.6 BTC was offered at USD 100,000.1, enough for our 0.5 at one price. By the time our order arrived, a faster buyer had taken 0.4 of it. A market order still gets its 0.5 BTC, 0.2 at USD 100,000.1 and 0.3 one tick higher, an average of USD 100,000.16 instead of 100,000.1. A limit order at USD 100,000.1 pays no more, but buys only 0.2 BTC. Suppose the faster buyer was right and the ask stands at USD 100,000.6 a second later: the 0.3 BTC the limit order missed is exactly the part that would have earned most.
+
+**A limit order that misses stays in the book.** A plain limit order, unlike an immediate-or-cancel order, is not cancelled when it cannot be filled at once: the part that finds nothing at its price becomes a resting order, with all the questions of §2.3 and §2.4. In the example, a limit buy of 0.5 BTC at USD 100,000.1 buys the 0.2 BTC still offered there and leaves 0.3 BTC resting at USD 100,000.1. The ask there is gone, so the bid becomes the new best bid, alone at the front of its line. If the faster buyer was right and the price rises, the bid is left behind unfilled: we missed the move. If the price comes back down, a seller fills it at once, just when buying was wrong. The order we meant as a trade has turned into a quote, and its fills lean towards the bad ones (§2.4). A replay must therefore know the type of every order: a market order walks the book at $`t + L`$; an immediate-or-cancel order takes what stands at its price and drops the rest; a limit order takes what stands and rests with the remainder, joining the line at its price from $`t + L`$ on. How often our marketable limit orders end up resting is measured in §3.2, by size; what their remainders earn, in Section 4.
+
+**Good orders fail.** Albers et al. (2025) measured this live: 3.1 million market orders of the minimum size on Bybit's inverse BTCUSD perpetual in April 2023, sent from a server close to the exchange, each one compared with the best price it had seen. Overall 1.35% could not be filled at that price. When the price then fell or stayed, almost none failed (0.09%); as soon as it rose in the order's favour, the share jumped to 4.2% and grew by 2.2 percentage points per basis point of return: 15% at +5 bp, 26% at +10 bp. Failures were also more frequent in volatile hours. A backtest that fills every order at the price seen at the decision is therefore wrong in a biased way: it keeps the trades that paid and that, in reality, others took first.
+
+**What it misses.** First, $`L`$ itself: it differs by trader, connection and moment, and it rises in busy markets, exactly when it matters; the replay takes it as a fixed parameter and reports results at 10, 50 and 100 ms. Second, the race: the recorded trades show who won each race, not who else was racing. In the replay, our order arrives after every recorded trade that happened before $`t + L`$, even if in reality we might have been faster. Third, the recorded book at $`t + L`$ is itself known only to the last update plus the trades since (§2.1). Fourth, Albers et al.'s numbers come from a different contract (inverse, priced in USD with a 0.5 USD tick) and from 2023; on our data the replay can show the mechanism but cannot measure true failure rates, which only live orders reveal.
+
+### 2.3 The queue
+
+**Key message.** A resting order is filled only when everything ahead of it at its price has traded or left. The book shows how long the line is, not who leaves it, so a replay must assume how cancellations split between ahead of us and behind us. One dial, $`a`$, spans the assumptions, from an even split to "never ahead of us".
+
+Lecture 25 (§2.4) introduced the line and showed that L2 data cannot say whose order was cancelled. This card turns the line into the queue rule of §1.
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | When our order arrives, the size ahead of it is the size displayed at our price: the last update minus the trades since (§2.1) | We join at the back: everyone already there was first |
+| 2 | A sell trade of size $`s`$ at our price: if $`s`$ is larger than the size ahead, we are filled; otherwise the size ahead falls by $`s`$ | Trades serve the line from the front |
+| 3 | A cancellation of size $`c`$ at our price (§2.1, step 3): the size ahead falls by $`p \cdot c`$, with $`p = x^a`$ and $`x`$ = ahead / (ahead + behind); never more is taken from behind us than stands there | Someone left the line; $`p`$ is the share assumed to have stood in front of us |
+| 4 | An increase at our price joins behind us | Later arrivals queue after us |
+| 5 | A sell trade below our price fills whatever is left of our order | The whole line at our price has been served |
+
+<sub><b>How to read the table.</b> $`x`$ is our position in the line, the share of the displayed size that stands ahead of us: 1 at the back, 0 at the front. The dial $`a`$ sets $`p`$: $`a = 1`$ splits a cancellation in proportion to the size on each side, as if every unit of size were equally likely to leave; a larger $`a`$ puts more of it behind us; $`a = \infty`$ puts none ahead unless nobody stands behind us, the "risk-averse" model of hftbacktest. Our results use $`a`$ = 1, 2, 5, 20 and ∞ (hypothesis H3).</sub>
+
+![The queue on the invented book: the size ahead of our bid under three dials, and the share of a cancellation put ahead of us as a function of our position](figures/21_05_queue_card.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: time (x), size ahead of us (y), one line per dial. Right: share of a cancellation put ahead of us (y), by our place in the line (x). <b>Left:</b> the bid of §2.1 at USD 100,000.0 joins at 60 ms behind 1.7 BTC, and the invented book runs on to 420 ms. Grey: the size displayed at our price, without our order; blue lines: the size ahead of our bid, under $`a = 1`$ (solid), $`a = 2`$ (dotted) and $`a = \infty`$ (dashed); stars: our fill under each; orange line: the touch rule's fill. Triangles: sell trades at our price, with their size; cross: a sell below our price. <b>Right:</b> $`p = x^a`$ against $`x`$ for $`a`$ = 1, 2, 5 and 20, and $`a = \infty`$ (dashed); the dot marks our bid at 300 ms.</sub>
+
+Until 200 ms the dial plays no part. The cancellation at 100 ms happened before anyone joined behind us, so all of it stood ahead; trades then shorten the line from 1.7 to 0.8 BTC. At 200 ms, 0.8 BTC joins behind us. At 300 ms, 0.8 BTC is cancelled, and now the answer depends on the dial: with 0.6 BTC ahead and 0.8 behind, $`x = 0.43`$.
+
+| Dial | Share of the 0.8 BTC put ahead of us | Size ahead after 300 ms | Filled |
+|---|---|---|---|
+| Touch rule (no line) | | | at 70 ms, by the first sell of 0.2 BTC |
+| $`a = 1`$ | 43% | 0.26 BTC | at 340 ms, by the sell of 0.5 BTC |
+| $`a = 2`$ | 18% | 0.45 BTC | at 340 ms, by the sell of 0.5 BTC |
+| $`a = \infty`$ | 0% | 0.60 BTC | at 420 ms, when the price runs through |
+
+<sub><b>How to read the table.</b> The invented example of the figure. Under $`a = \infty`$ the sell of 0.5 BTC at 340 ms leaves 0.1 BTC ahead of us, and our turn never comes before the price moves through our level.</sub>
+
+The touch rule fills the bid 270 ms before any version of the line would, while 1.7 BTC still stood in front of it. Among the queue rules, the dial moves the fill from a trade at our price to the moment the price runs through it: the same order becomes a fill at a stable price or a fill just before a fall (§2.4).
+
+**The models in the literature.** Every queue model for L2 data answers the same question as our dial: when the size at our price falls by more than was traded, how much of the cancellation stood ahead of us? The published models differ only in that answer, and they span a wide range:
+
+| Model | Share of a cancellation put ahead of us | Leaning | On the cancellation at 300 ms: share ahead, size ahead after |
+|---|---|---|---|
+| Rigtorp (2013), $`f`$ = identity; hftbacktest power, $`n = 1`$; our $`a = 1`$ | $`\frac{\text{ahead}}{\text{ahead} + \text{behind}} = x`$ | even | 43%, 0.26 BTC |
+| Rigtorp (2013), $`f = \ln(1 + \cdot)`$; hftbacktest log | $`\frac{\ln(1 + \text{ahead})}{\ln(1 + \text{ahead}) + \ln(1 + \text{behind})}`$ | towards the shorter side; depends on the unit of size | 44%, 0.25 BTC |
+| hftbacktest log, variant 2 | $`1 - \frac{\ln(1 + \text{behind})}{\ln(1 + \text{ahead} + \text{behind})}`$ | behind us; depends on the unit | 33%, 0.34 BTC |
+| hftbacktest power, $`n = 2`$ | $`\frac{x^2}{x^2 + (1 - x)^2}`$ | towards the longer side | 36%, 0.31 BTC |
+| hftbacktest power, variant 2, $`n = 2`$ | $`1 - (1 - x)^2`$ | ahead of us | 67%, 0.06 BTC |
+| hftbacktest power, variant 3, $`n = 2`$; our $`a = 2`$ | $`x^2`$ | behind us | 18%, 0.45 BTC |
+| hftbacktest risk-averse; our $`a = \infty`$ | 0, unless nobody stands behind us | all behind us | 0%, 0.60 BTC |
+
+<sub><b>How to read the table.</b> Ahead and behind: the size in the line in front of our order and after it, in BTC; $`x`$ = ahead / (ahead + behind), our position (0 at the front, 1 at the back). Rigtorp (2013) writes the share ahead as $`p = f(\text{ahead}) / (f(\text{ahead}) + f(\text{behind}))`$ with $`f`$ any increasing function, naming the identity and $`\ln(1 + x)`$. hftbacktest (queue.rs) writes the share behind, $`1 - p`$; its power functions are $`f(x) = x^n`$, its variants 2 and 3 normalise differently. hftbacktest, like our replay, takes the excess from ahead of us when a cancellation is larger than the size behind, and never lets the size ahead exceed the size displayed; Rigtorp (2013) states no such rule. Last column: the cancellation of 0.8 BTC at 300 ms in Figure 21_05, with 0.6 BTC ahead and 0.8 behind.</sub>
+
+![The queue models of the literature side by side: the share of a cancellation each puts ahead of our order, by position in the line](figures/21_06_queue_models.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: share of a cancellation put ahead of us (y), by our place in the line (x), one curve per model. Right: the same share (y) as the parameter grows (x). <b>Left:</b> for a line of 1.4 BTC counted in BTC, the share of a cancellation each model of the table puts ahead of our order, against our position $`x`$. Lines above the even split (blue) let our order advance faster than an even split; lines below hold it back. The dots mark the cancellation at 300 ms of Figure 21_05. <b>Right:</b> at that position, $`x = 0.43`$, the share ahead under the three power models as their parameter $`n`$ grows from 1 to 20 (log scale); for our dial, $`n`$ is $`a`$.</sub>
+
+On the same cancellation the models leave between 0.06 and 0.60 BTC ahead of our order, a factor of ten. What separates them is their leaning: an even split; towards whichever side of us is longer (hftbacktest power) or shorter (log); towards the front, which is optimistic for us (power variant 2); or towards the back, which is cautious (power variant 3 and risk-averse).
+
+**How the parameters move the split.** Each family has one parameter, and in each it does something different:
+
+- **Our dial $`a`$, the same as $`n`$ in hftbacktest's power variant 3.** The share ahead is $`x^a`$. Raising $`a`$ means assuming that cancellations come more and more from the late arrivals behind us: at our position $`x = 0.43`$, the share ahead falls from 43% ($`a = 1`$) to 18% ($`a = 2`$), 1.5% ($`a = 5`$) and practically 0 ($`a = 20`$). The effect is strongest near the front of the line; near the back every value of $`a`$ puts almost everything ahead of us, because almost nobody stands behind.
+- **$`n`$ in hftbacktest's power model, $`x^n / (x^n + (1 - x)^n)`$.** Raising $`n`$ hands the cancellation to whichever side of us is longer, as if cancellations came from large groups out of proportion to their size. With more size behind us than ahead, as here, it falls from 43% to 36%, 19% and 0.3% for $`n`$ = 1, 2, 5 and 20; with more ahead it would rise instead. The split is even only when we stand in the middle.
+- **$`n`$ in hftbacktest's power variant 2, $`1 - (1 - x)^n`$.** Raising $`n`$ puts more of every cancellation ahead of us: 43%, 67%, 94% and 100%. This is the optimistic direction, and the one the evidence below argues against.
+- **The unit of size, in the log models.** $`\ln(1 + x)`$ has no parameter, but it is not proportional, so the answer depends on whether size is counted in BTC, in thousandths of a BTC or in contracts. The unit is a hidden parameter:
+
+| Size counted in | Rigtorp, log; hftbacktest log | hftbacktest log, variant 2 |
+|---|---|---|
+| 10 BTC | 43% | 41% |
+| 1 BTC | 44% | 33% |
+| 0.01 BTC | 48% | 11% |
+| 0.001 BTC, Bybit's minimum order | 49% | 8% |
+
+<sub><b>How to read the table.</b> The share of the cancellation at 300 ms put ahead of our order (0.6 BTC ahead, 0.8 behind, $`x = 0.43`$) by the two log models, with size counted in different units. For comparison, the even split puts 43% ahead at any unit.</sub>
+
+In small units, the first log model puts about half of every cancellation ahead of us wherever we stand (41% at $`x = 0.1`$, 59% at $`x = 0.9`$, counted in 0.001 BTC), and variant 2 puts almost none. Rigtorp suggests the log as an example, not a recommendation, and the unit should be chosen deliberately or the model avoided.
+
+**Reading the code.** hftbacktest's documentation describes its queue models in words; the formulas are only in its source. We took them from the file that implements the models, [`hftbacktest/src/backtest/models/queue.rs`](https://github.com/nkaz001/hftbacktest/blob/master/hftbacktest/src/backtest/models/queue.rs), read on 2 November 2026, and translated each line into the notation of this card. When the size displayed at our price changes, the probabilistic models run these lines (Rust):
+
+```rust
+let mut chg = prev_qty - new_qty;      // how much the level fell since the last update
+chg -= q.cum_trade_qty;                // minus what was traded there: the rest was cancelled
+let front = q.front_q_qty;             // size ahead of our order
+let back = prev_qty - front;           // size behind it
+let mut prob = self.prob.prob(front, back);
+let est_front = front - (1.0 - prob) * chg + (back - prob * chg).min(0.0);
+q.front_q_qty = est_front.min(new_qty);
+```
+
+| Line | What it does | In this card |
+|---|---|---|
+| `chg = prev_qty - new_qty - cum_trade_qty` | The decrease of the level beyond the trades | The cancellation $`c`$ of §2.1, step 3 |
+| `front`, `back` | Size ahead of and behind our order | ahead, behind; $`x`$ = front / (front + back) |
+| `prob` | The share of the cancellation assumed to be **behind** us; the documentation: "the probability of a decrease behind the order's queue position" | $`1 - p`$: hftbacktest counts the other way round |
+| `front - (1.0 - prob) * chg` | The size ahead loses its share of the cancellation | ahead − $`p \cdot c`$ |
+| `+ (back - prob * chg).min(0.0)` | If more is assigned behind us than stands there, the excess comes from ahead | "never more is taken from behind us than stands there" |
+| `.min(new_qty)` | The size ahead never exceeds the size displayed | the same |
+
+<sub><b>How to read the table.</b> Each probabilistic model differs only in `prob`. For the power model, `f(back) / (f(back) + f(front))` with `f(x) = x^n`; for variant 3, `1.0 - f(front / (front + back))`, which makes the share ahead $`x^n`$, our dial. The risk-averse model replaces all of it with `front = front.min(new_qty)`: a cancellation moves us only if the level falls below the size ahead of us. A trade at our price runs `front -= qty`, and our order is filled once `front` is negative. One detail differs from our rule: `back` is computed from `prev_qty`, the level at the last update, which still contains the size traded since; the check below shows that this is the only difference.</sub>
+
+Reading the source rather than the description matters for a replay. The documentation of a tool says what its authors meant; the code says what it does, and a backtest's results come from the code. Here it showed a convention we would otherwise have reversed (`prob` is the share behind us, not ahead) and a detail the documentation does not mention (the size behind measured before the trades).
+
+**Do we reproduce them?** We use three of the models and checked our code against their published rules on 3,000 random sequences of trades and book updates. Our $`a = 1`$ gives the same fill as Rigtorp's rule with $`f`$ = identity in every sequence, and our $`a = \infty`$ the same as hftbacktest's risk-averse model. Our $`x^a`$ is the formula of hftbacktest's power variant 3, and gives the same fill except in 1.8% of the sequences at $`n = 1`$ (0.6% at $`n = 2`$). The difference is one detail of hftbacktest's code: it measures the size behind us from the level before the trades since the last update, so size already traded still counts as behind us. Measured after the trades, as Rigtorp and we do, the two agree in every sequence. The check is our calculation for these notes.
+
+**Which is right?** None of these formulas is derived from the behaviour of traders; each is a convenient shape, and Rigtorp (2013) recommends estimating $`f`$ from one's own fills. Evidence comes only from order-by-order data. Databento (2025) used such data for CME's E-mini S&P 500 future and concluded: "It's evident that cancels are mostly pulled from the back of the queue." They describe the bias with one parameter, from no bias towards a strong pull from the back; the formula in their example code is not legible on the page we read, so we quote only their conclusion. One reason for the back, an argument rather than a measurement: an order that has just joined has the least to lose by leaving, while an order near the front is about to be filled. On Bybit we cannot measure the leaning (no order-by-order data), so the lecture spans it with the dial $`a`$ from 1 to ∞, from the even split to the risk-averse model, and reports whether the answer changes inside that range (hypothesis H3); the models that lean ahead of us, against that evidence, are left out.
+
+**What it misses.** First, the truth: which orders were cancelled is recorded only in order-by-order (L3) data, which Bybit does not publish (Lecture 24, §2), so on our data the dial can be varied but not measured. Second, the split may depend on more than our position: on how long the line is, on how fast the price is moving, on the hour (Lecture 25, §3.7). Third, everything inside one 100 ms update (§2.1): a large order that joins and leaves within it is never seen. Fourth, our own order is not in the displayed size, so the line behind us is the size added after we joined, not including us; for an order of 0.001 BTC this changes nothing, for 5 BTC it does (§2.5).
+
+### 2.4 Adverse fills
+
+**Key message.** A resting order is not filled at random moments. When the price runs through it, it is filled for certain; when the price moves away, it is filled only if a counterparty reaches it first. So the fills an order gets lean towards those followed by a loss, even in a market with no trend. A replay that fills too easily, like the touch rule, hides this.
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | A fill is **adverse** if, in the interval in which it happens, the best price on our side moves through our level (for a bid: below it); otherwise it is non-adverse | Adverse: we bought just as the price fell through us |
+| 2 | A move through our level fills us with certainty | A price cannot pass a resting order without filling it |
+| 3 | A move away fills us only with a chance $`R`$ | Someone must sell to us before the price leaves |
+| 4 | Expected move after a fill, in ticks: $`E[d \mid \text{fill}] = \dfrac{R \cdot P(U) - P(D)}{P(D) + R \cdot P(U)}`$ | Negative whenever $`R < 1`$ and the market has no trend: the fill itself is bad news |
+| 5 | Report the markout of adverse and non-adverse fills separately (hypothesis H2) | Whether the replay's fills are the bad ones, and by how much |
+
+<sub><b>How to read the table.</b> Steps 2 to 4 are the model of DeLise (2024), eq. 3, for a bid at the best: the next move of the price is one tick down with probability $`P(D)`$, which trades through our bid and fills it, or one tick up with probability $`P(U)`$, in which case we are filled only with chance $`R`$. $`d`$ is the move after the fill: −1 tick after a down move, +1 after an up move. Lalor and Swishchuk (2024) define adverse fills the same way in spirit: the first change in the value of the position after the fill is negative. Our definition of step 1 is the one fixed in [results/hypotheses.md](results/hypotheses.md).</sub>
+
+![Adverse fills: the expected move after a fill in DeLise's model; the share of fills made as the price ran through, and the price after them, for the bid of §1](figures/21_07_adverse_card.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: move after a fill (y), by fill chance R (x). Middle: share of fills as the price ran through (y). Right: price 10 s after the fill (y), by rule. <b>Left:</b> DeLise's formula of step 4 against $`R`$, for a next move up with probability 50% (black), 60% and 40% (grey); at $`R = 1`$, every touch is a fill and the bias vanishes. <b>Middle and right:</b> the resting bid of 0.001 BTC of §1, every 15 s of 1 October 2025. Middle: the share of each rule's fills that came at the very trade that took the price through our level. Right: the mid 10 s after those fills (dark) and after the others (light), minus our price, in bp. One in-sample day, before the maker fee.</sub>
+
+Take a fair coin: the price is as likely to tick up as down, so it has no drift. If our bid is filled on every down move and on only 30% of up moves, then of every 100 moves, 50 down moves and 15 up moves fill us. The average move after a fill is (15 − 50) / 65 = −0.54 ticks, although the price itself has no trend. The fill is evidence about what happens next.
+
+The running example shows the three cases. The touch rule filled our bid at 70 ms, while the price was steady: non-adverse. With $`a = 1`$, it was filled at 340 ms by a trade at our price: non-adverse by the definition, yet 80 ms before the price ran through. With $`a = \infty`$, it was filled at 420 ms, by the trade below our price: adverse.
+
+On the day of §1 the same picture appears in real data. The touch rule's fills were mostly non-adverse, and the price hardly moved after them. Most of the queue rule's fills came only when the price ran through, and those lost about 0.75 bp in 10 s. Its other fills lost too, about 0.5 bp: they came just before the fall, like the fill at 340 ms. Whether this holds out of sample is hypothesis H2.
+
+**What others measured.** The effect is known from live and recorded orders:
+
+| Study | Market and data | Result |
+|---|---|---|
+| DeLise (2024) | US 10-year Treasury note future, one day of 2023, 100 fills | Move after a fill: −0.48 ticks predicted by the formula, −0.45 measured |
+| Lalor and Swishchuk (2024) | Four CME futures (E-mini S&P 500, E-mini Nasdaq-100, crude oil, 10-year note), one day each of 2024, simulated live orders | Share of fills that were adverse: 66% to 89% |
+| Albers et al. (arXiv 2502.18625) | Binance BTCUSDT perpetual, live minimum-size orders at the best, one week of 2024 | Fills more likely before an adverse move; 1-s markout from −0.06 bp (front of a short line) to −1.16 bp (back of long lines) |
+
+<sub><b>How to read the table.</b> Lalor and Swishchuk's shares are our computation from their Table 2: 81.5% (E-mini S&P 500), 65.8% (E-mini Nasdaq-100), 82.9% (crude oil), 88.8% (10-year note). Lalor and Swishchuk also show that simulations which treat every fill as non-adverse and at the front of the line are "over-inflated".</sub>
+
+**What it misses.** First, the definition depends on the interval: a fill just before the price runs through counts as non-adverse, as at 340 ms, so the split understates how bad fills are. Second, size: the formula counts one tick, while a fill before a large fall loses more. Third, $`R`$ is not a constant: it depends on our place in the line (§2.3), on the hour (Lecture 25, §3.7) and on the market. Fourth, scale: Bybit's base maker fee is 0.02%, 2 bp per fill (Lecture 25, §2.5), larger than every markout in the figure, so the sign of a maker's result is decided by fees, rebates and these fractions of a basis point together.
+
+### 2.5 Our footprint
+
+**Key message.** A replay assumes that our orders take nothing from the recorded market and change nobody's behaviour. For the smallest orders this is close to true. As our size grows towards the size of the queues, it fails, and in a direction that flatters us. This lecture measures where it starts to fail; Lecture 28 adds the footprint back.
+
+| Step | What the replay leaves out | Financial meaning |
+|---|---|---|
+| 1 | What our market order took is still in the recorded book afterwards | Liquidity counted twice: a second order of ours, or a later trader in the record, finds it again |
+| 2 | A recorded trade that fills our resting order also filled the recorded orders it filled in reality | Our fill is added to the record, not taken from someone in it |
+| 3 | Our trades do not move the recorded price | Impact (Lecture 26, §3.2): a large order pushes the price, and the push fades only slowly |
+| 4 | Nobody reacts to our resting size | A large bid can draw sellers to it, or scare others into cancelling or moving ahead (hypothesis H8) |
+| 5 | Our trades trigger no further trading | Most trading reacts to trading (Lecture 26, §3.4), and ours would too |
+
+<sub><b>How to read the table.</b> Each step is a way in which the real market would differ from the record if our order had been there. Steps 1 and 2 are mechanical and could be added by bookkeeping; steps 3 to 5 are behaviour and must be measured on other people's orders.</sub>
+
+![Our footprint: the invented book as recorded and as it would stand after our market buy; the size at the best bid on 1 October 2025 against the lecture's order sizes](figures/21_08_footprint_card.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left and middle: size (x) at each ask price (y). Right: share of moments (y) with at most a given best queue (x, log); dotted = our sizes. <b>Left and middle:</b> the ask side of the invented book of §2.2 at 100 ms. Left, as recorded: what the replay uses. Middle, as it would stand after our market buy of 0.5 BTC at 60 ms, if nobody refilled. <b>Right:</b> Bybit BTCUSDT, 1 October 2025: the size displayed at the best bid at each of the 5,760 moments of §1, as a cumulative share (log scale); dotted lines mark the lecture's order sizes, labelled with the share of moments in which the whole best queue was smaller than the order.</sub>
+
+In the record, 0.2 BTC still stands at USD 100,000.1 at 100 ms; our buy at 60 ms took it. A second buy of ours at 80 ms would be filled from it again, and a buyer in the record who took it at 90 ms would, in reality, have found the best ask a tick higher. One order of 0.5 BTC in a book of a few BTC is enough to make the record wrong about what stood there afterwards.
+
+The scale decides how much this matters. On 1 October the median queue at the best bid was 3.7 BTC:
+
+| Our order | Against the median best queue | Moments the whole best queue was smaller than our order |
+|---|---|---|
+| 0.001 BTC | 0.03% | 0.5% |
+| 0.01 BTC | 0.3% | 0.7% |
+| 0.1 BTC | 3% | 3% |
+| 1 BTC | 27% | 16% |
+| 5 BTC | 137% | 66% |
+
+<sub><b>How to read the table.</b> Our calculation for 1 October 2025, the size displayed at the best bid every 15 s; one in-sample day. The orders of 0.001 BTC are Bybit's minimum and the size of the test order of H1 to H4.</sub>
+
+At 0.001 BTC our order is a speck in the queue, and leaving the footprint out costs almost nothing. At 5 BTC our order is larger than the whole best queue two times in three: it would empty the level, move the price and be seen by everyone. The replay reports results at all five sizes, and two hypotheses measure where it stops being trustworthy. H7 compares what real large market orders paid with what the replay predicts from the book just before them. H8 measures how the market reacted when large size was added at the best, and the smallest addition that moved it sets the size above which replayed resting orders are flagged.
+
+**What it misses.** First, the reaction to *our* orders: H7 and H8 measure the market's reaction to other traders' large orders, and ours might be read differently, for example if they are recognisably the same size every time. Second, the slow part: impact that builds over minutes from many small orders of ours (Lecture 26, §3.2) is not visible in any single order. Third, everything that only live orders reveal. Lecture 28 adds the footprint back as layers on the recorded market, each calibrated on what Lectures 24 to 27 measured: depletion and refill, impact and its decay, triggered trading and the reaction of H8.
+
+### 2.6 The models side by side
+
+Every piece of Sections 2.1 to 2.5 has its own family of models, built for one step of an order's life in a replay:
+
+![The life of an order in a replay: six steps, and the family of models that covers each](figures/21_09_order_life.png)
+<sub><b>How to read the figure.</b> Top row: what happens to our order, from the decision to the price after the fill; a market order is filled at step 3, a resting order goes on to steps 4 and 5. Middle row: the family of models used for that step, with the card that introduces it. Bottom: our footprint, which acts at every step and is left out of this lecture.</sub>
+
+| Family | The question it answers | Examples | What it needs | Main blind spot | In this lecture |
+|---|---|---|---|---|---|
+| Fill rules | When is a resting order filled? | Touch; trade-through (Lecture 23); queue (§2.3); NautilusTrader's probability of a fill when the price touches our order | Trades; the book for the queue rule | Touch ignores the line ahead; trade-through ignores fills at our price | All three, side by side (H1) |
+| Queue-position models | How much stands ahead of our order? | Rigtorp (2013); hftbacktest's probabilistic and risk-averse models; Databento (2025) | Book and trades | Who cancels, which L2 does not show | The dial $`a`$ from 1 to ∞ (H3) |
+| Fill-probability models | How likely is a fill, and how soon? | Survival models of the time to execution (Lo, MacKinlay and Zhang, 2002); fill probability from the queues (Albers et al., arXiv 2502.18625); $`R`$ for non-adverse fills (Lalor and Swishchuk, 2024; DeLise, 2024) | Real fills: one's own or live experiments | Fitted on one market and period; used elsewhere | Not fitted here; our replay's fills are compared with real fills (H4) |
+| Latency models | What does our order meet when it arrives? | A constant delay; delays measured on live orders (hftbacktest); failure given the later return (Albers et al., 2025); latency as a cost to optimise (Cartea, Jaimungal and Sánchez-Betancourt, arXiv 1908.03281) | Measured delays of one's own orders | The race against faster traders | $`L`$ = 10, 50, 100 ms |
+| Adverse selection | What is a fill worth? | Adverse and non-adverse fills (Lalor and Swishchuk, 2024); the drift after a fill (DeLise, 2024); markouts (Lecture 25, §2.5) | Prices after the fill | The interval that defines "adverse" | Markouts by kind of fill (H2), at round times (H5), on 10 October (H6) |
+| Market reaction | How does the market respond to our order? | Impact over time (Lecture 26, §3.2); simulated traders (ABIDES; Byrd, Hybinette and Balch, 2019); queues whose rates depend on their size (Huang, Lehalle and Rosenbaum, 2015) | Reactions measured on others' orders, or live orders | Calibrated on other traders' orders, not ours | Where the replay breaks, by size (H7, H8 and its reaction curve); Lecture 28 |
+
+<sub><b>How to read the table.</b> One row per family of models. "What it needs" is the data required to use or fit it; "Main blind spot" is what no model of the family can know from that data. The last column says what this lecture does with the family on Bybit's data, with the hypotheses of [results/hypotheses.md](results/hypotheses.md). Examples are named for the reader to look up; they are listed in the reading list.</sub>
+
+The first two families decide when our order is filled, the third how often, the fourth what it meets, the fifth what the fill is worth and the last what our order does to the market. A replay needs a choice in each. The touch rule, a constant latency, no queue and no reaction is the simplest replay and the most flattering; each later choice makes it more cautious and asks for data that L2 feeds do not contain. Lo, MacKinlay and Zhang (2002) warned, on stock orders, that hypothetical executions computed from price paths or trades are "very poor proxies" for actual ones. That is the question of Section 4: how far from the truth is our replay, and in which direction?
+
+## 3. The replay on our data
+
+Section 2 laid out the pieces on an invented book. This section builds each of them on Bybit's recorded book and trades, 20 September to 3 November 2025, in the order of an order's life (Figure 21_09): how the two recorded streams line up, what a market order meets after the latency gap, where a resting order stands in the line, and which of its fills are adverse. The measurements here are descriptive; the tests of the replay are Section 4.
+
+| § | Piece of §2 | What is measured on our data |
+|---|---|---|
+| 3.1 | What a replay is (§2.1) | Whether trades and book share one clock, and how much flow the 100 ms book hides |
+| 3.2 | The latency gap (§2.2) | What market, immediate-or-cancel and limit orders meet after 10, 50 and 100 ms |
+| 3.3 | The queue (§2.3) | Where our resting order stands, under the dial from $`a = 1`$ to $`a = \infty`$ |
+| 3.4 | Adverse fills (§2.4) | Which fills come as the price runs through, and what they are worth |
+
+**What it costs to compute.** The cost of a replay is set by how many moments it asks about and how much of the book each one needs, not by the size of the data. On the same few gigabytes of book and trades per month and a half, the jobs of this lecture range from seconds to hours per day of data.
+
+| Job | What it needs | Order of cost per day of data | Normal laptop? |
+|---|---|---|---|
+| Net bookkeeping at the best price (§3.1) | The best price and size after each update, and the trades | Seconds | Yes |
+| Full rebuild of the book (Lecture 25) | Every message, tens of millions a day | Minutes | Yes, streamed in blocks |
+| The book's depth at chosen moments (§3.2) | The book file once, levels near the best at each moment | About a minute | Yes |
+| Taker orders after the latency gap (§3.2) | Depth at every decision and after each latency, by size | Minutes | Yes, run overnight for months of data |
+| One resting order in the queue (§3.3) | Every update at its price and the trades there, for its life | Milliseconds per order | Yes |
+| Quoting strategies (§4) | Chains of resting orders for every variant, every event of their lives | Minutes on quiet days, up to tens of minutes on busy ones | A sample of days, yes; months and many variants, no |
+
+<sub><b>How to read the table.</b> Orders of magnitude from the runs behind this lecture, in Python, one process at a time. The cost of the last row grows with the activity of the market: a busy day costs several times a quiet one.</sub>
+
+What is reasonable depends on the question:
+
+- **Teaching and checking a rule.** One day, or one window of it: seconds to minutes on a laptop. The lecture's notebook works this way, on the shipped results.
+- **A strategy that decides now and then** (the hourly and daily systems of Parts I to III, or any signal-driven taker). Only the decision moments need the book, so the depth at each can be looked up exactly; the cost is mostly reading each day's book once, and a laptop gets through a year of data overnight.
+- **Resting orders and market making.** Every event in the life of every order counts, and the cost grows with the activity of the market. On a laptop: fix a sample of days and a small grid before the results, as was done for the quoting test, and time a busy window, not a quiet one, before launching.
+- **Searching many designs of a high-frequency strategy over months.** Full event-by-event replays of every variant: this is where big computing power is needed, and compiled code run in parallel on many cores or machines; hftbacktest and NautilusTrader both have their core in Rust. A Python replay like ours is for understanding the mechanics and testing a few designs.
+
+**Where a laptop stops, as of 2026.** The full book of one market for a year is roughly 50 GB of compressed data and about half a day per pass of a full rebuild: a laptop can do it overnight. What it cannot do is the multiplication around it: dozens of markets (terabytes), several years, and a new pass for every variant tested, with event-level replays of resting orders costing tens of hours per variant grid and year. That is work for servers or the cloud. The line moves: each generation of disks, memory and processors brings more of it within reach of a single machine, so the boundary drawn here is a snapshot, not a rule.
+
+The pattern that keeps the work on a laptop: stream the data in blocks, never the whole day at once; check the cheap method once against the full rebuild (as §3.2's tool was, exactly); then ask only about the moments the question needs.
+
+### 3.1 Ordering trades against the book
+
+**The trades and the book share one clock to the millisecond. Even so, a book published every 100 ms hides about a fifth of the flow at the best price: size that was traded and replaced within the same update.**
+
+A replay merges two streams (§2.1). If their clocks disagree, trades land in the wrong interval between two book updates, and every inference about what was cancelled or added goes wrong with them. Lecture 24 (§4.4) chose the matching engine's time as the book's clock because more trades fit the book under it. Here the same question is asked more sharply, through the quantity the replay infers.
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | For each pair of consecutive book updates in which the best bid stayed at the same price, the change of its displayed size, $`\Delta q`$ | How the queue at the best moved between two snapshots |
+| 2 | The size sold by takers at that price between the two updates, $`T`$ | What certainly left the queue as fills |
+| 3 | Added $`= \max(\Delta q + T, 0)`$, cancelled $`= \max(-(\Delta q + T), 0)`$ | The replay's net inference: the rest of the change was new orders or cancellations |
+| 4 | Refilled unseen $`= \min(\text{added}, T)`$ | Where more was traded than the queue fell, new size must have arrived within the same update; the book never showed it |
+| 5 | Shift the trades by $`d`$ milliseconds against the book and repeat | If the clocks agree, misplaced trades only create refills that never happened: the share is smallest at the right alignment |
+
+<sub><b>How to read the table.</b> The same for the best ask, with taker buys. A trade stamped in the same millisecond as a book update is applied before it, the event order fixed in [results/hypotheses.md](results/hypotheses.md); only 1% of trades fall on such a millisecond, and applying them after the update changes the result by less than one percentage point (1 October).</sub>
+
+![What the 100 ms book hides: the share of traded size refilled unseen, with the trades shifted against the book, and day by day](figures/21_10_hidden_flow.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: shift of the trades in ms (x), share of traded size refilled unseen (y), one line per day. Right: day (x), the same share (y). <b>Left:</b> sells at the best bid on five days spread over the sample, with the trades shifted from 100 ms earlier to 100 ms later than recorded. <b>Right:</b> both sides, every day of the 45, at no shift; weekends light, 10 October orange; the dotted line is the median day.</sub>
+
+- **The clocks agree.** On every one of the five days the share is smallest at no shift, and it rises steeply either way: from 18–24% at no shift to 26–36% at 10 ms and 32–46% at 20 ms. A trade's timestamp and the book's engine time are the same clock, to within a few milliseconds. The event order of the replay is right.
+- **The book hides a fifth of the flow at the best.** On the median day, 22% of the size traded at an unchanged best price was replaced within the same update, in about a third of the intervals with trades. The share is lower at weekends (14–23%), when trading is thinner, and was among the highest on 10 October (27%).
+- **Cancellation still dominates.** Of the size that left the best queues, 92% is inferred as cancelled rather than traded, the same split as Lecture 25 (§3.4) found by the same bookkeeping.
+
+**What it means for the replay.** The net bookkeeping of §2.1 is correct in its order of events but blind to what happens inside 100 ms, and the blind spot has a direction. Trades are all recorded, and an addition always joins the back of the line, so what the book can hide from the queue rule is a cancellation ahead of our order offset by an addition behind it. The replay then counts nothing, and keeps our order further back than it may be. As our reasoning, not a measurement: within one update, the net book never makes the queue rule too optimistic, only too cautious. Feeds that publish more often (Bybit's best level every 10 ms, Lecture 24, §1.3) would shrink the blind spot; how much is an open question we invite readers to test.
+
+### 3.2 The latency gap on data
+
+**Most of the time our order meets the book we saw. The gap grows with order size and delay, and the immediate-or-cancel orders it leaves short are, as Albers et al. found live, the ones that would have paid.**
+
+A market order of up to 5 BTC walks several levels, so this section needs the book's depth at chosen moments, not only its best price. A full rebuild runs through every message of the day, 45 million on the median day and 79 million on 10 October, and holds the whole book in memory. Instead, the day's book file is read one half-hour block at a time, carrying the book from block to block, and the levels near the best are looked up at each moment we ask for ([l21_ladder.py](scripts/l21_ladder.py)). The result is exact: at 8,640 moments of 1 October and of 25 September, a day with a feed gap, it reproduces Lecture 25's book state exactly: the best prices, the sizes at the best and the depth of the best five levels. The same tool serves any question tied to points in time: the cost of an order at a signal, the book around an event, or the book just before a real large trade (§4, H7).
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | One decision moment $`t`$ at a random millisecond in every 10 s, 8,640 a day, 45 days; a buy and a sell at each | Moments that do not line up with the bots that act on round seconds |
+| 2 | Expected price: the average price of size $`S`$ walking the book published at $`t`$ | What the order promises on the book we decide on |
+| 3 | Paid price: the same walk on the book at $`t + L`$, the last update before it less the size traded at each price since (§2.1) | What a market order actually meets |
+| 4 | An IOC order at the best price seen at $`t`$ takes what stands at that price or better at $`t + L`$; a limit order takes the same and rests with the remainder | The gap for orders that must not pay more |
+| 5 | The move of the mid from $`t`$ over the next second, signed for the order; the volatility of the hour | Whether the orders that miss are the ones that would have paid (Albers et al.'s mechanism) |
+
+<sub><b>How to read the table.</b> $`S`$ in {0.001, 0.01, 0.1, 1, 5} BTC and $`L`$ in {10, 50, 100} ms, as fixed in [results/hypotheses.md](results/hypotheses.md); prices in bp of the mid at $`t`$. The book is read to the 200 levels Bybit publishes. In 481 of the 11.7 million orders these held less than the order (thin books after 10 October, or a sweep just before $`t + L`$); those orders are counted, not priced.</sub>
+
+![The latency gap on data: market orders that paid more than the book seen promised, limit orders left resting, and minimum-size IOC orders filled short by the move that followed](figures/21_11_latency_data.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left and middle: order size (x, log), share of orders (y), one line per latency. Right: 1-s move of the mid (x, bp), share of IOC orders filled short (y). <b>Left:</b> market orders whose average price at $`t + L`$ was worse than the walk on the book seen at $`t`$. <b>Middle:</b> the share of a limit order's size not filled at once and left resting at its price. <b>Right:</b> orders of 0.001 BTC at 50 ms; positive moves in the order's favour (orange), negative against it (grey); each moment counts once as a buy and once as a sell, so the bins mirror in size. Bands and whiskers: 95% from 2,000 resamples of days; numbers above the bars: decisions.</sub>
+
+- **Small orders mostly meet the book they saw.** A market order of 0.001 BTC paid more than expected in 1.5% of decisions at 10 ms, 2.6% at 50 ms and 3.7% at 100 ms. Large orders meet a changed book far more often: at 5 BTC, 8%, 18% and 29%. The book moves both ways, though: at 50 ms, 1.6% of the small orders paid less than expected. On average the gap costs about 0.003 bp, a third of a tick, against 0.37 bp from the mid for walking the book with 5 BTC at all. In the replay, latency is a lottery with a mean near zero for market orders; what it changes is which orders win.
+- **A limit order's remainder is mostly about size, not speed.** A limit order of 0.001 BTC at the best price seen was left partly resting in 1.5% to 3.7% of decisions, rising with $`L`$. At 1 BTC 15%, and at 5 BTC 46%, of the size was left resting, almost the same at every latency: the best level often holds less than the order, so the remainder rests whatever the delay. Only for small orders is the remainder the latency gap of §2.2.
+- **The orders that miss are the ones that would have paid.** When the mid hardly moved over the next second (within 0.5 bp), 1.1% of the minimum-size IOC orders were filled short. When it moved 0.5 to 2 bp in the order's favour, 15%; 2 to 5 bp, 24%; more than 5 bp, 33%. Moves against the order left 1.5% to 4% short. By the volatility of the hour: 0.8% in the calmest third of hours, 1.9% in the middle and 5.0% in the most volatile. Albers et al. (2025) found the same shape live on Bybit: 1.35% overall, almost none after a fall, 15% at +5 bp.
+
+**What it means for the replay.** The shape of the curve on the right is the mechanism of §2.2 on our data: an order arriving L later than its decision misses exactly when the price has started to move its way. A backtest that fills at the price seen keeps those trades; the replay removes them. Two warnings, both fixed before the results. First, in a replay the miss follows from the recorded book by construction: the move over the next second already contains the move during $`L`$, so the curve shows the mechanism, not a measured failure rate, which only live orders give. Second, the comparison with Albers et al. is of shape, not level: their contract is inverse BTCUSD with a 0.5 USD tick, in April 2023, and their horizon is ten events of their experiment rather than one second; our overall share at 50 ms (2.6%) is of the same order as their 1.35%, at 10 ms (1.5%) close to it.
+
+### 3.3 The queue on data
+
+**Our order joins behind a few BTC, and the naive rule fills it far too fast. The unknown cancellation split barely changes whether it is filled: most fills under the queue rule come as the price runs through our level, not because we reached the front. In the cascade of 10 October the line shrank to about a tenth.**
+
+§2.3 set up the question on an invented book: we see how much stands at our price, not where the cancellations come from, so the dial $`a`$ stands for what we do not know. Here the same rule runs on the recorded book. How much does the dial matter, and how far is the queue rule from the two simple rules that bracket it?
+
+| Step | Calculation | Financial meaning |
+|---|---|---|
+| 1 | On each of the 45 days, eight half-hours drawn at random, bids and asks | Every day is covered, at a fraction of the cost of a full run |
+| 2 | In each, an order of 0.001 BTC sent every 15 s, joining at the best price standing 50 ms later | 86,392 orders of the smallest size, so our own footprint is negligible |
+| 3 | The order is held up to 120 s and not re-posted | If the price moves away, it stays behind and is filled only if the price returns |
+| 4 | The fill time under touch ($`Q_0`$), trade-through ($`Q_1`$) and the queue rule ($`Q_2`$) at $`a`$ = 1, 2, 5, 20 and $`\infty`$ | One order, several possible histories, as in Section 1 |
+| 5 | For each queue fill: did it come with the first trade through our price, or earlier, at our price? | Whether we got there by waiting our turn or by the price running over us |
+
+<sub><b>How to read the table.</b> The sample is fixed in [results/hypotheses.md](results/hypotheses.md). The fill times use the rules of the replay of §2.3 and agree with it order by order on a random check. Time is counted from the moment the order joins.</sub>
+
+![Resting orders on data: the share filled by time since joining, by fill rule; the share filled within 120 s by the size ahead at joining; and every sampled half-hour, with 10 October marked](figures/21_12_queue_data.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: seconds since joining (x, log), share filled (y). Middle: size ahead at joining (x), share filled within 120 s (y, from 70%). Right: median size ahead (x, log), median time to fill (y, log), one dot per half-hour. <b>Left and middle:</b> one line per fill rule; touch dotted, trade-through dashed; the queue rule at $`a`$ = 2, 5 and 20 lies between its two lines and is left out. Bands: 95% from 2,000 resamples of days. <b>Right:</b> the queue rule at $`a = 1`$; 360 half-hours, those of 10 October in orange with their start time in UTC.</sub>
+
+- **The line is long.** The median order joins behind 2.5 BTC, 2,500 times its own size, and three orders in four join behind more than 1 BTC.
+- **The touch rule fills far too fast.** Within one second it has filled 56% of the orders, the queue rule 18 to 19%; within ten seconds 89% against 54 to 57%. Half the orders are filled within a second under touch, within 7 to 9 s under the queue rule and within 10 s under trade-through. After 120 s the gap has closed to 96% against 86 to 88%: touch misstates when an order is filled, and which fills it gets (§3.4), more than whether.
+- **The dial hardly changes whether we are filled.** Within 120 s: 87.5% at $`a = 1`$, 86.5% at 2, 86.1% at 5, and 85.9% at both 20 and $`\infty`$. A likely reason, by our reasoning from the rule: when we join, nobody stands behind us, so every cancellation must come from ahead whatever $`a`$ is. The dial only starts to act once new orders have joined behind us.
+- **Most queue fills are not a turn reached.** Of the queue rule's fills, 64% at $`a = 1`$ and 78% at $`a = \infty`$ came with the first trade through our price. Only 36% to 22% reached the front first. That is why the queue rule stays so close to trade-through, which fills 84%: the best price usually moves before a line of a few BTC has been worked off. The rules part where the line is long: behind more than 5 BTC, touch fills 94%, the queue rule 77 to 79%, trade-through 75%; behind less than 0.01 BTC they all fill 99%.
+
+**In the crash.** The two half-hours of the sample inside the cascade of 10 October, 21:30 and 22:00 UTC, stand apart from all others. The median order joined behind 0.30 and 0.45 BTC, against 2.5 BTC in the median half-hour, and was filled in 0.18 and 0.20 s, against 5 s; these are the lowest and second lowest of the 360 half-hours on both measures. Almost every order was filled (98% against 89%). In a crash the question of where we stand in the line nearly disappears: the risk of a resting order is no longer that the fill does not come. It does not follow that every fill was worse. The share of adverse fills was ordinary (74% and 82%, against 76% in the median half-hour). The loss 10 s after the fill was the largest of all half-hours at 21:30 (−1.76 bp against −0.79 bp), and smaller than usual at 22:00 (−0.54 bp). Two half-hours of about 235 fills each decide nothing; Section 5 replays the whole cascade.
+
+**What it means for the replay.** On whether an order is filled, the dial is a small uncertainty: about two percentage points across its whole range, the plateau that H3 tests on what fills earn. The rule itself matters far more: touch is off by a factor of three in the first second. Two limits remain. The queue rule cannot be checked here, because only an exchange's order-level data or live orders of our own show true fills. And the grid stops at $`a = 1`$: if cancellations came mostly from ahead of us, more orders would reach the front than any line in the figure shows. What these fills earn is the subject of §3.4.
+
+### 3.4 Adverse fills on data
+
+**Three queue fills in four are adverse, and they carry nearly all the loss: about 1 bp after ten seconds, against 0.16 bp for the others. The touch rule makes the same orders look three times better than they are.**
+
+§2.4 argued that the fills an order gets lean towards the bad ones. Here the orders of §3.3 are sorted by that definition, and each fill is scored by its **markout**: the mid after the fill minus the fill price, signed for our side, before the maker fee. A fill is adverse if the best price on our side has moved through our level at the first book update after it.
+
+![What the fills earn: the markout by fill rule, adverse against non-adverse fills under the queue rule, and every sampled half-hour with 10 October marked](figures/21_13_adverse_data.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left and middle: fill rule or kind of fill (x), markout in bp (y), one bar per horizon. Right: share of fills adverse (x), 10-s markout (y), one dot per half-hour. <b>Left:</b> 72,800 to 83,200 fills per rule. <b>Middle:</b> the queue rule at $`a = 1`$; the shares of the fills are in the labels. <b>Right:</b> the queue rule at $`a = 1`$; 360 half-hours, those of 10 October in green, the two inside the cascade labelled with their start time in UTC. Whiskers: 95% from 2,000 resamples of days.</sub>
+
+- **Every rule loses before the fee, and the touch rule hides most of it.** After 10 s the same orders show −0.26 bp under touch, −0.80 to −0.88 bp under the queue rule, and −0.98 bp under trade-through. Touch counts 26% of its fills as adverse, the queue rule 75 to 86%, trade-through 98%. Lalor and Swishchuk (2024) report adverse shares of 66 to 89%; the queue rule falls in that range.
+- **The adverse fills are where the loss is.** Under the queue rule at $`a = 1`$, the adverse fills lose 1.01 bp after 10 s and the others 0.16 bp. The second number is small, but it is not zero, and it stays negative at $`a = \infty`$ (−0.07 bp): even the fills we would call good do not earn the half-spread, about 0.005 bp, on average.
+- **The dial changes the mix, not the sign.** From $`a = 1`$ to $`a = \infty`$, fewer fills count as good ones and the 10-s markout moves by 0.09 bp. The maker fee of 2 bp is more than twenty times that. After the fee the same fills stand at about −2.8 to −2.9 bp.
+
+**In the crash.** The right panel separates two things the eye tends to join. Across half-hours, a higher adverse share goes with a larger loss (correlation −0.48). But the worst half-hour of all, 10 October at 21:30, has an ordinary share (74%): there the loss came from how far the price went after each fill, not from how many fills were adverse. Half an hour later, still in the cascade, the fills lost less than usual. On two half-hours this is a description only; Section 5 tests it on the whole cascade (H6).
+
+**What it means for the replay.** The fill rule decides the verdict on a resting order more than any other choice in this section: under touch the order seems to lose a quarter of a basis point, under the queue rule three times as much. None of the rules, on any setting, comes near paying the fee at the minimum size. Whether the replay's fills are as bad as real ones is a separate question, one of those Section 4 tests.
+
+## 4. Does the replay tell the truth?
+
+**The fill rule decides the picture, and the fair rule shows no sign of flattering. On market orders the replay is too kind: real orders pay beyond the book they saw. And the market responds to size from the smallest class we can measure, so the replay's results hold for the minimum size and are flagged above it.**
+
+Section 3 measured; this section tests. The questions were fixed in [results/hypotheses.md](results/hypotheses.md) before any of their results were computed, and the tests run on the 24 days after 10 October unless stated. The changes made while running are listed at the end of that file.
+
+| The question in plain words | Hypothesis | Main number | p | Verdict after correction |
+|---|---|---|---|---|
+| Does the touch rule flatter a resting order? | H1 | After 1 s: touch −0.29 bp, queue rule −0.76 bp | < 0.001 | Holds |
+| Are the fills that come as the price runs through the bad ones? | H2 | After 1 s: adverse −0.93 bp, others −0.05 bp | < 0.001 | Holds |
+| Does the unknown cancellation split decide the answer? | H3 | After the fee, 10 s: −2.8 to −3.0 bp at every point computed | not tested | Same sign throughout |
+| Is the replay no kinder than real fills? | H4 | After 1 s: replay −0.76 bp, real small fills −0.12 bp | < 0.001 | Holds, with a wide caveat |
+| Are fills worse at the start of minutes :00 and :30? | H5 | After 1 s: −0.92 bp against −0.76 bp | < 0.001 | Holds, on 0.9% of fills |
+| In the cascade, were more fills adverse than on any other day? | H6 | 81%, sixth of 45 days | 0.13 | Fails (Section 5) |
+| In the cascade, did each fill lose more than on any other day? | H6 | After 10 s: −1.73 bp, worst of 45 days | 0.022 | Holds (Section 5) |
+| Do large market orders miss the last book by more than small ones? | H7 | Gap 0.32 bp at 5 BTC or more, 0.14 bp below 0.01 BTC | < 0.001 | Holds |
+| Does the market respond to size added at the best? | H8 | After 1 s, additions of 100% or more: +0.25 bp net of controls | < 0.001 | Holds |
+| Far from the price, does the queue rule fill more than trade-through? | H9 | 47.75% against 47.72% | 0.038 | Holds, and hardly matters |
+| Were the fills trade-through misses at least as good? | H9 | Four fills out of 11,512 orders | < 0.001 | Holds on paper; four fills decide nothing |
+
+<sub><b>How to read the table.</b> Bp: basis points of the price; negative after a fill means the price moved against the order. "p" is one-sided, from 2,000 resamples of days, or for H6 the rank of 10 October among the same window on the 45 days; "< 0.001" means no resample went against the hypothesis. The Benjamini-Hochberg procedure at 5% ranks the ten p-values, H3 being reported only, and accepts the k smallest if the k-th is at most k × 0.05 / 10: nine hold and one fails. Several of the nine need the reading given below.</sub>
+
+![The tests: the reaction to size added at the best, the gap between what real taker orders paid and what the last book promised, and the two quoters' fills by how soon they follow the previous fill](figures/21_14_tests.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: size added relative to the queue (x), move of the mid in bp (y). Middle: taker order size (x), gap in bp (y). Right: quoter (x), 10-s markout in bp (y), one bar per kind of fill. <b>Left:</b> positive is away from the addition, up after an addition to the bid; solid lines net of the matched controls, dotted before them; all additions, 5.5 million. <b>Middle:</b> average price paid minus the price predicted by walking the last book, positive a cost. <b>Right:</b> the queue rule at $`a = 1`$, eight days; the label gives the share of each quoter's fills that come within 1 s of its previous fill on the same side. Bands and whiskers: 95% from 2,000 resamples of days.</sub>
+
+### 4.1 Resting orders
+
+**H1 and H2: the fill rule flatters in the direction the mechanism says.** On the re-posted test order, touch shows −0.29 bp after one second and the queue rule −0.76 bp, a difference of 0.47 bp (95% band 0.46 to 0.48); the queue rule stands 0.17 bp above trade-through (−0.93 bp). Within the queue rule, 81% of fills are adverse, at −0.93 bp, against −0.05 bp for the others. The results repeat those of §3.4, here on the order that keeps re-posting.
+
+**H3: the unknown split does not decide the answer.** At $`a`$ = 1 and $`\infty`$ and at each of the three latencies, on eight days, the 10-s markout after the fee lies between −2.80 and −3.02 bp, and fills fall as $`a`$ rises. On the held orders of §3.4, all five values of $`a`$ agree too. A result that changed sign would have been reported as undetermined; none did.
+
+**H4: the replay is not kinder than real fills, but this test cannot say by how much it is too hard.** The replay's fills lose 0.76 bp after one second, the real fills of the comparison 0.12 bp. These are the resting side of real taker orders below 0.01 BTC that executed at the best price, 2.7 million of them. They are not like the replay's fills: an order so small takes the front of the line and leaves the price where it was, and most of the replay's fills come with the price running through. Across all taker sizes, Lecture 25 (§5.1) found about 59 ticks per BTC, roughly −0.5 bp, much closer to the replay. The fair reading is that the replay errs on the cautious side, by an amount somewhere below 0.64 bp. Only live orders can settle it, which makes them a natural validation for the capstone.
+
+**H5: the clock is real and small.** In the first ten seconds of minutes :00 and :30 the fills lose 0.16 bp more (band 0.10 to 0.20), which takes up the open question of Lecture 25 (§3.7). Those moments hold 0.9% of the fills, more than their 0.6% of the clock. A quoter that stepped aside then would save little per day.
+
+**H9: Lecture 23's rule was hardly conservative where it was used.** At 10 bp from the mid, the queue rule fills 47.75% of the orders within ten minutes and trade-through 47.72%: when the price reaches that far, it nearly always goes through. The difference passes the test and has no practical size. The second half of H9 rests on the four fills trade-through missed, too few to mean anything. Lecture 23's fills stand.
+
+**Limit orders that miss.** The minimum-size orders of §3.2 left short at 50 ms rest at the price we saw: 2,248 of them in the half-hours of §3.3. Within 120 s, 86% are filled, half of those within 4.8 s, at −0.63 bp after 10 s, about the same as an order joining at the best (−0.80 bp, §3.4). The 14% that are not filled are the other half of the story: 120 s later the mid stands on average 11 bp beyond the order's price, in the direction it wanted. This is §2.2 on data: the order meant as a trade either becomes an ordinary losing quote, or misses the move it was sent for.
+
+### 4.2 Market orders
+
+**H7: real orders pay beyond the book they saw, and the replay does not see it.** Walking the last book before each real taker order predicts its price well in the typical case: the median gap is zero at every size. The mean is not: 0.14 bp below 0.01 BTC, rising to 0.32 bp at 5 BTC or more, a difference of 0.18 bp (band 0.13 to 0.23). The share of orders with any gap rises from 46% to 75%. So walking the book understates the cost, by an amount of the same order as the 0.37 bp of walking 5 BTC itself (§3.2). Even the smallest orders show most of the gap, which points away from depth: takers tend to act when the price has just moved, after the last update of a 100 ms book. The 3,192 largest orders (6% of those of 5 BTC or more) went beyond the 200 levels and are left out, so the top class is understated.
+
+### 4.3 The reaction to size
+
+**H8: the market responds from the smallest class on.** After additions of at least the size of the queue, the mid moves 0.25 bp away from the addition over one second and 0.38 bp over ten, net of the matched controls (bands 0.22 to 0.27 and 0.35 to 0.40); the stricter control gives 0.24 and 0.37 bp. The left panel shows the shape: a curve that starts at about 0.1 bp for additions of 5 to 10% of the queue and rises steadily with size, with no threshold.
+
+Two readings need care. First, this is not the price rising after a large bid. The dotted lines show the raw move: for additions of 100% or more it is about zero after one second and slightly negative after ten. Large additions arrive on thin queues, where the price would otherwise be expected to give way, and the net number measures the fall that did not happen. Second, it is not proof of cause. An addition may move the market, or may be placed by someone who expects the move; the data show the association. Additions removed within one second are reported apart, and that split depends on what happened after them: over ten seconds they show −0.09 bp for the smallest classes and about zero for the largest, no sign of the pressure a spoof is meant to create.
+
+**The validity of the replay.** By the rule fixed in advance, the reaction starts at the smallest class measured, 5% of the queue, about 0.125 BTC at the median queue of 2.5 BTC. Our orders of 0.001 and 0.01 BTC are 0.04% and 0.4% of that queue, below what we can measure, and the results at those sizes stand, with the reaction at those sizes unmeasured. **From 0.1 BTC up, resting results are flagged.** Footprint at those sizes is the subject of Lecture 28.
+
+### 4.4 Two quoters
+
+A replay also makes it possible to compare designs, and the comparison is a first introduction to market making. The test order reacts to every book update; a second quoter looks only once a second, keeps its order while the best price holds, and otherwise cancels and re-posts. Both quote 0.001 BTC on each side under the queue rule ($`a = 1`$, 50 ms), on eight days, as fixed in advance.
+
+The once-a-second quoter fills 1,800 times an hour and the instant one 4,000. Against the design's expectation, the slower quoter does slightly better per fill: −0.79 bp against −0.86 bp after 10 s, on all eight days (a mean of 0.06 bp, band 0.05 to 0.08). The right panel shows why. 65% of the instant quoter's fills come within a second of its previous fill on the same side: in a run of trades it rejoins at the next best price at once and is hit again, and these fills are 91% adverse, at −0.93 bp. Its other fills, at −0.73 bp, are as good as the slower quoter's (−0.77 bp). Neither pays the fee of 2 bp on any day.
+
+The replay leaves out what would matter to a real quoter, such as the value of holding a place in the line, reacting to the signals of Lectures 25 and 26, or controlling the position. These designs belong to Lecture 29.
+
+## 5. 10 October
+
+**In the cascade the line nearly vanished and fills came 24 times as often. Each fill lost only about twice the usual amount, although the price moved 17 times as far; the largest part of the bill came from the position the fills left behind. Orders meant as trades missed about 18 times as often.**
+
+Lecture 26 (§4) timed the news and Lecture 25 (§4) followed the book through the fall. Here the replay puts our orders into the same two hours, 20:50 to 22:50 UTC, while the mid goes from 116,850 to 103,151 USDT in 30 minutes and recovers to 113,702. The two quoters of §4.4 run through the whole window on all 45 days: 0.001 BTC on each side, the queue rule at $`a = 1`$, 50 ms. They have no limit on their position and never stop, so they show what the market would have done to a quoter that did nothing about it. The test on this window is H6; everything else here is description, of one evening, as recorded in [results/hypotheses.md](results/hypotheses.md).
+
+![The cascade in the replay: the price, the fills and the loss per fill every 10 minutes, the adverse share against the loss on all 45 days, the two quoters' positions, and our taker orders on all 45 days](figures/21_15_cascade.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Top and bottom middle: time on 10 October (x). Top left: mid (y). Top middle: fills per 10 minutes (y, log). Top right: 10-s markout (y). Bottom left: share of fills adverse (x), 10-s markout (y), one dot per day. Bottom middle: position in BTC (y). Bottom right: share of orders (y), one dot per day. <b>Top middle and right:</b> dotted lines are the median of the other 44 days in the same window. <b>Bottom left:</b> the quoter that reacts at every update. <b>Bottom right:</b> 50 ms; orders sampled every 10 s in the window; orange is 10 October.</sub>
+
+| | At every update | | Once a second | |
+|---|---|---|---|---|
+| | 10 October | Median of the other 44 days | 10 October | Median of the other 44 days |
+| Fills | 72,759 | 3,074 | 11,042 | 1,766 |
+| Share of fills adverse | 81% | 73% | 77% | 69% |
+| In the 10 s after each fill, bp | −1.72 | −0.88 | −1.16 | −0.82 |
+| From the position carried after that, bp | −7.26 | +0.17 | −1.78 | +0.37 |
+| Result before the fee, bp | −8.98 | −0.72 | −2.94 | −0.44 |
+| Result before the fee, USDT | −7,295 | −23 | −365 | −9 |
+| Largest position, BTC | 0.944 | 0.189 | 0.152 | 0.116 |
+
+<sub><b>How to read the table.</b> Bp are of the value traded, 8.1 million USDT at every update and 1.2 million once a second on 10 October. The first two bp rows add up to the third. "From the position carried": everything between 10 s after each fill and the mid at 22:50. The fee of 2 bp comes on top: 1,624 and 248 USDT on 10 October. Medians are taken row by row, so they need not add up.</sub>
+
+### 5.1 Resting orders
+
+**The queue stops being the question.** The median order joined behind 0.30 and 0.45 BTC in the two half-hours of §3.3 inside the cascade, against 2.5 BTC in the median half-hour. Over those half-hours 98% of held orders were filled under the queue rule and 99.6% and 99.2% under touch; in ordinary half-hours the same two numbers are 87% and 96%. The unknown split no longer matters either: from $`a = 1`$ to $`\infty`$ the share filled stays within half a point. The fill rule still matters for what a fill earns: at 21:30 touch reports −0.86 bp after 10 s and the queue rule −1.76 bp; at 22:00, −0.40 and −0.54 bp. These are 240 orders each, so a description only.
+
+**H6: the share of adverse fills was ordinary and the loss per fill was the worst.** 81% of the fills were adverse, sixth of the 45 days, so that half of H6 fails. The 10-s markout of −1.73 bp was the lowest of the 45 (the next, −1.59 bp, came on 21 October). The two are not the same thing, as the bottom-left panel shows. In the fastest ten minutes of the fall, 21:10 to 21:20, the adverse share was at its lowest of the evening, 75%, and the loss at its highest, −2.87 bp. The adverse share asks whether the next book update passes through our price; the loss depends on how far the price then goes.
+
+**The price moved far more than the fills lost.** The average move of the mid over 10 s was 16.1 bp in the window, against 0.9 bp on the median day: 17 times as far. The average loss per fill only doubled. What grew was the spread of the outcomes: the standard deviation of the 10-s markout was 41 bp, against 1.8 bp, 22 times as much. So on this evening the fills were not far worse on average; they were far less certain. An average markout hides that.
+
+**Fills multiply the loss.** With 24 times the fills at twice the loss, the fills' loss over 10 s came to about 50 times that of the median day, −1,398 USDT against −28 USDT, on an order of about 110 USDT at a time.
+
+**The largest part of the bill is the position.** Buys and sells nearly balanced: of 72,759 fills, the two sides ended only 925 apart. Their order did the damage. In the fall the bid was hit more often and the quoter reached +0.51 BTC at the low; in the rebound the ask was hit more often and it was at −0.61 BTC by 21:35, and it stayed short while the price recovered. It was long on the way down and short on the way up, and its position reached 944 times the size of its order. That carried position cost 5,897 of the 7,295 USDT, and the 10-s markout, the measure of the rest of this lecture, saw only 19% of the loss. On ordinary evenings that measure is a fair summary: on the other 44 days the position's part has a median of +0.17 bp and lies between −3.9 and +4.9 bp, and the worst whole result is −325 USDT, on 28 October.
+
+**The slower quoter lost a twentieth.** Once a second, the fills are six times the usual number instead of 24, the loss per fill −1.17 bp (second worst of the 45) and the largest position 0.152 BTC. The difference in the position's part should not be over-read: a position is one path, and another evening could treat it otherwise. The fewer fills, on the other hand, are by design.
+
+### 5.2 Market orders
+
+**Orders meant as trades miss.** At 50 ms, 27% of the minimum-size IOC orders in the window were filled short (21% at 10 ms, 35% at 100 ms), against a median of 1.5% and a highest other day of 5.7%. At the worst, 21:10 to 21:20, it was 45%. The mean slippage of a market order of that size was 0.14 bp, against 0.002 bp; in the ten minutes after that, 0.63 bp, with an average spread of 0.60 bp, against 0.009 bp on an ordinary evening.
+
+**A large order may leave the book behind.** 58% of the orders of 5 BTC paid more than they saw, against 15% (highest other day 29%). 86 of 1,440 could not be priced at all, because the 200 published levels held less than 5 BTC when the order arrived: 32 of 120 between 21:20 and 21:30, against four on all the other days together. So the average slippage of that size in the cascade is understated, and is not reported as a result. An IOC order of 5 BTC at the best price seen is left short in most cases on any evening (82%; here 94%), so that measure says little here.
+
+Set beside a move of 16 bp in 10 s, these costs are small, while a miss is not: what a taker needs in a cascade is to be filled. The price at which an order is filled, the concern of §3.2 on ordinary days, comes second.
+
+### 5.3 What the replay cannot say
+
+- **Whether a real connection stayed at 50 ms.** Bybit's published feed stayed fast through the fall (Lecture 25, §4), but that is the way out from the exchange. The way in, and whether orders were delayed, throttled or refused, is not in the recorded data. The window is replayed at constant latency, as §2.2 warned.
+- **What others would have done with our size.** At the queues of the cascade, 0.001 BTC is a larger share of the line, though still below the smallest class §4.3 could measure, and that reaction was measured on the days after the cascade, not in it.
+- **The margin behind the position.** A position of 0.944 BTC in a move of 12% needs margin and, at high leverage, could be liquidated (Lecture 24). The replay contains neither.
+- **Whether any of this repeats.** It is one evening on one venue. Lectures 25 and 26 found that nothing in the book or the flow warned of it beforehand.
+
+**An open question for Lecture 29.** The bill in the table is what happens without any defence. How much of it would a limit on the position, or stepping back after fills on one side, have saved, and what would these have cost on the other 44 days? We have not tested it; the replay makes it possible.
+
+## 6. Summary, exercises and reading
+
+### 6.1 Six takeaways
+
+1. **The fill rule decides the picture.** On the test order out of sample, the touch rule shows −0.29 bp after one second and the queue rule −0.76 bp. Simple rules fill more, sooner, and keep the fills that come at the better moments.
+2. **The fills we get are mostly the bad ones.** Under the queue rule 81% of the test order's fills came with the price running through, at −0.93 bp after one second; the others at −0.05 bp. The unknown share of cancellations ahead of us barely changes the answer, because most fills do not depend on reaching the front.
+3. **Latency does little on average and takes the trades that would have paid.** Minimum-size orders paid about 0.003 bp more than they saw, and 2.6% of IOC orders were left short at 50 ms; but when the mid moved over 5 bp in the order's favour within a second, a third were. Real taker orders paid 0.14 to 0.32 bp beyond the last book.
+4. **The replay leans cautious on resting orders and kind on market orders.** It is no kinder than real small fills, by an amount below 0.64 bp that only live orders can settle; for market orders, walking the last book understates the cost. The market responds to size from the smallest class measured, so resting results are flagged from 0.1 BTC up.
+5. **A quote at the best price does not pay at the base fee.** It earns about 0.005 bp of spread, gives up about 0.8 bp in the 10 s after a fill and pays 2 bp, on every day we ran. Quoting once a second did slightly better per fill than reacting at every update, because it does not rejoin at once during a run of trades.
+6. **In the cascade the danger moved.** The queue nearly vanished, the adverse share stayed ordinary and the average loss per fill doubled, while the outcomes spread out 22 times as far. Fills came 24 times as often, and most of the loss of a quoter with no limit came from its position. Every result here is a result on one symbol, one venue and 45 days; on this data sample we cannot generalise, in either direction.
+
+### 6.2 Where this leaves market making
+
+Lectures 24 to 27 prepare the ground for the rest of Part IV ([roadmap](../PART_IV_ROADMAP.md)). This lecture gives the first look at the sum a quote has to pass, and the literature's two classic reasons why a spread exists fit it well: a market maker is paid for facing better-informed traders (Glosten and Milgrom, 1985), which is the move after the fill, and for carrying a position it did not choose (Ho and Stoll, 1981), which is the term that decided the cascade.
+
+| Term of the sum | What it pays for | Our measure, 0.001 BTC at the best price |
+|---|---|---|
+| Half the spread | The service | About +0.005 bp |
+| The move after the fill | Being picked off | About −0.8 bp after 10 s, under the queue rule |
+| The position carried | Holding what the fills left behind | Small with either sign on ordinary evenings; −7.3 bp in the cascade at every update |
+| The maker fee | The venue | −2 bp at the base tier |
+
+<sub><b>How to read the table.</b> Bp of the value traded. The measures come from §3.4 and Section 5, the fee from Bybit's base tier. A markout is measured from our own price, so the second row already contains the first; the half-spread is shown apart because it is what the quote is paid.</sub>
+
+The table also shows why market making is the hardest strategy to backtest. Its profit, if any, is a small difference between larger terms, and the fill rule alone moves the second term by about 0.5 bp (§3.4), a hundred times the half-spread. A backtest with the touch rule and a low fee can report a business where the queue rule reports none. The replay's own limits fall on the same term: H4 leaves room of up to 0.64 bp, which only live orders can close.
+
+The next lectures take the terms one by one. Lecture 28 adds the market's reaction, which the replay leaves out. Lecture 29 tests quoting rules, including those of Avellaneda and Stoikov (2008), who set the quotes around the position, and asks what the signals of Lectures 25 and 26, the time of day and a lower fee can change. Lecture 30 asks whether a hedge on a second venue takes out the term that hurt most here.
+
+### 6.3 Exercises
+
+- [ ] Redraw the key chart of Section 1 (figure 21_02) for another day and another hour. How much does the gap between the rules vary?
+- [ ] Rerun the test order with Rigtorp's logarithmic split instead of the dial $`a`$. Does any verdict of Section 4 change?
+- [ ] Repeat §3.2 for 10 October at 500 ms and 1 s. How much of the cascade's miss rate comes from the speed of the connection?
+- [ ] Give the quoters of Section 5 a limit on their position, at several sizes. How much of the bill does each limit save on 10 October, and what does it cost on the other 44 days?
+- [ ] Compute the markouts of Section 5 at 1 and 10 minutes as well as 10 s. At which horizon does the position begin to outweigh the fill on an ordinary day?
+- [ ] Repeat H8 by the hour of the day and by the depth of the queue. Does the reaction to added size depend on how thin the book is?
+- [ ] Send minimum-size resting orders to a live venue for a week and compare your fills with the replay of the same days. How much of the 0.64 bp of H4 is left?
+- [ ] Pick one result of this lecture and test it on a market of your choice.
+
+### 6.4 Reading
+
+For latency measured live, Albers, Cucuringu, Howison and Shestopaloff (2025); for live resting orders, the same authors' paper on the market maker's dilemma (arXiv 2502.18625). For queue position from aggregated books, Rigtorp (2013) and Databento (2025), with the documentation of hftbacktest and NautilusTrader for working code. For adverse fills, Lalor and Swishchuk (2024) and DeLise (2024). Lo, MacKinlay and Zhang (2002) warned early that hypothetical executions are poor proxies for real ones. For why spreads exist, Ho and Stoll (1981) and Glosten and Milgrom (1985); for quoting rules, Avellaneda and Stoikov (2008), to which Lecture 29 returns.
+
+## References
+
+- Albers, J., Cucuringu, M., Howison, S. and Shestopaloff, A. Y. (2025). The good, the bad, and latency: exploratory trading on Bybit and Binance. *Quantitative Finance* 25(6), 919–947. — live market orders and their failure given the later return (§2.2, §3.2).
+- Albers, J., Cucuringu, M., Howison, S. and Shestopaloff, A. Y. (2025). The market maker's dilemma: navigating the fill probability vs. post-fill returns trade-off. arXiv 2502.18625. — live resting orders on Binance (§2.4).
+- Avellaneda, M. and Stoikov, S. (2008). High-frequency trading in a limit order book. *Quantitative Finance* 8(3), 217–224. — quotes set around the position (§6.2).
+- Byrd, D., Hybinette, M. and Balch, T. H. (2019). ABIDES: towards high-fidelity market simulation for AI research. arXiv 1904.12066. — simulated traders (§2.6).
+- Cartea, Á., Jaimungal, S. and Sánchez-Betancourt, L. Latency and liquidity risk. arXiv 1908.03281. — latency as a cost to optimise (§2.6).
+- Databento (2025). Getting queue position from L2 and order book data. Blog, 26 February 2025. databento.com/blog/getting-queue-position-from-l2-and-order-book-data. — cancellations mostly from the back of the line (§2.3).
+- DeLise, T. (2024). The negative drift of a limit order fill. arXiv 2407.16527. — the drift after a fill (§2.4).
+- Glosten, L. R. and Milgrom, P. R. (1985). Bid, ask and transaction prices in a specialist market with heterogeneously informed traders. *Journal of Financial Economics* 14(1), 71–100. — the spread as the price of facing informed traders (§6.2).
+- Ho, T. and Stoll, H. R. (1981). Optimal dealer pricing under transactions and return uncertainty. *Journal of Financial Economics* 9(1), 47–73. — the spread and the dealer's position (§6.2).
+- hftbacktest. github.com/nkaz001/hftbacktest. — queue models, fill rules and latency in code (§2.3).
+- Huang, W., Lehalle, C.-A. and Rosenbaum, M. (2015). Simulating and analyzing order book data: the queue-reactive model. *Journal of the American Statistical Association* 110(509), 107–122. — queues whose rates depend on their size (§2.6).
+- Lalor, L. and Swishchuk, A. (2024). Market simulation under adverse selection. arXiv 2409.12721. — adverse and non-adverse fills (§2.4).
+- Lo, A. W., MacKinlay, A. C. and Zhang, J. (2002). Econometric models of limit-order executions. *Journal of Financial Economics* 65(1), 31–71. — survival models; hypothetical executions as poor proxies (§2.6).
+- NautilusTrader. github.com/nautechsystems/nautilus_trader. — a queue position model in code (§2.3).
+- Rigtorp, E. (2013). Estimating order queue position. rigtorp.se/2013/06/08/estimating-order-queue-position.html. — the split of a cancellation (§2.3).
