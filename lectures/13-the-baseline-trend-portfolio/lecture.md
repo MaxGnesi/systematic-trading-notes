@@ -113,6 +113,19 @@ Grouping by region is the only method that is fair and steady in these four case
 
 <sub><b>How to read the table.</b> One row per method; the numbers come from the edge cases above. "When it bites": the kind of speed set that exposes the problem.</sub>
 
+**How to space the speeds matters more than how to weigh them.** Since the correlation between two speeds depends on their ratio (§2.1), "evenly spaced" should mean evenly spaced in ratio. Four ways to place six speeds between 40 and 400 days:
+
+| Spacing | Speeds per third (fast / middle / slow) | Equal weight | Equal risk contributions | Grouped by third | Verdict |
+|---|---|---|---|---|---|
+| Same ratio (geometric): 40, 63, 100, 159, 252, 400 | 2 / 2 / 2 | 32 / 35 / 32 | 33 / 33 / 33 | 32 / 35 / 32 | Fair with every method |
+| Same day difference (arithmetic): 40, 112, 184, 256, 328, 400 | 1 / 2 / 3 | 13 / 34 / 52 | 17 / 33 / 50 | 31 / 36 / 33 | Crowds the slow end; only grouping repairs it |
+| U-shaped: 40, 45, 52 and 310, 355, 400 | 3 / 0 / 3 | 50 / 0 / 50 | 50 / 0 / 50 | 50 / 0 / 50 | No method can repair it: the centre of the plateau is missing |
+| Erratic: 40, 48, 57, 90, 230, 400 | 3 / 1 / 2 | 53 / 18 / 30 | 50 / 17 / 33 | 33 / 35 / 31 | Grouping repairs it |
+
+<sub><b>How to read the table.</b> The range from 40 to 400 days is cut into three thirds by ratio (40-86, 86-186, 186-400 days). Middle columns: the share of the blend's risk in the fast, middle and slow third, in %, under each method. Correlations from the speed ratio, as in the edge cases ([results/spacing.json](results/spacing.json)).</sub>
+
+Spacing in days crowds the slow end: 150 and 200 days are almost the same speed (a ratio of 1.33), while 40 and 100 are very different (2.5), so half the risk ends up in the slowest third. A U-shaped grid leaves the centre of the plateau empty, and no weighting can put back speeds that are not there. Grouping repairs uneven grids but cannot create missing speeds. On a same-ratio grid every method is fair, which is why Lecture 12's grid steps each speed up by about 1.4 times.
+
 **The rule that follows.** Group only where there is a natural gap between regions, with the regions drawn in advance from the speeds themselves (their ratios), never tuned to results. On an even grid, do not cut: equal weight or equal risk contributions are fine there, and that is the baseline's case.
 
 In the baseline every held speed carries all three rules, so the speeds are triplicated equally; the exception, the 251-day speed held only as the EWMA crossover, gets a little less risk than its region would alone. Their correlations leave little to choose: when every pair of neighbours overlaps by about 0.9, no weighting finds a second independent bet that is not there. Maximum Sharpe ratio concentrates on five streams that changed from year to year (at the 2012 review mostly the 179-day crossover, at 2018 the 89-day crossover and the 127-day breakout) and earned 0.03 less.

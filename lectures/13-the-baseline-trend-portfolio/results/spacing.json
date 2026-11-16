@@ -1,0 +1,122 @@
+{
+ "Same ratio (geometric)": {
+  "speeds": [
+   40,
+   63,
+   100,
+   159,
+   252,
+   400
+  ],
+  "per_third": [
+   2,
+   2,
+   2
+  ],
+  "Equal weight": [
+   0.323,
+   0.354,
+   0.323
+  ],
+  "Equal risk contributions": [
+   0.333,
+   0.333,
+   0.333
+  ],
+  "Grouped by third": [
+   0.323,
+   0.355,
+   0.323
+  ]
+ },
+ "Same day difference (arithmetic)": {
+  "speeds": [
+   40,
+   112,
+   184,
+   256,
+   328,
+   400
+  ],
+  "per_third": [
+   1,
+   2,
+   3
+  ],
+  "Equal weight": [
+   0.133,
+   0.344,
+   0.523
+  ],
+  "Equal risk contributions": [
+   0.167,
+   0.333,
+   0.5
+  ],
+  "Grouped by third": [
+   0.309,
+   0.358,
+   0.332
+  ]
+ },
+ "U-shaped: dense at both ends, none in the middle": {
+  "speeds": [
+   40,
+   45,
+   52,
+   310,
+   355,
+   400
+  ],
+  "per_third": [
+   3,
+   0,
+   3
+  ],
+  "Equal weight": [
+   0.5,
+   0.0,
+   0.5
+  ],
+  "Equal risk contributions": [
+   0.5,
+   0.0,
+   0.5
+  ],
+  "Grouped by third": [
+   0.5,
+   0.0,
+   0.5
+  ]
+ },
+ "Erratic": {
+  "speeds": [
+   40,
+   48,
+   57,
+   90,
+   230,
+   400
+  ],
+  "per_third": [
+   3,
+   1,
+   2
+  ],
+  "Equal weight": [
+   0.525,
+   0.176,
+   0.299
+  ],
+  "Equal risk contributions": [
+   0.5,
+   0.167,
+   0.333
+  ],
+  "Grouped by third": [
+   0.334,
+   0.352,
+   0.314
+  ]
+ }
+}

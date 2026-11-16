@@ -69,3 +69,27 @@ if __name__ == "__main__":
             print(f"{name:44s} {m:28s} weights {np.round(w * 100, 1)}  region risk {np.round(np.array(shares(w, C, R)) * 100).astype(int)}"
                   + (f"  max move {100 * max(moves):.1f} pts" if moves else ""))
     (Path(__file__).resolve().parent.parent / "results" / "edge_cases.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+
+
+# --- how to space the speeds: same ratio, same day difference, U-shaped, erratic (40 to 400 days, six speeds) -------------------------
+def spacing():
+    lo, hi = 40, 400
+    grids = {"Same ratio (geometric)": [int(x) for x in np.round(np.geomspace(lo, hi, 6))],
+             "Same day difference (arithmetic)": [int(x) for x in np.round(np.linspace(lo, hi, 6))],
+             "U-shaped: dense at both ends, none in the middle": [40, 45, 52, 310, 355, 400],
+             "Erratic": [40, 48, 57, 90, 230, 400]}
+    edges = np.geomspace(lo, hi, 4); out = {}                            # thirds of the range by ratio
+    for name, sp in grids.items():
+        C = corr(sp, []); lab = [min(2, int(np.searchsorted(edges, s, side="right") - 1)) for s in sp]
+        R = [[i for i, l in enumerate(lab) if l == k] for k in range(3)]
+        out[name] = {"speeds": sp, "per_third": [len(g) for g in R]}
+        for m, f in [("Equal weight", lambda C: np.ones(len(C)) / len(C)), ("Equal risk contributions", erc),
+                     ("Grouped by third", lambda C: grouped(C, [g for g in R if g]))]:
+            w = f(C); rc = w * (C @ w); rc = rc / rc.sum()
+            out[name][m] = [round(float(rc[g].sum()), 3) if g else 0.0 for g in R]
+    (Path(__file__).resolve().parent.parent / "results" / "spacing.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+    return out
+
+
+if __name__ == "__main__":
+    for k, v in spacing().items(): print(k, v)
