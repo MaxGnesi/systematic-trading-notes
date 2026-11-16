@@ -1,4 +1,4 @@
-# Lecture 12: Trend Speeds That Work Across the Board
+# Lecture 12: Portfolio Construction 2: Trend Speeds That Work Across the Board
 
 *Systematic Trading: Lecture Notes (MSc) · draft, Nov 13, 2026 · Max Gnesi*
 

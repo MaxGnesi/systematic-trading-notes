@@ -1,0 +1,152 @@
+{
+ "split": {
+  "Equity": {
+   "median_agreement": 0.43243243243243246,
+   "accepted": false,
+   "groups_2025": [
+    [
+     "GDX",
+     "FXI",
+     "XLU"
+    ],
+    [
+     "SPY",
+     "SMH",
+     "OIH",
+     "XBI",
+     "EWZ"
+    ]
+   ],
+   "bets_flat": 5.2031185559233695,
+   "bets_split": 5.101133617148752
+  },
+  "Rates": {
+   "median_agreement": 1.0,
+   "accepted": true,
+   "groups_2025": [
+    [
+     "TLT",
+     "SHY",
+     "TIP"
+    ],
+    [
+     "BNDX"
+    ]
+   ],
+   "bets_flat": 1.6134221281936545,
+   "bets_split": 1.5890570533723671
+  },
+  "Credit": {
+   "median_agreement": null,
+   "accepted": false
+  },
+  "Commodities": {
+   "median_agreement": 1.0,
+   "accepted": true,
+   "groups_2025": [
+    [
+     "USO",
+     "UNG"
+    ],
+    [
+     "GLD"
+    ]
+   ],
+   "bets_flat": 3.0600703134017775,
+   "bets_split": 2.7663793376579853
+  },
+  "FX": {
+   "median_agreement": 1.0,
+   "accepted": true,
+   "groups_2025": [
+    [
+     "FXE",
+     "UUP"
+    ],
+    [
+     "FXY"
+    ]
+   ],
+   "bets_flat": 1.5246289094150074,
+   "bets_split": 1.5988544586168059
+  }
+ },
+ "assumptions": {
+  "Calm (2017)": {
+   "within": {
+    "Equity": 0.13169544235708153,
+    "Rates": 0.4005390701565594,
+    "Credit": 0.0743299265420064,
+    "Commodities": -0.0027955700259727607,
+    "FX": 0.49202542582169556
+   },
+   "across": 0.1101195047401945,
+   "pairs": {
+    "Equity / Rates": 0.02450860031378732,
+    "Equity / Credit": 0.168892098709715,
+    "Equity / Commodities": 0.05028522995358379,
+    "Equity / FX": 0.01921507050021785,
+    "Rates / Credit": 0.23685134935988356,
+    "Rates / Commodities": 0.14086610560098797,
+    "Rates / FX": 0.19916977142219483,
+    "Credit / Commodities": 0.06472569353916945,
+    "Credit / FX": 0.06927622011919388,
+    "Commodities / FX": 0.1274049078832113
+   }
+  },
+  "Average (2008-2025)": {
+   "within": {
+    "Equity": 0.16733785423162964,
+    "Rates": 0.34747598204118063,
+    "Credit": 0.33150837032118213,
+    "Commodities": 0.041787985667779894,
+    "FX": 0.46041314710273396
+   },
+   "across": 0.07229680820800478,
+   "pairs": {
+    "Equity / Rates": 0.015139044184197084,
+    "Equity / Credit": 0.09330381599918414,
+    "Equity / Commodities": 0.07056311019182884,
+    "Equity / FX": 0.08800536921969408,
+    "Rates / Credit": 0.24389002528894038,
+    "Rates / Commodities": 0.06075334737550755,
+    "Rates / FX": 0.035853119298496494,
+    "Credit / Commodities": 0.025329565791180925,
+    "Credit / FX": 0.03641382196665065,
+    "Commodities / FX": 0.05371686276436755
+   }
+  },
+  "Crisis (highest of 2008-09, 2020, 2022)": {
+   "within": {
+    "Equity": 0.6388203841035031,
+    "Rates": 0.5800029359845986,
+    "Credit": 0.8142532371789579,
+    "Commodities": 0.3373576701839948,
+    "FX": 0.6881701412119061
+   },
+   "across": 0.32143451485911206,
+   "pairs": {
+    "Equity / Rates": 0.27897445924063646,
+    "Equity / Credit": 0.4272985115408008,
+    "Equity / Commodities": 0.30503792795704454,
+    "Equity / FX": 0.3756651478661717,
+    "Rates / Credit": 0.5394592011533748,
+    "Rates / Commodities": 0.1969218802955387,
+    "Rates / FX": 0.2136283934528365,
+    "Credit / Commodities": 0.1311661647435267,
+    "Credit / FX": 0.4178253573589317,
+    "Commodities / FX": 0.328368104982258
+   }
+  }
+ },
+ "stress_total_pct": {
+  "Measured, 2023-2025 (the target)": 10.0,
+  "Calm (2017)": 10.467180040418414,
+  "Average (2008-2025)": 9.713591886583155,
+  "Crisis (highest of 2008-09, 2020, 2022)": 15.606654734539985,
+  "Crisis window 2008-2009": 11.47142961387641,
+  "Crisis window 2020": 7.979673111437745,
+  "Crisis window 2022": 12.364271237938086,
+  "Every correlation at 1 (bound)": 24.608536778941843
+ }
+}

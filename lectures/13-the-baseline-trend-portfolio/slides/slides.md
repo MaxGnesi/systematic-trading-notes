@@ -1,4 +1,4 @@
-# Lecture 13: The Baseline Trend Portfolio
+# Lecture 13: Portfolio Construction 3: The Baseline Trend Portfolio
 
 > One portfolio from Lecture 11's markets and Lecture 12's speeds, built with one method at every level: equal risk.
 

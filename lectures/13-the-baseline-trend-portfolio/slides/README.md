@@ -1,4 +1,4 @@
-# Slides · Lecture 13: The Baseline Trend Portfolio
+# Slides · Lecture 13: Portfolio Construction 3: The Baseline Trend Portfolio
 
 **[Download the slides as PDF](13_slides.pdf?raw=1)** · [Back to the lecture](../lecture.md)
 

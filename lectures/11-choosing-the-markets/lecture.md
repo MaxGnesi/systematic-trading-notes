@@ -1,4 +1,4 @@
-# Lecture 11: Choosing the Markets
+# Lecture 11: Portfolio Construction 1: Choosing the Markets
 
 *Systematic Trading: Lecture Notes (MSc) · draft, Nov 13, 2026 · Max Gnesi*
 

@@ -1,4 +1,4 @@
-# Slides · Lecture 11: Choosing the Markets
+# Slides · Lecture 11: Portfolio Construction 1: Choosing the Markets
 
 **[Download the slides as PDF](11_slides.pdf?raw=1)** · [Back to the lecture](../lecture.md)
 
