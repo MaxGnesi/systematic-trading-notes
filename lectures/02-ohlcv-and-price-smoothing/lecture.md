@@ -2,6 +2,8 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 10, 2026 · Max Gnesi*
 
+*Pipeline stage (Lecture 1 §2.1): data (what a bar holds) and signal generation (smoothing the price level).*
+
 A bar compresses a stream of trades into five numbers; a moving average filters many bars into one estimate of the price level. This lecture covers both, and tests every method on real QQQ data from 1999 to 2026. Companion notebook: [02_price_smoothing.ipynb](02_price_smoothing.ipynb).
 
 ## 1. OHLCV: what a bar actually is

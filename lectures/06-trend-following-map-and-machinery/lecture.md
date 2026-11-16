@@ -2,6 +2,8 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 18, 2026 · Max Gnesi*
 
+*Pipeline stage (Lecture 1 §2.1): signal generation (the trend machinery).*
+
 The same market can be traded for different purposes: to collect its drift, to protect against its crashes, or both. Lecture 5 showed what a market makes available to a trend rule; this lecture shows that what a system captures is decided by its design. It draws the map of trend rules, measures how much they overlap, and builds the machinery that turns any rule into positions: forecasts, volatility targeting, costs and the payoff profile. Data: the 16 ETFs of Lecture 5. Companion notebook: [06_trend_following_map_and_machinery.ipynb](06_trend_following_map_and_machinery.ipynb).
 
 ## 1. The question of this lecture

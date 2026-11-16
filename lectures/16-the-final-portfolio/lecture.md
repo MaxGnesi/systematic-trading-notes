@@ -2,7 +2,9 @@
 
 *Systematic Trading: Lecture Notes (MSc) · draft, Nov 16, 2026 · Max Gnesi*
 
-**Part IV: the portfolio.** The base layer is assembled here, and Lecture 17 closes it with how such research is done well with an AI assistant. Part V then goes below the daily bar.
+*Pipeline stage (Lecture 1 §2.1): portfolio construction and risk management (two signals combined at equal risk, one volatility target), with execution costs.*
+
+**Part IV: the portfolio.** The base layer is assembled here, stage by stage of Lecture 1 §2.1: signals already built, combined by allocation and held to one risk target, with execution costs (§3). Lecture 17 closes the part with how such research is done well with an AI assistant. Part V then goes below the daily bar.
 
 The base layer ends with one portfolio and an honest number. The portfolio is the simplest combination the evidence of Lectures 12-15 supports: trend and carry at equal risk. The number is what such a portfolio can be expected to deliver, not what its best backtest shows. Both are tested on years no lecture used to build them, 1990-2005, and judged the way an investor would judge them: as an addition to an ordinary portfolio of stocks and bonds. The plan was fixed before any result was computed, and every change made after seeing results is dated and labelled ([results/hypotheses.md](results/hypotheses.md)).
 
@@ -44,6 +46,18 @@ And the modest target is valuable. Most investors already hold stocks and bonds.
 | **For reference** | 2006-2022, the years Lectures 13-15 used |
 
 <sub><b>How to read the table.</b> What is held, what it is compared with, and on which years. Every choice was fixed in the plan before any result of this lecture.</sub>
+
+**The portfolio, stage by stage.** Every part of the final portfolio sits in one stage of Lecture 1's pipeline, and was built in the lecture named.
+
+| Stage | In the final portfolio | Built in |
+|---|---|---|
+| **Data** | Futures and ETFs; for 1990-2005, long free series: exchange rates and 3-month rates (FRED, OECD), central-bank 10-year yields, Shiller's earnings, country equity funds | 11, 13, 15 |
+| **Signal generation** | Trend: the baseline's rules and speeds. Carry: the score on level and 3-month change, within each of four groups | 12-13, 15 |
+| **Portfolio construction and allocation** | Within each strategy, markets at equal risk within groups and groups at equal risk; between strategies, trend and carry at equal risk | 13, 15, this lecture |
+| **Risk management** | Each position sized by its own volatility (trend over its speed, carry over 36 months); each group and the total scaled each year to 10% on its past. No drawdown rule or leverage cap: drawdowns, Calmar and skew are measured, not clipped | 9, 12-13, 15 |
+| **Execution** | Monthly rebalancing at 5 bp per trade; 10 and 20 bp as checks (§6). How to trade it cheaper is Part V | §6, Part V |
+
+<sub><b>How to read the table.</b> One row per stage of Lecture 1 §2.1. Middle: what the final portfolio does at that stage. Right: where it was built. The combination of trend and carry is an allocation and risk decision, not a new signal: the signals are unchanged from Lectures 13 and 15.</sub>
 
 The 1990-2005 data are partial, and the test says so. Trend is Lecture 14's 12-market portfolio built with the baseline's rules from long free series. Carry's groups join as their data begin: currencies trade from 1990 (the euro before 1999 through the German mark at the fixed conversion rate, from monthly average rates, which smooth those years' returns a little; Japan's call-money rate before its 3-month rate begins in 2002); government bonds from 1995; equities from 2001; commodities from 2004. So for most of the test, carry rests on currencies and bonds.
 

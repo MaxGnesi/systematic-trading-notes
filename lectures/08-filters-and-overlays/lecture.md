@@ -2,6 +2,8 @@
 
 *Systematic Trading: Lecture Notes (MSc) · Oct 20, 2026 · Max Gnesi*
 
+*Pipeline stage (Lecture 1 §2.1): signal generation (filters and overlays on a signal).*
+
 A filter decides whether, or how much, to trade a signal, using information the signal does not contain. Filters are where creativity has most room: almost any data can condition a trend system. This lecture maps the sources and the ways a filter can act, sets one common test for all of them, and applies it to four filters on the 16 ETFs of Lectures 5 to 9. Companion notebook: [08_filters_and_overlays.ipynb](08_filters_and_overlays.ipynb).
 
 ## 1. The question of this lecture
