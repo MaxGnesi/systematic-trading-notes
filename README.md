@@ -3,8 +3,58 @@
 Lecture notes on systematic trading (MSc level). Each lecture lives in its own folder together with
 the notebook that tests its claims on real market data and the charts it cites.
 
-The course roadmap (clock-time bars and trend following, tick data and alternative bars, the order book and market making, and a final part on
-portfolio construction) and the style and formula conventions are in [COURSE_GUIDE.md](COURSE_GUIDE.md).
+## The course at a glance
+
+**In one sentence.** Build simple trading rules on reasons that should last, judge them against luck and on data they were not built on, count every try, and expect what such rules can honestly deliver.
+
+**What it builds.** A systematic portfolio from free data: trend following as the base strategy, carry next to it, judged as an addition to an ordinary portfolio of stocks and bonds. Along the way it looks inside the price bar and the order book, because that is where trading costs come from, and costs decide which strategies survive.
+
+### The arc
+
+| Part | Lectures | The question | Why it leads to the next part |
+|---|---|---|---|
+| I. Foundations | 1-4 | What is in the data, and what do different transformations of the same prices show? | A strategy is only as good as its understanding of the data |
+| II. Trend following | 5-11 | What does trend capture, how are trend systems built, compared, filtered and sized, and do they hold on futures? | Trend becomes the base strategy; a bar hides what happens inside it |
+| III. The tape | 12-17 | What do individual trades add to bars: other clocks, the path, order flow, costs? | Costs and speed depend on the order book behind the trades |
+| IV. The order book | 18-24 | How do the book, other traders and one's own orders interact, and what does execution really cost? | The lessons on execution are needed to trade a daily portfolio well |
+| V. Portfolio | 25-30 | Which markets, which speeds, which strategies next to trend, and what can the whole portfolio honestly earn? | The course close |
+
+The detour into high frequency is deliberate. Part III and IV use crypto tick and order-book data, the one market where such data are free, to show how markets work at the level of single orders. Part V returns to daily data across many markets and uses those lessons: a daily portfolio is still traded order by order, and its costs decide whether a small edge survives.
+
+### How every lecture works
+
+- **The plan comes first.** Hypotheses, rules and expectations are written down and dated before any result; every change made after seeing results is dated and labelled (`results/hypotheses.md` in each lecture folder).
+- **Luck is the yardstick.** A strategy is compared with many random strategies of the same kind; a filter with random switching that keeps trend off just as often.
+- **Data not used to build it.** Every result that matters is checked on a period or a dataset the choice was not made on.
+- **Every try is counted.** The best of many versions looks better by luck; the deflated Sharpe ratio corrects for the search.
+- **Evidence is weighed, not passed.** Lasting edges are small and noisy; a result is judged on its probability, its breadth, a reason it should persist and what it adds, not on one threshold.
+- **Published versions are the check.** Where a strategy has a published construction, ours is compared with it, and every difference is shown with what it costs.
+- **Every claim can be rerun.** Each lecture's notebook redraws its figures and checks its mechanics by hand on the same data.
+
+### What the course found
+
+| Finding | Where |
+|---|---|
+| Trend following on many markets earns a Sharpe ratio of about 0.5 to 0.7 after costs, on ETFs and on futures, over decades | Lectures 26-27, 30 |
+| Switching trend off in bad regimes does not beat random switching; the strongest regime pattern ran against the plan (trend did worse after large dollar moves, also on untouched years) | Lecture 28 |
+| Carry across currencies, commodities, bonds and equities adds to trend; its edge is sensitive to trading costs and paid for with sudden losses | Lectures 29-30 |
+| Value measured by price alone lost in this period; value from fundamentals earned a little | Lecture 29 |
+| Short-horizon strategies live or die by execution: speed, queue position and the traders on the other side | Parts III-IV |
+| Trend and carry together can be expected to earn about what a stock-and-bond portfolio earns per unit of risk, with a correlation to it near zero; a modest share of an investor's risk lifts the whole portfolio | Lecture 30 |
+| Higher Sharpe ratios come from breadth and better execution added on top of a fixed base, not from a cleverer version of the same few signals | Lecture 30 |
+
+### What you will be able to do
+
+- Build a strategy end to end, from raw data to positions, costs and a portfolio.
+- Test it honestly: against luck, on data it was not built on, counting the tries.
+- Read a market below the bar: trades, order flow, the order book and what execution costs.
+- Combine small, robust edges into a portfolio, and set realistic expectations for it.
+
+**What you need.** Python and pandas, statistics at the level of a first course (regression, standard errors), a computer with about 8 GB of free memory for Parts III-IV. All data are free; none are committed to the repository (see each lecture's notebook for the downloads).
+
+**Not covered.** Single-stock factor investing, options, cross-exchange market making (the free archives do not hold both venues' books for our period) and prediction markets.
+
+The roadmap and the style and formula conventions for writing the notes are in [COURSE_GUIDE.md](COURSE_GUIDE.md).
 
 ## Lectures
 
