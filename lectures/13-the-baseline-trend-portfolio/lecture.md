@@ -17,7 +17,7 @@ Two trend streams in the same market overlap by how far apart their speeds are, 
 
 | § | Step | Question |
 |---|---|---|
-| 2 | Speeds inside a market | How should streams that overlap this much be blended, and does anything beat equal weights? |
+| 2 | Speeds inside a market | How should streams that overlap this much be blended, does anything beat equal weights, and why do optimisers pick corners? |
 | 3 | Markets and classes | Equal risk or equal capital? Asset classes or groups found in the data? |
 | 4 | The total | Scale to a volatility target or hold leverage constant? |
 | 5 | Taking profits | Does closing a trend after a large gain help? |
@@ -32,7 +32,7 @@ Two trend streams in the same market overlap by how far apart their speeds are, 
 | Weights | Risk only: volatilities, correlations, costs | **13** (the baseline and its rivals) |
 | Judge | Profit and loss, out of sample | every lecture |
 
-Profit and loss never feeds back into the weights silently: where a weight depends on past performance (maximum Sharpe ratio in §2, speed timing in §2.4), the lecture says so and shows the cost.
+Profit and loss never feeds back into the weights silently: where a weight depends on past performance (maximum Sharpe ratio in §2, speed timing in §2.5), the lecture says so and shows the cost.
 
 **The baseline in one sentence.** *Hold Lecture 12's speeds with equal risk in each market, the markets with equal risk in each asset class, the classes with equal risk, and scale the total each year to 10% volatility on its past three years.* All weights are set at each year end from 2012 on past data only and traded the following year; the results are out of sample, 2013-2026, on Lecture 11's markets (Sharpe ratio 0.49 after costs).
 
@@ -83,7 +83,87 @@ Equal weights, equal risk contributions and the cost-adjusted budgets give the s
 
 **Reading.** On our sample the choice between the three risk-based methods does not matter, and equal weights are the simplest. The result is specific to streams that overlap this much and cost this little: with distinct strategies, or at speeds where costs bite, equal risk contributions and cost budgets would move the weights, and that is where Lecture 16 takes them up.
 
-### 2.3 Streams that are not always in the market
+### 2.3 How optimisers choose: minimum variance against equal risk contributions
+
+Maximum Sharpe ratio concentrated on a few streams and changed them from review to review. This is not bad luck in our data; it is how optimisers behave when the things they weigh are near-duplicates. The whole question comes down to two rules, minimum variance and equal risk contributions, and to why the first eliminates the middle of a group of similar streams while the second keeps it. Every other method is a variant of one of the two. This section is about the mechanism and the philosophy, not about which method happened to earn most; Appendix A summarises the methods for practical use.
+
+**The example.** Three speeds, 50, 100 and 200 days, each scaled to the same risk, with correlations of 0.8 between neighbours and 0.5 between the slowest and the fastest (an illustration):
+
+| Method | 50 days | 100 days | 200 days | Volatility of the blend |
+|---|---|---|---|---|
+| Equal weight | 33.3% | 33.3% | 33.3% | 0.894 |
+| Equal risk contributions | 34.6% | 30.8% | 34.6% | 0.892 |
+| Minimum variance, long only | 50% | **0%** | 50% | 0.866 |
+| Minimum variance, shorts allowed | 67% | **−33%** | 67% | |
+
+<sub><b>How to read the table.</b> Risk weights that each method gives three streams of equal risk (volatility 1) with the correlations above; illustrative numbers, not estimates. Last column: the blend's volatility in the same units. With correlations of 0.9 between neighbours and 0.7 at the ends, equal risk contributions barely move (34.1% / 31.7% / 34.1%), while minimum variance with shorts goes to +100% / −100% / +100%.</sub>
+
+**Two rules, one difference.** Both methods look at how much each stream adds to the blend's risk. The **marginal risk** of stream $`i`$ is how much the blend's variance rises when a little more of it is added, $`(Cw)_i`$; its **risk contribution** is its weight times that, $`w_i\,(Cw)_i`$, and the contributions add up to the blend's variance.
+
+| | Minimum variance | Equal risk contributions |
+|---|---|---|
+| What it equalises | The **marginal** risk of every stream held: $`(Cw)_i = \lambda`$ | The **total** contribution of every stream: $`w_i\,(Cw)_i = c`$ |
+| What that implies for a weight | A stream whose marginal risk stays above the others' even at zero weight is dropped ($`w_i = 0`$, or negative if shorts are allowed) | $`w_i = c \,/\, (Cw)_i`$: the weight is inversely proportional to the marginal risk, so it shrinks but never reaches zero |
+
+| Symbol | Meaning |
+|---|---|
+| $`C`$ | Correlation matrix of the streams, each scaled to the same volatility |
+| $`w`$ | Risk weights, summing to one |
+| $`(Cw)_i`$ | Marginal risk of stream $`i`$: its covariance with the blend |
+| $`\lambda, c`$ | Constants: the common marginal risk, the common contribution |
+
+**Why the middle speed goes.** The 100-day stream is correlated 0.8 with both neighbours; each end is correlated 0.8 with one stream and only 0.5 with the other. So the middle stream overlaps most with the rest of the blend. At equal weights its marginal risk is 0.867 against 0.767 for the ends: adding to it raises the blend's risk more than adding to either end. Minimum variance moves weight away from it until the marginal risks are equal. They never become equal: even at zero weight the middle's marginal risk is 0.80 against 0.75, so the middle is dropped, and with shorts allowed it is sold until the ends' extra exposure is offset. Equal risk contributions take the same marginal risks and simply give the middle less: 30.8% against 34.6%, which is almost exactly the ratio 0.767 to 0.867.
+
+**What the elimination buys, and what it costs.** Dropping a third of the speeds lowers the blend's volatility from 0.892 to 0.866, by about 3%. In exchange, the blend holds two speeds instead of three, and with shorts it carries a bet on the **curvature** of the speeds, that middle speeds do worse than both neighbours: a trade nobody designed, which falls out of the arithmetic as a curve trade falls out of a bond optimiser. A long-only constraint does not remove the problem; it turns the short into a zero, which is clipping by another name.
+
+| | Minimum variance | Equal risk contributions |
+|---|---|---|
+| **Pros** | The lowest risk the correlations allow; uses no return estimates; the right method when the goal truly is the lowest risk | Keeps every stream; uses no return estimates; weights move little when inputs change; a unique solution; the maximum-Sharpe portfolio when all streams have the same Sharpe ratio and the same correlation with each other (Maillard, Roncalli and Teïletche, 2010); its risk lies between minimum variance and equal weight |
+| **Cons** | Ignores return: a stream with the same expected return as the others is dropped because it overlaps; concentrates in the least-correlated or calmest streams; with shorts, bets on curvature; across markets, where correlations must be estimated, it magnifies their errors | Gives up the small risk reduction of minimum variance; ignores genuine differences in return; **duplication**: adding a near-copy of a stream gives that stream a larger total share (a second 50-day stream would lift the 50-day speed from 34.6% to 48.7% of the weight) |
+
+<sub><b>How to read the table.</b> Pros and cons of the two rules on near-duplicate streams. Numbers from the example above.</sub>
+
+**Everything else derives from these two.**
+
+| Method | Derived from | What it changes |
+|---|---|---|
+| Maximum Sharpe ratio | Minimum variance | Adds expected returns: $`w \propto C^{-1}\,\mathrm{SR}`$, so it inherits the inversion and adds the least reliable input (below) |
+| Shrinkage of returns | Maximum Sharpe ratio | Pulls the Sharpe ratios towards their average; when they cannot be told apart it falls back to minimum variance and its corner |
+| Denoising, shrinkage of correlations | Minimum variance, maximum Sharpe | Cleans the matrix before it is inverted; helps with many assets and short histories |
+| Equal weight, equal risk | Equal risk contributions | Ignore correlations entirely |
+| HRP, NCO | Equal risk contributions | Share risk between **groups** first, then within them: the fix for duplication (López de Prado, 2016, 2020) |
+| Spectral risk parity | Equal risk contributions | Shares risk equally across principal components instead of streams: diversified across components is not diversified across streams |
+
+<sub><b>How to read the table.</b> Each method in terms of the two rules: the family it belongs to and what it adds or changes.</sub>
+
+**Maximum Sharpe ratio: the minimum-variance corner, plus noise.** With two streams of correlation $`\rho`$, the maximum-Sharpe weights are $`w_1 \propto \mathrm{SR}_1 - \rho\,\mathrm{SR}_2`$ and $`w_2 \propto \mathrm{SR}_2 - \rho\,\mathrm{SR}_1`$. With $`\rho = 0.9`$ and past Sharpe ratios of 0.50 and 0.45, the second weight is $`0.45 - 0.9 \times 0.50 = 0`$: a difference of 0.05 sends all the weight to one stream. That difference is noise: the standard error of the gap between two Sharpe ratios correlated $`\rho`$ is about $`\sqrt{2(1-\rho)/T}`$, about 0.12 for $`\rho = 0.9`$ over 13 years ($`T`$ in years). Michaud (1989) called it an error maximiser.
+
+**Correlations across speeds come from construction; across markets they must be estimated.** Two speeds of one rule are windows on the same price, so much of their correlation is mechanical. On our data the correlations of the 43-, 89- and 179-day streams at the end of 2025 are almost the same in an equity index, crude oil and long bonds: 0.82 to 0.86 between the faster pair, 0.77 to 0.80 between the slower pair, 0.52 to 0.59 between the ends. So across speeds the minimum-variance corner is not an artefact of noise in the correlations: it is the structural result above, and the objection to it is its objective. Across markets, correlations come from the economy, change with regimes and are far harder to estimate (Lecture 11 §5, Lecture 14): every method that inverts the matrix then magnifies estimation error as well.
+
+**Use what is known best: correlation to share risk, not to hedge.** For speeds, the inputs rank by how sure we can be. The correlation is the surest, because it comes largely from construction. The volatility is set by design, since every stream is scaled to the same risk. The expected return is the least sure: differences between speeds are smaller than their noise and could change sign. Portfolio construction on speeds should therefore lean on the correlation and not on expected returns, which is what equal risk contributions do. One subtlety: if the correlations were certain and the speeds earned the same, theory would prefer minimum variance with shorts, long the ends and short the middle. That long-short position has very little risk of its own, so it must be levered, and its profit depends entirely on the middle speed earning exactly what the ends earn: the input known least. Sharing risk by overlap uses what we know best; a hedge between near-duplicates turns the certain correlation into a bet on the uncertain return difference.
+
+**Robust weights, and a right objective, are different things.** A method's weights are robust when they hardly change if history had come out slightly differently. That is measured by resampling the history; watching the weights over yearly reviews proves nothing, since with an expanding window each review adds only a sliver of data and a corner held by a constraint does not move at all.
+
+![How far the weights move when history is resampled](figures/27_opt_resampled.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> x: the risk weight of one speed; y: one row per method. Three panels, one per speed (43, 89 and 179 days, EWMA crossover, one market, SPY). The history up to 2025 is resampled 200 times in blocks of 21 days and each method recomputes its weights: the dot is the average weight, the bar runs from the 5th to the 95th percentile. Dotted line: one third. Our calculation ([results/optimisers_many.json](results/optimisers_many.json)).</sub>
+
+The methods that use past returns scatter: maximum Sharpe ratio moves by tens of points from one resampled history to the next, and spectral risk parity jumps between speeds. Equal risk contributions move by about one point. Minimum variance does not move at all, since the speeds' correlations are fixed by construction, and it drops the middle speed in every draw: its weights are robust, its objective is the question. Out of sample, across 86 markets, no method gained reliably on equal risk contributions ([results/hypotheses.md](results/hypotheses.md)).
+
+**More correct, or a matter of taste?** Both, at different levels. Some choices are worse whatever one believes, because they fail tests that do not depend on opinion: weights that jump when history is resampled, bets on differences smaller than their own noise, trades nobody designed. Among the methods that pass, the choice follows from beliefs that can be stated and checked:
+
+| If you believe… | The consistent choice |
+|---|---|
+| The streams earn the same, and their overlap is as measured | Equal risk contributions |
+| The streams earn the same, and correlations are not worth using | Equal weight, equal risk |
+| Some streams are near-copies, and only groups are reliable | HRP, NCO |
+| The goal is the lowest risk, not return per unit of risk | Minimum variance, long only |
+| One stream earns more for a reason that should last | A modest tilt, stated in advance and tested elsewhere |
+
+<sub><b>How to read the table.</b> Left: a belief about the streams. Right: the method consistent with it. The error is not choosing one row over another; it is choosing a method whose assumptions contradict one's beliefs, such as maximum Sharpe ratio while believing the streams cannot be told apart.</sub>
+
+**Why the baseline uses equal risk contributions.** Every weight is a claim, and this rule makes only the claims the data support: that the streams' Sharpe ratios cannot be told apart, which is what Lecture 7's noise bands and Lecture 15's deflated Sharpe ratio say about most differences. Its mistakes are small: if the streams really differ, it gives up a little, while an optimiser that is wrong can concentrate on one stream or bet on curvature. It keeps weights and performance apart, so the backtest does not mark its own homework. And one rule serves every level, speeds in a market, markets in a class and classes in the portfolio, with groups first wherever near-copies would otherwise count twice.
+
+### 2.4 Streams that are not always in the market
 
 The breakout rule is flat after the price crosses back over its half-length channel (Lecture 12 §3.1), so its streams are **often flat**: on Lecture 11's markets the held breakout speeds had a signal on 71% of days over 2007-2026 (median over markets and speeds). This raises a question that has no single answer: are the flat days zeros or missing?
 
@@ -97,7 +177,7 @@ The two give different numbers. The breakout streams earned a Sharpe ratio of 0.
 
 In the baseline the breakout streams are blended as they are, with zeros on flat days: their volatility is measured on all days and their risk is the average risk. Strategies that are in the market much less often, and how to combine them with strategies that always are, are the subject of Lectures 14 and 15.
 
-### 2.4 Timing the speeds
+### 2.5 Timing the speeds
 
 Could the weights move with what has worked lately within the held set? Two opposite rules are both plausible:
 
@@ -245,6 +325,7 @@ The worst case is a quick crash that hits a long, levered position sized on calm
 
 - **The baseline:** equal risk at every level, for the speeds in each market, the markets in each class and the classes, with the total scaled each year to 10% on its past three years. Sharpe ratio 0.49 after costs, out of sample 2013-2026. Every later lecture changes one part and must beat it.
 - **Speeds overlap by their ratio.** Neighbouring speeds are 0.9 correlated, and different rules at the same speed are too; 20 streams make about 1.4 independent bets in a market. Equal weights, equal risk contributions and cost-adjusted budgets gave the same result; maximum Sharpe ratio concentrated on a few streams and did worse.
+- **Minimum variance drops the middle speed; equal risk contributions keep it.** The first equalises marginal risk, the second total contributions; on near-duplicates the first ends in a corner for about 3% less risk. For speeds, use the correlation, the input known best, to share risk out, not to hedge one speed against another. Every other method derives from these two (§2.3, Appendix A).
 - **Timing the speeds did not help.** Momentum lost clearly; reversal's small gain has no mechanism on our data; a volatility-state tilt failed on the capstone futures.
 - **Equal risk costs leverage.** Equal capital holds a third less gross exposure, earns a little less, and moves almost identically.
 - **Volatility target or constant leverage** is a choice between steady risk and steady exposure, not a winner and a loser on our sample. Scaling daily on today's positions re-levers weak signals.
@@ -257,7 +338,7 @@ The worst case is a quick crash that hits a long, levered position sized on calm
 - [ ] **Halve, do not exit.** In §5, halve the position at the threshold instead of going flat. Plot Sharpe ratio and skew against k next to the full exit.
 - [ ] **Class weights by bets.** Weight each class by its number of independent bets (§2's formula applied to the markets' correlation) instead of equally. How much do the class weights matter?
 - [ ] **Bitcoin, with hindsight.** Add the CME Bitcoin future (Yahoo BTC=F, from December 2017) as its own class, and as one market in commodities. What risk share does it get each way, and what does that do to the 2018 and 2022 drawdowns? Why is any result here hindsight?
-- [ ] **Reversal, again.** The reversal tilt in §2.4 gained a little with no mechanism behind it. Test it on the capstone futures with the rule fixed before you look. Does it hold?
+- [ ] **Reversal, again.** The reversal tilt in §2.5 gained a little with no mechanism behind it. Test it on the capstone futures with the rule fixed before you look. Does it hold?
 - [ ] **Crowding.** The CFTC's Commitments of Traders reports show how speculators are positioned in each future. Is today's portfolio's worst stress case (§6.2) worse when speculators are crowded on the same side?
 
 ### 7.3 Reading list
@@ -269,3 +350,27 @@ The worst case is a quick crash that hits a long, levered position sized on calm
 - Goulding, C. L., Harvey, C. R. and Mazzoleni, M. G. (2023). Momentum turning points. *Journal of Financial Economics*, 149(3), 378-406. Blending fast and slow trends by whether they agree.
 - Hurst, B., Ooi, Y. H. and Pedersen, L. H. (2017). A century of evidence on trend-following investing. *Journal of Portfolio Management*, 44(1), 15-29. Trend following across crises.
 - Kaminski, K. M. and Lo, A. W. (2014). When do stop-loss rules stop losses? *Journal of Financial Markets*, 18, 234-254. When rules that exit early add value, the frame for §5.
+
+## Appendix A. Portfolio construction methods, in plain terms
+
+A practical guide to the methods of §2.3, one card each: what the method does, what it trusts, when it works and how it fails. "Trusts" refers to the three layers of §2.3: what is known by construction, what can be estimated roughly, what is barely knowable.
+
+| Method | What it does | What it trusts | Works when | Fails when |
+|---|---|---|---|---|
+| **Equal weight** | The same capital in each asset | Nothing | Assets have similar risk and are equally distinct | Risks differ: the most volatile asset dominates |
+| **Equal risk (inverse volatility)** | Capital inversely proportional to volatility, so each asset has the same risk | Volatilities | Assets are roughly equally correlated | A group of near-duplicates gets as much risk each as a lone diversifier |
+| **Equal risk contributions** | Each asset contributes the same share of the portfolio's risk | Volatilities; correlations in broad shape | Almost always a sound default; the maximum-Sharpe portfolio if all Sharpe ratios and correlations are equal | Assets earn very differently for a known reason (then tilt deliberately) |
+| **Minimum variance** | The lowest-risk combination | The full correlation matrix, inverted | The goal really is the lowest risk | Near-duplicates: drops or shorts the middle one; concentrates in the calmest assets |
+| **Maximum Sharpe ratio (mean-variance)** | The highest expected return per unit of risk | Correlations, inverted, and expected returns | Expected returns are known far better than they ever are | Almost always in practice: corners, extreme long-short weights, choices that follow the noise (Michaud, 1989) |
+| **Shrinkage** | Pulls estimates towards a simple structure before optimising: Sharpe ratios towards their average, correlations towards a constant (Ledoit and Wolf, 2004) | The structure it shrinks towards | The structure is close to the truth | Shrinking returns alone does not help when the corner comes from the correlations (§2.3: the shrunk optimiser falls back to minimum variance) |
+| **Maximum diversification** | Maximises the ratio of the weighted average volatility to the portfolio's volatility (Choueifaty and Coignard, 2008) | Volatilities and correlations, inverted | Correlations are well estimated | As minimum variance with near-duplicates; not tested here |
+| **Hierarchical Risk Parity (HRP)** | Groups assets by correlation into a tree, then splits risk between and within the groups (López de Prado, 2016) | Correlations only to form groups | Many assets with a clear group structure; noisy or near-singular correlations | Groups are unclear; sizing by variance can concentrate in the calmest group |
+| **Nested Clustered Optimisation (NCO)** | Optimises inside each cluster, then across the clusters (López de Prado, 2020) | As its inner and outer methods | Run with equal risk contributions inside and across | Run with an inverting optimiser, it concentrates like one |
+| **Denoising (Marchenko–Pastur)** | Replaces the part of the correlation matrix indistinguishable from noise before any optimiser uses it (López de Prado, 2020) | Random-matrix theory: the noise band set by the number of assets relative to the history | Many assets, short history | Few assets: there is no band to estimate; a cleaner input, not a method |
+| **Spectral risk parity** | Spreads risk evenly over the principal components rather than over assets (Meucci, 2009) | The eigenvectors of the correlation matrix | The components have a stable meaning | Diversified across components is not diversified across assets: on three speeds it puts everything in one speed, and its weights jump between resampled histories |
+
+<sub><b>How to read the table.</b> One row per method, from those that use the least estimated information to those that use the most, then the methods that tame an optimiser. "Inverted": the weights depend on the inverse of the correlation matrix. Results on our data are in §2.3 and results/hypotheses.md.</sub>
+
+**How to choose, in two steps.** First rule out what fails tests that do not depend on opinion: weights that jump when the history is resampled, bets on differences smaller than their noise, trades nobody designed. Then choose among the rest by the belief you hold (the table at the end of §2.3), state it in advance, and keep it the same at every level of the portfolio.
+
+**References for this appendix.** Choueifaty, Y. and Coignard, Y. (2008). Toward maximum diversification. *Journal of Portfolio Management* 35(1), 40-51. · Ledoit, O. and Wolf, M. (2004). Honey, I shrunk the sample covariance matrix. *Journal of Portfolio Management* 30(4), 110-119. · López de Prado, M. (2016). Building diversified portfolios that outperform out of sample. *Journal of Portfolio Management* 42(4), 59-69. · López de Prado, M. (2020). *Machine Learning for Asset Managers*. Cambridge University Press. · Maillard, S., Roncalli, T. and Teïletche, J. (2010). The properties of equally weighted risk contribution portfolios. *Journal of Portfolio Management* 36(4), 60-70. · Meucci, A. (2009). Managing diversification. *Risk* 22(5), 74-79. · Michaud, R. O. (1989). The Markowitz optimization enigma: is "optimized" optimal? *Financial Analysts Journal* 45(1), 31-42.

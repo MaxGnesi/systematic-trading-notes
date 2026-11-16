@@ -61,6 +61,21 @@ When neighbours overlap by about 0.9, no weighting finds a second independent be
 
 ---
 
+# Why optimisers drop the middle speed
+
+> Minimum variance equalises each speed's marginal risk, $(Cw)_i$; equal risk contributions equalise its total contribution, $w_i\,(Cw)_i$. The middle speed overlaps both neighbours, so only the first drops it.
+
+| Three speeds, correlation 0.8 / 0.8 / 0.5 | 50 days | 100 days | 200 days |
+|---|---|---|---|
+| Equal risk contributions | 34.6% | 30.8% | 34.6% |
+| Minimum variance, long only | 50% | 0% | 50% |
+| Minimum variance, shorts | 67% | −33% | 67% |
+
+- Dropping the middle buys about 3% less risk, and with shorts a curvature bet nobody designed
+- For speeds, correlation is the input known best: use it to share risk, not to hedge
+
+---
+
 # Timing the speeds did not help
 
 > Momentum lost clearly; reversal gained a little with no mechanism on our data, so the baseline keeps equal weights.
