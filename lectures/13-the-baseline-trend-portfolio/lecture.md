@@ -1,4 +1,4 @@
-# Lecture 13: The Baseline Trend Portfolio
+# Lecture 13: Portfolio Construction 3: The Baseline Trend Portfolio
 
 *Systematic Trading: Lecture Notes (MSc) · draft, Nov 14, 2026 · Max Gnesi*
 
@@ -129,7 +129,7 @@ Maximum Sharpe ratio concentrated on a few streams and changed them from review 
 | | Minimum variance | Equal risk contributions |
 |---|---|---|
 | **Pros** | The lowest risk the correlations allow; uses no return estimates; the right method when the goal truly is the lowest risk | Keeps every stream; uses no return estimates; weights move little when inputs change; a unique solution; the maximum-Sharpe portfolio when all streams have the same Sharpe ratio and the same correlation with each other (Maillard, Roncalli and Teïletche, 2010); its risk lies between minimum variance and equal weight |
-| **Cons** | Ignores return: a stream with the same expected return as the others is dropped because it overlaps; concentrates in the least-correlated or calmest streams; with shorts, bets on curvature; across markets, where correlations must be estimated, it magnifies their errors | Gives up the small risk reduction of minimum variance; ignores genuine differences in return; **duplication**: adding a near-copy of a stream gives that stream a larger total share (a second 50-day stream would lift the 50-day speed from 34.6% to 48.7% of the weight) |
+| **Cons** | Assumes, without saying so, that every stream earns exactly the same: a stream with the same expected return as the others is dropped because it overlaps; concentrates in the least-correlated or calmest streams; with shorts, bets on curvature; across markets, where correlations must be estimated, it magnifies their errors | Gives up the small risk reduction of minimum variance; ignores genuine differences in return; **duplication**: adding a near-copy of a stream gives that stream a larger total share (a second 50-day stream would lift the 50-day speed from 34.6% to 48.7% of the weight) |
 
 <sub><b>How to read the table.</b> Pros and cons of the two rules on near-duplicate streams. Numbers from the example above.</sub>
 
@@ -150,6 +150,19 @@ Maximum Sharpe ratio concentrated on a few streams and changed them from review 
 
 **Correlations across speeds come from construction; across markets they must be estimated.** Two speeds of one rule are windows on the same price, so much of their correlation is mechanical. On our data the correlations of the 43-, 89- and 179-day streams at the end of 2025 are almost the same in an equity index, crude oil and long bonds: 0.82 to 0.86 between the faster pair, 0.77 to 0.80 between the slower pair, 0.52 to 0.59 between the ends. So across speeds the minimum-variance corner is not an artefact of noise in the correlations: it is the structural result above, and the objection to it is its objective. Across markets, correlations come from the economy, change with regimes and are far harder to estimate (Lecture 11 §5, Lecture 14): every method that inverts the matrix then magnifies estimation error as well.
 
+**Every weighting implies a view on returns.** Any set of weights is the maximum-Sharpe portfolio for some expected returns: those proportional to each stream's marginal risk, $`Cw`$. Reading them off (reverse optimisation) shows what each method assumes about performance, without saying so:
+
+| Method | Weights, 50 / 100 / 200 days | Implied return of the middle speed, relative to the ends |
+|---|---|---|
+| Minimum variance, shorts allowed | 67% / −33% / 67% | Equal (×1.00) |
+| Minimum variance, long only | 50% / 0% / 50% | Equal, or anything up to ×1.07 |
+| Equal weight | 33% / 33% / 33% | ×1.13 |
+| Equal risk contributions | 34.6% / 30.8% / 34.6% | ×1.13 |
+
+<sub><b>How to read the table.</b> The example above. Last column: the expected return the middle speed would need, relative to each end, for the weights to be the best portfolio. Long only, any value up to ×1.07 keeps the middle at zero.</sub>
+
+The result runs against intuition. Minimum variance does not assume the middle speed performs worst: it assumes all speeds earn exactly the same, and then drops the middle because, for the same return, it adds the most risk. Its short position pays only if that equality holds exactly. Equal weight and equal risk contributions act as if the middle earned about 13% more, a difference well within the noise of any Sharpe ratio estimate; they hold no such view, they simply do not trade on the fine structure of the correlations. The contrast is in how each fails: minimum variance takes "equal performance" literally and precisely, so an error in either direction moves the corner; equal risk contributions take it roughly, so an error in either direction costs little.
+
 **Use what is known best: correlation to share risk, not to hedge.** For speeds, the inputs rank by how sure we can be. The correlation is the surest, because it comes largely from construction. The volatility is set by design, since every stream is scaled to the same risk. The expected return is the least sure: differences between speeds are smaller than their noise and could change sign. Portfolio construction on speeds should therefore lean on the correlation and not on expected returns, which is what equal risk contributions do. One subtlety: if the correlations were certain and the speeds earned the same, theory would prefer minimum variance with shorts, long the ends and short the middle. That long-short position has very little risk of its own, so it must be levered, and its profit depends entirely on the middle speed earning exactly what the ends earn: the input known least. Sharing risk by overlap uses what we know best; a hedge between near-duplicates turns the certain correlation into a bet on the uncertain return difference.
 
 **Robust weights, and a right objective, are different things.** A method's weights are robust when they hardly change if history had come out slightly differently. That is measured by resampling the history; watching the weights over yearly reviews proves nothing, since with an expanding window each review adds only a sliver of data and a corner held by a constraint does not move at all.
@@ -163,7 +176,8 @@ The methods that use past returns scatter: maximum Sharpe ratio moves by tens of
 
 | If you believe… | The consistent choice |
 |---|---|
-| The streams earn the same, and their overlap is as measured | Equal risk contributions |
+| The streams earn exactly the same, and their overlap is known exactly | Minimum variance, shorts allowed (the maximum-Sharpe portfolio under exactly these beliefs) |
+| The streams earn about the same, and only the broad shape of their overlap is trusted | Equal risk contributions (the maximum-Sharpe portfolio if Sharpe ratios and correlations were all equal; robust when they are only roughly so) |
 | The streams earn the same, and correlations are not worth using | Equal weight, equal risk |
 | Some streams are near-copies, and only groups are reliable | HRP, NCO |
 | The goal is the lowest risk, not return per unit of risk | Minimum variance, long only |
@@ -171,7 +185,7 @@ The methods that use past returns scatter: maximum Sharpe ratio moves by tens of
 
 <sub><b>How to read the table.</b> Left: a belief about the streams. Right: the method consistent with it. The error is not choosing one row over another; it is choosing a method whose assumptions contradict one's beliefs, such as maximum Sharpe ratio while believing the streams cannot be told apart.</sub>
 
-**Why the baseline uses equal risk contributions.** Every weight is a claim, and this rule makes only the claims the data support: that the streams' Sharpe ratios cannot be told apart, which is what Lecture 7's noise bands and Lecture 15's deflated Sharpe ratio say about most differences. Its mistakes are small: if the streams really differ, it gives up a little, while an optimiser that is wrong can concentrate on one stream or bet on curvature. It keeps weights and performance apart, so the backtest does not mark its own homework. And one rule serves every level, speeds in a market, markets in a class and classes in the portfolio, with groups first wherever near-copies would otherwise count twice.
+**Why the baseline uses equal risk contributions.** Every weight is a claim, and this rule makes only the claims the data support: that the streams' Sharpe ratios cannot be told apart and that the fine structure of their correlations should not be traded on, which is what Lecture 7's noise bands and Lecture 15's deflated Sharpe ratio say about most differences. Its mistakes are small: if the streams really differ, it gives up a little, while an optimiser that is wrong can concentrate on one stream or bet on curvature. It keeps weights and performance apart, so the backtest does not mark its own homework. And one rule serves every level, speeds in a market, markets in a class and classes in the portfolio, with groups first wherever near-copies would otherwise count twice.
 
 ### 2.4 Streams that are not always in the market
 
@@ -422,7 +436,7 @@ A practical guide to the methods of §2.3, one card each: what the method does, 
 | **Equal weight** | The same capital in each asset | Nothing | Assets have similar risk and are equally distinct | Risks differ: the most volatile asset dominates |
 | **Equal risk (inverse volatility)** | Capital inversely proportional to volatility, so each asset has the same risk | Volatilities | Assets are roughly equally correlated | A group of near-duplicates gets as much risk each as a lone diversifier |
 | **Equal risk contributions** | Each asset contributes the same share of the portfolio's risk | Volatilities; correlations in broad shape | Almost always a sound default; the maximum-Sharpe portfolio if all Sharpe ratios and correlations are equal | Assets earn very differently for a known reason (then tilt deliberately) |
-| **Minimum variance** | The lowest-risk combination | The full correlation matrix, inverted | The goal really is the lowest risk | Near-duplicates: drops or shorts the middle one; concentrates in the calmest assets |
+| **Minimum variance** | The lowest-risk combination | The full correlation matrix, inverted; implicitly, equal expected returns | The goal really is the lowest risk | Near-duplicates: drops or shorts the middle one; concentrates in the calmest assets |
 | **Maximum Sharpe ratio (mean-variance)** | The highest expected return per unit of risk | Correlations, inverted, and expected returns | Expected returns are known far better than they ever are | Almost always in practice: corners, extreme long-short weights, choices that follow the noise (Michaud, 1989) |
 | **Shrinkage** | Pulls estimates towards a simple structure before optimising: Sharpe ratios towards their average, correlations towards a constant (Ledoit and Wolf, 2004) | The structure it shrinks towards | The structure is close to the truth | Shrinking returns alone does not help when the corner comes from the correlations (§2.3: the shrunk optimiser falls back to minimum variance) |
 | **Maximum diversification** | Maximises the ratio of the weighted average volatility to the portfolio's volatility (Choueifaty and Coignard, 2008) | Volatilities and correlations, inverted | Correlations are well estimated | As minimum variance with near-duplicates; not tested here |

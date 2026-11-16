@@ -1,4 +1,4 @@
-# Slides · Lecture 12: Trend Speeds That Work Across the Board
+# Slides · Lecture 12: Portfolio Construction 2: Trend Speeds That Work Across the Board
 
 **[Download the slides as PDF](12_slides.pdf?raw=1)** · [Back to the lecture](../lecture.md)
 

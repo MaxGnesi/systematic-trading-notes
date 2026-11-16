@@ -1,4 +1,4 @@
-# Lecture 11: Choosing the Markets
+# Lecture 11: Portfolio Construction 1: Choosing the Markets
 
 > Which markets should be in a trend portfolio at all? A universe that is diverse and tradable, chosen without looking at any strategy's results.
 

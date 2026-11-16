@@ -1,4 +1,4 @@
-# Lecture 12: Trend Speeds That Work Across the Board
+# Lecture 12: Portfolio Construction 2: Trend Speeds That Work Across the Board
 
 > Choose the speeds of the trend rules so that they work on all asset classes and their markets, and judge the choice on years it never saw.
 
