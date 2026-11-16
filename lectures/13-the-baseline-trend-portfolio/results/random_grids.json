@@ -28,5 +28,6 @@
   "p90_gap": 0.023964519016244832,
   "median_move": 0.00021265551447025022,
   "p90_move": 0.00030068105406384494
- }
+ },
+ "_note": "Three-parts measure from l27_edge_cases.random_grids(). Whole-range measure (median / worst tenth, points): equal weight 17/28, equal risk contributions 16/26, minimum variance 26/33, HRP 16/26, grouped 10/15; computed 2026-11-16 with the same draws (seed 13)."
 }

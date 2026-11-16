@@ -116,7 +116,22 @@ The problems that arise, method by method:
 
 <sub><b>How to read the table.</b> One row per method; the right column points to the rows of the matrix where the problem appears.</sub>
 
-**And on random grids?** One erratic pattern is a single example. Across 500 grids of six speeds drawn at random between 40 and 400 days (grids with an empty third left out, since no method repairs those), the largest gap between a third's share of the risk and an even third was, typically and in the worst tenth of grids: equal weight 19 and 36 points; equal risk contributions 17 and 33; HRP as published 18 and 29; minimum variance 22 and 26, with weights that move by up to 5.4 points when one correlation shifts by 0.01; grouping by third 2 and 2. HRP helps a little in the most bunched grids but not in the typical one; only grouping repairs a random grid ([results/random_grids.json](results/random_grids.json)).
+**And on random grids?** One erratic pattern is a single example, so the test is repeated on 500 grids of six speeds placed at random between 40 and 400 days. The aim is that each part of the speed range, fast, middle and slow, carries a fair share of the portfolio's risk. Two ways of measuring it:
+
+- **Three parts.** The range is split into three equal parts by ratio: fast (40-86 days), middle (86-186) and slow (186-400). Each should carry one third of the risk; the number is how far the worst part is from one third, in percentage points (a slow part with 52% of the risk is 19 points too much).
+- **Along the whole range.** Nothing is split: walking from the fastest speed to the slowest, the risk collected so far is compared with what an even spread would have collected by that point; the number is the biggest difference found along the way. It does not depend on where any boundary is drawn, which matters because grouping builds its weights on exactly the three parts of the first measure.
+
+| Method | Worst part's distance from a fair third: typical / worst tenth of grids | Biggest unevenness along the whole range: typical / worst tenth |
+|---|---|---|
+| Equal weight | 19 / 36 | 17 / 28 |
+| Equal risk contributions | 17 / 33 | 16 / 26 |
+| HRP, as published | 18 / 29 | 16 / 26 |
+| Minimum variance, long only | 22 / 26 | 26 / 33 |
+| Grouped into the three parts | 2 / 2 (it uses the same three parts) | 10 / 15 |
+
+<sub><b>How to read the table.</b> Percentage points; lower is fairer. "Typical": the median of the 500 grids; "worst tenth": the 90th percentile. Grids with an empty part are left out, since no method can repair them (the U-shaped row above). Correlations from the speed ratio, as in the matrix ([results/random_grids.json](results/random_grids.json)).</sub>
+
+Four readings. Grouping is the fairest on both measures, but on the second, which does not favour it, its lead is smaller (10 against 16). HRP looked slightly fairer than equal risk contributions on the first measure only; on the second they are identical, so its apparent advantage came from the way of measuring. Minimum variance is the least fair on both. And no method makes a randomly placed grid fair: 10 to 26 points of unevenness remain whatever the method, which is why the grid should be fixed first. The limits: the correlations come from a simple ratio model, and random grids bunch more than Lecture 12's held speeds, which are contiguous.
 
 Grouping has problems of its own, because someone has to draw the regions. A lone speed gets a whole region's share: with 50, 60 and 70 days and one speed at 500, grouping puts 50% of the risk on the 500-day speed alone (equal risk contributions, 25%), and a lone speed at the edge of the plateau is the least reliable place for it (Lecture 7 §6). On an even grid the cut decides the weights: for 50, 70, 100, 140 and 200 days, the 100-day speed gets 17.1% if the cut falls after 70 or after 100 days, 32.6% if it stands as a region of its own, and 19.1% under equal risk contributions with no cut at all.
 
@@ -460,7 +475,7 @@ The worst case is a quick crash that hits a long, levered position sized on calm
 - [ ] **Bitcoin, with hindsight.** Add the CME Bitcoin future (Yahoo BTC=F, from December 2017) as its own class, and as one market in commodities. What risk share does it get each way, and what does that do to the 2018 and 2022 drawdowns? Why is any result here hindsight?
 - [ ] **Reversal, again.** The reversal tilt in §2.5 gained a little with no mechanism behind it. Test it on the capstone futures with the rule fixed before you look. Does it hold?
 - [ ] **Crowding.** The CFTC's Commitments of Traders reports show how speculators are positioned in each future. Is today's portfolio's worst stress case (§6.2) worse when speculators are crowded on the same side?
-- [ ] **Bunching, on your own correlations.** Repeat the random-grid test of §2.2 ([scripts/l27_edge_cases.py](scripts/l27_edge_cases.py)) with the correlations measured between real trend streams of one market instead of the ratio model. Draw 500 sets of six held speeds, weigh each by equal weight, equal risk contributions, minimum variance, HRP and grouping at the natural gaps, and compare how far each strays from an even split and how steady it is. Does HRP's small advantage in the most bunched sets survive?
+- [ ] **Bunching, on your own correlations.** Repeat the random-grid test of §2.2 ([scripts/l27_edge_cases.py](scripts/l27_edge_cases.py)) with the correlations measured between real trend streams of one market instead of the ratio model. Draw 500 sets of six held speeds, weigh each by equal weight, equal risk contributions, minimum variance, HRP and grouping at the natural gaps, and compare how far each strays from an even split and how steady it is. Does the ranking hold on both measures, the three parts and the whole range?
 
 ### 7.3 Reading list
 
