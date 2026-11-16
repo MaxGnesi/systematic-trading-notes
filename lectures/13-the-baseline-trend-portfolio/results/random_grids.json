@@ -3,31 +3,40 @@
   "median_gap": 0.18592976500448855,
   "p90_gap": 0.3603273754180396,
   "median_move": 0.0,
-  "p90_move": 0.0
+  "p90_move": 0.0,
+  "median_whole": 0.16868150109279315,
+  "p90_whole": 0.2786187347349056
  },
  "Equal risk contributions": {
   "median_gap": 0.16666683893262974,
   "p90_gap": 0.3333328151757792,
   "median_move": 0.00022430369672064854,
-  "p90_move": 0.00024836599863153344
+  "p90_move": 0.00024836599863153344,
+  "median_whole": 0.15697124046579553,
+  "p90_whole": 0.260288516484962
  },
  "Minimum variance, long only": {
   "median_gap": 0.22480058248358809,
   "p90_gap": 0.25717855085404173,
   "median_move": 0.03141080814272654,
-  "p90_move": 0.05360637181953806
+  "p90_move": 0.05360637181953806,
+  "median_whole": 0.26494453993822353,
+  "p90_whole": 0.32805851304709344
  },
  "HRP, as published": {
   "median_gap": 0.18016451604621633,
   "p90_gap": 0.29244186460419475,
   "median_move": 0.0003263524329054496,
-  "p90_move": 0.0005597094907277057
+  "p90_move": 0.0005597094907277057,
+  "median_whole": 0.15563173968712485,
+  "p90_whole": 0.2629239564995505
  },
  "Grouped by third": {
   "median_gap": 0.019214454042901508,
   "p90_gap": 0.023964519016244832,
   "median_move": 0.00021265551447025022,
-  "p90_move": 0.00030068105406384494
- },
- "_note": "Three-parts measure from l27_edge_cases.random_grids(). Whole-range measure (median / worst tenth, points): equal weight 17/28, equal risk contributions 16/26, minimum variance 26/33, HRP 16/26, grouped 10/15; computed 2026-11-16 with the same draws (seed 13)."
+  "p90_move": 0.00030068105406384494,
+  "median_whole": 0.09699703326090738,
+  "p90_whole": 0.1452596413797834
+ }
 }

@@ -143,7 +143,7 @@ def random_grids(n=500, seed=13):
     def hrp_w(C):
         cov = pd.DataFrame(C, index=range(len(C)), columns=range(len(C)))
         return hrp(cov, method="single").weights.reindex(cov.index).to_numpy()
-    res = {m: {"gap": [], "move": []} for m in ["Equal weight", "Equal risk contributions", "Minimum variance, long only", "HRP, as published", "Grouped by third"]}
+    res = {m: {"gap": [], "move": [], "whole": []} for m in ["Equal weight", "Equal risk contributions", "Minimum variance, long only", "HRP, as published", "Grouped by third"]}
     done = 0
     while done < n:
         sp = sorted(int(x) for x in np.exp(rng.uniform(np.log(lo), np.log(hi), 6)))
@@ -155,10 +155,13 @@ def random_grids(n=500, seed=13):
              "HRP, as published": hrp_w, "Grouped by third": lambda C: grouped(C, R)}
         for m, f in M.items():
             w = f(C); rc = w * (C @ w); rc = rc / rc.sum(); sh = np.array([rc[g].sum() for g in R])
-            res[m]["gap"].append(float(np.abs(sh - 1 / 3).max())); res[m]["move"].append(float(np.abs(f(C2) - w).max()))
+            x = np.log(np.array(sp)); mids = np.r_[np.log(lo), (x[1:] + x[:-1]) / 2, np.log(hi)]       # the share of the axis each speed stands for
+            whole = float(np.abs(np.cumsum(rc) - np.cumsum(np.diff(mids) / (np.log(hi) - np.log(lo)))).max())
+            res[m]["gap"].append(float(np.abs(sh - 1 / 3).max())); res[m]["move"].append(float(np.abs(f(C2) - w).max())); res[m]["whole"].append(whole)
         done += 1
     out = {m: dict(median_gap=float(np.median(v["gap"])), p90_gap=float(np.percentile(v["gap"], 90)),
-                   median_move=float(np.median(v["move"])), p90_move=float(np.percentile(v["move"], 90))) for m, v in res.items()}
+                   median_move=float(np.median(v["move"])), p90_move=float(np.percentile(v["move"], 90)),
+                   median_whole=float(np.median(v["whole"])), p90_whole=float(np.percentile(v["whole"], 90))) for m, v in res.items()}
     (Path(__file__).resolve().parent.parent / "results" / "random_grids.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
     return out
 
