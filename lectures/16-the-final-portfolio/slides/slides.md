@@ -133,15 +133,15 @@ $$IR \approx IC \times \sqrt{\text{breadth}}$$
 
 # Where to focus next
 
-> Seven open questions, ranked by what they would add to the fixed base layer: cheapest and surest first.
+> The base layer stays fixed; each direction changes one part of what we built, judged by what it adds to the whole.
 
-1. **Cheaper execution** of what is held (Lectures 18, 19, 21)
-2. **Regime information as a tilt**, not a switch (Lecture 14)
-3. **More breadth** for the same styles (Lectures 11, 15)
-4. **A faster horizon** next to slow trend (Lecture 20)
-5. **Construction that uses only what is known** (Lecture 13)
-6. **Kill switches** from the book and the flow (Lectures 21, 22)
-7. **The live strategy against its backtest** (Lecture 24)
+1. **Cheaper execution:** how it trades
+2. **Regime information as a tilt:** how much trend it holds
+3. **More breadth:** which markets it holds
+4. **A faster horizon:** a new sleeve beside trend and carry
+5. **Construction from what is known:** its weights
+6. **Kill switches:** when it trades
+7. **Live against backtest:** the assumptions behind it
 
 ---
 
