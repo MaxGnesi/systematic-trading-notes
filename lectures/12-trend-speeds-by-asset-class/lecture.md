@@ -18,6 +18,8 @@ Lecture 11 chose the markets without looking at any strategy's results. This lec
 
 <sub><b>How to read the table.</b> One row per decision, in the order they are taken; the rows in bold are this lecture's. "What it uses": the only information the step may use. Steps 1 and 2 choose; steps 3 to 5 weigh, by risk alone.</sub>
 
+**Two directions, one portfolio.** The risk budget is planned **top-down**: the total gets 10% a year; it is split equally across the asset classes; each class's share is split equally across its markets; each market's share across its speeds. The portfolio is computed **bottom-up**, because each level can be sized only once the level below exists: diversification makes a blend calmer than its parts, so its risk must be measured before it can be scaled. The held speeds are blended into one stream per market; each market stream is scaled to equal risk and combined into one stream per class; each class stream is scaled to equal risk and combined; the total is scaled to 10%.
+
 ## 1. Speeds that work across the board
 
 The lecture's result fits in one chart.
