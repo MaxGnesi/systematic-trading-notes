@@ -261,6 +261,14 @@ Spaced by days, 150 and 200 days are nearly the same speed (a ratio of 1.33) whi
 
 <sub><b>How to read the table.</b> One row per method; "Seen in": the rows of the table above where the problem shows.</sub>
 
+**The erratic part, shown.** Take the bunch again (50, 60 and 70 days, and 200) and move one correlation, between the 50- and 60-day speeds, by at most 0.02 either side of its value of 0.93: a change far smaller than any estimate can resolve.
+
+![Weights of the four speeds under five methods as the 50-60-day correlation moves slightly](figures/27_bunch_stability.png)
+
+<sub><b>How to read the figure.</b> Axes. x: the change in the correlation between the 50- and 60-day speeds, from −0.02 to +0.02; y: the weight of each speed, in %. One panel per method; one line per speed (blue 50 days, orange 60, green 70, black 200). Correlations from the speed ratio, as in the table above; minimum variance long only ([scripts/l27_bunch_stability_chart.py](scripts/l27_bunch_stability_chart.py)).</sub>
+
+Minimum variance trades the bunch's members against each other: on a change of 0.04 the 60-day speed falls from 12.6% to zero and the 70-day speed rises from 2.6% to 10.3%, while the bunch as a whole barely moves. HRP is flat until the tree reorders, then jumps by 4.4 points. Equal weight, equal risk contributions and grouping barely move (0.2 points at most), and only grouping is also fair between the regions. The bunch's members are near-copies, so the data cannot say which of them deserves the weight; a method that chooses anyway is choosing on noise.
+
 Grouping has problems of its own, because someone has to draw the regions. A lone speed gets a whole region's share: with 50, 60 and 70 days and one speed at 500, grouping puts 50% of the risk on the 500-day speed alone (equal risk contributions, 25%), and a lone speed at the edge of the plateau is the least reliable place for it (Lecture 7 §6). On an even grid the cut decides the weights: for 50, 70, 100, 140 and 200 days, the 100-day speed gets 17.1% if the cut falls after 70 or after 100 days, 32.6% if it stands as a region of its own, and 19.1% under equal risk contributions with no cut at all.
 
 **On random grids.** The seven patterns are chosen examples. On 500 grids of six speeds placed at random between 40 and 400 days:
