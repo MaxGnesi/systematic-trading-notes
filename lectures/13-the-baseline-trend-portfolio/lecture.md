@@ -467,7 +467,16 @@ The worst case is a quick crash that hits a long, levered position sized on calm
 
 ### 7.1 Choosing the settings
 
-**When methods built on different assumptions agree, the choice does not matter: take the simplest, and look for the risk elsewhere.** Agreement shows that the result does not hinge on one assumption, the plateau of Lecture 7 applied to methods instead of parameters. It does not show that the portfolio is safe, and it can give false comfort: methods agree because they share something, the same history, the same markets, the same calm years, and if what they share is wrong they fail together. Across speeds the methods agree because there is little to choose (about 1.4 independent bets in 20 streams, §3.1); across classes every method agreed, and every one carried 6% to 12% on a 10% target, too much in the same regimes (§4.5). Agreement says where the risk is not, in the choice of method; the risk sits in what all methods share.
+**When methods built on different assumptions agree, the choice does not matter: take the simplest, and look for the risk elsewhere.** Agreement shows that the result does not hinge on one assumption, the plateau of Lecture 7 applied to methods instead of parameters. It does not show that the portfolio is safe, and it can give false comfort: methods agree because they share something, the same history, the same markets, the same calm years, and if what they share is wrong they fail together. Across speeds the methods agree because there is little to choose (about 1.4 independent bets in 20 streams, §3.1); across classes every method agreed, and every one carried 6% to 12% on a 10% target, too much in the same regimes (§4.5). Agreement says where the risk is not, in the choice of method; the risk sits in what all methods share. So the better question is where the portfolio they agree on would fail:
+
+| Where it would fail | What happens | Seen in |
+|---|---|---|
+| A quick crash after a calm run | Long trends sized on calm years are held at high leverage when the reversal comes, faster than any held speed can turn | Today's portfolio in Feb-Mar 2020: −18%, 16 points of it in credit (§6) |
+| Correlations jump inside a class | Markets that diversified in calm years move together, so the class carries more risk than its share | Credit 0.07 to 0.81, equity 0.13 to 0.64; the 10% target becomes 15.6% in the harsh scenario (§4.4) |
+| A regime in which the classes move together | Weights cannot remove it: every method carries more than its target at the same time | 2007-09 and 2022-24: 11.5% to 11.9% on a 10% target, whatever the weights (§4.5) |
+| The window the total is scaled on was calm | The target is met on paper and missed in the next bad regime | Scaled on 2003-2006: 13.3% in 2007-2009 (§4.3) |
+
+<sub><b>How to read the table.</b> One row per way the baseline, and every method that agrees with it, would fail. Middle: the mechanism; right: where this lecture measured it. These are the cases to check before committing leverage, by the stress test of §4.4 and the replay of §6.</sub>
 
 Sensible settings come from the order in which the questions are asked, not from trying every combination and keeping the best backtest, which with hundreds of combinations is mostly luck (Lecture 12 §2):
 
