@@ -460,6 +460,7 @@ The worst case is a quick crash that hits a long, levered position sized on calm
 - [ ] **Bitcoin, with hindsight.** Add the CME Bitcoin future (Yahoo BTC=F, from December 2017) as its own class, and as one market in commodities. What risk share does it get each way, and what does that do to the 2018 and 2022 drawdowns? Why is any result here hindsight?
 - [ ] **Reversal, again.** The reversal tilt in §2.5 gained a little with no mechanism behind it. Test it on the capstone futures with the rule fixed before you look. Does it hold?
 - [ ] **Crowding.** The CFTC's Commitments of Traders reports show how speculators are positioned in each future. Is today's portfolio's worst stress case (§6.2) worse when speculators are crowded on the same side?
+- [ ] **Bunching, on your own correlations.** Repeat the random-grid test of §2.2 ([scripts/l27_edge_cases.py](scripts/l27_edge_cases.py)) with the correlations measured between real trend streams of one market instead of the ratio model. Draw 500 sets of six held speeds, weigh each by equal weight, equal risk contributions, minimum variance, HRP and grouping at the natural gaps, and compare how far each strays from an even split and how steady it is. Does HRP's small advantage in the most bunched sets survive?
 
 ### 7.3 Reading list
 
