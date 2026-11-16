@@ -1,0 +1,45 @@
+# Lecture 30: the final portfolio — plan fixed before any result
+
+Fixed 2026-11-16, before any result of this lecture was computed. Agreed with the user. Every later change is dated below with its reason.
+
+## The frame: realistic expectations (the opening of the lecture)
+
+The lecture closes the course with one portfolio built from simple, rule-based strategies, and with the expectation such a portfolio can honestly carry. Setting that expectation is part of the method (user): a researcher who expects a simple rule to deliver a very high Sharpe ratio keeps adjusting it until the backtest agrees, which is curve fitting by another name; one who aims for **performance comparable to, or slightly above, long-only indices with low correlation to them** stops at a robust rule. That target is realistic, and it is valuable: in practice a strategy that earns like the market but moves differently from it is what investors pay to add to their portfolios.
+
+## The rule (one sentence, our proposal)
+
+**Hold trend (Lecture 27's baseline) and carry (Lecture 29's rule, unchanged) at equal risk, the total scaled to 10% a year, and judge it as an addition to a long-only portfolio.**
+
+## Rivals and benchmarks
+
+- **Rival:** trend, carry and value from fundamentals (Lecture 29 §5.4) at equal thirds of the risk. Value enters the portfolio only through this rival; the decision is fixed now, before the test.
+- **Yardsticks:** trend alone (Lecture 27); and the long-only benchmarks, US equities (S&P 500, total return over cash) and 60/40 (S&P 500 and intermediate Treasuries, VFITX).
+
+## Samples
+
+- **The test: 1990-2005**, years never used to build or tune carry or value. Trend: Lecture 28's 12-market trend portfolio for 1990-2005 (the baseline's rules on long free series). Carry with Lecture 29's rule, each group entering as its data begins: currencies from 1990 (the euro before 1999 via the German mark at the fixed rate; Japan's call-money rate before its 3-month rate begins in 2002); government bonds from the 1980s for seven countries with daily central-bank yields, Australia from 1995 and Germany from 1997; equities, the US throughout (Shiller), other countries from about 1997 (country funds from 1996); commodities from about 2000 (the capstone futures). A partial universe, stated: for most of the period carry rests on currencies and bonds.
+- **For reference, not as a test:** 2006-2022 (futures) and 2013-2026 (ETFs), the years Lectures 27-29 used.
+
+## Measures (the same for every portfolio)
+
+1. Sharpe ratio (daily where the data allow, else monthly, stated), return, volatility, worst drawdown, Calmar, Omega, skew, worst month.
+2. Correlation with US equities and with 60/40.
+3. **The investor's frame:** a 60/40 portfolio with 0%, 20%, 30% and 50% of its risk budget moved to the rule, at 60/40's volatility: Sharpe ratio and worst drawdown.
+4. Luck: 1,000 random strategies on the same markets, as Lecture 29; and the deflated Sharpe ratio counting the tries of Lectures 27-30.
+5. **The realistic expectation:** the backtest's Sharpe ratio cut, one source at a time, to an expected live range: monthly against daily measurement, selection (the deflated Sharpe ratio), costs (5, 10 and 20 bp per trade), and the period (in-sample years against 1990-2005).
+6. In brief, from the folded lectures: gross leverage and each group's share of risk over time; the cost of the monthly rebalancing with Part IV's cost estimates; capacity in a sentence.
+
+## Three expectations
+
+1. **On 1990-2005, carry earns a positive Sharpe ratio with low correlation to trend** (below 0.3), weaker than in 2006-2022 since it rests mostly on currencies and bonds.
+2. **On 1990-2005, trend + carry earns at least as much per unit of risk as trend alone.**
+3. **On 1990-2005, moving 20-30% of a 60/40 portfolio's risk budget to the rule raises its Sharpe ratio and reduces its worst drawdown.**
+
+## Verdict (graded, not pass/fail)
+
+The evidence is read together: the Sharpe ratios as probabilities (against random strategies; deflated for the tries), the breadth across groups and periods, whether the 1990-2005 results point the same way as the in-sample years, and what the rule adds to a long-only portfolio. The realistic expectation (measure 5) is the number the lecture ends on.
+
+## Kept for later / exercises
+
+- The hedge, value tilts and mixes of Lecture 29 are not revisited.
+- Exercise: rebuild the 1990-2005 test with your own Lecture 29 variant, fixed before you look, and count it as a try.
