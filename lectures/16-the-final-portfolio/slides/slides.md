@@ -64,7 +64,6 @@ Combining trend and carry is an **allocation and risk decision**, not a new sign
 2. Trend + carry beat trend alone (1.11 against 0.78)
 3. A 20-30% share of 60/40's risk raised its Sharpe ratio and cut its worst loss
 - Carry and the rule beat **all** of 1,000 random strategies
-- Value from fundamentals earned a little; a small diversifier, not a pillar
 
 ![](figures/16s_results.png)
 
@@ -75,7 +74,7 @@ Combining trend and carry is an **allocation and risk decision**, not a new sign
 > A modest share, 20-30% of the risk, lifts a stock-and-bond portfolio's Sharpe ratio by a quarter to a half and cuts its worst loss, at the same total risk.
 
 - The rule does not need to beat 60/40; it needs to **move differently**, and it does
-- Correlation with 60/40: −0.03 (1990-2005), 0.09 (2006-2022)
+- Its correlation with 60/40 is near zero in both periods
 
 ![](figures/16s_investor.png)
 
@@ -87,7 +86,7 @@ Combining trend and carry is an **allocation and risk decision**, not a new sign
 
 - Execution is not a detail for carry: Part V's methods are what keep its edge
 - Costs are a distribution, not a constant: they widen exactly when trend and carry rebalance most
-- Carry also adds sudden losses: worst month −11.4% against trend's −7.4%
+- Carry also adds sudden losses: the price of its premium
 
 ![](figures/16s_costs.png)
 
@@ -98,8 +97,8 @@ Combining trend and carry is an **allocation and risk decision**, not a new sign
 > Cut one source at a time, the rule averages about 0.69 across three periods: comparable to 60/40, with a correlation near zero.
 
 - **The period is the largest uncertainty:** the same rule earned 0.43 to 1.00 after haircuts
-- **The start date alone moves a Sharpe ratio:** an early draft's "monthly flatters by a fifth" was a start-date effect
-- **The search is counted:** 21 carry versions, deflated Sharpe ratio 0.90; the untouched test involved no choice
+- **Even the start date moves a Sharpe ratio**
+- **The search is counted:** the untouched test involved no choice among versions
 
 ![](figures/16s_realistic.png)
 
@@ -107,7 +106,9 @@ Combining trend and carry is an **allocation and risk decision**, not a new sign
 
 # Where higher Sharpe ratios come from
 
-> Large funds' higher Sharpe ratios come mostly from breadth and granularity, not a better signal: many weakly correlated small edges add up (Grinold's law).
+> Large funds' higher Sharpe ratios come mostly from breadth and granularity, not a better signal: many weakly correlated small edges add up.
+
+$$IR \approx IC \times \sqrt{\text{breadth}}$$
 
 | Source | This portfolio | A large multi-strategy fund |
 |---|---|---|

@@ -345,7 +345,7 @@ Each way of filling the slots was run at every review from 2009 to 2025 and judg
 
 <sub><b>How to read the table.</b> Medians over the 17 years after each review; in brackets, the number of years the method did better than the median of 300 random selections in the same slots. "Overlap": mean correlation between the chosen markets, sign ignored. "Trend-positioned": the same for each market's weekly return times the sign of its past 26-week return, the risk a trend follower holds (§1). Liquidity at the review. Our calculation.</sub>
 
-The slots do most of the work: random markets in the same slots already explain 73% of each class's variance the next year, and the best method adds four points. Between the methods the gaps are small and run along a trade-off. Explained variance represents each class best and overlaps most; greedy diversification overlaps least and drifts to the edge of each class. The score sits between them on both, has the lowest overlap of trend-positioned returns, and holds markets about twice as liquid as any other method. The year-to-year spread (the bars in the chart) is larger than these gaps, which is why the count of years against random selections, made year by year, is the better guide.
+The slots do most of the work: random markets in the same slots already explain 73% of each class's variance the next year, and the best method adds four points. Between the methods the gaps are small and run along a trade-off. Explained variance represents each class best and overlaps most; greedy diversification overlaps least and drifts to the edge of each class. The score sits between them on both, has the lowest overlap of trend-positioned returns, and holds the most liquid markets: a median of 400 m dollars a day, against 150 m to 260 m for the other methods. The year-to-year spread (the bars in the chart) is larger than these gaps, which is why the count of years against random selections, made year by year, is the better guide.
 
 ### 7.3 How much the weights matter
 
@@ -414,7 +414,7 @@ The next step for a growing account is therefore to change the instrument where 
 4. **Correlation misses the drift.** Two markets are the same trend bet only if they also share their trend phases; mirror images with different interest income can trend the same way. Trend strength is far less shared than returns, and nearly unrelated across classes (§4).
 5. **Selection effects bias correlations.** Joint falls must be read against what a normal distribution gives in the same weeks, and weeks chosen by one market's falls understate co-movement (§5.1).
 6. **Methods have roles, not votes.** Factors count the bets, the duplicate rule removes copies, a score chooses, the tree and downside correlation check (§5).
-7. **The slots do most of the work.** Among ways to fill them, a score of representativeness, diversification and liquidity, ranked top to bottom, keeps diversification and doubles liquidity, over a flat region of weights (§7).
+7. **The slots do most of the work.** Among ways to fill them, a score of representativeness, diversification and liquidity, ranked top to bottom, keeps diversification and holds the most liquid markets (about 1.5 to 2.7 times the other methods' median), over a flat region of weights (§7).
 8. **Capacity depends on the instrument.** ETF screen volume understates deep markets and can overstate shallow ones (§8).
 
 ### 9.2 Exercises

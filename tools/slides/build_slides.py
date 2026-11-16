@@ -52,6 +52,7 @@ th, td {{ border-bottom: 1px solid {GRID}; padding: 0.05in 0.14in; text-align: l
 th {{ color: {MUTED}; font-weight: 600; }}
 .foot {{ position: absolute; left: 0.7in; right: 0.7in; bottom: 0.22in; display: flex; justify-content: space-between;
   font-size: 10pt; color: {MUTED}; }}
+.katex-display {{ font-size: 1.35em; margin: 0.12in 0; }}
 .title {{ justify-content: center; }}
 .title .body {{ flex: 0 0 auto; }}
 .title h1 {{ font-size: 40pt; margin-bottom: 0.25in; }}
@@ -60,12 +61,25 @@ th {{ color: {MUTED}; font-weight: 600; }}
 """
 
 
+# Formulas: $...$ inline and $$...$$ displayed, rendered by KaTeX (loaded from a CDN when the deck is built).
+KATEX = ("<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css'>"
+         "<script src='https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js'></script>"
+         "<script src='https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js'></script>"
+         "<script>document.addEventListener('DOMContentLoaded',()=>renderMathInElement(document.body,"
+         "{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]}));</script>")
+
+
 def inline(s: str) -> str:
     s = html.escape(s, quote=False)
+    maths: list[str] = []                       # formulas are kept out of the bold and italic rules
+
+    def keep(m):
+        maths.append(m.group(0)); return f"\x00{len(maths) - 1}\x00"
+    s = re.sub(r"\$\$.+?\$\$|\$[^$]+\$", keep, s)
     s = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", s)
     s = re.sub(r"(?<![*\w])\*(?!\s)(.+?)(?<!\s)\*(?!\w)", r"<i>\1</i>", s)
     s = re.sub(r"`(.+?)`", r"<code>\1</code>", s)
-    return s
+    return re.sub(r"\x00(\d+)\x00", lambda m: maths[int(m.group(1))], s)
 
 
 def render_slide(block: str, first: bool, footer: str, page: int) -> str:
@@ -124,7 +138,7 @@ def build(lecture_dir: Path) -> Path:
     footer = re.search(r"^# (.+)$", blocks[0], re.M).group(1)
     footer = html.escape(footer) + " · Systematic Trading: Lecture Notes (MSc)"
     slides = [render_slide(b, k == 0, footer, k + 1) for k, b in enumerate(blocks)]
-    page = f"<!doctype html><html><head><meta charset='utf-8'><style>{CSS}</style></head><body>" + "\n".join(slides) + "</body></html>"
+    page = f"<!doctype html><html><head><meta charset='utf-8'><style>{CSS}</style>{KATEX}</head><body>" + "\n".join(slides) + "</body></html>"
     html_path = sdir / f"{num}_slides.html"; html_path.write_text(page, encoding="utf-8")
     pdf = sdir / f"{num}_slides.pdf"
     browser = next((b for b in BROWSERS if Path(b).exists() or shutil.which(b)), None)
