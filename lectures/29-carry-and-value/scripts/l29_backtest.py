@@ -82,25 +82,27 @@ if __name__ == "__main__":
     sm = {g: L.smooth(c) for g, c in carry.items()}
     ver = {}
     # carry
-    rule = {g: (np.sign(sm[g]) if g == "equity" else L.carry_signal(carry[g])) for g in carry}
+    rank = {g: (np.sign(sm[g]) if g == "equity" else L.carry_signal(carry[g])) for g in carry}
+    rule = {g: (np.sign(sm[g]) if g == "equity" else L.carry_score(carry[g], R[g][carry[g].columns])) for g in carry}   # rule after 2026-11-16
     own = {g: np.sign(sm[g]) for g in carry}
     hed = {g: (pca_hedge(rule[g], R[g]) if g in ("fx", "commod") else rule[g]) for g in carry}
     vown = dict(value); vown["fx"] = own_sign_fx_value()
     vrule = {g: L.rank_centred(value[g]) for g in value}
     vhed = {g: (pca_hedge(vrule[g], R[g]) if g in ("fx", "commod") else vrule[g]) for g in value}
-    for name, sig in (("carry_rule", rule), ("carry_own", own), ("carry_hedge", hed),
+    for name, sig in (("carry_rule", rule), ("carry_rank", rank), ("carry_own", own), ("carry_hedge", hed),
                       ("value_rule", vrule), ("value_own", {g: np.sign(v) for g, v in vown.items()}), ("value_hedge", vhed)):
         tot, G = strategy({g: group_stream(sig[g], R[g][sig[g].columns]) for g in sig})
         ver[name] = tot
         for g in G: ver[f"{name}:{g}"] = G[g]
         print(name, "groups:", {g: round(sharpe(G[g].loc[START:END]), 2) for g in G}, flush=True)
-    base = pd.read_parquet(L.L28.OUT / "l28_base.parquet")[("futures", "ret")].rename("trend")
+    fixed = L.RAW / "l29_trend_futures_fixed.parquet"                                  # trend with both Treasury funds (VUSTX fix, 2026-11-16)
+    base = (pd.read_parquet(fixed)["ret"] if fixed.exists() else pd.read_parquet(L.L28.OUT / "l28_base.parquet")[("futures", "ret")]).rename("trend")
     S = pd.DataFrame(ver); S["trend"] = base; S = S.loc[START:END]
     S.to_parquet(L.RAW / "l29_streams.parquet")
     print("\nSharpe 2006-2022 and correlation with trend:")
-    for c in ["trend", "carry_rule", "carry_own", "carry_hedge", "value_rule", "value_own", "value_hedge"]:
+    for c in ["trend", "carry_rule", "carry_rank", "carry_own", "carry_hedge", "value_rule", "value_own", "value_hedge"]:
         print(f"  {c:12s} Sharpe {sharpe(S[c]):+.2f}  corr with trend {S[c].corr(S['trend']):+.2f}")
-    for combo in (["trend", "carry_rule", "value_rule"], ["trend", "carry_rule"], ["trend", "value_rule"]):
+    for combo in (["trend", "carry_rule", "value_rule"], ["trend", "carry_rule"], ["trend", "carry_rank"], ["trend", "value_rule"]):
         m = yearly_scale(pd.concat([S[c] for c in combo], axis=1).mean(axis=1)).loc[START:END]
         dd = (np.exp(np.log1p(m.fillna(0)).cumsum())); dd = (dd / dd.cummax() - 1).min()
         print(f"  {' + '.join(combo):30s} Sharpe {sharpe(m):+.2f}  return a year {m.mean() * 252:+.1%}  worst drawdown {dd:.1%}")

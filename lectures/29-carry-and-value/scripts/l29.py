@@ -84,6 +84,19 @@ def carry_signal(C):
     C = smooth(C); return (rank_centred(C) + rank_centred(C - C.shift(63))) / 2
 
 
+def zrow(X):
+    """Cross-sectional z-score within the group, each day (NaN where fewer than two markets)."""
+    n = X.notna().sum(axis=1); return X.sub(X.mean(axis=1), axis=0).div(X.std(axis=1, ddof=0), axis=0).where(n >= 2)
+
+
+def carry_score(C, R):
+    """Rule after 2026-11-16: half absolute, half risk-adjusted carry (z-scores within the group), for the level and the 3-month change;
+    the weights are proportional to the score (risk is set at portfolio construction, position = weight / volatility)."""
+    C = smooth(C); vol = R.rolling(126, min_periods=60).std().shift(1) * np.sqrt(252)
+    part = lambda X: (zrow(X) + zrow(X / vol)) / 2
+    return (part(C) + part(C - C.shift(63))) / 2
+
+
 # ---------- value ----------
 LONG = RAW / "l29_long"
 
