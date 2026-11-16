@@ -19,7 +19,7 @@ the notebook that tests its claims on real market data and the charts it cites.
 | IV. The portfolio | 16-17 | Allocation and risk; the research loop | What can the assembled base layer honestly earn, how is it improved, and how is such research done well with AI? | The base layer is complete; what remains is below the daily bar |
 | V. Deep dive: high frequency | 18-30 | Data and execution at the finest grain | What do individual trades and the order book add: clocks, the path, order flow, costs, queues, other traders, market making? | Back to Part IV: the execution of a daily portfolio, and where finer granularity adds breadth |
 
-Part V is a deep dive on purpose. It uses bitcoin tick and order-book data, the one market where such data are free at that depth, to set the stage for the analysis one should also do on traditional markets: it is an example and the beginning of a direction. Its lessons on execution matter for the base layer too: a daily portfolio is still traded order by order, and its costs decide whether a small edge survives.
+Part V is a deep dive on purpose, and a first hands-on with tick and order-book data: the same tools let a live strategy check its execution against the market at the moment of each order. It uses bitcoin tick and order-book data, the one market where such data are free at that depth, to set the stage for the analysis one should also do on traditional markets: it is an example and the beginning of a direction. Its lessons on execution matter for the base layer too: a daily portfolio is still traded order by order, and its costs decide whether a small edge survives.
 
 ### How every lecture works
 
