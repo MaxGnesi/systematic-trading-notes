@@ -76,6 +76,20 @@ When neighbours overlap by about 0.9, no weighting finds a second independent be
 
 ---
 
+# Every weighting implies a view on returns
+
+> Minimum variance does not assume the middle speed is worst: it assumes all speeds earn exactly the same, and drops the middle because it adds the most risk.
+
+| Method | 50 / 100 / 200 days | Implied return, middle against the ends |
+|---|---|---|
+| Minimum variance, shorts | 67% / −33% / 67% | Equal (×1.00) |
+| Equal risk contributions | 34.6% / 30.8% / 34.6% | ×1.13 |
+
+- If returns differ, the best weights swing from −125% to +71% on the middle speed: neither rule is safer in every direction
+- The middle speed sits in the centre of the plateau: think before setting its weight to zero
+
+---
+
 # Timing the speeds did not help
 
 > Momentum lost clearly; reversal gained a little with no mechanism on our data, so the baseline keeps equal weights.
@@ -114,14 +128,15 @@ Groups found in the data instead of asset classes did a little better (0.52), bu
 
 ---
 
-# A lesson from scaling daily
+# The correlations to assume, and a stress test
 
-> Scaling daily on today's positions did worse (Sharpe ratio 0.46, volatility 16% instead of 10%): it re-levers weak signals.
+> State the correlations the portfolio assumes, and check the total against the ones it may face.
 
-- When markets chop, the speeds disagree, long and short streams offset, and the net position shrinks
-- A daily target reads the small position as low risk and scales it back up to full size
-- In 2023 the daily version lost 15.6%, the yearly one 6.3%
-- Scaling once a year on the realised volatility of the whole portfolio keeps weak signals small
+- In crises, trend streams within a class move together: credit 0.07 to 0.81, equity 0.13 to 0.64
+- The baseline's 10% carried 8.0% to 12.4% in the real crises, 15.6% in a harsh scenario
+- If every correlation went to 1: 24.6%, the bound that needs no model
+
+![](../figures/27_corr_stress.png)
 
 ---
 
@@ -134,18 +149,6 @@ Groups found in the data instead of asset classes did a little better (0.52), bu
 - Long bear markets give some gain back: 2022 +26% → +18%
 
 ![](../figures/27_takeprofit.png)
-
----
-
-# Which speeds work in crises?
-
-> No speed passed the test fixed in advance: what works depends on the crisis's own speed.
-
-- **Quick crashes:** fast speeds of 11 to 31 days earned up to 5%
-- **Long bear markets:** the held speeds earned most (+7% to +13%)
-- Which kind of crisis comes is not known in advance
-
-![](../figures/27_crisis.png)
 
 ---
 
