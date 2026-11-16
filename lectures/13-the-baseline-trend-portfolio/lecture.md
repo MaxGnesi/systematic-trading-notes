@@ -38,7 +38,7 @@ Two trend streams in the same market overlap by how far apart their speeds are, 
 |---|---|---|
 | 2 | How weighting methods choose | Why do optimisers pick corners, what does each weighting assume about returns, and which is more correct? |
 | 3 | Speeds inside a market: the easy case | Does the method matter when the correlations are known, and what if the speeds are unevenly spaced? |
-| 4 | Markets and classes: the hard case | Why are correlations across markets shaky? Equal risk or equal capital, classes or groups found in the data, and how bad can the correlations get? |
+| 4 | Markets and classes: the hard case | Why are correlations across markets shaky? Equal risk or equal capital, classes or groups found in the data, how bad can the correlations get, and how to weigh when they are unstable? |
 | 5 | The total | Scale to a volatility target or hold leverage constant? |
 | 6 | Today's portfolio in past crises | How would the portfolio held today fare in a repeat of past crises? |
 
@@ -367,6 +367,52 @@ The real crises took the 10% portfolio to between 8.0% (2020, when its trend str
 
 **Where clustering and related tools fit.** Pragmatically, and only as measurements or options: hierarchical clustering checks for duplicates and groups when markets are chosen (Lecture 11) and offers an alternative to asset classes as the groups (§4.2); principal components count a class's independent bets (Lecture 11). Denoising a correlation matrix would matter only if many markets were weighed with estimated correlations, which the baseline does not do; and it cleans noise, not regime change, so for the total the stress test above matters more.
 
+### 4.5 Weighing when correlations are unstable: the workflow, end to end
+
+The sections above each show one piece. This one puts them together into one workflow, run on one example: the five asset-class trend streams of §4.3 (equities, government bonds, credit, commodities and the dollar), with their correlations measured in eight regimes since 1973 ([results/regimes.json](results/regimes.json)). Each class stream is held at the same risk, as step 1 makes it.
+
+**Step 1. Size by volatility first.** Scale each class to the same risk: 20% each. Only volatilities are used, and they are far easier to estimate than correlations: a market's volatility changes in a crisis, but its correlation with another market can change sign. This is the baseline's rule.
+
+**Step 2. Look at the correlations regime by regime, never as one average.** The correlation of the equity and government-bond trend streams:
+
+| 1973-82 | 1983-99 | 2000-02 | 2003-06 | 2007-09 | 2010-19 | 2020 | 2022-24 | All, blended |
+|---|---|---|---|---|---|---|---|---|
+| -0.02 | +0.08 | +0.39 | -0.15 | -0.03 | -0.23 | -0.66 | -0.15 | **-0.03** |
+
+<sub><b>How to read the table.</b> Correlation of the monthly returns of the equity and government-bond trend streams in each regime window; last column: all months together, which is what one matrix estimated over the whole history would hold. Our calculation ([results/unstable_corr.json](results/unstable_corr.json)).</sub>
+
+One matrix over the whole history says the two streams are unrelated (−0.03). That number hides a range from −0.66 in 2020 to +0.39 in 2000-02. A blend of regimes is a number the portfolio may never meet: it can make two streams look like a steady diversifier that in some regimes moves together and in others hedges.
+
+**Step 3. If correlations are to move the weights, use them in a form that survives instability.** Three forms, beside the naive one:
+
+- **Structure, not pairs:** one average correlation for every pair, or one within each class and one across, instead of every pair; the idea of shrinking towards constant correlation (Ledoit and Wolf, 2004). A few averages are far more stable than many pairs. With one correlation for every pair and every stream at the same risk, equal risk contributions are exactly equal risk, so this form adds nothing across five classes; it matters when the classes hold different numbers of markets.
+- **A regime matrix, not a blend:** estimate the matrix of a turbulent regime separately from the calm ones (Chow, Jacquier, Kritzman and Lowry, 1999).
+- **Min-max:** the long-only weights whose risk in the worst of all the regimes is lowest.
+
+**Step 4. Which regime sets the weights?** Not an average. Averaging the matrices brings back the blend of step 2; averaging the weights computed in each regime gives a portfolio that is best in none. Three choices are consistent: weigh on **one regime**, the one that was worst for the portfolio, which is conservative by design; weigh on a **blend that counts turbulent periods more** than their share of time, with the tilt stated in advance (Chow, Jacquier, Kritzman and Lowry, 1999); or take the **min-max** weights, which survive every regime instead of choosing one. The worst regime is the one in which the portfolio carried most risk, here 2007-09, not the one with the largest correlations: in 2020 the overlap was largest (0.46 on average) but the big correlations were negative, so trend streams hedged one another and risk fell.
+
+| Method | Equity | Govt bonds | Credit | Commodities | Dollar | Risk across the regimes, % |
+|---|---|---|---|---|---|---|
+| Equal risk: no correlations (baseline) | 20 | 20 | 20 | 20 | 20 | 6.3 to 11.9 |
+| Structured: one average correlation for every pair | 20 | 20 | 20 | 20 | 20 | 6.3 to 11.9 |
+| Equal risk contributions, one blended matrix | 20 | 20 | 20 | 21 | 19 | 6.2 to 11.8 |
+| Minimum variance, one blended matrix | 19 | 21 | 21 | 21 | 18 | 6.1 to 11.8 |
+| Equal risk contributions, crisis matrix (2007-09) | 19 | 21 | 17 | 25 | 18 | 6.3 to 11.5 |
+| Min-max over the eight regimes | 23 | 20 | 12 | 31 | 14 | 6.1 to 11.0 |
+
+<sub><b>How to read the table.</b> One row per method. Middle columns: the risk weight of each class, in %. Last column: the risk the portfolio would carry in the calmest and the worst of the eight regimes, when it is scaled to 10% on the blended matrix. Illustrative: every regime is used at once, which is hindsight. Our calculation ([scripts/l27_unstable_corr.py](scripts/l27_unstable_corr.py)).</sub>
+
+**Step 5. Check the total in every regime.**
+
+![The risk of one 10% target in eight regimes](figures/27_unstable_corr.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> x: the risk the portfolio would carry, % a year, when scaled to 10% on the blended 1973-2024 matrix; y: one row per regime. Black circles: equal risk; blue diamonds: equal risk contributions on the crisis matrix (2007-09); orange squares: min-max. Dotted line: the 10% target. Our calculation.</sub>
+
+Every method carries between about 6% and 12% depending on the regime. Min-max lowers the worst case from 11.9% to 11.0%, at the price of a portfolio heavy in commodities (31%) and light in credit (12%).
+
+**Step 6. Size the total for the regimes it may meet.** Since the weights cannot remove the regime risk, the total must carry it: check the 10% target against the crisis correlations before committing leverage (§4.4), and scale the total on a window that holds a bad regime (§4.3, §5).
+
+**What the example says.** At the level of asset classes the weights hardly depend on the method: class trend streams overlap little on average (0.04 in the blend), so every method lands near equal risk. The regime risk does not sit in the weights; it sits in the total. So correlations across classes earn their place as a **check on the total**, not as an input to the weights. Within a class, where markets overlap more, they would move the weights more, and the same workflow applies (§7.2). Limits: the example uses every regime at once, which no yearly review could have done (at the 2012 review only the crises up to then were known); volatilities are held fixed, while in crises they rise as well, which the volatility target of §5 answers; and the 2020 window holds only 11 months.
+
 ## 5. The total
 
 ![Scaling the total](figures/27_total.png)
@@ -426,6 +472,7 @@ The worst case is a quick crash that hits a long, levered position sized on calm
 - **Uneven speeds: fix the grid first, then group at the natural gaps.** Equal weight and equal risk contributions give a bunch too much risk, minimum variance picks inside it on noise, HRP as published keeps the bunch together; only grouping gives each region its share (§3).
 - **Minimum variance drops the middle speed; equal risk contributions keep it.** The first equalises marginal risk, the second total contributions; on near-duplicates the first ends in a corner for about 3% less risk. For speeds, use the correlation, the input known best, to share risk out, not to hedge one speed against another. Every other method derives from these two (§2, Appendix A).
 - **State the correlations you assume, and stress the total with them.** In crises the trend streams of a class move together (credit 0.81, equity 0.64) and across classes the correlation triples; the baseline's 10% would carry 8% to 12% in the real crises, 15.6% in a harsh scenario and at most 24.6% if every correlation went to 1 (§4.4).
+- **When correlations are unstable, size by volatility, read correlations regime by regime and use them to check the total.** One matrix over the whole history blends the equity-bond trend correlation of −0.66 to +0.39 into −0.03; across classes every method lands near equal risk, and the regime risk (6% to 12% on a 10% target) sits in the total, not in the weights (§4.5).
 - **Correlations across classes change regime.** The stock-bond correlation changed sign twice since 1973, and a total scaled to 10% in calm years carried about a third more in 2007-2009 and 2022-2024. Choose markets on their bad-regime overlap and size the total for the correlations it may face (§4.3).
 - **Equal risk costs leverage.** Equal capital holds a third less gross exposure, earns a little less, and moves almost identically.
 - **Volatility target or constant leverage** is a choice between steady risk and steady exposure, not a winner and a loser on our sample. Scaling daily on today's positions re-levers weak signals.
@@ -437,10 +484,12 @@ The worst case is a quick crash that hits a long, levered position sized on calm
 - [ ] **Class weights by bets.** Weight each class by its number of independent bets (§3.1's formula applied to the markets' correlation) instead of equally. How much do the class weights matter?
 - [ ] **Bitcoin, with hindsight.** Add the CME Bitcoin future (Yahoo BTC=F, from December 2017) as its own class, and as one market in commodities. What risk share does it get each way, and what does that do to the 2018 and 2022 drawdowns? Why is any result here hindsight?
 - [ ] **Crowding.** The CFTC's Commitments of Traders reports show how speculators are positioned in each future. Is today's portfolio's worst stress case (§6) worse when speculators are crowded on the same side?
+- [ ] **The workflow inside a class.** Repeat the six steps of §4.5 for the markets of one class (government bonds or equity), with their correlations measured in the same regime windows. Do the methods part ways more than across classes? Which regime would set the weights, and would you have known it at the 2012 review?
 - [ ] **Bunching, on your own correlations.** Repeat the random-grid test of §3 ([scripts/l27_edge_cases.py](scripts/l27_edge_cases.py)) with the correlations measured between real trend streams of one market instead of the ratio model. Draw 500 sets of six held speeds, weigh each by equal weight, equal risk contributions, minimum variance, HRP and grouping at the natural gaps, and compare how far each strays from an even split and how steady it is. Does the ranking hold on both measures, the three parts and the whole range?
 
 ### 7.3 Reading list
 
+- Chow, G., Jacquier, E., Kritzman, M. and Lowry, K. (1999). Optimal portfolios in good times and bad. *Financial Analysts Journal*, 55(3), 65-73. Separate matrices for quiet and turbulent periods, the idea of §4.5.
 - Maillard, S., Roncalli, T. and Teïletche, J. (2010). The properties of equally weighted risk contribution portfolios. *Journal of Portfolio Management*, 36(4), 60-70. The equal-risk-contribution portfolio of §2.
 - Michaud, R. O. (1989). The Markowitz optimization enigma: is "optimized" optimal? *Financial Analysts Journal*, 45(1), 31-42. Why maximum Sharpe ratio maximises estimation error.
 - DeMiguel, V., Garlappi, L. and Uppal, R. (2009). Optimal versus naive diversification: how inefficient is the 1/N portfolio strategy? *Review of Financial Studies*, 22(5), 1915-1953. Equal weights against fitted portfolios, out of sample.

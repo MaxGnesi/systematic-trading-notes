@@ -1,0 +1,166 @@
+{
+ "classes": [
+  "Equity",
+  "Government bonds",
+  "Credit",
+  "Commodities",
+  "Dollar"
+ ],
+ "crisis_window": "2007-2009 financial crisis",
+ "average_correlation_blend": 0.03727659574468085,
+ "stock_bond_trend": {
+  "1973-1982 high inflation": -0.01574978047765488,
+  "1983-1999 disinflation": 0.08159866739542525,
+  "2000-2002 equity bear market": 0.38758887094874167,
+  "2003-2006 calm": -0.14906953648459553,
+  "2007-2009 financial crisis": -0.034579036884875076,
+  "2010-2019 low rates": -0.23145537939718494,
+  "2020 pandemic": -0.6574939965947952,
+  "2022-2024 inflation's return": -0.15044655516589334
+ },
+ "stock_bond_trend_blend": -0.03270540098199673,
+ "avg_abs_overlap": {
+  "1973-1982 high inflation": 0.07360000000000001,
+  "1983-1999 disinflation": 0.0588,
+  "2000-2002 equity bear market": 0.18109999999999998,
+  "2003-2006 calm": 0.1712,
+  "2007-2009 financial crisis": 0.2616,
+  "2010-2019 low rates": 0.10269999999999999,
+  "2020 pandemic": 0.4582,
+  "2022-2024 inflation's return": 0.1905
+ },
+ "methods": {
+  "Equal risk (no correlations)": {
+   "weights": {
+    "Equity": 0.2,
+    "Government bonds": 0.2,
+    "Credit": 0.2,
+    "Commodities": 0.2,
+    "Dollar": 0.2
+   },
+   "risk_by_window": {
+    "1973-1982 high inflation": 0.09847827512203747,
+    "1983-1999 disinflation": 0.09918270666968905,
+    "2000-2002 equity bear market": 0.10896593176443298,
+    "2003-2006 calm": 0.08924376567107588,
+    "2007-2009 financial crisis": 0.11870530522670246,
+    "2010-2019 low rates": 0.09591763427057917,
+    "2020 pandemic": 0.06277302976743107,
+    "2022-2024 inflation's return": 0.11487532930430679
+   },
+   "worst": 0.11870530522670246,
+   "best": 0.06277302976743107,
+   "worst_window": "2007-2009 financial crisis"
+  },
+  "Structured: one average correlation": {
+   "weights": {
+    "Equity": 0.19999999892150414,
+    "Government bonds": 0.19999999892150414,
+    "Credit": 0.2000000041011159,
+    "Commodities": 0.200000000023688,
+    "Dollar": 0.1999999980321877
+   },
+   "risk_by_window": {
+    "1973-1982 high inflation": 0.09847827514013408,
+    "1983-1999 disinflation": 0.09918270668742743,
+    "2000-2002 equity bear market": 0.10896593174352184,
+    "2003-2006 calm": 0.08924376533324536,
+    "2007-2009 financial crisis": 0.11870530534774903,
+    "2010-2019 low rates": 0.0959176343220341,
+    "2020 pandemic": 0.06277302973037101,
+    "2022-2024 inflation's return": 0.11487532927347459
+   },
+   "worst": 0.11870530534774903,
+   "best": 0.06277302973037101,
+   "worst_window": "2007-2009 financial crisis"
+  },
+  "Equal risk contributions, blended matrix": {
+   "weights": {
+    "Equity": 0.19671676375168423,
+    "Government bonds": 0.20426507392753038,
+    "Credit": 0.2023597051129131,
+    "Commodities": 0.20550397426660452,
+    "Dollar": 0.19115448294126772
+   },
+   "risk_by_window": {
+    "1973-1982 high inflation": 0.09867739115722864,
+    "1983-1999 disinflation": 0.09918127247918652,
+    "2000-2002 equity bear market": 0.10936254920424741,
+    "2003-2006 calm": 0.08888949185110043,
+    "2007-2009 financial crisis": 0.1183911629795023,
+    "2010-2019 low rates": 0.09597871007336614,
+    "2020 pandemic": 0.06213539606843709,
+    "2022-2024 inflation's return": 0.11456176980107066
+   },
+   "worst": 0.1183911629795023,
+   "best": 0.06213539606843709,
+   "worst_window": "2007-2009 financial crisis"
+  },
+  "Minimum variance, blended matrix": {
+   "weights": {
+    "Equity": 0.1931933210904805,
+    "Government bonds": 0.20882746980621328,
+    "Credit": 0.20665406006348977,
+    "Commodities": 0.2117137453873592,
+    "Dollar": 0.17961140365245726
+   },
+   "risk_by_window": {
+    "1973-1982 high inflation": 0.09891924091638968,
+    "1983-1999 disinflation": 0.09920120275969603,
+    "2000-2002 equity bear market": 0.1098452523832651,
+    "2003-2006 calm": 0.08834077983210896,
+    "2007-2009 financial crisis": 0.11806116584279985,
+    "2010-2019 low rates": 0.09606152567922796,
+    "2020 pandemic": 0.061371779176441536,
+    "2022-2024 inflation's return": 0.11410689627018693
+   },
+   "worst": 0.11806116584279985,
+   "best": 0.061371779176441536,
+   "worst_window": "2007-2009 financial crisis"
+  },
+  "Equal risk contributions, crisis matrix": {
+   "weights": {
+    "Equity": 0.19046441484988685,
+    "Government bonds": 0.20563157542311927,
+    "Credit": 0.17076690189326155,
+    "Commodities": 0.2523507697036539,
+    "Dollar": 0.18078633813007836
+   },
+   "risk_by_window": {
+    "1973-1982 high inflation": 0.09979077819923866,
+    "1983-1999 disinflation": 0.09897066435743498,
+    "2000-2002 equity bear market": 0.10857665862064102,
+    "2003-2006 calm": 0.09240305501637558,
+    "2007-2009 financial crisis": 0.11490932611210823,
+    "2010-2019 low rates": 0.09588745077253276,
+    "2020 pandemic": 0.06277510753742006,
+    "2022-2024 inflation's return": 0.11310410817006816
+   },
+   "worst": 0.11490932611210823,
+   "best": 0.06277510753742006,
+   "worst_window": "2007-2009 financial crisis"
+  },
+  "Min-max over the regimes": {
+   "weights": {
+    "Equity": 0.2286872238539081,
+    "Government bonds": 0.20312788949297367,
+    "Credit": 0.11841232226155989,
+    "Commodities": 0.308169181778611,
+    "Dollar": 0.1416033826129473
+   },
+   "risk_by_window": {
+    "1973-1982 high inflation": 0.10203970104830774,
+    "1983-1999 disinflation": 0.09979274425568067,
+    "2000-2002 equity bear market": 0.10962294741195068,
+    "2003-2006 calm": 0.097150861090878,
+    "2007-2009 financial crisis": 0.10962294679950847,
+    "2010-2019 low rates": 0.09356966594536557,
+    "2020 pandemic": 0.061061393020642805,
+    "2022-2024 inflation's return": 0.1078929838130813
+   },
+   "worst": 0.10962294741195068,
+   "best": 0.061061393020642805,
+   "worst_window": "2000-2002 equity bear market"
+  }
+ }
+}
