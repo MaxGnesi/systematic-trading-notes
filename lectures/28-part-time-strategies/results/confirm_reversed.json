@@ -1,0 +1,29 @@
+{
+ "always_in": 0.6414410341162013,
+ "fed moving": {
+  "filter": 0.4656889655753628,
+  "share_off": 0.754744174873889,
+  "sharpe_on": 1.0722978699632244,
+  "sharpe_off": 0.473812465011121,
+  "random_median": 0.33231411077290907,
+  "random_p95": 0.6095469062702152,
+  "beaten": 0.776,
+  "p": 0.22399999999999998,
+  "flag_from": "1990-01-02",
+  "bh": false,
+  "verdict": "consistent"
+ },
+ "dollar moving": {
+  "filter": 0.690378573822521,
+  "share_off": 0.18616382416526545,
+  "sharpe_on": 0.8302255047265026,
+  "sharpe_off": -0.10961520222182258,
+  "random_median": 0.5654022919757564,
+  "random_p95": 0.695780379873402,
+  "beaten": 0.937,
+  "p": 0.06299999999999994,
+  "flag_from": "1990-01-02",
+  "bh": false,
+  "verdict": "confirmed"
+ }
+}
