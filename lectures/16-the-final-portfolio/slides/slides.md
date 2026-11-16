@@ -131,6 +131,20 @@ $$IR \approx IC \times \sqrt{\text{breadth}}$$
 
 ---
 
+# Where to focus next
+
+> The base layer stays fixed; each direction changes one part of what we built, judged by what it adds to the whole.
+
+1. **Cheaper execution:** how it trades
+2. **Regime information as a tilt:** how much trend it holds
+3. **More breadth:** which markets it holds
+4. **A faster horizon:** a new sleeve beside trend and carry
+5. **Construction from what is known:** its weights
+6. **Kill switches:** when it trades
+7. **Live against backtest:** the assumptions behind it
+
+---
+
 # Takeaways
 
 1. **Set the expectation first:** comparable to long-only, moving differently

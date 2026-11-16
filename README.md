@@ -45,6 +45,8 @@ Part V is a deep dive on purpose, and a first hands-on with tick and order-book 
 | Higher Sharpe ratios come from breadth and better execution added on top of a fixed base, not from a cleverer version of the same few signals | Lecture 16 |
 | In this course's own record, every error that reached a result was silent (the code ran, the numbers looked plausible); the costly ones were design choices found by a reviewer, not bugs | Lecture 17 |
 
+**Where to take it next.** The base layer stays fixed, and each of seven research directions changes one part of what we built: how it trades (cheaper execution), how much trend it holds (regime information as a tilt), which markets it holds (more breadth), a new sleeve beside it (a faster horizon), its weights (construction that uses only what is known), when it trades (kill switches from the book and the flow), and the assumptions behind it (the live strategy against its backtest). Each is an open question with the lecture that sets it up: [Lecture 16 §8.2](lectures/16-the-final-portfolio/lecture.md).
+
 ### What you will be able to do
 
 - Build a strategy end to end, from raw data to positions, costs and a portfolio.
