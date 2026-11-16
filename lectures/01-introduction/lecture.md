@@ -74,17 +74,17 @@ A systematic strategy is a chain of five stages, each with its own inputs, outpu
 - **Signal generation.** Convert data into a forecast of return or relative value, usually normalised to a bounded score such as $`s_{i,t} \in [-1, +1]`$ for asset $`i`$.
 - **Portfolio construction and allocation.** Map signals to target positions, balancing expected return, risk, factor exposures, leverage and transaction costs.
 - **Risk management.** Enforce constraints: volatility targets, position and sector limits, drawdown rules, liquidity buffers.
-- **Execution.** Route orders with execution algorithms (e.g. TWAP, VWAP, smart order routing) to minimise slippage and market impact. Parts I and II trade at daily prices with a cost per trade; the order types themselves, and what each costs, start in Lecture 18, §3.4.
+- **Execution.** Route orders with execution algorithms (e.g. TWAP, VWAP, smart order routing) to minimise slippage and market impact. Parts I and II trade at daily prices with a cost per trade; the order types themselves, and what each costs, start in Lecture 18, §3.2.
 
 **Where the course builds each stage.** The five stages are also the map of these notes; each lecture names its stage under its title.
 
 | Stage | Where the course builds it |
 |---|---|
-| **Data** | 2-3 (bars and what they hide), 11 (choosing the markets), 14 (macro data as first published), 15 (futures curves and yields), 18-19 (the tape and its clocks) |
+| **Data** | 2-3 (bars and what they hide), 11 (choosing the markets), 14 (macro data as first published), 15 (futures curves and yields), 18 (the tape and its clocks) |
 | **Signal generation** | 4 (hidden states), 5-6 and 8 (trend signals and filters), 12 (speeds), 15 (carry and value) |
 | **Portfolio construction and allocation** | 9 (sizing), 13 (weights across markets and speeds), 16 (trend and carry at equal risk) |
 | **Risk management** | 9 and 13 (volatility targeting, correlations), 14 (regime switches as an overlay), 16 (one volatility target for the whole, drawdowns) |
-| **Execution** | 16 §6 (costs), 18-30 (order types, costs as a distribution, the order book, market making) |
+| **Execution** | 16 §6 (costs), 18-23 (order types, costs as a distribution, the order book, market making), 24 (a live trend bot) |
 | **The feedback loop** | 1 §5 (pitfalls), 7 (comparing systems), 17 (research with AI) |
 
 <sub><b>How to read the table.</b> One row per stage of the pipeline above; right: the lectures that build it. Lecture 10 runs all five end to end on futures; Lecture 16 assembles the final portfolio stage by stage.</sub>

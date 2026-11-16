@@ -56,7 +56,7 @@ These are not new ideas. The classic studies of trend following apply one rule t
 **Speeds.** Twelve horizons from two weeks to two years, each about 1.4 times (the square root of 2) the one before: 11, 17, 23, 31, 43, 61, 89, 127, 179, 251, 359 and 503 trading days. Each is a prime number. Two reasons:
 
 - Rules that look back over a fixed window, such as a past return or a breakout, are blind to cycles of exactly their length and its fractions. Two windows of which one is a multiple of the other share those blind spots; two primes share none.
-- Many traders use round lookbacks (20, 50, 100, 200 days) and calendar lengths (21, 63, 252). A rule on 197 or 251 days changes its position on different days than the crowd's, which matters for execution (Lecture 30 showed how predictable orders get picked off).
+- Many traders use round lookbacks (20, 50, 100, 200 days) and calendar lengths (21, 63, 252). A rule on 197 or 251 days changes its position on different days than the crowd's, which matters for execution (Lecture 23 shows how predictable orders get picked off).
 
 What makes two speeds different is mainly their ratio, not their divisibility: 59 and 61 are both prime and almost the same rule. So the grid is spaced by ratio first and made of primes second.
 

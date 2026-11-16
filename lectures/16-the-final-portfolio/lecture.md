@@ -108,7 +108,7 @@ Both periods tell the same story: a modest share, 20-30% of the risk, lifts a st
 
 <sub><b>How to read the table.</b> The rule's Sharpe ratio when carry's trades cost more; trend's costs unchanged. At 20 bp in 2006-2022 the rule falls below trend alone (0.67). Our calculation.</sub>
 
-At 20 bp the combination does worse than trend alone in 2006-2022. Execution is therefore not a detail for carry: Part V's lessons (Lectures 25-30: slicing, timing, cost as a distribution) are what keep its edge. A slower carry signal, or trading only when a score changes enough, are the obvious next steps (§9.2). A flat cost per trade also understates the problem. Part V measures trading costs on the tape and in the order book as a distribution, not a constant: they widen in fast markets and grow with the size traded (Lectures 21 and 27-28), which is exactly when trend and carry rebalance the most. Measuring each market's own costs, and trading the rebalancing with Part V's methods, is the first improvement of §8.1.
+At 20 bp the combination does worse than trend alone in 2006-2022. Execution is therefore not a detail for carry: Part V's lessons (Lectures 21-23: slicing, timing, cost as a distribution) are what keep its edge. A slower carry signal, or trading only when a score changes enough, are the obvious next steps (§9.2). A flat cost per trade also understates the problem. Part V measures trading costs on the tape and in the order book as a distribution, not a constant: they widen in fast markets and grow with the size traded (Lectures 19 and 22), which is exactly when trend and carry rebalance the most. Measuring each market's own costs, and trading the rebalancing with Part V's methods, is the first improvement of §8.1.
 
 **Crashes.** Carry adds sudden losses: in 2006-2022 the combination's worst month was −11.4% against trend's −7.4% (Lecture 15 §6.3). That is the price of carry's premium, and the reason it persists.
 
@@ -141,7 +141,7 @@ Large multi-strategy funds often report higher Sharpe ratios than this portfolio
 | Breadth of strategies | two or three styles | dozens, often market-neutral | Lecture 1 §5.4 |
 | Granularity | monthly or daily, whole countries | intraday, single names, sectors within countries | Part V |
 | Niches | none | capacity-limited markets, too small for large money | Lecture 11 (capacity) |
-| Execution and technology | a flat cost per trade | measured costs, smart execution, fast infrastructure | Lectures 25-30 |
+| Execution and technology | a flat cost per trade | measured costs, smart execution, fast infrastructure | Lectures 21-23 |
 | Research | free data, one team | paid data, many teams, years of testing | – |
 
 <sub><b>How to read the table.</b> One row per source of a higher Sharpe ratio; the last column points to where the course introduced it. A description of how such funds are organised, not a result.</sub>
@@ -154,7 +154,7 @@ The base layer stays as it is: trend and carry on the rules of Lectures 13 and 1
 
 | Order | What to add | Why it should help | What it needs | Course |
 |---|---|---|---|---|
-| 1 | **Cheaper execution of what is already held** | Trend + carry falls from 0.84 to 0.36 between 5 and 20 bp in 2006-2022 (§6): costs are the cheapest gain | Rebalancing thresholds, slower carry signals, Part V's execution | Lectures 25-30 |
+| 1 | **Cheaper execution of what is already held** | Trend + carry falls from 0.84 to 0.36 between 5 and 20 bp in 2006-2022 (§6): costs are the cheapest gain | Rebalancing thresholds, slower carry signals, Part V's execution | Lectures 21-23 |
 | 2 | **More markets for the same styles** | Breadth: by Grinold's law, four times the independent markets doubles the information ratio of a style | More free data: emerging-market currencies, more commodity futures and bond countries, equity sectors | Lectures 11, 15 (exercises) |
 | 3 | **New strategies that earn for different reasons** | A second business next to the first (Lecture 15 §2), ideally market-neutral and uncorrelated with trend and carry | A mechanism stated in advance; the same tests | Lecture 14 (economic trend, the Fed day), Lecture 15 (value, equity factors) |
 | 4 | **Finer granularity** | Single names and intraday horizons hold many more independent bets | Tick data, infrastructure, capacity limits | Part V |
