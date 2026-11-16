@@ -259,6 +259,41 @@ Steps 3 and 4 of the build use no correlations across classes. Step 5 does: the 
 
 **The takeaway.** *Across speeds, correlation comes from construction; across classes it comes from the economy and changes regime. Choose markets on their bad-regime overlap, keep the weights of steps 3 and 4 independent of estimated cross-class correlations, and size the total for the correlations it may face, not only those it has seen.*
 
+### 3.4 The correlations to assume, and a stress test
+
+§3.3 showed that correlations across classes change regime. A portfolio manager should therefore state the correlations the portfolio assumes, and check the total against the ones it may face. This section does both for the baseline as it stood at the end of 2025: 20 markets in five classes, each market's trend stream the equal-risk blend of the speeds Lecture 12 held at every review (results/hypotheses.md).
+
+**The correlations to assume.** The average correlation of the trend streams within each class and across classes, in three scenarios fixed before the data were read:
+
+| Average correlation of trend streams | Equity | Government bonds | Credit | Commodities | Currencies | Across classes |
+|---|---|---|---|---|---|---|
+| Calm (2017) | +0.13 | +0.40 | +0.07 | −0.00 | +0.49 | +0.11 |
+| Average (September 2008 to 2025) | +0.17 | +0.35 | +0.33 | +0.04 | +0.46 | +0.07 |
+| Crisis (for each pair, the highest of 2008-09, 2020 and 2022) | +0.64 | +0.58 | +0.81 | +0.34 | +0.69 | +0.32 |
+
+<sub><b>How to read the table.</b> Each cell is the average correlation of the daily trend streams of the baseline's markets: within a class (first five columns) or between markets of different classes (last column). Calm and average are single windows; the crisis row takes, for each pair of markets, the highest correlation of three crisis windows, so it is deliberately harsher than any one crisis. Our calculation ([results/corr_stress.json](results/corr_stress.json)).</sub>
+
+In a crisis the markets of a class move together: credit's two markets from 0.07 to 0.81, equity's eight from 0.13 to 0.64. Across classes the correlation roughly triples. These are the numbers to state, and to plan for.
+
+**The stress test.** The baseline's weights, scaled to 10% on the correlations of its own three years, held under each scenario. Only the correlations change; the volatilities of the streams are held fixed, so the test isolates what the correlations alone do.
+
+![The baseline's 10% under other correlations](figures/27_corr_stress.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> x: the volatility the same weights would carry, % a year; y: one bar per correlation scenario. Black: the target, 10% on the correlations of 2023-2025. Grey: calm and average years. Orange: the three crisis windows. Pink: the crisis scenario of the table above. Blue: every correlation equal to 1, a bound that needs no model, the sum of the standalone risks. Dotted line: 10%. Our calculation.</sub>
+
+The real crises took the 10% portfolio to between 8.0% (2020, when its trend streams diversified unusually well) and 12.4% (2022). The harsher crisis scenario gives 15.6%. If every correlation went to 1, the same weights would carry 24.6%, about two and a half times the target: no portfolio of these markets can lose more of its diversification than that. The range from 12% to 16%, with a hard ceiling of 25%, is what a manager accepts by targeting 10% on three calm-enough years; whether to scale the total on a stressed matrix instead is a proposal to be tested, not a change to the baseline.
+
+**Splitting a class gave nothing.** Clustering could split an asset class into two more homogeneous groups. Tested at every review, the two-way split of equity was not stable from one year to the next (agreement 0.43, below the 0.5 fixed in advance). Government bonds, commodities and currencies did split stably, but only by setting one market apart (international bonds, gold, the yen), which equal risk within the class already treats fairly. The effective number of bets did not rise (equity 5.2 against 5.1; commodities 3.1 against 2.8). The classes are kept.
+
+**Where the clustering, spectral and denoising tools fit.** These tools appear across the course (§2.3, Appendix A). Pragmatically, each earns a place in some steps of the build and not in others:
+
+| Tool | What it does | Where it helps in the build | Why not in the other steps |
+|---|---|---|---|
+| **Hierarchical clustering** | Groups markets that move together | Step 1, as a check for duplicates and groups (Lecture 11); step 4, as an alternative to asset classes (§3.2) or to split a class (above) | Speeds need no grouping: their overlap is known by construction (§2.3) |
+| **Spectral methods (principal components)** | Splits co-movement into independent factors | Step 1: counting a class's independent bets, the factors above the noise band (Lecture 11) | As weights (spectral risk parity) they were unstable and put everything on one speed (§2.3) |
+| **Denoising (Marchenko-Pastur)** | Removes the part of a correlation matrix indistinguishable from noise | Already in step 1 in spirit: the noise band that counts the factors is the same idea | Steps 3 to 5 do not invert an estimated matrix of many markets; denoising cleans noise, not regime change, so for the total the stress test above matters more |
+
+<sub><b>How to read the table.</b> One row per tool. "Where it helps": the steps of the build table (§ at the top of the lecture) in which the tool adds information. "Why not": the reason it adds little elsewhere. A tool not used for weights can still be the right instrument for measuring.</sub>
+
 ## 4. The total
 
 ![Scaling the total](figures/27_total.png)
@@ -351,6 +386,7 @@ The worst case is a quick crash that hits a long, levered position sized on calm
 - **The baseline:** equal risk at every level, for the speeds in each market, the markets in each class and the classes, with the total scaled each year to 10% on its past three years. Sharpe ratio 0.49 after costs, out of sample 2013-2026. Every later lecture changes one part and must beat it.
 - **Speeds overlap by their ratio.** Neighbouring speeds are 0.9 correlated, and different rules at the same speed are too; 20 streams make about 1.4 independent bets in a market. Equal weights, equal risk contributions and cost-adjusted budgets gave the same result; maximum Sharpe ratio concentrated on a few streams and did worse.
 - **Minimum variance drops the middle speed; equal risk contributions keep it.** The first equalises marginal risk, the second total contributions; on near-duplicates the first ends in a corner for about 3% less risk. For speeds, use the correlation, the input known best, to share risk out, not to hedge one speed against another. Every other method derives from these two (§2.3, Appendix A).
+- **State the correlations you assume, and stress the total with them.** In crises the trend streams of a class move together (credit 0.81, equity 0.64) and across classes the correlation triples; the baseline's 10% would carry 8% to 12% in the real crises, 15.6% in a harsh scenario and at most 24.6% if every correlation went to 1 (§3.4).
 - **Correlations across classes change regime.** The stock-bond correlation changed sign twice since 1973, and a total scaled to 10% in calm years carried about a third more in 2007-2009 and 2022-2024. Choose markets on their bad-regime overlap and size the total for the correlations it may face (§3.3).
 - **Timing the speeds did not help.** Momentum lost clearly; reversal's small gain has no mechanism on our data; a volatility-state tilt failed on the capstone futures.
 - **Equal risk costs leverage.** Equal capital holds a third less gross exposure, earns a little less, and moves almost identically.
