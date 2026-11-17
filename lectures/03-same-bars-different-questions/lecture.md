@@ -678,9 +678,9 @@ From the companion notebook, [03_same_bars_different_questions.ipynb](03_same_ba
 
 ### B.1 The same volatility in two units (§2)
 
-![ATR(14) of SPY and QQQ in dollars and as a percent of price, 1993–2026](figures/12_01_units.png)
+![ATR(14) of SPY and QQQ in dollars and as a percentage of price, 1993–2026](figures/12_01_units.png)
 
-In dollars (top), QQQ's 2000–02 bust looks smaller than recent years. As a percent of price (bottom), it is the most volatile period in the sample.
+In dollars (top), QQQ's 2000–02 bust looks smaller than recent years. As a percentage of price (bottom), it is the most volatile period in the sample.
 
 ### B.2 Four ways to measure GLD's volatility (§4.3)
 
@@ -714,7 +714,7 @@ OBV's scale depends on each asset's volume, so its levels cannot be compared; th
 
 ### B.7 ATR two ways (§3.1)
 
-![SPY ATR(14) as a percent of price, February to June 2020, from a plain 14-bar mean and from Wilder's smoothing of the same true ranges](figures/12_07_atr_two_ways.png)
+![SPY ATR(14) as a percentage of price, February to June 2020, from a plain 14-bar mean and from Wilder's smoothing of the same true ranges](figures/12_07_atr_two_ways.png)
 
 Same true ranges, two smoothings. The plain mean reacts to the spike faster and drops back faster; Wilder's version peaks lower and stays above the plain mean for about two months.
 

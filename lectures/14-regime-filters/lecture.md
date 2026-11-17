@@ -138,7 +138,7 @@ Every variable has an **unfavourable state**, fixed before any result with its r
 | Market | Correlation | Average absolute pairwise correlation of the baseline's markets over six months | Top third | Many trends become one bet and reverse together (Hurst, Ooi and Pedersen, 2017) |
 | Market | Turning points | Share of markets whose 1-month and 12-month returns disagree in sign | Top third | Disagreement between fast and slow trends marks turns (Goulding, Harvey and Mazzoleni, 2023) |
 | Market | Yield curve | 10-year minus 2-year Treasury yield; the size of its 12-month change | Bottom third | A still curve gives rates little to trend on |
-| Market | Dollar | Broad trade-weighted dollar; the size of its 12-month change in percent | Bottom third | A still dollar gives currencies and commodities little to trend on |
+| Market | Dollar | Broad trade-weighted dollar; the size of its 12-month change in per cent | Bottom third | A still dollar gives currencies and commodities little to trend on |
 
 <sub><b>How to read the table.</b> One row per regime variable: what is measured, the state in which the filter switches trend off, and the reason fixed in advance. "Bottom (top) third of its history" means of the variable's own history up to the day before (at least five years for market-state variables; the full history of the data vintage in use for macro variables). Every input is lagged one trading day. Composites: macro off when at least two of three are off; market state off when at least three of five are; "both agree" off when both composites are, "either" when one is.</sub>
 

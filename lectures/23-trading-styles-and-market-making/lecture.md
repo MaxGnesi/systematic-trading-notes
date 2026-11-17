@@ -294,7 +294,7 @@ Two directions are left open. A maker can lean on another market that moves firs
 - [ ] **Binance's book, not its trades.** Record Binance's best bid and ask live for a few days (its public websocket feed is free), together with Bybit's, and repeat the diagnostic of §6 with Binance's mid instead of its last trade. Does the book lead by more?
 - [ ] **Your fee level.** Take the fee level you could reach and the results of §6. Which design does best there, and at what taker fee would ping-pong's stops start to pay?
 - [ ] **Who leads?** Repeat H22 the other way round: after a 2 bp move on Bybit, how often does a Binance order follow within 50 ms? What does the asymmetry say about where prices are formed?
-- [ ] **Another threshold.** Repeat H10 and H21 with moves of 1 and 5 bp on Binance and look-backs of 50 and 200 ms. Is the makers' loss to the sniper stable, or a product of the 2 bp choice?
+- [ ] **Another threshold.** Repeat H10 and H21 with moves of 1 and 5 bp on Binance and lookbacks of 50 and 200 ms. Is the makers' loss to the sniper stable, or a product of the 2 bp choice?
 - [ ] **A run as it starts.** First in the laboratory with the slicer known, then on Bybit: recognise a run at its third slice and predict the next. Does the price move less on a slice that could be expected?
 - [ ] **Your own market.** Read an hour of ETHUSDT on Bybit with the steps of Lecture 22 §10 and §4 of this lecture, write the read before looking ahead, then run the baseline and Avellaneda-Stoikov on it for a week. Is the loss in the first second the same size relative to the tick?
 

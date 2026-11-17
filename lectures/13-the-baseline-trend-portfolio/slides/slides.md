@@ -96,7 +96,7 @@ When neighbours overlap by about 0.9, no weighting finds a second independent be
 
 Speeds 50, 60, 70 and 200 days; a fair split is 50 / 50:
 
-- **Equal weight, ERC:** the bunch gets 75-78%
+- **Equal weight, equal risk contributions:** the bunch gets 75-78%
 - **HRP as published:** 76%
 - **Minimum variance:** 52%, but picks inside the bunch on noise
 - **Grouped by region:** 50%, steady

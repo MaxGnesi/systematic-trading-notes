@@ -30,7 +30,7 @@ Four checks for every statistic: **units, memory, precision, blind spot.**
 - QQQ looks three times **more** volatile today in dollars
 - As a percentage it was nearly three times more volatile **in 2000**
 
-![ATR(14) of SPY and QQQ in dollars (top) and as a percent of price (bottom)](../figures/12_01_units.png)
+![ATR(14) of SPY and QQQ in dollars (top) and as a percentage of price (bottom)](../figures/12_01_units.png)
 
 ---
 
