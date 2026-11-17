@@ -12,9 +12,9 @@ Lecture 11 chose the markets without looking at any strategy's results. This lec
 |---|---|---|---|---|
 | 1. Choose the markets | Which markets enter | Liquidity, history and overlap with the others, sign ignored; no strategy profits | 16 to 21 of 116 ETFs | 11 |
 | **2. Choose the speeds (this lecture)** | Which trend streams run | Each asset class's in-sample results, read as a region of speeds, not a point | 16 to 20 of 36 streams per market | 12 |
-| 3. Weigh the speeds | How much of each stream in a market | Risk only: each stream at equal risk; their correlations come from construction | One blended trend per market | 13 §2 |
-| 4. Weigh the markets and the classes | How much of each market, then of each class | Risk only: equal standalone risk; no correlations across classes | Markets equal within a class, classes equal | 13 §3 |
-| 5. Scale the total | How much leverage overall | The portfolio's volatility over three years, to 10% a year | The baseline trend portfolio | 13 §4 |
+| 3. Weigh the speeds | How much of each stream in a market | Risk only: each stream at equal risk; their correlations come from construction | One blended trend per market | 13 §3 |
+| 4. Weigh the markets and the classes | How much of each market, then of each class | Risk only: equal standalone risk; no correlations across classes | Markets equal within a class, classes equal | 13 §4 |
+| 5. Scale the total | How much leverage overall | The portfolio's volatility over three years, to 10% a year | The baseline trend portfolio | 13 §5 |
 
 <sub><b>How to read the table.</b> One row per decision, in the order they are taken; the rows in bold are this lecture's. "What it uses": the only information the step may use. Steps 1 and 2 choose; steps 3 to 5 weigh, by risk alone.</sub>
 
