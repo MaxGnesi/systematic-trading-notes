@@ -6,6 +6,21 @@ Part I · The whole pipeline
 
 ---
 
+# One rule, and the whole chain behind it
+
+> Hold gold when its price is higher than a year ago; otherwise stay out. The decision is made once, in advance, and then repeated. Writing the rule is the easy part.
+
+- Which price, and is the data clean? *(data)*
+- Why a year, and why should a rising price keep rising? *(signal and reason)*
+- How much gold, given how far it can fall? *(size and risk)*
+- How often to trade, and what does each trade cost? *(costs and execution)*
+- Would it have worked, and would it work again? *(testing)*
+- What does it not know? *(limits)*
+
+The answers depend on each other: designing a rule means seeing the whole chain at once.
+
+---
+
 # A function from information to positions
 
 > A strategy needs two views: how the machine is built, and why it should make money. A sound architecture with no economic reason behind it is a well-engineered guess.
