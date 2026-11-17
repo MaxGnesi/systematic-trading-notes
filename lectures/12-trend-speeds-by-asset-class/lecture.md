@@ -20,8 +20,8 @@ Lecture 11 chose the markets without looking at any strategy's results. This lec
 
 **Two directions, one portfolio.** The risk budget is planned **top-down**: the total gets 10% a year; it is split equally across the asset classes; each class's share is split equally across its markets; each market's share across its speeds. The portfolio is computed **bottom-up**, because each level can be sized only once the level below exists: diversification makes a blend calmer than its parts, so its risk must be measured before it can be scaled. The held speeds are blended into one stream per market; each market stream is scaled to equal risk and combined into one stream per class; each class stream is scaled to equal risk and combined; the total is scaled to 10%. The groups can be the asset classes, known in advance and stable, or clusters of markets found each year in the data; Lecture 13 §4.2 compares the two (no difference beyond the noise on our sample, and the clusters changed from year to year), so the baseline uses the classes and treats clusters as a check.
 
-![The build: one rule, equal risk, at every level](../13-the-baseline-trend-portfolio/figures/27_build.png)
-<sub><b>How to read the figure.</b> A stylised diagram, not data. From top to bottom: the total, the five groups (asset classes in the baseline), the markets of one group, the speeds of one market; every box at a level gets the same risk. Left arrow: the risk budget is shared out from the total downwards. Right arrow: the portfolio is computed from the speeds upwards.</sub>
+![The build: this lecture chooses the speeds](figures/build_speeds.png)
+<sub><b>How to read the figure.</b> A stylised diagram, not data. From top to bottom: the total, the five groups (asset classes in the baseline), the markets of one group, the speeds of one market; every box at a level gets the same risk. Highlighted: the level this lecture decides, which speeds run; greyed: the levels decided in Lectures 11 and 13. Left arrow: the risk budget is shared out from the total downwards. Right arrow: the portfolio is computed from the speeds upwards.</sub>
 
 ## 1. Speeds that work across the board
 
