@@ -4,7 +4,20 @@
 
 ## 1. Introduction and definition
 
-Systematic trading is an investment process in which every decision, from data to executed order, follows explicit rules that can be written down, tested on history, and repeated without discretion.
+**One rule, in plain words.** Hold gold when its price is higher than a year ago; otherwise stay out. Anyone can write this on a card, and a computer can follow it every day without hesitation. That is systematic trading at its simplest: the decision is made once, in advance, and then repeated.
+
+Writing the card is the easy part. Before trusting it, its designer must answer a chain of questions:
+
+- Which price, and is the data clean? *(data)*
+- Why a year, and why should a rising price keep rising? *(the signal and the reason behind it)*
+- How much gold, given how far it can fall? *(size and risk)*
+- How often to trade, and what does each trade cost? *(costs and execution)*
+- Would it have worked, and would it work again? *(testing)*
+- What does it not know? *(its limits)*
+
+The answers depend on each other. A faster rule trades more and pays more costs; a larger position needs a stricter limit. Designing a systematic rule means seeing the whole chain at once, the big picture. This lecture draws that picture, and the rest of the course fills it in.
+
+More precisely, systematic trading is an investment process in which every decision, from data to executed order, follows explicit rules that can be written down, tested on history, and repeated without discretion.
 
 Two complementary definitions.
 
