@@ -15,7 +15,7 @@ import re
 _MARKERS = ("SECRET", "TOKEN", "PASSWORD", "KEY", "WEBHOOK")
 _MIN_LEN = 8
 # signatures and keys that may appear in URLs or headers even when not in the environment
-_PATTERNS = [re.compile(r"(?i)(sign|signature|api[_-]?key|x-bapi-api-key|x-bapi-sign)([\"'=:\s]+)([A-Za-z0-9+/=_\-]{8,})")]
+_PATTERNS = [re.compile(r"(?i)(signature|client_secret|access_token|refresh_token|api[_-]?key)([\"'=:\s]+)([A-Za-z0-9+/=_.\-]{8,})")]
 
 
 def _secret_values():

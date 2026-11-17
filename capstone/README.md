@@ -1,27 +1,38 @@
-# Capstone: a live trend bot on Bybit
+# Capstone: a live trend bot on Deribit
 
-The code of Lecture 24: a simple short-term trend strategy on Bybit's BTCUSDT perpetual, run from backtest
-to a live testnet account, with every order, fill and decision recorded and reconciled against the
-exchange, and a read-only dashboard. Built step by step; this folder grows with each step.
+The code of Lecture 24: a simple short-term trend strategy on Deribit's BTC perpetual (`BTC-PERPETUAL`),
+run from backtest to a live **testnet** account, with every order, fill and decision recorded and
+reconciled against the exchange, and a read-only dashboard. Built step by step; this folder grows with
+each step.
 
-**Free and safe by design.** Market data is public and needs no account. Trading runs only on Bybit's
-free **testnet** (play money). Keys are created by you, kept outside the repository, never printed.
+**Free and safe by design.** Market data is public and needs no account. Trading runs only on Deribit's
+free testnet (play money). Keys are created by you, kept outside the repository, never printed.
+
+**Why Deribit.** The order-book lectures used Bybit's data, but exchanges are not open to everyone:
+Bybit's testnet refused an account from our country for regulatory reasons. That is a lesson in itself:
+check where a venue is available before building on it. And it shows what the connector layer is for:
+only `connectors/` knows the exchange; swapping it leaves everything else unchanged.
 
 ## The layers
 
 | Folder | Its one job | Status |
 |---|---|---|
-| `connectors/` | Talk to Bybit and understand its API: public REST (instrument details, candles, server time), the public WebSocket (order book, trades) with heartbeat, reconnect and gap checks, the local order book, one-minute bars | Step 1, done |
+| `connectors/` | Talk to Deribit and understand its API: public REST (instrument details, candles, server time), the public WebSocket (order book, trades) with heartbeat, reconnect and gap checks; an exchange-neutral local order book; one-minute bars | Step 1, done |
 | `database/` | Remember everything and make it checkable: numbered migrations; orders, their history, fills, positions, reconciliation, decisions, bot events, bars. SQLite by default, Postgres by changing `DATABASE_URL` | Step 1, done |
 | `security/` | Keep secrets out of every log line and message (`scrub()`, `install_log_scrubbing()`) | Step 1, done |
-| `executors/` | Sign requests and send, cancel and amend orders, with our own order ids | Step 2 |
+| `executors/` | Sign in by signature and send, cancel and amend orders, with our own order labels | Step 2 |
 | `strategies/trend/` | The strategy: a simple signal, stop loss, take profit, time limit, trailing stop, cooldown, kill switch; settings in `params.toml` | Step 3 |
 | `backtest/` | The same strategy code run on recorded bars | Step 3 |
 | `run_bot.py` | The live loop: reconcile at start, heartbeat, reconnect, kill switch | Step 4 |
 | `dashboard/` | Read-only pages: health, position, strategy, orders and fills, reconciliation, live against backtest | Step 5 |
 
-Each layer may call the ones below it, never the ones above: the strategy never talks to Bybit directly,
-and nothing in `connectors/` decides anything.
+Each layer may call the ones below it, never the ones above: the strategy never talks to the exchange
+directly, and nothing in `connectors/` decides anything.
+
+## The instrument
+
+`BTC-PERPETUAL` is an **inverse** contract: amounts are in USD, in steps of 10 USD (one contract), while
+profit, loss and margin are in BTC. Tick 0.5 USD. Checked live on mainnet and testnet, 17 November 2026.
 
 ## Step 1: record the market (no account needed)
 
@@ -35,8 +46,8 @@ python -m capstone.tests.test_step1                      # tests, no network nee
 ```
 
 The recorder logs one line per finished one-minute bar and, at the end, the feed's health: connections,
-reconnects, book gaps, trades and book updates. The same feed runs on the testnet with `--env testnet`;
-its book is a different, much quieter market, fine for checking the plumbing, not for realistic fills.
+reconnects, book gaps, heartbeats, trades and book updates. `--env testnet` records the testnet's market,
+the one the test orders of step 2 will meet.
 
 ## Rules that hold in every file
 
