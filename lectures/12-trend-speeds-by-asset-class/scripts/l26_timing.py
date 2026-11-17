@@ -1,12 +1,16 @@
-"""Lecture 13, timing the speeds inside the plateau (the user, 2026-11-14): momentum (tilt towards the speeds that did best over the past
+"""Lecture 12 §8.1 (moved from Lecture 13, 2026-11-16), timing the speeds inside the plateau (the user, 2026-11-14): momentum (tilt towards the speeds that did best over the past
 quarter, relative to the plateau) and reversal (towards the worst), against equal weights. Each market's weights at the start of each quarter:
 w_i = (1 + k * c_i) / n, with c_i the stream's rank over the past window centred to [-1, 1] (momentum: +rank, reversal: -rank) and k = 0.5 or 1,
 so weights stay within [0, 2/n]. Reweighting costs 5 bp of the change in each stream's position. Markets, classes and total as the rule, with
-the scales of the equal blend (so only the tilt differs). Out of sample 2013-2026. Usage: python l27_timing.py. Output: results/timing.json."""
+the scales of the equal blend (so only the tilt differs). Out of sample 2013-2026. Usage: python l26_timing.py. Output: results/timing.json."""
 import json, sys, warnings; warnings.filterwarnings("ignore")
 from pathlib import Path
 import numpy as np, pandas as pd
-sys.path.insert(0, str(Path(__file__).resolve().parent)); import l27 as M
+import os
+HERE = Path(__file__).resolve().parent; LECT = Path(__file__).resolve().parents[2]
+for d in (HERE, LECT / "13-the-baseline-trend-portfolio" / "scripts"): sys.path.insert(0, str(d)) if str(d) not in sys.path else None
+RES = Path(os.environ.get("L27_RESULTS", HERE.parent / "results"))   # this lecture's results (the notebook may redirect)
+import l27 as M
 L26 = M.L26; KS = (0.5, 1.0); WINDOWS = (3, 6)
 
 if __name__ == "__main__":
@@ -56,5 +60,5 @@ if __name__ == "__main__":
                 ii = np.concatenate([idx[um[i]] for i in rng.choice(len(um), len(um))]); b.append(L26.sharpe(D[v].iloc[ii]) - L26.sharpe(D.equal.iloc[ii]))
         res[v] = dict(sharpe=L26.sharpe(D[v]), diff=(L26.sharpe(D[v]) - L26.sharpe(D.equal)) if v != "equal" else 0.0,
                       ci90=[float(np.quantile(b, .05)), float(np.quantile(b, .95))] if b else None)
-    (M.RESULTS / "timing.json").write_text(json.dumps(res, indent=1), encoding="utf-8")
+    (RES / "timing.json").write_text(json.dumps(res, indent=1), encoding="utf-8")
     print(pd.DataFrame(res).T.to_string())

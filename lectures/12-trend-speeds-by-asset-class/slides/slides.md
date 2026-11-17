@@ -170,7 +170,7 @@ A speed that worked because of one crisis, or in one market, passes only when th
 - **Market state:** failed on the futures
 - **Crises:** no speed passed; quick crashes and long bear markets need opposite speeds
 
-![](../../13-the-baseline-trend-portfolio/figures/27_crisis_speeds.png)
+![](../figures/26_crisis_speeds.png)
 
 ---
 

@@ -30,7 +30,7 @@ import numpy as np, pandas as pd
 from IPython.display import Image, display
 
 HERE = Path.cwd(); SCRIPTS, FIG = HERE / "scripts", HERE / "figures"
-sys.path[:0] = [str(SCRIPTS)]
+sys.path[:0] = [str(SCRIPTS), str(SCRIPTS.parents[1] / "12-trend-speeds-by-asset-class" / "scripts"), str(SCRIPTS.parents[1] / "08-filters-and-overlays" / "scripts")]
 import l27 as M
 L26, L25 = M.L26, M.L25
 RUN_ALL = False                                                            # True: also rerun every analysis (about an hour)
@@ -44,7 +44,8 @@ print("data:", L25.DATA, "| streams:", L26.OUT / "streams", "| daily results:", 
 def run(script, *args, show=False):
     "Run a script of this lecture (or of Lectures 11-12) in a fresh process; figures as nb_*, results to WORK."
     t0 = time.time(); path = next(p for p in (SCRIPTS / script, M.REPO / "lectures" / "12-trend-speeds-by-asset-class" / "scripts" / script,
-                                              M.REPO / "lectures" / "11-choosing-the-markets" / "scripts" / script) if p.exists())
+                                              M.REPO / "lectures" / "11-choosing-the-markets" / "scripts" / script,
+                                              M.REPO / "lectures" / "08-filters-and-overlays" / "scripts" / script) if p.exists())
     env = {**os.environ, "PORTFOLIO_DATA": str(L25.DATA), "L27_RESULTS": str(WORK), "L27_PREFIX": "nb_", "PYTHONIOENCODING": "utf-8"}
     p = subprocess.run([sys.executable, str(path), *args], capture_output=True, text=True, encoding="utf-8", env=env)
     if p.returncode:
@@ -70,9 +71,9 @@ close, high, low, dv, rf = L26.load_daily(); D = pd.read_parquet(M.OUT / "l27_da
 print(f"{close.shape[1]} ETFs to {close.index.max().date()}; baseline daily returns {D.index.min().date()} to {D.index.max().date()}, Sharpe ratio {L26.sharpe(D['rule']):.3f}")"""),
 M("""**Running everything.** With `RUN_ALL` the cell below reruns every analysis of the lecture, one at a time: the baseline and its rivals, the tests, the speed blends, timing, scaling the total, the futures test, crises, take-profit and the stress test. The futures scripts need the capstone futures of Lecture 10 (`data/interim/l11_series99.pkl`); without them they are skipped."""),
 C("""if RUN_ALL:
-    for s in ("l27.py", "l27_tests.py", "l27_speeds.py", "l27_timing.py", "l27_leverage.py", "l27_states.py"): run(s)
+    for s in ("l27.py", "l27_tests.py", "l27_speeds.py", "l26_timing.py", "l27_leverage.py", "l27_states.py"): run(s)
     if (M.REPO / "data" / "interim" / "l11_series99.pkl").exists():
-        for s in ("l27_futures_test.py", "l27_crisis.py", "l27_takeprofit.py", "l27_stress.py"): run(s)
+        for s in ("l27_futures_test.py", "l26_crisis.py", "takeprofit.py", "l27_stress.py"): run(s)
     else: print("capstone futures not found: futures checks skipped")
     D = pd.read_parquet(M.OUT / "l27_daily.parquet")"""),
 M("""## 1. The key chart
@@ -170,7 +171,7 @@ M("""## 5. Taking profits
 ### 5.1 The rule by hand
 
 SPY's EWMA crossover at 89 days with a take-profit at k = 4, written as a plain Python loop: the open gain since the signal last changed, in units of daily volatility at entry times the square root of the speed; flat above four units until the signal changes. Against the compiled `run` of `l27_takeprofit.py`."""),
-C("""import l27_takeprofit as TP
+C("""import takeprofit as TP
 t, h, k = "SPY", 89, 4.0
 c = close[t].dropna(); x = L26.excess(c, high[t].reindex(c.index), low[t].reindex(c.index), rf)[0]
 r = x.pct_change().fillna(0).to_numpy(); vol = np.sqrt((x.pct_change() ** 2).ewm(span=L26.VOL_SPAN, min_periods=60).mean() * 252).to_numpy()

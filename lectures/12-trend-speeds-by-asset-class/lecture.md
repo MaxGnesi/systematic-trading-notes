@@ -238,7 +238,7 @@ Momentum lost clearly; reversal gained a little, and two of its four bands only 
 
 Trend following is often sold as crisis insurance. If some speeds outside the held set worked reliably in crises, they could be added as a small sleeve, switched on when a crisis begins. The test, fixed in advance: a speed works in crises if it beats the held set in at least two thirds of the S&P 500's falls of more than 15%, on the ETFs and on the capstone futures.
 
-![Which speeds work in crises](../13-the-baseline-trend-portfolio/figures/27_crisis_speeds.png)
+![Which speeds work in crises](figures/26_crisis_speeds.png)
 <sub><b>How to read the figure.</b> <b>Axes.</b> x: trend speed in trading days; y: the return over each fall of the S&P 500 of more than 15%, for a stream at 10% risk, averaged over the three rules and over the ETFs with data, each class the same weight. One line per fall; orange: quick crashes (under four months), blue: long bear markets. Shaded: the held speeds. Excess returns over cash, 5 bp per trade; our calculation.</sub>
 
 **No speed passed.** What works depends on the crisis's own speed:

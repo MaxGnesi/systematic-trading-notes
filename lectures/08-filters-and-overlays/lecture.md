@@ -246,7 +246,7 @@ The filters so far use information from outside the trade. An exit rule uses the
 
 The test runs on the full trend portfolio built later in the course rather than on the 16 ETFs of this lecture: Lecture 11's markets with Lecture 12's speeds and Lecture 13's weights, out of sample 2013-2026, and the capstone futures 2003-2022 as a second dataset. The thresholds are reported as a curve (§4.4), with one variant that re-enters after a pullback; the comparison at equal speed (§3, step 2) was not made.
 
-![Taking profits per speed](../13-the-baseline-trend-portfolio/figures/27_takeprofit.png)
+![Taking profits per speed](figures/08_08_takeprofit.png)
 <sub><b>How to read the figure.</b> <b>Axes.</b> Take-profit threshold k, in units of each speed's risk over its own horizon (x), against the Sharpe ratio after costs (left, y) and the skew of monthly returns (right, y). Filled markers and lines: the stream stays flat until its signal changes; hollow markers: it re-enters after a pullback of one unit. Blue: ETFs out of sample 2013-2026 with the baseline's structure; orange: capstone futures 2003-2022 with Lecture 12's end-2025 speeds. Breakout on closes in all versions, so the ETF baseline earns 0.465 here. Our calculation.</sub>
 
 | | none | k = 3 | k = 4 | k = 5 |

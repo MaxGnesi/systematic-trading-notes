@@ -1,4 +1,4 @@
-"""Lecture 13, take-profit per speed (results/hypotheses.md, fixed 2026-11-14 before any result). For each held stream: the open gain since
+"""Lecture 8 §4.8 (moved from Lecture 13, 2026-11-16), take-profit per speed; run on the full portfolio of Lectures 11-13 (results/hypotheses.md, fixed 2026-11-14 before any result). For each held stream: the open gain since
 its signal last changed (sum of sign x daily return) in units of that speed's risk (six-month daily volatility at entry x sqrt(speed));
 above k units the stream is flat until its signal changes. Positions as Lecture 12 (10% / volatility, a tenth of the way each day, 5 bp).
 k = 2, 3, 4, 5 and none. ETFs out of sample 2013-2026 with the rule's structure; capstone futures 2003-2022 (end-2025 held set).
@@ -7,7 +7,11 @@ import json, sys, warnings; warnings.filterwarnings("ignore")
 from pathlib import Path
 import numpy as np, pandas as pd
 from numba import njit
-sys.path.insert(0, str(Path(__file__).resolve().parent)); import l27 as M, l27_futures_test as FT, l27_crisis as CR
+import os
+HERE = Path(__file__).resolve().parent; LECT = Path(__file__).resolve().parents[2]
+for d in (HERE, LECT / "13-the-baseline-trend-portfolio" / "scripts", LECT / "12-trend-speeds-by-asset-class" / "scripts"): sys.path.insert(0, str(d)) if str(d) not in sys.path else None
+RES = Path(os.environ.get("L27_RESULTS", HERE.parent / "results"))   # this lecture's results (the notebook may redirect)
+import l27 as M, l27_futures_test as FT, l26_crisis as CR
 L26 = M.L26; KS = (None, 2.0, 3.0, 4.0, 5.0, "2r", "3r", "4r", "5r")                     # "3r": k = 3 with re-entry after a one-unit pullback
 
 
@@ -121,4 +125,4 @@ if __name__ == "__main__":
     DF = portfolio(BF, uf, range(2002, 2022)); DF.to_parquet(M.OUT / "l27_tp_futures.parquet"); res["futures"] = measures(DF, EP); res["futures_bands"] = bands(DF); print("bands futures:", res["futures_bands"])
     print("futures 2003-2022:"); print(pd.DataFrame({c: {k: v for k, v in d.items() if k != "episodes"} for c, d in res["futures"].items()}).round(3).to_string())
     print(pd.DataFrame({c: d["episodes"] for c, d in res["futures"].items()}).round(3).to_string())
-    (M.RESULTS / "takeprofit.json").write_text(json.dumps(res, indent=1), encoding="utf-8")
+    (RES / "takeprofit.json").write_text(json.dumps(res, indent=1), encoding="utf-8")
