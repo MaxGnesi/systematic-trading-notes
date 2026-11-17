@@ -148,12 +148,12 @@ Groups found in the data instead of asset classes did a little better (0.52), bu
 
 > The worst case is a quick crash that hits a long, levered position sized on calm years: in 2020 today's portfolio would lose 18%.
 
-| Episode | S&P 500 | Today's portfolio | With take-profit at k = 4 (Lecture 8) |
-|---|---|---|---|
-| 2007-09 | −57% | +35% | +38% |
-| Feb-Mar 2020 | −34% | **−18%** | −13% |
-| 2022 | −25% | +41% | +33% |
-| Feb-Apr 2025 | −19% | −7% | −7% |
+| Episode | S&P 500 | Today's portfolio |
+|---|---|---|
+| 2007-09 | −57% | +35% |
+| Feb-Mar 2020 | −34% | **−18%** |
+| 2022 | −25% | +41% |
+| Feb-Apr 2025 | −19% | −7% |
 
 16 points of the 2020 loss came from credit: corporate bond funds held long at several times their value after a calm run.
 

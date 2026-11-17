@@ -485,22 +485,22 @@ The volatility target earned more per unit of risk, but the difference is not di
 
 ## 6. Today's portfolio in past crises
 
-The out-of-sample results mix portfolios of different years. A different question is what the portfolio held today would do in a repeat of past crises: the end-2025 markets and speeds, with all scales from 2023-2025, replayed through each fall of the S&P 500 of more than 15%. Where §4.4 stressed the correlations alone, this replays the whole history of each episode. Which speeds worked in these crises is a question about the speeds, in Lecture 12 §8.2; the take-profit column is the exit rule of Lecture 8 §4.8.
+The out-of-sample results mix portfolios of different years. A different question is what the portfolio held today would do in a repeat of past crises: the end-2025 markets and speeds, with all scales from 2023-2025, replayed through each fall of the S&P 500 of more than 15%. Where §4.4 stressed the correlations alone, this replays the whole history of each episode. Which speeds worked in these crises is a question about the speeds, in Lecture 12 §8.2.
 
 ![Today's portfolio replayed through past crises](figures/27_crisis_today.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> x: the return of today's portfolio (end-2025 markets and held speeds, scales from 2023-2025) over each fall of the S&P 500, from peak to trough; y: one row per fall. Black: the portfolio as it is; green: with a take-profit at k = 4 (Lecture 8 §4.8). Excess returns over cash, 5 bp per trade; our calculation.</sub>
+<sub><b>How to read the figure.</b> <b>Axes.</b> x: the return of today's portfolio (end-2025 markets and held speeds, scales from 2023-2025) over each fall of the S&P 500, from peak to trough; y: one row per fall. Excess returns over cash, 5 bp per trade; our calculation.</sub>
 
-| Episode | S&P 500 | Today's portfolio | With take-profit at k = 4 | Drawdown inside the episode, without / with |
-|---|---|---|---|---|
-| 2007-09 | −57% | +35% | +38% | −13% / −11% |
-| 2018 Q4 | −20% | −3% | −2% | −7% / −7% |
-| Feb-Mar 2020 | −34% | **−18%** | −13% | −24% / −17% |
-| 2022 | −25% | +41% | +33% | −11% / −7% |
-| Feb-Apr 2025 | −19% | −7% | −7% | −8% / −7% |
+| Episode | S&P 500 | Today's portfolio | Drawdown inside the episode |
+|---|---|---|---|
+| 2007-09 | −57% | +35% | −13% |
+| 2018 Q4 | −20% | −3% | −7% |
+| Feb-Mar 2020 | −34% | **−18%** | −24% |
+| 2022 | −25% | +41% | −11% |
+| Feb-Apr 2025 | −19% | −7% | −8% |
 
 <sub><b>How to read the table.</b> Return over the fall of the S&P 500 from peak to trough. 2000-02 is left out: only 5 of today's 20 markets traded then. Our calculation.</sub>
 
-The worst case is a quick crash that hits a long, levered position sized on calm years: in 2020 today's portfolio would lose 18%, 16 points of it in credit (corporate bond funds held long at several times their value after a calm run), partly offset by commodities (+8%). Its worst day was −7.3%. The take-profit cuts that loss by about a third and gives up about a fifth of the 2022 gain, the trade-off Lecture 8 §4.8 found over the whole sample. Two long bear markets would have paid well. The stress test does not predict the next crisis; it shows where today's portfolio is exposed: to a fast reversal of a calm, long-held trend in a levered class.
+The worst case is a quick crash that hits a long, levered position sized on calm years: in 2020 today's portfolio would lose 18%, 16 points of it in credit (corporate bond funds held long at several times their value after a calm run), partly offset by commodities (+8%). Its worst day was −7.3%. Two long bear markets would have paid well. The stress test does not predict the next crisis; it shows where today's portfolio is exposed: to a fast reversal of a calm, long-held trend in a levered class.
 
 ## 7. Summary
 

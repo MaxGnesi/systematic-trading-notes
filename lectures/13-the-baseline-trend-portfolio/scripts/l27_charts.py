@@ -2,7 +2,7 @@
   27_total       volatility target against constant leverage: drawdowns and gross exposure, out of sample 2013-2026 (OUT/l27_daily.parquet);
   27_takeprofit  Sharpe ratio and monthly skew against the take-profit threshold k, ETFs and capstone futures (results/takeprofit.json);
   27_crisis_speeds  return of each speed in each S&P 500 fall of more than 15% (ETFs, results/crisis.json; used in Lecture 12 §8.2);
-  27_crisis_today   today's portfolio replayed through the same falls, with and without take-profit at k = 4 (results/stress.json).
+  27_crisis_today   today's portfolio replayed through the same falls (results/stress.json).
 27_takeprofit is used in Lecture 8 §4.8.
 Usage: python l27_charts.py [function names]. Output: figures/27_total.png, 27_takeprofit.png, 27_crisis_speeds.png, 27_crisis_today.png."""
 import json, sys
@@ -76,13 +76,12 @@ def crisis_today_chart():
     S = load("stress.json"); name = lambda p, t: f"{p[:7]} to {t[:7]}"
     eps = [e for e in S["episodes"] if e["plain"]["markets"] >= 15]; lab = [name(e["peak"], e["trough"]) for e in eps]
     fig = make_subplots(rows=1, cols=1)
-    for k, nm, c in (("plain", "today's portfolio", INK), ("take-profit 4", "with take-profit at k = 4 (Lecture 8 §4.8)", SERIES[2])):
-        fig.add_bar(y=lab, x=[e[k]["ret"] for e in eps], orientation="h", marker_color=c, name=nm)
+    fig.add_bar(y=lab, x=[e["plain"]["ret"] for e in eps], orientation="h", marker_color=INK, name="today's portfolio", showlegend=False)
     fig.add_vline(x=0, line=dict(color=MUTED, width=1))
     fig.update_yaxes(autorange="reversed"); fig.update_xaxes(tickformat=".0%", title_text="return over the fall")
     fig.update_layout(title="Today's portfolio replayed through past crises<br><sup>end-2025 markets and held speeds, scales from 2023-2025, through each fall of the "
                             "S&P 500 of more than 15%; excess returns over cash, 5 bp per trade</sup>",
-                      barmode="group", height=480, width=1000, margin=dict(t=110, l=150, r=30, b=110), legend=dict(orientation="h", y=-0.2, x=0))
+                      height=440, width=1000, margin=dict(t=110, l=150, r=30, b=70))
     save_figure(fig, M.PREFIX + "27_crisis_today", M.FIG)
 
 
