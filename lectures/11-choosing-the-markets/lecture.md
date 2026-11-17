@@ -495,7 +495,7 @@ The next step for a growing account is therefore to change the instrument where 
 - Elton, E. J., Gruber, M. J. and Blake, C. R. (1996). Survivor bias and mutual fund performance. *Review of Financial Studies* 9(4), 1097-1120. — survivorship (§2.1).
 - Forbes, K. J. and Rigobon, R. (2002). No contagion, only interdependence: measuring stock market comovements. *Journal of Finance* 57(5), 2223-2261. — selection effects in crisis correlations (§5.1).
 - Friedman, J., Hastie, T. and Tibshirani, R. (2008). Sparse inverse covariance estimation with the graphical lasso. *Biostatistics* 9(3), 432-441. — the graphical lasso (§5).
-- Harding, D. and Pagan, A. (2002). Dissecting the cycle: a methodological investigation. *Journal of Monetary Economics.* — concordance (§4.1).
+- Harding, D. and Pagan, A. (2002). Dissecting the cycle: a methodological investigation. *Journal of Monetary Economics* 49(2), 365-381. — concordance (§4.1).
 - Laloux, L., Cizeau, P., Bouchaud, J.-P. and Potters, M. (1999). Noise dressing of financial correlation matrices. *Physical Review Letters* 83(7), 1467-1470. — the noise band and its scaling (§3.3).
 - Lo, A. (2002). The statistics of Sharpe ratios. *Financial Analysts Journal* 58(4), 36-52. — the standard error of a Sharpe ratio (§1).
 - Longin, F. and Solnik, B. (2001). Extreme correlation of international equity markets. *Journal of Finance* 56(2), 649-676. — correlation in falls (§5).
@@ -506,4 +506,4 @@ The next step for a growing account is therefore to change the instrument where 
 - Plerou, V., Gopikrishnan, P., Rosenow, B., Amaral, L. A. N., Guhr, T. and Stanley, H. E. (2002). Random matrix approach to cross correlations in financial data. *Physical Review E* 65(6), 066126. — factors above the noise band (§3.3).
 - Rudin, A. M. and Morgan, J. S. (2006). A portfolio diversification index. *Journal of Portfolio Management* 32(2), 81-89. — the portfolio diversification index (§5).
 
-The bibliographic details above were checked against Crossref, RePEc or the publishers' pages ([results/sources.md](results/sources.md)), except Meucci (2009), whose volume and issue are not confirmed, and Lo (2002) and Harding and Pagan (2002), cited as in Lectures 7 and 3. *References are given from memory and should be checked against the originals before circulation.*
+The bibliographic details above were checked against Crossref, RePEc or the publishers' pages ([results/sources.md](results/sources.md)), Lo (2002) and Harding and Pagan (2002) were checked against Crossref on 17 November 2026. For Meucci (2009) the title, year, journal and pages are confirmed by citing papers; its volume and issue (usually given as 22(5)) could not be confirmed at the source and are left out.

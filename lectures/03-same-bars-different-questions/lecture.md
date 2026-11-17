@@ -643,34 +643,34 @@ atr_wilder = tr.ewm(alpha=1 / 14, adjust=False).mean()  # Wilder's smoothing, se
 
 ### 12.3 Reading list
 
-- Feller, W. (1951). The asymptotic distribution of the range of sums of independent random variables. *Annals of Mathematical Statistics.*
-- Parkinson, M. (1980). The extreme value method for estimating the variance of the rate of return. *Journal of Business.*
-- Garman, M. and Klass, M. (1980). On the estimation of security price volatilities from historical data. *Journal of Business.*
-- Rogers, L. and Satchell, S. (1991). Estimating variance from high, low and closing prices. *Annals of Applied Probability.*
-- Yang, D. and Zhang, Q. (2000). Drift-independent volatility estimation based on high, low, open, and close prices. *Journal of Business.*
-- Alizadeh, S., Brandt, M. and Diebold, F. (2002). Range-based estimation of stochastic volatility models. *Journal of Finance.*
-- Broadie, M., Glasserman, P. and Kou, S. (1997). A continuity correction for discrete barrier options. *Mathematical Finance.*
-- Wilder, J.W. (1978). *New Concepts in Technical Trading Systems.* Trend Research.
-- Granville, J. (1963). *Granville's New Key to Stock Market Profits.* Prentice-Hall.
-- Lee, C. and Ready, M. (1991). Inferring trade direction from intraday data. *Journal of Finance.*
-- Chordia, T., Roll, R. and Subrahmanyam, A. (2002). Order imbalance, liquidity, and market returns. *Journal of Financial Economics.*
-- Easley, D., López de Prado, M. and O'Hara, M. (2012). Flow toxicity and liquidity in a high-frequency world. *Review of Financial Studies.*
-- Forbes, K. and Rigobon, R. (2002). No contagion, only interdependence. *Journal of Finance.*
-- Harding, D. and Pagan, A. (2002). Dissecting the cycle: a methodological investigation. *Journal of Monetary Economics.* — the concordance index (§8.4).
-- Campbell, J., Pflueger, C. and Viceira, L. (2020). Macroeconomic drivers of bond and stock risks. *Journal of Political Economy.*
-- Joanes, D. and Gill, C. (1998). Comparing measures of sample skewness and kurtosis. *The Statistician.*
-- Efron, B. (1979). Bootstrap methods: another look at the jackknife. *Annals of Statistics.*
-- Künsch, H. (1989). The jackknife and the bootstrap for general stationary observations. *Annals of Statistics.*
-- Politis, D. and Romano, J. (1994). The stationary bootstrap. *Journal of the American Statistical Association.*
-- Ané, T. and Geman, H. (2000). Order flow, transaction clock, and normality of asset returns. *Journal of Finance.* — returns in trade time (§11).
-- Clark, P. (1973). A subordinated stochastic process model with finite variance for speculative prices. *Econometrica.*
-- Mandelbrot, B. (1963). The variation of certain speculative prices. *Journal of Business.*
-- Engle, R. (1982). Autoregressive conditional heteroscedasticity. *Econometrica.*
-- Cont, R. (2001). Empirical properties of asset returns: stylized facts and statistical issues. *Quantitative Finance.*
-- Kim, T.-H. and White, H. (2004). On more robust estimation of skewness and kurtosis. *Finance Research Letters.*
-- Faith, C. (2007). *Way of the Turtle.* McGraw-Hill.
+- Feller, W. (1951). The asymptotic distribution of the range of sums of independent random variables. *Annals of Mathematical Statistics* 22(3), 427-432.
+- Parkinson, M. (1980). The extreme value method for estimating the variance of the rate of return. *Journal of Business* 53(1), 61-65.
+- Garman, M. and Klass, M. (1980). On the estimation of security price volatilities from historical data. *Journal of Business* 53(1), 67-78.
+- Rogers, L. C. G. and Satchell, S. E. (1991). Estimating variance from high, low and closing prices. *Annals of Applied Probability* 1(4), 504-512.
+- Yang, D. and Zhang, Q. (2000). Drift independent volatility estimation based on high, low, open, and close prices. *Journal of Business* 73(3), 477-492.
+- Alizadeh, S., Brandt, M. and Diebold, F. (2002). Range-based estimation of stochastic volatility models. *Journal of Finance* 57(3), 1047-1091.
+- Broadie, M., Glasserman, P. and Kou, S. (1997). A continuity correction for discrete barrier options. *Mathematical Finance* 7(4), 325-349.
+- Wilder, J.W. (1978). *New Concepts in Technical Trading Systems.* Trend Research, Greensboro, NC.
+- Granville, J. (1963). *Granville's New Key to Stock Market Profits.* Prentice-Hall, Englewood Cliffs.
+- Lee, C. and Ready, M. (1991). Inferring trade direction from intraday data. *Journal of Finance* 46(2), 733-746.
+- Chordia, T., Roll, R. and Subrahmanyam, A. (2002). Order imbalance, liquidity, and market returns. *Journal of Financial Economics* 65(1), 111-130.
+- Easley, D., López de Prado, M. and O'Hara, M. (2012). Flow toxicity and liquidity in a high-frequency world. *Review of Financial Studies* 25(5), 1457-1493.
+- Forbes, K. J. and Rigobon, R. (2002). No contagion, only interdependence: measuring stock market comovements. *Journal of Finance* 57(5), 2223-2261.
+- Harding, D. and Pagan, A. (2002). Dissecting the cycle: a methodological investigation. *Journal of Monetary Economics* 49(2), 365-381. — the concordance index (§8.4).
+- Campbell, J. Y., Pflueger, C. and Viceira, L. M. (2020). Macroeconomic drivers of bond and equity risks. *Journal of Political Economy* 128(8), 3148-3185.
+- Joanes, D. and Gill, C. (1998). Comparing measures of sample skewness and kurtosis. *Journal of the Royal Statistical Society: Series D (The Statistician)* 47(1), 183-189.
+- Efron, B. (1979). Bootstrap methods: another look at the jackknife. *Annals of Statistics* 7(1), 1-26.
+- Künsch, H. (1989). The jackknife and the bootstrap for general stationary observations. *Annals of Statistics* 17(3), 1217-1241.
+- Politis, D. and Romano, J. (1994). The stationary bootstrap. *Journal of the American Statistical Association* 89(428), 1303-1313.
+- Ané, T. and Geman, H. (2000). Order flow, transaction clock, and normality of asset returns. *Journal of Finance* 55(5), 2259-2284. — returns in trade time (§11).
+- Clark, P. (1973). A subordinated stochastic process model with finite variance for speculative prices. *Econometrica* 41(1), 135-155.
+- Mandelbrot, B. (1963). The variation of certain speculative prices. *Journal of Business* 36(4), 394-419.
+- Engle, R. F. (1982). Autoregressive conditional heteroscedasticity with estimates of the variance of United Kingdom inflation. *Econometrica* 50(4), 987-1007.
+- Cont, R. (2001). Empirical properties of asset returns: stylized facts and statistical issues. *Quantitative Finance* 1(2), 223-236.
+- Kim, T.-H. and White, H. (2004). On more robust estimation of skewness and kurtosis. *Finance Research Letters* 1(1), 56-73.
+- Faith, C. M. (2007). *Way of the Turtle: The Secret Methods that Turned Ordinary People into Legendary Traders.* McGraw-Hill.
 
-*References are given from memory and should be checked against the originals before circulation.*
+*Journal articles checked against Crossref (DOI records) on 17 November 2026; the books against library records (Open Library) or their ISBN.*
 
 ## Appendix: main charts
 

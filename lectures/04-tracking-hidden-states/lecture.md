@@ -614,7 +614,7 @@ The same machinery with a different hidden state gives volatility (§8, from Lec
 - Chan, E. (2013). *Algorithmic Trading: Winning Strategies and Their Rationale.* Wiley. — a Kalman-filter hedge ratio for an ETF pair, traded on the forecast error scaled by its standard deviation (§4.3, §9.4).
 - Durbin, J. and Koopman, S.J. (2012). *Time Series Analysis by State Space Methods* (2nd ed.). Oxford University Press. — ch. 5, starting a filter, including the diffuse start (§6).
 - Fama, E. and French, K. (1988). Permanent and temporary components of stock prices. *Journal of Political Economy* 96(2), 246–273. — a slowly reverting component of prices (§2.1).
-- Harvey, A. (1989). *Forecasting, Structural Time Series Models and the Kalman Filter.* Cambridge University Press. — local level and local linear trend models; Holt's method as a steady-state filter (§3).
+- Harvey, A. C. (1989). *Forecasting, Structural Time Series Models and the Kalman Filter.* Cambridge University Press. — local level and local linear trend models; Holt's method as a steady-state filter (§3).
 - Julier, S. and Uhlmann, J. (1997). A new extension of the Kalman filter to nonlinear systems. *Proc. SPIE* 3068, 182–193. — the unscented filter (§8).
 - Julier, S. and Uhlmann, J. (2004). Unscented filtering and nonlinear estimation. *Proceedings of the IEEE* 92(3), 401–422. — review of the unscented transform (§8).
 - Kalman, R.E. (1960). A new approach to linear filtering and prediction problems. *Journal of Basic Engineering* 82(1), 35–45. — the original filter (§1).
@@ -623,7 +623,7 @@ The same machinery with a different hidden state gives volatility (§8, from Lec
 - Poterba, J. and Summers, L. (1988). Mean reversion in stock prices: evidence and implications. *Journal of Financial Economics* 22(1), 27–59. — transitory components in stock prices (§2.1).
 - Roll, R. (1984). A simple implicit measure of the effective bid-ask spread in an efficient market. *Journal of Finance* 39(4), 1127–1139. — bid-ask bounce and the negative correlation of successive price changes (§2.1).
 
-*Harvey (1989) is given from memory and should be checked before circulation; the other references were checked against publisher or library records.*
+*References checked against publisher or library records; Harvey (1989) against Cambridge University Press's record and Open Library on 17 November 2026 (1989 is the hardback; Crossref lists the 1990 paperback).*
 
 ## Appendix: main charts
 
