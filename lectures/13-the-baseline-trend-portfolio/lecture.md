@@ -435,6 +435,20 @@ Losses cluster only a little more than chance, and gains cluster more than losse
 
 The case left is a sharp reversal right after a strong trend: positions are full, the trends turn at once and the streams lose together, as in 2020 (−18% in the replay of §6). That is a question of speed and exits (Lecture 12 §8, Lecture 8 §4.8), not of weights. So the build keeps to the literature: equal risk for the weights, correlations only to check and scale the total.
 
+**Where correlation does raise the Sharpe ratio: choosing the markets.** None of this makes correlation unimportant. What lifts a trend book's Sharpe ratio is breadth: many markets whose trend streams are unrelated. With $`N`$ streams of the same Sharpe ratio $`\mathrm{SR}`$ and average correlation $`arho`$, the book's Sharpe ratio is about
+
+```math
+\mathrm{SR}_p pprox \mathrm{SR}\,\sqrt{rac{N}{1 + (N-1)\,arho}}
+```
+
+| Symbol | Meaning |
+|---|---|
+| $`\mathrm{SR}`$ | Sharpe ratio of one market's trend stream, the same for every market |
+| $`N`$ | Number of markets in the book |
+| $`arho`$ | Average correlation between the markets' trend streams (positioned returns, not the assets) |
+
+Twenty markets that each trend with a Sharpe ratio of 0.3 give 1.34 if their streams are unrelated, 0.79 at an average correlation of 0.1 and 0.52 at 0.3: the first tenth of correlation costs the most. Equal Sharpe ratios are an illustration, not an estimate. This decision is made in the first step, when the markets are chosen (Lecture 11 §3-§4: the number of bets, counted on the trend streams with the sign of each correlation ignored, and markets that share trend phases treated as the same bet), not in the weights. Choose the least related markets **that have a reason to trend** (Lecture 11 §2.2): a market that is unrelated but does not trend adds costs and noise, not Sharpe ratio, because the formula assumes every stream earns. Correlation decides **which markets** to hold; once they are chosen, equal risk weighs them and correlation checks the total.
+
 ## 5. The total
 
 ![Scaling the total](figures/27_total.png)
@@ -523,6 +537,7 @@ Sensible settings come from the order in which the questions are asked, not from
 - **Uneven speeds: fix the grid first, then group at the natural gaps.** Equal weight and equal risk contributions give a bunch too much risk, minimum variance picks inside it on noise, HRP as published keeps the bunch together; only grouping gives each region its share (§3).
 - **Minimum variance drops the middle speed; equal risk contributions keep it.** The first equalises marginal risk, the second total contributions; on near-duplicates the first ends in a corner for about 3% less risk. For speeds, use the correlation, the input known best, to share risk out, not to hedge one speed against another. Every other method derives from these two (§2, Appendix A).
 - **State the correlations you assume, and stress the total with them.** In crises the trend streams of a class move together (credit 0.81, equity 0.64) and across classes the correlation triples; the baseline's 10% would carry 8% to 12% in the real crises, 15.6% in a harsh scenario and at most 24.6% if every correlation went to 1 (§4.4).
+- **Correlation raises the Sharpe ratio through choosing, not weighing.** Twenty markets at a Sharpe ratio of 0.3 each give 1.34 when their trend streams are unrelated and 0.52 at an average correlation of 0.3; so choose the least related markets that have a reason to trend (Lecture 11), then weigh them at equal risk (§4.6).
 - **For a trend book, correlation matters through the total, and mostly when full positions turn.** Correlations that rise with strong trends come with gains (2022); in choppy markets the speeds offset and positions shrink, so a total calibrated too high (about 15% instead of 10%) meets small positions; the danger left is a sharp reversal after a strong trend (2020). Weights stay at equal risk, as in the literature (§4.6).
 - **When correlations are unstable, size by volatility, read correlations regime by regime and use them to check the total.** One matrix over the whole history blends the equity-bond trend correlation of −0.66 to +0.39 into −0.03; across classes every method lands near equal risk, and the regime risk (6% to 12% on a 10% target) sits in the total, not in the weights (§4.5).
 - **Correlations across classes change regime.** The stock-bond correlation changed sign twice since 1973, and a total scaled to 10% in calm years carried about a third more in 2007-2009 and 2022-2024. Choose markets on their bad-regime overlap and size the total for the correlations it may face (§4.3).
