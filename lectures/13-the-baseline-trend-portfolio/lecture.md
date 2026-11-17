@@ -38,7 +38,7 @@ Two trend streams in the same market overlap by how far apart their speeds are, 
 |---|---|---|
 | 2 | How weighting methods choose | Why do optimisers pick corners, what does each weighting assume about returns, and which is more correct? |
 | 3 | Speeds inside a market: the easy case | Does the method matter when the correlations are known, and what if the speeds are unevenly spaced? |
-| 4 | Markets and classes: the hard case | Why are correlations across markets shaky? Equal risk or equal capital, classes or groups found in the data, how bad can the correlations get, and how to weigh when they are unstable? |
+| 4 | Markets and classes: the hard case | Why are correlations across markets shaky? Equal risk or equal capital, classes or groups found in the data, how bad can the correlations get, and how to weigh when they are unstable, and do the trend streams lose together? |
 | 5 | The total | Scale to a volatility target or hold leverage constant? |
 | 6 | Today's portfolio in past crises | How would the portfolio held today fare in a repeat of past crises? |
 
@@ -413,6 +413,21 @@ Every method carries between about 6% and 12% depending on the regime. Min-max l
 
 **What the example says.** At the level of asset classes the weights hardly depend on the method: class trend streams overlap little on average (0.04 in the blend), so every method lands near equal risk. The regime risk does not sit in the weights; it sits in the total. So correlations across classes earn their place as a **check on the total**, not as an input to the weights. Within a class, where markets overlap more, they would move the weights more, and the same workflow applies (§7.3). Limits: the example uses every regime at once, which no yearly review could have done (at the 2012 review only the crises up to then were known); volatilities are held fixed, while in crises they rise as well, which the volatility target of §5 answers; and the 2020 window holds only 11 months.
 
+### 4.6 Is correlation that important for a trend book?
+
+**For return, no; for risk, yes, but only one kind of co-movement matters: losing together.** The book earns the sum of what its trend streams earn, whatever their correlations. Correlation sets how much the streams offset one another, and so the leverage a 10% target allows. For a trend book, however, the correlation that counts is that of the **positioned streams**, not of the assets: a stream flips its position, so two assets that fall together can give two trend streams that gain together (in 2000-02 the equity and bond trend streams were correlated +0.39 because trend was short equities and long bonds, and both earned). Correlated gains are harmless; the danger is streams that lose together. So we asked whether the five class trend streams of §4.5 lose together more than they gain together (600 months, 1975-2024, [scripts/l27_lose_together.py](scripts/l27_lose_together.py)):
+
+| Plain question | Losing months | Winning months |
+|---|---|---|
+| How often do four or five of the five streams move the same way? | 16.3% (chance: 14.4%) | 27.3% (chance: 23.7%) |
+| How closely do two streams move when both move that way? | 0.16 | 0.23 |
+
+<sub><b>How to read the table.</b> Columns: months in which the streams lose, months in which they gain. First row: share of months in which at least four of the five class trend streams lose (or gain); "chance" is the same share with each stream's months shuffled, which keeps how often each stream loses and removes any co-movement. Second row: average correlation of the ten pairs in the months when both streams of a pair lose (or both gain). Over all months the average correlation is 0.04. Our calculation ([results/lose_together.json](results/lose_together.json)).</sub>
+
+Losses cluster only a little more than chance, and gains cluster more than losses. The correlation when both lose (0.16) is not higher than when both gain (0.23); the difference, −0.07, lies inside its 90% band (−0.16 to +0.05). The book is positively skewed (+0.31). On our sample, then, the average correlation of the class trend streams does not hide a risk of losing together; if anything, it is a slightly cautious guide. This supports the build as it stands: correlations stay out of the weights, and the total is checked against crisis correlations (§4.4) and past crises (§6). Limits: monthly data and one 12-month signal per class; a crash inside one month, as in 2020, shows only on daily data, which is what the replay of §6 uses.
+
+**What the literature does.** Published trend portfolios are simple at this step. Time-series momentum is built with each market at the same volatility and the markets averaged with equal weights (Moskowitz, Ooi and Pedersen, 2012); the century-long study does the same and uses correlations only to scale the total to 10% (Hurst, Ooi and Pedersen, 2017). Where correlations enter, they enter the total: Baltas and Kosowski (2012) lower the leverage of the whole book when the average signed correlation of its positions rises. The baseline follows the same pattern: equal risk for the weights, correlations for the total.
+
 ## 5. The total
 
 ![Scaling the total](figures/27_total.png)
@@ -523,7 +538,10 @@ Sensible settings come from the order in which the questions are asked, not from
 - Michaud, R. O. (1989). The Markowitz optimization enigma: is "optimized" optimal? *Financial Analysts Journal*, 45(1), 31-42. Why maximum Sharpe ratio maximises estimation error.
 - DeMiguel, V., Garlappi, L. and Uppal, R. (2009). Optimal versus naive diversification: how inefficient is the 1/N portfolio strategy? *Review of Financial Studies*, 22(5), 1915-1953. Equal weights against fitted portfolios, out of sample.
 - Levine, A. and Pedersen, L. H. (2016). Which trend is your friend? *Financial Analysts Journal*, 72(3), 51-66. Crossovers and past returns as the same filters, which is why the rules overlap at the same speed.
-- Hurst, B., Ooi, Y. H. and Pedersen, L. H. (2017). A century of evidence on trend-following investing. *Journal of Portfolio Management*, 44(1), 15-29. Trend following across crises.
+- Moskowitz, T. J., Ooi, Y. H. and Pedersen, L. H. (2012). Time series momentum. *Journal of Financial Economics*, 104(2), 228-250. Each market at the same volatility, markets averaged with equal weights.
+- Baltas, N. and Kosowski, R. (2012, revised 2019). Demystifying time-series momentum strategies: volatility estimators, trading rules and pairwise correlations. Working paper, SSRN 2140091. The leverage of the whole book scaled down when the average signed correlation of its positions rises (§4.6).
+- Longin, F. and Solnik, B. (2001). Extreme correlation of international equity markets. *Journal of Finance*, 56(2), 649-676. Correlation measured separately in falling and rising markets, the measure of §4.6.
+- Hurst, B., Ooi, Y. H. and Pedersen, L. H. (2017). A century of evidence on trend-following investing. *Journal of Portfolio Management*, 44(1), 15-29. Trend following across crises; markets at equal risk, correlations used only to scale the total.
 
 ## Appendix A. Portfolio construction methods, in plain terms
 
