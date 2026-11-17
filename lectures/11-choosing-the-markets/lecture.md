@@ -52,7 +52,7 @@ Within a class, more ETFs add little: 87 equity ETFs make fewer than two bets. W
 
 | § | Step | Question |
 |---|---|---|
-| 2 | The data | Which ETFs, which prices, and why must the closes be synchronous? |
+| 2 | The data | Which ETFs, what economic driver each adds, which prices, and why must the closes be synchronous? |
 | 3 | Correlation, factors and noise | What moves together, through which factors, and how much of it is noise? |
 | 4 | The same market? | When are two markets the same bet: correlation, trend phases, trend strength? |
 | 5 | The methods as a family | Which ways of choosing markets exist, and what did each show here? |
@@ -103,7 +103,46 @@ All data are free: daily adjusted closes and volume from Yahoo Finance, through 
 
 Three things about these funds matter later. First, **only survivors** are in the data: funds that closed, often after poor results, are gone, which flatters the themes most (Elton, Gruber and Blake, 1996). Second, they hold different things: most hold the securities directly, eight hold futures and roll them (the commodity funds, UUP and UDN), and six hold currency deposits. Third, they differ hugely in trading: the median daily dollar volume over the last year ranges from USD 41 billion for SPY to USD 0.37 million for EWK (Belgium); 29 of the 116 trade less than USD 10 million a day, which is why §6 sets a liquidity floor.
 
-### 2.2 Why the closes must be synchronous
+### 2.2 Before the numbers: what does a market add?
+
+The rest of this lecture chooses markets from numbers: correlations, factors, liquidity. Numbers show whether a market moved differently in the past; only economic reasoning says why it should keep doing so. For a market with a short history the numbers say little at all. So each candidate first answers three questions, written down before any test and without any strategy result:
+
+1. **What is its economic driver, and is that driver already in the universe?** A market adds a dimension only if it carries a risk the others do not.
+2. **Why should it trend?** A distinct driver is not enough for trend following: something must make its moves persist, such as slow-moving fundamentals, central-bank policy or forced flows (Lecture 5 §3.2).
+3. **What could break it?** Its structure (a futures roll in contango, a synthetic or leveraged product), the risk of closure (two of our 116 ETFs, RSX and IRBO, closed), regulation, or a history too short to judge without a long-history parent (Lecture 13 §4.3).
+
+The baseline's 20 markets at the end of 2025, by driver:
+
+| Class | Market | Main economic driver |
+|---|---|---|
+| Equity | SPY | US corporate earnings and the equity risk premium |
+| | GDX | The gold price, with equity and operating leverage on top |
+| | SMH | The global semiconductor cycle |
+| | FXI | China's growth and economic policy |
+| | OIH | Oil-industry investment, following the oil price |
+| | XLU | Interest rates and defensive demand: utilities behave partly like bonds |
+| | XBI | Trial results, funding conditions and healthcare policy |
+| | EWZ | Commodities, the Brazilian real and domestic politics |
+| Government bonds | TLT | Long-term inflation expectations and the term premium |
+| | SHY | The path of Federal Reserve policy |
+| | TIP | Real yields and inflation compensation |
+| | BNDX | Interest rates outside the US, hedged into dollars |
+| Credit | LQD | Investment-grade spreads, on top of rates |
+| | HYG | Default risk, closer to equity |
+| Commodities | USO | Oil supply and demand shocks; roll costs in contango |
+| | GLD | Real interest rates, the dollar and monetary stress |
+| | UNG | Weather and storage of US natural gas; heavy roll costs |
+| Currencies | FXE | Euro-area against US rates and growth |
+| | FXY | A safe haven, and the funding side of carry trades |
+| | UUP | The dollar: global risk appetite and US rates |
+
+<sub><b>How to read the table.</b> One row per market held at the end-2025 review (§7). Right: the main economic risk the market carries, in plain words; an economic reading, not an estimate. Markets in the same class can carry different drivers (gold miners and utilities sit in equity), and some drivers are absent: agriculture and industrial metals were not selected in 2025.</sub>
+
+**Thematic equities are the hardest case.** Many themes are a story on top of the equity market rather than a separate driver. "Artificial intelligence will grow" is a narrative carried mostly by large technology companies that the universe already holds; "gold miners follow gold" is a driver. Two more questions apply to them: are its holdings already in the universe, and will the theme still exist in ten years? Themes tend to be launched after strong runs, and some fade or close. The data agree with the reasoning: judged in the bad regimes of a long-history parent, most technology themes moved with US equities at 0.64 to 0.78, while gold miners (0.22) and biotech (0.39), the themes with a distinct driver, stayed separate (Lecture 13 §4.3).
+
+**The numbers then confirm or challenge the reasoning.** A market with a distinct driver that nevertheless moves with the others in the data is questioned; a market that looks diversifying in three calm years but has no distinct driver is treated with suspicion. Neither the reasoning nor the numbers uses a strategy's profits.
+
+### 2.3 Why the closes must be synchronous
 
 Every statistic in this lecture compares markets over the same interval, and that needs prices taken at the same moment. Tokyo's stock market closes in the afternoon local time, some fourteen hours before New York's. News that arrives after Tokyo's close moves New York the same day but Tokyo only the next day. Measured close to close, the two markets then seem less related on the same day than they are, and one seems to lead the other by a day: with asynchronous closes, "the returns appear to have predictability and correlations are understated" (Burns, Engle and Mezrich, 1998).
 
