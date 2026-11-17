@@ -430,17 +430,17 @@ If exact reproducibility matters more than $`O(1)`$ updates, cap the history del
 ### 10.3 Reading list
 
 - Brown, R.G. (1963). *Smoothing, Forecasting and Prediction of Discrete Time Series.* Prentice-Hall. — the $`\alpha = 2/(N+1)`$ convention.
-- Holt, C.C. (1957, reprinted 2004). Forecasting seasonals and trends by exponentially weighted moving averages. *International Journal of Forecasting.*
-- Harvey, A. (1989). *Forecasting, Structural Time Series Models and the Kalman Filter.* Cambridge University Press.
+- Holt, C.C. (1957). Forecasting seasonals and trends by exponentially weighted moving averages. ONR Memorandum 52, Carnegie Institute of Technology. Reprinted in *International Journal of Forecasting* 20(1), 5-10 (2004).
+- Harvey, A. C. (1989). *Forecasting, Structural Time Series Models and the Kalman Filter.* Cambridge University Press.
 - Hyndman, R., Koehler, A., Ord, J.K. and Snyder, R. (2008). *Forecasting with Exponential Smoothing: The State Space Approach.* Springer. — exponential smoothing and its starting values (§9.1).
 - Durbin, J. and Koopman, S.J. (2012). *Time Series Analysis by State Space Methods* (2nd ed.). Oxford University Press. — ch. 5, starting a Kalman filter, including the diffuse start (§9.1).
 - Kaufman, P. (2013). *Trading Systems and Methods* (5th ed.). Wiley. — KAMA.
-- Ehlers, J. (2001). *Rocket Science for Traders.* Wiley.
-- Chan, E. (2013). *Algorithmic Trading.* Wiley. — Kalman filters for hedge ratios.
-- Berkowitz, S., Logue, D. and Noser, E. (1988). The total cost of transactions on the NYSE. *Journal of Finance.* — VWAP as an execution benchmark.
+- Ehlers, J. (2001). *Rocket Science for Traders: Digital Signal Processing Applications.* Wiley.
+- Chan, E. (2013). *Algorithmic Trading: Winning Strategies and Their Rationale.* Wiley. — Kalman filters for hedge ratios.
+- Berkowitz, S., Logue, D. and Noser, E. (1988). The total cost of transactions on the NYSE. *Journal of Finance* 43(1), 97-112. — VWAP as an execution benchmark.
 - TA-Lib documentation, "Unstable Period": [ta-lib.org/api/unstable-period](https://ta-lib.org/api/unstable-period/) — discarding warm-up bars in practice (§9.1).
 
-*References are given from memory and should be checked against the originals before circulation.*
+*Journal articles checked against Crossref (DOI records) on 17 November 2026; the books' details were checked from standard bibliographic knowledge, not against a library catalogue.*
 
 ## Appendix: main charts
 

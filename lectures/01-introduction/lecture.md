@@ -399,18 +399,18 @@ The same template applies to the other families: replace the signal and the sizi
 ### 7.3 Reading list
 
 - Carver, R. (2015). *Systematic Trading.* Harriman House.
-- Grinold, R. (1989). The fundamental law of active management. *Journal of Portfolio Management* 15(3).
-- Grinold, R. and Kahn, R. (2000). *Active Portfolio Management.* McGraw-Hill.
+- Grinold, R. C. (1989). The fundamental law of active management. *Journal of Portfolio Management* 15(3), 30-37.
+- Grinold, R. C. and Kahn, R. N. (2000). *Active Portfolio Management* (2nd ed.). McGraw-Hill.
 - López de Prado, M. (2018). *Advances in Financial Machine Learning.* Wiley.
-- Moskowitz, T., Ooi, Y. and Pedersen, L. (2012). Time series momentum. *Journal of Financial Economics.*
-- Hurst, B., Ooi, Y. and Pedersen, L. (2017). A century of evidence on trend-following investing. *Journal of Portfolio Management.*
-- Gatev, E., Goetzmann, W. and Rouwenhorst, K. (2006). Pairs trading: performance of a relative-value arbitrage rule. *Review of Financial Studies.*
-- Avellaneda, M. and Lee, J.-H. (2010). Statistical arbitrage in the US equities market. *Quantitative Finance.*
-- Khandani, A. and Lo, A. (2011). What happened to the quants in August 2007? *Journal of Financial Markets.*
-- Asness, C., Moskowitz, T. and Pedersen, L. (2013). Value and momentum everywhere. *Journal of Finance.*
+- Moskowitz, T., Ooi, Y. and Pedersen, L. (2012). Time series momentum. *Journal of Financial Economics* 104(2), 228-250.
+- Hurst, B., Ooi, Y. and Pedersen, L. (2017). A century of evidence on trend-following investing. *Journal of Portfolio Management* 44(1), 15-29.
+- Gatev, E., Goetzmann, W. and Rouwenhorst, K. (2006). Pairs trading: performance of a relative-value arbitrage rule. *Review of Financial Studies* 19(3), 797-827.
+- Avellaneda, M. and Lee, J.-H. (2010). Statistical arbitrage in the US equities market. *Quantitative Finance* 10(7), 761-782.
+- Khandani, A. and Lo, A. (2011). What happened to the quants in August 2007? Evidence from factors and transactions data. *Journal of Financial Markets* 14(1), 1-46.
+- Asness, C., Moskowitz, T. and Pedersen, L. (2013). Value and momentum everywhere. *Journal of Finance* 68(3), 929-985.
 - Harvey, C., Liu, Y. and Zhu, H. (2016). ... and the cross-section of expected returns. *Review of Financial Studies* 29(1), 5-68.
 - McLean, R. D. and Pontiff, J. (2016). Does academic research destroy stock return predictability? *Journal of Finance* 71(1), 5-32.
 - Bailey, D., Borwein, J., López de Prado, M. and Zhu, Q. (2017). The probability of backtest overfitting. *Journal of Computational Finance* 20(4).
-- Bailey, D. and López de Prado, M. (2014). The deflated Sharpe ratio. *Journal of Portfolio Management.*
+- Bailey, D. and López de Prado, M. (2014). The deflated Sharpe ratio: correcting for selection bias, backtest overfitting, and non-normality. *Journal of Portfolio Management* 40(5), 94-107.
 
-*References are given from memory and should be checked against the originals before circulation.*
+*Journal articles checked against Crossref (DOI records) on 17 November 2026; the books' details were checked from standard bibliographic knowledge, not against a library catalogue.*

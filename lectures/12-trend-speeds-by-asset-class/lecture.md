@@ -282,4 +282,4 @@ A fast sleeve would have paid in the quick crashes and cost in the long ones, an
 - Meinshausen, N. and Bühlmann, P. (2010). Stability selection. *Journal of the Royal Statistical Society Series B* 72(4), 417-473. — keeping what is chosen on many random halves of the data (§2, §4).
 - Moskowitz, T. J., Ooi, Y. H. and Pedersen, L. H. (2012). Time series momentum. *Journal of Financial Economics* 104(2), 228-250. — one 12-month rule for 58 futures (§2).
 
-The details above were checked at source ([results/sources.md](results/sources.md)). *References are given from memory and should be checked against the originals before circulation.*
+The details above were checked at source ([results/sources.md](results/sources.md)); Goulding, Harvey and Mazzoleni (2023) against Crossref on 17 November 2026.
