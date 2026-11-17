@@ -9,6 +9,6 @@ CREATE TABLE IF NOT EXISTS bars_1m (
     close              {DEC} NOT NULL,
     volume             {DEC} NOT NULL,           -- BTC traded
     trades             INTEGER,
-    source             TEXT NOT NULL,            -- 'live' (built from our feed) or 'rest' (Bybit's candles)
+    source             TEXT NOT NULL,            -- 'live' (built from our feed) or 'rest' (the exchange's own candles)
     PRIMARY KEY (symbol, start_ms)
 );
