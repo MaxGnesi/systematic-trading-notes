@@ -1,4 +1,4 @@
-"""Lecture 13, crisis speeds (results/hypotheses.md, fixed 2026-11-14 before any result). Episodes: falls of the S&P 500 of more than 15%,
+"""Lecture 12 §8.2 (moved from Lecture 13, 2026-11-16), crisis speeds (results/hypotheses.md, fixed 2026-11-14 before any result). Episodes: falls of the S&P 500 of more than 15%,
 peak to trough, 2000-2026. Per episode, each of the 36 streams' return (all speeds), averaged over markets with each class the same weight,
 on the ETFs (Lecture 12's streams) and on the capstone futures (Lecture 10, observed rolls; breakout on closes); per speed the average over
 the rules, against Lecture 12's held set at equal weights. A speed works in crises if it beats the held set in >= 2/3 of the episodes on
@@ -7,7 +7,11 @@ rule's structure; futures 2003-2022). Output: results/crisis.json."""
 import json, sys, warnings; warnings.filterwarnings("ignore")
 from pathlib import Path
 import numpy as np, pandas as pd, yfinance as yf
-sys.path.insert(0, str(Path(__file__).resolve().parent)); import l27 as M, l27_futures_test as FT
+import os
+HERE = Path(__file__).resolve().parent; LECT = Path(__file__).resolve().parents[2]
+for d in (HERE, LECT / "13-the-baseline-trend-portfolio" / "scripts"): sys.path.insert(0, str(d)) if str(d) not in sys.path else None
+RES = Path(os.environ.get("L27_RESULTS", HERE.parent / "results"))   # this lecture's results (the notebook may redirect)
+import l27 as M, l27_futures_test as FT
 L26 = M.L26; SLEEVES = (0.0, 0.1, 0.2, 0.3)
 
 
@@ -100,4 +104,4 @@ if __name__ == "__main__":
         sc = pd.concat([pd.read_parquet(L26.OUT / "streams" / f"{t}.parquet")[[f"t_{s}" for s in sleeve]].loc["2013":].mean() for t in ETF]).mean() * 252 * L26.COST_BP / 1e4
         res["sleeve_cost_a_year_per_unit_weight"] = float(sc)
         print("ETFs:", pd.DataFrame(res["eval_etf"]).round(3).to_string()); print("futures:", pd.DataFrame(res["eval_futures"]).round(3).to_string())
-    (M.RESULTS / "crisis.json").write_text(json.dumps(res, indent=1), encoding="utf-8")
+    (RES / "crisis.json").write_text(json.dumps(res, indent=1), encoding="utf-8")

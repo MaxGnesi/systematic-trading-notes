@@ -40,6 +40,7 @@ The map covers the main ground without claiming to be complete. Two further sour
 | Restrict direction | One side, long or short, is switched off while the condition holds | No short positions while policy rates are at zero |
 | Switch speed | A different version of the rule is used in each state | The fast rule in turbulent markets, the slow one in calm markets |
 | Delay or confirm | A signal is acted on only once a second condition confirms it | Enter a breakout only if volume is above normal |
+| Exit early | The position is closed before the signal turns, on information from the trade itself, such as its open gain | Go flat when the open gain exceeds four units of risk (§4.8) |
 
 ## 3. One test for every filter
 
@@ -239,6 +240,30 @@ Scheduled events matter most where a single piece of news can reprice an asset a
 
 **Macro releases, by contrast,** matter more for short-term and relative-value trading than for trend following. On our trend system, payroll days carried their fair share of profit overall, 5% of the days for 5% of the profit, and the effect on bonds changed sign over time: the bond trend lost on payroll days through 2015 and gained on them in 2016–2022 (notebook §4.7).
 
+### 4.8 An exit example: taking profits
+
+The filters so far use information from outside the trade. An exit rule uses the trade itself: it closes a position before the signal turns, on the trade's own open gain or loss. Its mechanism is stated before the test. Trends end, and a trend follower gives back part of every large gain before its signal turns; a take-profit closes the trade earlier and keeps that part. The rule: when a stream's open gain since its signal last changed exceeds **k units of its risk**, it goes flat until the signal changes. The unit is the speed's own scale, daily volatility at entry times the square root of the speed, so a slow stream needs a larger gain than a fast one before it counts as large.
+
+The test runs on the full trend portfolio built later in the course rather than on the 16 ETFs of this lecture: Lecture 11's markets with Lecture 12's speeds and Lecture 13's weights, out of sample 2013-2026, and the capstone futures 2003-2022 as a second dataset. The thresholds are reported as a curve (§4.4), with one variant that re-enters after a pullback; the comparison at equal speed (§3, step 2) was not made.
+
+![Taking profits per speed](figures/08_08_takeprofit.png)
+<sub><b>How to read the figure.</b> <b>Axes.</b> Take-profit threshold k, in units of each speed's risk over its own horizon (x), against the Sharpe ratio after costs (left, y) and the skew of monthly returns (right, y). Filled markers and lines: the stream stays flat until its signal changes; hollow markers: it re-enters after a pullback of one unit. Blue: ETFs out of sample 2013-2026 with the baseline's structure; orange: capstone futures 2003-2022 with Lecture 12's end-2025 speeds. Breakout on closes in all versions, so the ETF baseline earns 0.465 here. Our calculation.</sub>
+
+| | none | k = 3 | k = 4 | k = 5 |
+|---|---|---|---|---|
+| ETFs: Sharpe ratio | 0.47 | 0.42 | 0.46 | 0.48 |
+| ETFs: difference, 90% band | | −0.05 (−0.17 to +0.07) | −0.00 (−0.09 to +0.09) | +0.01 (−0.06 to +0.08) |
+| ETFs: skew of monthly returns | 0.24 | 0.38 | 0.41 | 0.38 |
+| ETFs: Covid crash 2020 | −13.8% | −10.2% | −10.7% | −11.3% |
+| ETFs: rate shock 2022 | +26.1% | +13.7% | +17.7% | +20.1% |
+| Futures: Sharpe ratio | 0.45 | 0.46 | 0.48 | 0.48 |
+| Futures: difference, 90% band | | +0.01 (−0.07 to +0.09) | +0.03 (−0.02 to +0.09) | +0.03 (−0.00 to +0.07) |
+| Futures: skew of monthly returns | 0.18 | 0.39 | 0.35 | 0.31 |
+
+<sub><b>How to read the table.</b> Differences in Sharpe ratio against no take-profit; 90% band from a block bootstrap over calendar months. Episode rows: return from the peak to the trough of the S&P 500. Our calculation.</sub>
+
+At k = 4 to 5 the Sharpe ratio is unchanged, on both datasets; at lower thresholds it falls (ETFs at k = 2 to 3, futures at k = 2), because the exit cuts too many trends that would have run on. Skew rises at every threshold: the take-profit removes the giving-back at the end of a trend, the part of a large win that would have been returned. Quick crashes that follow a run-up lose less (ETFs 2020: −13.8% to −10.7% at k = 4), and long bear markets give some of their gain back (2022: +26% to +18%). Re-entering after a one-unit pullback did not improve on waiting for the signal to change. No difference is distinguishable from zero: the take-profit is **an option with known trade-offs**, not an improvement. The baseline of Lecture 13 does without it; Lecture 13 §6 shows what it would do to today's portfolio in past crises.
+
 None of the examples in §4.1 to §4.6 passes all three requirements: a stated mechanism, a gain at equal speed, and a significant addition after costs. That says little about filters in general and much about the test: with millions of possible variants, a filter that does pass has to be checked for how many variants were tried before it.
 
 ## 5. Further ideas
@@ -256,14 +281,15 @@ Filters that our daily ETF data cannot test, each with its mechanism and the dat
 
 ## 6. Summary, exercises and reading
 
-### 6.1 Six takeaways
+### 6.1 Seven takeaways
 
 1. **Filters can use any information, which is why they need discipline.** Sources range from the price itself to flows, macro data and the calendar; actions from gating to switching speed.
 2. **Two purposes, one test.** Explore which variables determine or predict a signal's performance, or confirm a mechanism you believe in; then compare at equal speed, use only information known at the time, judge after costs by marginal contribution, count the tries, and confirm on data the idea was not found in.
 3. **The examples teach the method, not a verdict.** With millions of possible filters, the examples could have been entirely different; in these, none added significantly; two of three regime hypotheses were wrong as stated, yet the regime patterns themselves, such as 0.88 against 0.51 by cross-asset-class correlation, are candidates to explain and confirm.
 4. **How a filter attaches to the signal matters as much as which regime it uses.** Letting the filter open and close positions on its own hurt; attaching it to the trend's entries and exits recovered most of the loss.
 5. **Judge filters by curves and against random filters, and confirm out of sample.** A filter is a curve across its thresholds; a filter that leaves the market must beat random filters with the same timing; and a pattern found in the data must survive on data it was not found in. The cross-asset-class correlation candidate beat 88% of random filters but did not survive out of sample.
-6. **The most promising filters work through mechanisms with a known timing:** flows and positioning, scheduled events, and regimes that change how fast markets move.
+6. **Exits are overlays too.** A take-profit at four to five units of a speed's risk left the Sharpe ratio unchanged and raised skew: it cuts quick crashes after a run-up and trims long bear markets. An option with known trade-offs, not an improvement (§4.8).
+7. **The most promising filters work through mechanisms with a known timing:** flows and positioning, scheduled events, and regimes that change how fast markets move.
 
 ### 6.2 Exercises
 
@@ -272,6 +298,7 @@ Filters that our daily ETF data cannot test, each with its mechanism and the dat
 - [ ] Gate breakouts by volume: enter a Donchian breakout only when volume exceeds its 50-day average. Compare at equal speed. (notebook §4)
 - [ ] Run the random-filter test of §4.5 for the efficiency-ratio gate and the VIX switch. Do they beat their random counterparts? (notebook §4.5)
 - [ ] Combine the correlation scale with the VIX switch. Do two weak filters add up to a strong one? (notebook §4)
+- [ ] **Halve, do not exit.** In §4.8, halve the position at the threshold instead of going flat. Plot Sharpe ratio and skew against k next to the full exit.
 
 ### 6.3 Reading
 
@@ -329,5 +356,6 @@ The share of days with moves of each size, on a log scale. Ordinary days (grey) 
 - Baltussen, G., Da, Z., Lammers, S. and Martens, M. (2021). Hedging demand and market intraday momentum. *Journal of Financial Economics* 142(1), 377–403. — hedging flows (§5).
 - Cooper, M., Gutierrez, R. and Hameed, A. (2004). Market states and momentum. *Journal of Finance* 59(3), 1345–1365. — state-dependent momentum (§4.2).
 - Harvey, C., Liu, Y. and Zhu, H. (2016). … and the cross-section of expected returns. *Review of Financial Studies* 29(1), 5–68. — the bar for new findings (§3).
+- Kaminski, K. M. and Lo, A. W. (2014). When do stop-loss rules stop losses? *Journal of Financial Markets* 18, 234–254. — when rules that exit early add value (§4.8).
 - Lo, A. (2004). The adaptive markets hypothesis: market efficiency from an evolutionary perspective. *Journal of Portfolio Management* 30, 15–29. — why edges fade (§1).
 - Norges Bank Investment Management (2014). Momentum in futures markets. Discussion note. — time-series momentum and the volatility regime (§4.2).

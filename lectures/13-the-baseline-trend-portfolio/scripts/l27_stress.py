@@ -1,11 +1,13 @@
 """Lecture 13, stress scenarios: today's portfolio (the end-2025 review: Lecture 11's markets, Lecture 12's held speeds, every scale from
 2023-2025) replayed through the six S&P 500 falls of more than 15% since 2000, with and without the take-profit at k = 4. Markets without
-data in an episode are left out and their class averages over the rest. Breakout on closes in both versions (as l27_takeprofit.py).
+data in an episode are left out and their class averages over the rest. Breakout on closes in both versions (as Lecture 8's scripts/takeprofit.py).
 Per episode: return, worst drawdown inside it, each class's contribution. Output: results/stress.json."""
 import json, sys, warnings; warnings.filterwarnings("ignore")
 from pathlib import Path
 import numpy as np, pandas as pd
-sys.path.insert(0, str(Path(__file__).resolve().parent)); import l27 as M, l27_crisis as CR, l27_takeprofit as TP
+LECT = Path(__file__).resolve().parents[2]
+for d in (Path(__file__).resolve().parent, LECT / "12-trend-speeds-by-asset-class" / "scripts", LECT / "08-filters-and-overlays" / "scripts"): sys.path.insert(0, str(d))
+import l27 as M, l26_crisis as CR, takeprofit as TP   # episodes from Lecture 12 §8.2, the stream engine from Lecture 8 §4.8
 L26 = M.L26
 
 if __name__ == "__main__":

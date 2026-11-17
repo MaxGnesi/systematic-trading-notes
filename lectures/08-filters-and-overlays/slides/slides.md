@@ -41,6 +41,9 @@ Part II · Pipeline stage: signal generation (filters and overlays on a signal)
 | Restrict direction | One side, long or short, is switched off while the condition holds |
 | Switch speed | A different version of the rule is used in each state |
 | Delay or confirm | A signal is acted on only once a second condition confirms it |
+| Exit early | The position is closed before the signal turns, on the trade's own open gain |
+
+Example (§4.8): a take-profit at four to five units of a speed's risk left the Sharpe ratio unchanged and raised skew; an option, not an improvement.
 
 ---
 
@@ -166,6 +169,7 @@ Part II · Pipeline stage: signal generation (filters and overlays on a signal)
 3. **The examples teach the method, not a verdict:** none added significantly
 4. **How a filter attaches matters as much as its regime:** attaching it to the trend's entries and exits recovered most of the loss
 5. **Judge filters by curves, against random filters, and out of sample:** the best candidate beat 88% of random filters but did not survive out of sample
-6. **The most promising filters work through mechanisms with a known timing**
+6. **Exits are overlays too:** a take-profit is an option with known trade-offs, not an improvement
+7. **The most promising filters work through mechanisms with a known timing**
 
 > Be creative about sources and disciplined about testing.

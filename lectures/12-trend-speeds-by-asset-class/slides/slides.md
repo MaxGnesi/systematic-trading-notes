@@ -161,6 +161,19 @@ A speed that worked because of one crisis, or in one market, passes only when th
 
 ---
 
+# Static or dynamic speeds?
+
+> The rule holds one set of speeds for a year; no dynamic choice beat it out of sample on our data.
+
+- **Momentum** (recent best): −0.06 to −0.11
+- **Reversal** (recent worst): +0.03 to +0.05, no mechanism
+- **Market state:** failed on the futures
+- **Crises:** no speed passed; quick crashes and long bear markets need opposite speeds
+
+![](../figures/26_crisis_speeds.png)
+
+---
+
 # Takeaways
 
 1. **Overfitting has two parts:** dependence on the sample can be measured in advance; a future unlike the past cannot
@@ -169,5 +182,6 @@ A speed that worked because of one crisis, or in one market, passes only when th
 4. **Super-long speeds in US equity are drift, not timing:** they fail where markets drifted less
 5. **Choosing helps by leaving out what fails:** per class or the fine details add nothing measurable
 6. **Framework choices matter more than they look:** returns over cash; volatility over months, not weeks
+7. **Static beat dynamic:** timing the speeds and crisis speeds did not beat holding the region
 
 > Hold every speed that works on one random half of years and markets and still works on the other, in at least 20% of 500 splits.

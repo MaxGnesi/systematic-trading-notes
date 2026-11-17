@@ -1,0 +1,29 @@
+{
+ "months": 600,
+ "first": "1975-01-31",
+ "last": "2024-12-31",
+ "share_4plus_lose": 0.16333333333333333,
+ "share_4plus_lose_chance": 0.14374166666666668,
+ "p_lose": 0.03,
+ "share_4plus_gain": 0.2733333333333333,
+ "share_4plus_gain_chance": 0.237115,
+ "p_gain": 0.0,
+ "loss_frequency": {
+  "Equity": 0.4,
+  "Government bonds": 0.44666666666666666,
+  "Credit": 0.5216666666666666,
+  "Commodities": 0.47833333333333333,
+  "Dollar": 0.4666666666666667
+ },
+ "corr_all": 0.0430698673830717,
+ "corr_down": 0.15593089651282827,
+ "corr_up": 0.2258104787277762,
+ "down_minus_up": -0.06987958221494794,
+ "band90": [
+  -0.16102401500184668,
+  0.0546387666751161
+ ],
+ "corr_book_worst_fifth": -0.18028584763786545,
+ "corr_book_best_fifth": -0.11241890163335629,
+ "skew_book": 0.3131957809557549
+}
