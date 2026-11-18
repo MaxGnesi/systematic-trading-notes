@@ -34,8 +34,8 @@ To compare families at equal speed, speed must be measured the same way for all 
 
 | Axis | Average gap between the best and the worst family at equal speed, in Sharpe ratio |
 |---|---|
-| Changes of direction per year | 0.32 |
-| Average holding period | 0.28 |
+| Changes of direction per year | 0.35 |
+| Average holding period | 0.30 |
 | Trend signature: average horizon of the past returns used | **0.09** |
 
 - **On the signature axis the families almost collapse onto one curve.** Measured by the horizon of the past returns they use, the five families behave like one rule at five speeds. Most of the gaps on the other two axes come from how each family's trades are counted, not from what it looks at.
@@ -65,15 +65,15 @@ A second system is worth adding if it improves the first, not if it beats it. Tw
 
 | Family, regressed on the other four (monthly) | Alpha, % a year | t-statistic | R² |
 |---|---|---|---|
-| TSMOM | +0.71 | 1.89 | 0.78 |
-| Price vs SMA | −0.24 | −0.68 | 0.86 |
-| EWMAC | +0.20 | 0.54 | 0.91 |
-| Donchian | −0.12 | −0.48 | 0.90 |
-| Chandelier | −0.05 | −0.14 | 0.82 |
+| TSMOM | +0.74 | 1.97 | 0.77 |
+| Price vs SMA | −0.25 | −0.72 | 0.85 |
+| EWMAC | +0.23 | 0.64 | 0.91 |
+| Donchian | −0.15 | −0.60 | 0.90 |
+| Chandelier | −0.04 | −0.11 | 0.81 |
 
 - **Neighbours are near copies**: TSMOM and price against its average correlate 0.91, Donchian and chandelier 0.92. The two ends of the list correlate only 0.48.
-- **No family adds a return the others do not already have.** The other four explain 78% to 91% of each family's monthly returns, and no alpha is distinguishable from zero; TSMOM comes closest, with a t-statistic of 1.9.
-- **Breakeven costs rise with speed** ([chart F.4](#f4-breakeven-cost-against-speed-3)). Rules that hold positions for less than about ten days lose money even before costs or break even below 5 bp; at a holding period of 25 to 35 days the breakeven is 10 to 30 bp; the slowest rules, EWMAC 64/256 and Donchian 200, reach about 65 bp. The chandelier never exceeds 23 bp, because its stop holds every position for about 25 days whatever the entry channel: its speed is set by the stop, not by the entry.
+- **Hardly any family adds a return the others do not already have.** The other four explain 77% to 91% of each family's monthly returns. Only TSMOM's alpha, 0.74% a year, reaches the usual 5% threshold, and only just (t-statistic 2.0); among five regressions, one at that level is about what chance alone would give (toolkit card 8). The others are far from it.
+- **Breakeven costs rise with speed** ([chart F.4](#f4-breakeven-cost-against-speed-3)). Rules that hold positions for less than about ten days lose money even before costs or break even below 5 bp; at a holding period of 25 to 35 days the breakeven is 10 to 35 bp; the slowest rules, EWMAC 64/256 and Donchian 200, reach about 70 bp. The chandelier never exceeds 24 bp, because its stop holds every position for about 25 days whatever the entry channel: its speed is set by the stop, not by the entry.
 
 ## 4. Beyond the return series: trades, sides and time in the market
 
@@ -153,23 +153,23 @@ Marginal contribution is the criterion that runs through the rest of Part II: it
 
 | | TSMOM | Price vs SMA | EWMAC | Donchian | Chandelier |
 |---|---|---|---|---|---|
-| Trades per asset per year | 8.0 | 7.8 | 4.2 | 5.0 | 6.6 |
+| Trades per asset per year | 7.9 | 7.8 | 4.1 | 5.0 | 6.6 |
 | Average days held | 29 | 29 | 55 | 34 | 29 |
-| Win rate | 32% | 14% | 18% | 38% | 38% |
-| Average win ÷ average loss | 3.1 | 8.4 | 6.1 | 1.9 | 1.8 |
-| Skewness of trade returns | 5.4 | 5.9 | 4.1 | 2.3 | 2.0 |
-| Profit of the best tenth of trades, as a multiple of total profit | 2.8 | 3.6 | 3.2 | 4.5 | 5.9 |
+| Win rate | 31% | 14% | 19% | 38% | 38% |
+| Average win ÷ average loss | 3.2 | 8.6 | 6.2 | 1.9 | 1.8 |
+| Skewness of trade returns | 5.5 | 6.0 | 4.2 | 2.3 | 2.0 |
+| Profit of the best tenth of trades, as a multiple of total profit | 2.8 | 3.5 | 3.1 | 4.6 | 5.9 |
 
 | | TSMOM | Price vs SMA | EWMAC | Donchian | Chandelier |
 |---|---|---|---|---|---|
-| Long side, % a year, before costs | +3.1 | +2.8 | +3.0 | +1.9 | +1.9 |
-| Short side, % a year, before costs | −0.5 | −0.8 | −0.8 | −0.9 | −1.0 |
+| Long side, % a year, before costs | +3.6 | +3.3 | +3.6 | +2.3 | +2.3 |
+| Short side, % a year, before costs | −1.0 | −1.2 | −1.3 | −1.3 | −1.4 |
 
-- **Every family wins rarely and wins big** ([chart F.5](#f5-trade-returns-at-matched-speed-4)). One trade in three to one in seven wins, and the winners are two to eight times the size of the losers.
+- **Every family wins rarely and wins big** ([chart F.5](#f5-trade-returns-at-matched-speed-4)). One trade in three to one in seven wins, and the winners are two to nine times the size of the losers.
 - **The best tenth of trades earns more than all the profit**: between 2.8 and 5.9 times it, so the other nine tenths lose money together. A system that missed its few best trades would lose money; this is the timing of Lecture 5, §2.4, earned in a few large months, seen trade by trade.
 - **On these ETFs the short side loses in every family** ([chart F.6](#f6-long-and-short-sides-4)): prices mostly rose, and the long side collected the drift (Lecture 5, §2.3). The short side earns its keep only as crisis protection (Lecture 6, §3.1), which a full-period average does not show.
-- **Time in the market** ([chart F.7](#f7-sharpe-ratio-against-time-in-the-market-4)). The Donchian rules are in the market 67% to 68% of the time at every entry channel; the chandelier from 81% (entry over 10 days) down to 31% (200 days). For the chandelier over 200 days, the median asset's Sharpe ratio is 0.26 while invested and 0.13 over the whole period, close to what the formula of §4.3 predicts: 0.26 × √0.31 = 0.14.
-- **Marginal contribution of the system that is often flat.** Regressing the chandelier over 20 days on EWMAC 16/64, with flat days earning zero, gives an alpha of −0.49% a year (t-statistic −1.0) and an R² of 0.59: although it is out of the market a quarter of the time and looks different, it adds nothing that EWMAC does not already have.
+- **Time in the market** ([chart F.7](#f7-sharpe-ratio-against-time-in-the-market-4)). The Donchian rules are in the market 67% to 69% of the time at every entry channel; the chandelier from 81% (entry over 10 days) down to 31% (200 days). For the chandelier over 200 days, the median asset's Sharpe ratio is 0.29 while invested and 0.14 over the whole period, close to what the formula of §4.3 predicts: 0.29 × √0.31 = 0.16.
+- **Marginal contribution of the system that is often flat.** Regressing the chandelier over 20 days on EWMAC 16/64, with flat days earning zero, gives an alpha of −0.55% a year (t-statistic −1.1) and an R² of 0.58: although it is out of the market a quarter of the time and looks different, it adds nothing that EWMAC does not already have.
 
 ### 4.5 Beyond the Sharpe ratio: Omega and drawdowns
 
@@ -196,15 +196,15 @@ At matched speed and equal volatility of 10% a year ([chart F.8](#f8-drawdowns-a
 
 | | Sharpe ratio | Omega, daily | Omega, monthly | Maximum drawdown | Average drawdown | Longest under water |
 |---|---|---|---|---|---|---|
-| TSMOM | 0.38 | 1.07 | 1.36 | −18% | −6.5% | 3.3 years |
-| Price vs SMA | 0.28 | 1.05 | 1.25 | −18% | −7.3% | 3.3 years |
-| EWMAC | 0.24 | 1.04 | 1.21 | −23% | −7.8% | 5.1 years |
-| Donchian | 0.11 | 1.02 | 1.09 | −21% | −8.5% | 6.7 years |
-| Chandelier | 0.08 | 1.01 | 1.06 | −25% | −9.5% | 6.7 years |
+| TSMOM | 0.40 | 1.07 | 1.38 | −21% | −6.5% | 3.2 years |
+| Price vs SMA | 0.30 | 1.05 | 1.27 | −18% | −7.3% | 3.6 years |
+| EWMAC | 0.24 | 1.05 | 1.22 | −23% | −7.8% | 5.0 years |
+| Donchian | 0.10 | 1.02 | 1.08 | −22% | −8.7% | 6.7 years |
+| Chandelier | 0.07 | 1.01 | 1.06 | −25% | −9.5% | 6.7 years |
 
 - **Omega ranks the families as the Sharpe ratio does.** For these rules the asymmetry lives in the trades (§4.1) and is averaged away in daily or monthly portfolio returns.
 - **Drawdowns separate the families more**: between three and seven years without a new peak.
-- **Low correlation of returns carried over to drawdowns.** The drawdown paths of TSMOM and Donchian correlate 0.33, and both were more than 10% under water on 11% of days; for the near copies Donchian and chandelier the figures are 0.83 and 30%.
+- **Low correlation of returns carried over to drawdowns.** The drawdown paths of TSMOM and Donchian correlate 0.36, and both were more than 10% under water on 12% of days; for the near copies Donchian and chandelier the figures are 0.83 and 32%.
 
 ## 5. Is the difference real?
 
@@ -223,10 +223,10 @@ Strategy returns are noisy, fat-tailed and serially dependent. Before reading a 
 
 **Results** (notebook §5):
 
-- **The noise is large.** The 90% block-bootstrap bands are on average 0.56 wide, about ±0.28 around each Sharpe ratio ([chart F.9](#f9-curves-with-bootstrap-bands-5)), in line with the standard error of a Sharpe ratio over 26 years, about 0.2 (Lo, 2002). The gaps between families at equal speed found in §2, 0.1 to 0.3, lie inside the bands.
-- **No pair of families at equal speed differs significantly.** The bootstrap tests of the Sharpe-ratio difference give p-values from 0.14 (EWMAC against Donchian) to 0.77 (Donchian against chandelier).
-- **Choosing a slow rule is not luck; choosing among slow rules is.** The probability of backtest overfitting is low, 0 to 0.15 within each family and 0.07 across all 31 systems, because the slow end is better in almost every sub-period. The best system in sample still earns less out of sample: a median Sharpe ratio of 0.37 against 0.53.
-- **The ranking of speeds carries over to other markets** ([chart F.10](#f10-asset-split-5)). Chosen on half of the ETFs and tested on the other half over the same period, the ranks of the parameters correlate 0.83 to 1.00 within four families and 0.87 across all systems; within the chandelier, whose speed hardly varies, only 0.20. In every family the best parameter on one half is also the best on the other.
+- **The noise is large.** The 90% block-bootstrap bands are on average 0.55 wide, about ±0.28 around each Sharpe ratio ([chart F.9](#f9-curves-with-bootstrap-bands-5)), in line with the standard error of a Sharpe ratio over 26 years, about 0.2 (Lo, 2002). The gaps between families at equal speed found in §2, 0.1 to 0.3, lie inside the bands.
+- **No pair of families at equal speed differs significantly.** The bootstrap tests of the Sharpe-ratio difference give p-values from 0.08 (EWMAC against Donchian) to 0.77 (Donchian against chandelier); none reaches 5%.
+- **Choosing a slow rule is not luck; choosing among slow rules is.** The probability of backtest overfitting is low, 0 to 0.13 within each family and 0.06 across all 31 systems, because the slow end is better in almost every sub-period. The best system in sample still earns less out of sample: a median Sharpe ratio of 0.41 against 0.57.
+- **The ranking of speeds carries over to other markets** ([chart F.10](#f10-asset-split-5)). Chosen on half of the ETFs and tested on the other half over the same period, the ranks of the parameters correlate 0.83 to 1.00 within four families and 0.89 across all systems; within the chandelier, whose speed hardly varies, only 0.43. In every family the best parameter on one half is also the best on the other.
 
 ### 5.2 Luck or an edge?
 
@@ -259,20 +259,20 @@ sign  = start * np.where(np.cumsum(flips, axis=0) % 2 == 0, 1, -1)   # an even n
 ![Luck or an edge? Zero-edge strategies built like the trend systems](figures/07_13_luck_cloud.png)
 <sub><b>How to read the figure.</b> <b>Axes.</b> Left: Sharpe ratio before costs, 2000-2026 (x), number of strategies (y). Middle: the best Sharpe ratio among 31 zero-edge strategies drawn at random, 5,000 draws (x), number of draws (y). Right: average holding period in days, log scale (x), Sharpe ratio after 5 bp (y). Grey: the zero-edge strategies; ticks and lines: the 31 trend systems, coloured by family; dotted line: the best trend system before costs.</sub>
 
-**How far luck goes.** Before costs, the zero-edge strategies have a median Sharpe ratio of 0.00 and a spread of 0.19, the standard error of a Sharpe ratio over 26 years (§5.1). The best of the 1,000 reaches 0.57, the same as the best trend system (0.56). The best of 31, as many as this lecture tried, is typically 0.38, and in one group of 31 in thirty it beats the best trend system. The expected maximum of $`N`$ independent draws from a normal distribution predicts this well: about 2.0 spreads above the median for 31 draws and 3.2 for 1,000, that is 0.39 and 0.62; for large $`N`$ it grows like $`\sqrt{2\ln N}`$ (Bailey, Borwein, López de Prado and Zhu, 2014). A peak Sharpe ratio alone cannot separate trend from luck; Chordia, Goyal and Saretto (2020) make the same point with two million trading signals built mechanically from accounting data.
+**How far luck goes.** Before costs, the zero-edge strategies have a median Sharpe ratio of 0.01 and a spread of 0.19, the standard error of a Sharpe ratio over 26 years (§5.1). The best of the 1,000 reaches 0.69, above the best trend system (0.60). The best of 31, as many as this lecture tried, is typically 0.40, and in about one group of 31 in sixteen it beats the best trend system. The expected maximum of $`N`$ independent draws from a normal distribution predicts this well: about 2.0 spreads above the median for 31 draws and 3.2 for 1,000, that is 0.40 and 0.62; for large $`N`$ it grows like $`\sqrt{2\ln N}`$ (Bailey, Borwein, López de Prado and Zhu, 2014). A peak Sharpe ratio alone cannot separate trend from luck; Chordia, Goyal and Saretto (2020) make the same point with two million trading signals built mechanically from accounting data.
 
-After costs (right panel) the random strategies lose, most of all the fast ones, because a flip costs the same whether or not it is right. At every speed from ten days up, the trend systems sit above the random cloud: their median before costs is 0.20 to 0.46, the random strategies' about zero.
+After costs (right panel) the random strategies lose, most of all the fast ones, because a flip costs the same whether or not it is right. At every speed from ten days up, the trend systems sit above the random cloud: their median before costs is about 0.2 to 0.5, the random strategies' about zero.
 
 ![Luck does not persist; an edge does](figures/07_14_luck_persistence.png)
 <sub><b>How to read the figure.</b> <b>Axes.</b> Left: Sharpe ratio before costs in 2000-2012 (x) and in 2013-2026 (y). Right: Sharpe ratio before costs on half A of the ETFs (x) and on half B (y), over the whole period. Grey: zero-edge strategies; orange: the 31 with the best Sharpe ratio in 2000-2012, the same 31 in both panels; diamonds: the 31 trend systems by family. Before costs, so that slower strategies, which pay less, do not look persistent for that reason alone.</sub>
 
 | Test | Trend systems | Zero-edge strategies |
 |---|---|---|
-| The whole curve: median Sharpe ratio before costs | 0.20 | 0.00 |
-| Over time: correlation of Sharpe ratios in 2000-2012 and 2013-2026 | 0.62 | 0.02 |
-| The best in 2000-2012, then 2013-2026 | 0.47 → 0.56 (best 5) | 0.60 → −0.01 (best 31) |
-| Across markets: rank correlation between the two halves of the ETFs | 0.77 | 0.01 |
-| Breadth: share of the 16 ETFs with a positive Sharpe ratio | 0.89 (systems above 0.4) | 0.72 (best 31) |
+| The whole curve: median Sharpe ratio before costs | 0.19 | 0.01 |
+| Over time: correlation of Sharpe ratios in 2000-2012 and 2013-2026 | 0.70 | 0.02 |
+| The best in 2000-2012, then 2013-2026 | 0.47 → 0.62 (best 5) | 0.60 → −0.08 (best 31) |
+| Across markets: rank correlation between the two halves of the ETFs | 0.84 | 0.05 |
+| Breadth: share of the 16 ETFs with a positive Sharpe ratio | 0.89 (systems above 0.4) | 0.70 (best 31) |
 
 <sub><b>How to read the table.</b> All before costs. Rank correlation: Spearman, across the 31 trend systems or the 1,000 zero-edge strategies. Our calculation for these notes.</sub>
 
@@ -283,11 +283,11 @@ After costs (right panel) the random strategies lose, most of all the fast ones,
 
 **The mechanism, tested.** Lectures 5 and 6 say what trend following captures: moves that persist for weeks to months, and large moves above all. They also say what kills it: markets that reverse before a position pays. Both statements make predictions that luck cannot meet:
 
-- **What drives it: large moves.** The slow trend systems' profit rises steadily with the size of the month's move, from −0.35 in quiet months to 3.97 in months that move more than three times their volatility: the smile of Lecture 5 (Table 3.1). The luckiest zero-edge strategies show a faint version of it, because they were selected for having been right in big moves, and the average zero-edge strategy none.
-- **What kills it: choppy markets.** In the choppiest third of asset-years the slow trend systems lose (−0.55), in the most trending third they earn (1.19). The luckiest zero-edge strategies earn about the same everywhere (0.03 to 0.08).
-- **When it works: regimes.** The slow trend systems earned in low and middle volatility (0.68, 0.59) and much less in high volatility (0.13), and about as much in zero-rate months as in the others (0.42 against 0.49). The luckiest zero-edge strategies show no pattern that any mechanism would predict.
+- **What drives it: large moves.** The slow trend systems' profit rises steadily with the size of the month's move, from −0.33 in quiet months to 3.79 in months that move more than three times their volatility: the smile of Lecture 5 (Table 3.1). The luckiest zero-edge strategies show a faint version of it, because they were selected for having been right in big moves, and the average zero-edge strategy none.
+- **What kills it: choppy markets.** In the choppiest third of asset-years the slow trend systems lose (−0.54), in the most trending third they earn (1.22). The luckiest zero-edge strategies earn about the same everywhere (0.02 to 0.10).
+- **When it works: regimes.** The slow trend systems earned in low and middle volatility (0.82, 0.69) and nothing in high volatility (−0.02), and about as much in zero-rate months as in the others (0.45 against 0.53). The luckiest zero-edge strategies show no pattern that any mechanism would predict.
 
-**Two predictions failed, and they are reported.** Persistence at a one-month horizon, measured by the variance ratio within each asset-year, did not line up with trend profits; if anything they were higher where one-month returns reversed. The edge lives at the horizons of months, and a year with a large directional move can be choppy within each month. And in months that began with SPY below its 200-day average, the slow trend systems earned nothing (−0.04, against 0.64 when SPY was above it). This contradicts the simple story of trend as protection in crises at this definition: such months include the sharp rebounds after a fall, which a slow rule meets with a short position; Lecture 5 (§2.5) found that a large fall tends to be followed by a small rebound.
+**Two predictions failed, and they are reported.** Persistence at a one-month horizon, measured by the variance ratio within each asset-year, did not line up with trend profits; if anything they were higher where one-month returns reversed. The edge lives at the horizons of months, and a year with a large directional move can be choppy within each month. And in months that began with SPY below its 200-day average, the slow trend systems lost (−0.19, against 0.74 when SPY was above it). This contradicts the simple story of trend as protection in crises at this definition: such months include the sharp rebounds after a fall, which a slow rule meets with a short position; Lecture 5 (§2.5) found that a large fall tends to be followed by a small rebound.
 
 **What to take from it.** Luck can produce a backtest as good as any trend system's. An edge is something else: a profit with a mechanism that says where and when it should work and fail, and those statements hold up across markets, across regimes and over time. The procedure of §7 adds this as a step.
 
@@ -305,16 +305,16 @@ The best point on a curve combines skill with luck, and the luck does not repeat
 
 | | Peak | Median across parameters | Walk-forward choice, 2005–2026 | Fixed middle parameter, 2005–2026 | Blend of all parameters, 2005–2026 |
 |---|---|---|---|---|---|
-| TSMOM | 0.47 | 0.18 | 0.46 | 0.04 | 0.16 |
-| Price vs SMA | 0.39 | 0.02 | 0.33 | 0.10 | −0.10 |
-| EWMAC | 0.49 | 0.11 | 0.44 | 0.19 | 0.00 |
-| Donchian | 0.42 | 0.10 | 0.42 | 0.08 | 0.08 |
-| Chandelier | 0.26 | 0.09 | 0.20 | 0.08 | 0.12 |
+| TSMOM | 0.51 | 0.17 | 0.51 | 0.07 | 0.19 |
+| Price vs SMA | 0.42 | 0.01 | 0.38 | 0.11 | −0.09 |
+| EWMAC | 0.53 | 0.10 | 0.51 | 0.21 | 0.02 |
+| Donchian | 0.44 | 0.09 | 0.46 | 0.09 | 0.08 |
+| Chandelier | 0.27 | 0.08 | 0.27 | 0.09 | 0.13 |
 
 - **The median lies far below the peak** ([chart F.11](#f11-median-against-peak-6)), because every grid includes fast rules that lose money after costs.
 - **Blending all parameters inherits those losses.** A blend diversifies only once the region that does not work has been dropped; Lecture 10 does exactly that, and blends what remains.
 - **Walk-forward choice comes close to the peak**, because the ranking of speeds is stable (§5): each year it picks one of the slow rules.
-- **Several measures at once** ([chart F.12](#f12-trade-offs-6)): 10 of the 31 systems are beaten by no other on Sharpe ratio, monthly skewness and maximum drawdown together, mostly the slow ends of the families. The fastest EWMAC is among them on its skewness alone, with a Sharpe ratio of −0.72: the undominated set removes systems, it does not choose one.
+- **Several measures at once** ([chart F.12](#f12-trade-offs-6)): 8 of the 31 systems are beaten by no other on Sharpe ratio, monthly skewness and maximum drawdown together, mostly the slow ends of the families. The fastest EWMAC is among them on its skewness alone, with a Sharpe ratio of −0.76: the undominated set removes systems, it does not choose one.
 
 ## 7. A procedure, simplest first
 
@@ -338,7 +338,7 @@ The best point on a curve combines skill with luck, and the luck does not repeat
 2. **Ask what a system adds, not how good it is.** At equal speed, no family adds a return that the others do not already have.
 3. **Look inside the return series.** Trend systems win rarely and win big; the best tenth of trades earns more than all the profit, and the long and short sides earn in different conditions.
 4. **Treat every gap as noise until shown otherwise.** Bands of ±0.3 around each Sharpe ratio swallow the differences between families; tests that allow fat tails and dependence find none significant.
-5. **A good backtest can be luck.** The best of 1,000 strategies with no edge matches the best trend system; what separates an edge is persistence over time and across markets, and profits where its mechanism says they should be (§5.2).
+5. **A good backtest can be luck.** The best of 1,000 strategies with no edge beats the best trend system; what separates an edge is persistence over time and across markets, and profits where its mechanism says they should be (§5.2).
 6. **Judge the whole curve, then drop what fails and blend the rest.** The peak overstates what a family offers, the median of a grid that includes failing rules understates it.
 
 ### 8.2 Exercises
