@@ -60,6 +60,18 @@ $$I = \frac{q^b - q^a}{q^b + q^a}$$
 
 ---
 
+# The microprice: where the mid is going
+
+> The mid ignores the queues; the microprice is the mid to expect once the price has moved. Estimated from data, it cuts the error of the next mid by 19%.
+
+- The weighted mid barely helps (under 0.5%): it assumes a one-tick move, while the mid jumps a median of 44 ticks
+- Over 1 s the gain is 13%, over 10 s 2.3%
+- **Blind spot:** estimated on calm days, it cut the error by only 6% on 10 October
+
+![The microprice](../figures/19_12_microprice_results.png)
+
+---
+
 # Resting orders: mostly cancelled, filled ones lose
 
 > Of each 100 BTC that left a best queue, about 92 were cancelled; one second after its fill the average resting order was 59 ticks per BTC under water.
@@ -97,6 +109,17 @@ $$\Delta m = \beta \cdot \text{OFI}$$
 - A book twice as deep moves about half as far per BTC
 
 ![Order-flow imbalance on 45 days: share of the move explained out of sample, day by day, and the move per BTC against depth](../figures/20_08_ofi_results.png)
+
+---
+
+# Impact builds, then fades; VPIN warned of nothing
+
+> A taker order's own impact builds for about a dozen orders, then fades; the price keeps moving because buys follow buys.
+
+- Own impact: 2.7 ticks at once, a peak of 10.5 ticks about 14 orders later, two thirds of the peak by 500 orders
+- Order signs: correlation 0.41 with the next order, 0.17 ten orders later, still 0.01 a thousand later
+- What a maker sees: 5 ticks one order later, about 62 from a hundred on
+- **VPIN**, the toxicity measure, added nothing beyond volume and the last hour (partial correlation −0.004)
 
 ---
 

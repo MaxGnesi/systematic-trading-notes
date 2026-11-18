@@ -29,3 +29,7 @@
 ![Slide 13](pages/22_slide_13.png)
 
 ![Slide 14](pages/22_slide_14.png)
+
+![Slide 15](pages/22_slide_15.png)
+
+![Slide 16](pages/22_slide_16.png)

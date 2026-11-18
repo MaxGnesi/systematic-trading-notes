@@ -144,6 +144,33 @@ Groups found in the data instead of asset classes did a little better (0.52), bu
 
 ---
 
+# Weighing when correlations are unstable
+
+> One matrix over the whole history blends regimes into a number the portfolio may never meet; size by volatility, read correlations regime by regime, and use them to check the total.
+
+- Equity-bond trend correlation by regime: from −0.66 (2020) to +0.39 (2000-02); blended over all years: −0.03
+- Across classes every method lands near equal risk; the regime risk sits in the **total**: 6% to 12% on a 10% target
+- Weights by the worst regime, a turbulent-tilted blend or min-max; never an average of regimes
+
+![The risk of one 10% target in eight regimes](../figures/27_unstable_corr.png)
+
+---
+
+# Is correlation important for a trend book?
+
+> For return, no; for risk and breadth, yes. Correlation decides **which markets** to hold; equal risk weighs them; correlation checks the total.
+
+| Average correlation of the trend streams | Book Sharpe ratio, 20 markets at 0.3 each |
+|---|---|
+| 0 | 1.34 |
+| 0.1 | 0.79 |
+| 0.3 | 0.52 |
+
+- **The sign does not matter:** at −1 a trend follower holds the mirror image, one bet, not a hedge
+- **Do the streams lose together?** Little more than chance (16% of months vs 14%); they gain together more (27% vs 24%)
+
+---
+
 # Today's portfolio in past crises
 
 > The worst case is a quick crash that hits a long, levered position sized on calm years: in 2020 today's portfolio would lose 18%.
@@ -156,6 +183,21 @@ Groups found in the data instead of asset classes did a little better (0.52), bu
 | Feb-Apr 2025 | −19% | −7% |
 
 16 points of the 2020 loss came from credit: corporate bond funds held long at several times their value after a calm run.
+
+---
+
+# Choosing the settings
+
+> When methods built on different assumptions agree, the choice does not matter: take the simplest, and look for the risk elsewhere. Agreement is not safety.
+
+| Where the portfolio would fail | On our data |
+|---|---|
+| A quick crash after a calm run | 2020: today's portfolio −18%, 16 points in credit |
+| Correlations jump inside a class | 10% target becomes 15.6% in a harsh scenario |
+| A regime where classes move together | 11.5% to 11.9% on a 10% target |
+| Volatility scaled on a calm window | 13.3% in 2007-09 |
+
+- Decide from what is known about the inputs, rule out what fails objective tests, then compare one setting at a time against the noise
 
 ---
 
