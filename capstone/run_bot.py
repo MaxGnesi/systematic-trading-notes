@@ -14,7 +14,9 @@ What protects the account, each a separate guard:
     between our records and the exchange, after repeated order errors, or when the file data/STOP exists.
     There is deliberately no drawdown stop: a trend follower's drawdowns are how it earns.
   - **Hard limit.** The position never exceeds max_position_x_equity x equity, whatever the signal.
-  - **No late decisions.** A decision more than 10 minutes late (the computer slept) is skipped, not acted on.
+  - **Catching up after a delay.** If a decision comes more than 10 minutes late (the computer slept), the bot
+    decides at once on the latest finished hour and trades if the signal calls for it: a flipped signal is
+    never left waiting. The hour's label still prevents trading the same hour twice.
 On Ctrl+C the bot stops cleanly and leaves the position as it is; the next start reconciles it.
 
 Usage:  python -m capstone.run_bot [--dry-run] [--hours N] [--once]
@@ -184,9 +186,14 @@ class Bot:
                 await asyncio.sleep(wait)
             await asyncio.sleep(2)                           # let the decision minute's candle close
             late = (datetime.now(timezone.utc) - decision_time).total_seconds()
-            if not once and late > 600 + self.p.jitter_seconds:   # e.g. the PC slept: never act on an old decision
-                self.event("warning", "skip", f"decision for {decision_time:%H:%M} is {late / 60:.0f} min late (did the computer sleep?)")
-                continue
+            if not once and late > 600 + self.p.jitter_seconds:   # e.g. the PC slept: catch up on the latest hour instead
+                now = datetime.now(timezone.utc)
+                latest = now.replace(minute=self.p.decision_minute, second=0, microsecond=0)
+                if latest > now:
+                    latest -= timedelta(hours=1)
+                self.event("warning", "catch_up", f"decision for {decision_time:%H:%M} came {late / 60:.0f} min late "
+                           f"(did the computer sleep?); deciding now on the latest finished hour, {latest:%H:%M}")
+                decision_time = latest
             if self.paused_reason:
                 log.warning("paused (%s): no decision", self.paused_reason)
             else:
