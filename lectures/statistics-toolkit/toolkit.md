@@ -63,7 +63,7 @@ r_{\log,\,\text{portfolio}} \;\approx\; \sum_i w_i\, r_{\log,\,i} \;+\; \tfrac12
 <sub><b>How to read the table.</b> One row per step of building and judging a portfolio, in order. For daily data the two kinds differ only in the second decimal, so steps 1 and 4 hardly depend on the choice; steps 2, 3, 5 and 6 do, because they add up across assets or over long periods.</sub>
 
 **Watch out for** the four classic mistakes, one per step:
-- **Log returns added across assets** (step 2): the diversification return is lost, 1.7 points a year on our ETFs. A per-asset profit of position × log return carries the same error, about $`\tfrac12\sigma^2`$ a year per unit held long, in the other direction when short.
+- **Log returns added across assets** (step 2): the diversification return is lost, 1.7 points a year on our ETFs. A per-asset profit of position × log return carries the same error, about $`\tfrac12\sigma^2`$ a year per unit held long, in the other direction when short. It can even create a finding: in Lecture 6 §3.1 it made a trend system's crisis "smile" look significant (t = 2.0) when, measured correctly, it is not (t = 1.0).
 - **Simple returns added over time** (step 3): +100% then −50% becomes +50%.
 - **A Sharpe ratio quoted as growth** (steps 4 and 5): card 2.
 - **A drawdown from summed returns** (step 6) presented as a fall in money: at a 30% drawdown the two differ by about 4 points.
