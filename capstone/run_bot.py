@@ -14,6 +14,7 @@ What protects the account, each a separate guard:
     between our records and the exchange, after repeated order errors, or when the file data/STOP exists.
     There is deliberately no drawdown stop: a trend follower's drawdowns are how it earns.
   - **Hard limit.** The position never exceeds max_position_x_equity x equity, whatever the signal.
+  - **No late decisions.** A decision more than 10 minutes late (the computer slept) is skipped, not acted on.
 On Ctrl+C the bot stops cleanly and leaves the position as it is; the next start reconciles it.
 
 Usage:  python -m capstone.run_bot [--dry-run] [--hours N] [--once]
@@ -182,6 +183,10 @@ class Bot:
                 log.info("next decision %s (+ random delay), in %.0f s", decision_time.isoformat(), wait)
                 await asyncio.sleep(wait)
             await asyncio.sleep(2)                           # let the decision minute's candle close
+            late = (datetime.now(timezone.utc) - decision_time).total_seconds()
+            if not once and late > 600 + self.p.jitter_seconds:   # e.g. the PC slept: never act on an old decision
+                self.event("warning", "skip", f"decision for {decision_time:%H:%M} is {late / 60:.0f} min late (did the computer sleep?)")
+                continue
             if self.paused_reason:
                 log.warning("paused (%s): no decision", self.paused_reason)
             else:
