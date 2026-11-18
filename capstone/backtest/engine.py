@@ -65,7 +65,7 @@ class Result:
 
 
 def run(h: pd.DataFrame, p: Params, rival: str = "base", x_bp: float = 0.0, seed: int = 7, tx_override=None,
-        vol_switch: str = "off", vol_k: float = 2.0) -> Result:
+        vol_switch: str = "off", vol_k: float = 2.0, flat_mask=None) -> Result:
     """`tx_override` (tests only): a fixed target, as a multiple of equity, instead of the strategy's."""
     sig = targets(h["price"], p) if tx_override is None else pd.DataFrame({"target_x_equity": tx_override}, index=h.index)
     rng = np.random.default_rng(seed)
@@ -76,6 +76,8 @@ def run(h: pd.DataFrame, p: Params, rival: str = "base", x_bp: float = 0.0, seed
     violent = vr >= vol_k
     if vol_switch == "flatten":
         tx[violent] = 0.0
+    if flat_mask is not None:                       # a hook for your own filter: flat in the hours it marks
+        tx[np.asarray(flat_mask, dtype=bool)] = 0.0
     avg_abs = pd.Series(np.abs(tx)).expanding().mean().to_numpy()
     n = len(h)
     eq, pos, last_fill = 1.0, 0.0, np.nan

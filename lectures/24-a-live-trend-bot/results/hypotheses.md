@@ -91,3 +91,9 @@ fills, reconciliation, uptime of the feed, and the gap between live and backtest
   3 times equity on the position guards against bugs. Drawdowns are reported, not acted on. Before any result.
 - **18 November 2026, the user: check whether trend works better in extreme volatility, and the volatility
   quadrant (level x direction).** Added as Part A, Part B and expectations 6 to 8, before any result.
+- **18 November 2026, the user: keep it simple; the capstone teaches the plumbing, and a good strategy is each
+  student's own work.** Rival 5 (the volatility switch), Part A (where the strategy earns, by volatility
+  state) and Part B (a filter chosen on 2019-2022) become exercises; expectations 5 to 8 are withdrawn
+  untested. The engine keeps a hook (`flat_mask`, `vol_switch`) for students' own filters. Disclosure: a smoke
+  test of the code on partial data with a three-year gap printed volatility-state numbers before this change;
+  they are meaningless and played no part in it.
