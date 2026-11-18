@@ -95,6 +95,16 @@ class Gateway:
     def open_orders(self, instrument: str) -> list[dict]:
         return [self._order(o) for o in self.call("private/get_open_orders_by_instrument", {"instrument_name": instrument})]
 
+    def fills_of_order(self, exchange_order_id: str) -> list[dict]:
+        """The executions of one order, in the bot's own fields. A market order may fill in several pieces."""
+        out = []
+        for t in self.call("private/get_user_trades_by_order", {"order_id": exchange_order_id}):
+            out.append(dict(exec_id=str(t["trade_id"]), exchange_order_id=t["order_id"], client_order_id=t.get("label") or None,
+                            instrument=t["instrument_name"], side=t["direction"], price=Decimal(str(t["price"])),
+                            amount=Decimal(str(t["amount"])), fee=Decimal(str(t["fee"])), fee_currency=t.get("fee_currency"),
+                            is_maker=t.get("liquidity") == "M", ts_ms=int(t["timestamp"])))
+        return out
+
     def position(self, instrument: str) -> dict:
         p = self.call("private/get_position", {"instrument_name": instrument})
         return {"size_usd": Decimal(str(p["size"])), "average_price": Decimal(str(p.get("average_price") or 0)),

@@ -97,3 +97,33 @@ fills, reconciliation, uptime of the feed, and the gap between live and backtest
   untested. The engine keeps a hook (`flat_mask`, `vol_switch`) for students' own filters. Disclosure: a smoke
   test of the code on partial data with a three-year gap printed volatility-state numbers before this change;
   they are meaningless and played no part in it.
+
+## Results, 18 November 2026 (capstone/backtest/run_backtest.py, results/backtest.json)
+
+Deribit BTC-PERPETUAL, 1 January 2019 to 31 October 2026, 68,664 hourly decisions; no minute missing in the
+4,119,840 one-minute candles. Settings chosen on other exchanges' data: the whole sample is out of sample.
+Account in BTC; taker fee, half a tick and recorded funding charged.
+
+| Variant | Sharpe | Return a year (BTC) | Volatility | Worst month | Largest drawdown |
+|---|---|---|---|---|---|
+| Strategy: 2 + 7 days, 5-sigma take profit | 0.99 | 9.8% | 9.9% | -3.8% | -9.9% |
+| 2 days alone | 0.83 | 9.5% | 11.8% | -5.8% | -9.0% |
+| 7 days alone | 0.87 | 9.4% | 10.9% | -6.2% | -13.1% |
+| Without the take profit | 0.79 | 12.1% | 16.0% | -4.2% | -15.4% |
+
+- **Expectation 1 partly holds.** The blend's worst month is milder than either speed's; its Sharpe ratio is
+  above both, not between them, with differences inside their 90% bands (2 days: -0.12, band -0.29 to +0.09;
+  7 days: -0.04, band -0.30 to +0.19).
+- **Expectation 2 half holds.** Sharpe ratio unchanged by the take profit (without it: +0.03, band -0.16 to
+  +0.23); skew not raised (without it: +0.19, band -0.10 to +0.50). The take profit cut volatility from 16% to
+  10% and the largest drawdown from -15% to -10%; the speeds were flat 12% (2 days) and 17% (7 days) of hours.
+- **Expectation 3 holds.** Patient entry: -0.001 (band -0.017 to +0.015); 68% of its trades filled as maker and
+  fees fell 40%, offset by the fills it missed.
+- **Expectation 4 holds in practice.** Timing inside the window: +0.009 at 10 bp (band +0.001 to +0.019, a
+  marginal pass among four thresholds, not corrected), nothing at 20-40 bp; triggered on 7%, 1.7%, 0.7%, 0.35%
+  of trades.
+- **Robustness check (labelled):** deciding at :00 instead of :23 gave +0.08 (band +0.01 to +0.18). Minute
+  candles cannot see the extra cost of the crowded first seconds of the hour, so this comparison flatters :00.
+  The strategy is unchanged; an open question.
+- **By year:** 1.41, 1.80, 0.29, 0.26, 2.06, 1.01, -0.26 (2025), 1.34 (2026 to October). Funding cost more than
+  fees (0.014 against 0.009 BTC a year).

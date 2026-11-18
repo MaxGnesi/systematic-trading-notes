@@ -1,0 +1,382 @@
+{
+ "history": [
+  "2019-01-01 00:23:00+00:00",
+  "2026-10-31 23:23:00+00:00"
+ ],
+ "hours": 68664,
+ "variants": {
+  "base": {
+   "sharpe": 0.9945,
+   "ann_return": 0.0979,
+   "ann_vol": 0.0987,
+   "max_drawdown": -0.0994,
+   "worst_month": -0.0385,
+   "month_skew": 1.397,
+   "fees_per_year": 0.0086,
+   "funding_per_year": 0.0143,
+   "hours_at_limit": 0,
+   "months": 91,
+   "sharpe_by_year": {
+    "2019": 1.41,
+    "2020": 1.8,
+    "2021": 0.29,
+    "2022": 0.26,
+    "2023": 2.06,
+    "2024": 1.01,
+    "2025": -0.26,
+    "2026": 1.34
+   },
+   "share_of_hours_tp_flat": {
+    "tp2d": 0.1153,
+    "tp7d": 0.1715
+   }
+  },
+  "speed_2d": {
+   "sharpe": 0.8308,
+   "ann_return": 0.0952,
+   "ann_vol": 0.1177,
+   "max_drawdown": -0.0898,
+   "worst_month": -0.0576,
+   "month_skew": 1.0445,
+   "fees_per_year": 0.0147,
+   "funding_per_year": 0.0134,
+   "hours_at_limit": 0,
+   "months": 91,
+   "sharpe_by_year": {
+    "2019": 1.27,
+    "2020": 1.4,
+    "2021": -0.16,
+    "2022": 0.27,
+    "2023": 2.36,
+    "2024": 0.8,
+    "2025": -0.31,
+    "2026": 0.82
+   },
+   "share_of_hours_tp_flat": {
+    "tp2d": 0.1153
+   }
+  },
+  "speed_7d": {
+   "sharpe": 0.8706,
+   "ann_return": 0.0935,
+   "ann_vol": 0.1095,
+   "max_drawdown": -0.1309,
+   "worst_month": -0.0615,
+   "month_skew": 1.522,
+   "fees_per_year": 0.0041,
+   "funding_per_year": 0.0148,
+   "hours_at_limit": 0,
+   "months": 91,
+   "sharpe_by_year": {
+    "2019": 1.2,
+    "2020": 2.01,
+    "2021": 0.58,
+    "2022": 0.12,
+    "2023": 0.8,
+    "2024": 0.97,
+    "2025": -0.23,
+    "2026": 1.33
+   },
+   "share_of_hours_tp_flat": {
+    "tp7d": 0.1715
+   }
+  },
+  "no_tp": {
+   "sharpe": 0.791,
+   "ann_return": 0.1209,
+   "ann_vol": 0.1604,
+   "max_drawdown": -0.154,
+   "worst_month": -0.0425,
+   "month_skew": 1.5685,
+   "fees_per_year": 0.0108,
+   "funding_per_year": 0.0361,
+   "hours_at_limit": 0,
+   "months": 91,
+   "sharpe_by_year": {
+    "2019": 1.1,
+    "2020": 1.69,
+    "2021": 0.08,
+    "2022": 0.34,
+    "2023": 1.22,
+    "2024": 0.74,
+    "2025": -0.63,
+    "2026": 1.14
+   },
+   "share_of_hours_tp_flat": {
+    "tp2d": 0.0,
+    "tp7d": 0.0
+   }
+  },
+  "patient": {
+   "sharpe": 0.9938,
+   "ann_return": 0.0985,
+   "ann_vol": 0.0994,
+   "max_drawdown": -0.1052,
+   "worst_month": -0.0386,
+   "month_skew": 1.3896,
+   "fees_per_year": 0.0052,
+   "funding_per_year": 0.0143,
+   "hours_at_limit": 0,
+   "months": 91,
+   "sharpe_by_year": {
+    "2019": 1.35,
+    "2020": 1.83,
+    "2021": 0.32,
+    "2022": 0.29,
+    "2023": 2.04,
+    "2024": 0.99,
+    "2025": -0.27,
+    "2026": 1.39
+   },
+   "share_of_trades_flagged": 0.68,
+   "share_of_hours_tp_flat": {
+    "tp2d": 0.1153,
+    "tp7d": 0.1715
+   }
+  },
+  "window_10": {
+   "sharpe": 1.005,
+   "ann_return": 0.099,
+   "ann_vol": 0.0986,
+   "max_drawdown": -0.0984,
+   "worst_month": -0.0376,
+   "month_skew": 1.4035,
+   "fees_per_year": 0.0087,
+   "funding_per_year": 0.0143,
+   "hours_at_limit": 0,
+   "months": 91,
+   "sharpe_by_year": {
+    "2019": 1.42,
+    "2020": 1.82,
+    "2021": 0.32,
+    "2022": 0.25,
+    "2023": 2.08,
+    "2024": 1.01,
+    "2025": -0.25,
+    "2026": 1.35
+   },
+   "share_of_trades_flagged": 0.0697,
+   "share_of_hours_tp_flat": {
+    "tp2d": 0.1153,
+    "tp7d": 0.1715
+   }
+  },
+  "window_20": {
+   "sharpe": 1.0025,
+   "ann_return": 0.0987,
+   "ann_vol": 0.0986,
+   "max_drawdown": -0.0983,
+   "worst_month": -0.0375,
+   "month_skew": 1.4051,
+   "fees_per_year": 0.0087,
+   "funding_per_year": 0.0143,
+   "hours_at_limit": 0,
+   "months": 91,
+   "sharpe_by_year": {
+    "2019": 1.42,
+    "2020": 1.82,
+    "2021": 0.31,
+    "2022": 0.25,
+    "2023": 2.08,
+    "2024": 1.01,
+    "2025": -0.26,
+    "2026": 1.33
+   },
+   "share_of_trades_flagged": 0.0171,
+   "share_of_hours_tp_flat": {
+    "tp2d": 0.1153,
+    "tp7d": 0.1715
+   }
+  },
+  "window_30": {
+   "sharpe": 0.9945,
+   "ann_return": 0.0979,
+   "ann_vol": 0.0986,
+   "max_drawdown": -0.1008,
+   "worst_month": -0.0389,
+   "month_skew": 1.3999,
+   "fees_per_year": 0.0086,
+   "funding_per_year": 0.0143,
+   "hours_at_limit": 0,
+   "months": 91,
+   "sharpe_by_year": {
+    "2019": 1.4,
+    "2020": 1.82,
+    "2021": 0.3,
+    "2022": 0.25,
+    "2023": 2.08,
+    "2024": 0.98,
+    "2025": -0.26,
+    "2026": 1.34
+   },
+   "share_of_trades_flagged": 0.0073,
+   "share_of_hours_tp_flat": {
+    "tp2d": 0.1153,
+    "tp7d": 0.1715
+   }
+  },
+  "window_40": {
+   "sharpe": 0.9961,
+   "ann_return": 0.098,
+   "ann_vol": 0.0986,
+   "max_drawdown": -0.1002,
+   "worst_month": -0.039,
+   "month_skew": 1.3973,
+   "fees_per_year": 0.0086,
+   "funding_per_year": 0.0143,
+   "hours_at_limit": 0,
+   "months": 91,
+   "sharpe_by_year": {
+    "2019": 1.39,
+    "2020": 1.84,
+    "2021": 0.3,
+    "2022": 0.24,
+    "2023": 2.07,
+    "2024": 0.99,
+    "2025": -0.25,
+    "2026": 1.34
+   },
+   "share_of_trades_flagged": 0.0035,
+   "share_of_hours_tp_flat": {
+    "tp2d": 0.1153,
+    "tp7d": 0.1715
+   }
+  },
+  "check_phase_00": {
+   "sharpe": 1.0624,
+   "ann_return": 0.1093,
+   "ann_vol": 0.1025,
+   "max_drawdown": -0.1028,
+   "worst_month": -0.0392,
+   "month_skew": 1.4111,
+   "fees_per_year": 0.0092,
+   "funding_per_year": 0.0156,
+   "hours_at_limit": 0,
+   "months": 91,
+   "sharpe_by_year": {
+    "2019": 1.55,
+    "2020": 1.83,
+    "2021": 0.31,
+    "2022": 0.56,
+    "2023": 1.99,
+    "2024": 0.96,
+    "2025": -0.28,
+    "2026": 1.27
+   },
+   "share_of_hours_tp_flat": {
+    "tp2d": 0.1209,
+    "tp7d": 0.167
+   }
+  }
+ },
+ "differences_vs_base_monthly": {
+  "speed_2d": {
+   "sharpe_minus_base": -0.117,
+   "band90": [
+    -0.294,
+    0.09
+   ],
+   "skew_minus_base": -0.366,
+   "skew_band90": [
+    -0.605,
+    -0.161
+   ]
+  },
+  "speed_7d": {
+   "sharpe_minus_base": -0.042,
+   "band90": [
+    -0.295,
+    0.187
+   ],
+   "skew_minus_base": 0.135,
+   "skew_band90": [
+    -0.225,
+    0.517
+   ]
+  },
+  "no_tp": {
+   "sharpe_minus_base": 0.027,
+   "band90": [
+    -0.157,
+    0.227
+   ],
+   "skew_minus_base": 0.185,
+   "skew_band90": [
+    -0.097,
+    0.503
+   ]
+  },
+  "patient": {
+   "sharpe_minus_base": -0.001,
+   "band90": [
+    -0.017,
+    0.015
+   ],
+   "skew_minus_base": -0.017,
+   "skew_band90": [
+    -0.042,
+    0.005
+   ]
+  },
+  "window_10": {
+   "sharpe_minus_base": 0.009,
+   "band90": [
+    0.001,
+    0.019
+   ],
+   "skew_minus_base": 0.007,
+   "skew_band90": [
+    -0.005,
+    0.019
+   ]
+  },
+  "window_20": {
+   "sharpe_minus_base": 0.007,
+   "band90": [
+    -0.001,
+    0.015
+   ],
+   "skew_minus_base": 0.009,
+   "skew_band90": [
+    -0.004,
+    0.021
+   ]
+  },
+  "window_30": {
+   "sharpe_minus_base": -0.0,
+   "band90": [
+    -0.007,
+    0.006
+   ],
+   "skew_minus_base": 0.003,
+   "skew_band90": [
+    -0.007,
+    0.013
+   ]
+  },
+  "window_40": {
+   "sharpe_minus_base": 0.0,
+   "band90": [
+    -0.009,
+    0.01
+   ],
+   "skew_minus_base": 0.001,
+   "skew_band90": [
+    -0.01,
+    0.008
+   ]
+  },
+  "check_phase_00": {
+   "sharpe_minus_base": 0.083,
+   "band90": [
+    0.011,
+    0.177
+   ],
+   "skew_minus_base": 0.018,
+   "skew_band90": [
+    -0.186,
+    0.148
+   ]
+  }
+ }
+}

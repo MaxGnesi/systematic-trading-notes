@@ -58,3 +58,36 @@ def reconcile(db: DB, symbol: str, exchange_open: list[dict], exchange_position:
     db.execute("INSERT INTO reconciliation_events (at, kind, status, ours, theirs, action) VALUES (?,?,?,?,?,?)",
                (now, "position", "drift" if ledger_position != exchange_position else "ok", str(ledger_position), str(exchange_position), "none"))
     return drift
+
+
+def record_fill(db: DB, f: dict) -> bool:
+    """Record one execution; the exchange's execution id makes it impossible to count a fill twice."""
+    if db.query("SELECT 1 FROM fills WHERE exec_id = ?", (f["exec_id"],)):
+        return False
+    from datetime import datetime, timezone
+    at = datetime.fromtimestamp(f["ts_ms"] / 1000, timezone.utc).isoformat(timespec="milliseconds")
+    db.execute("INSERT INTO fills (exec_id, client_order_id, exchange_order_id, symbol, side, price, qty, fee, fee_currency, is_maker, at) "
+               "VALUES (?,?,?,?,?,?,?,?,?,?,?)", (f["exec_id"], f["client_order_id"], f["exchange_order_id"], f["instrument"], f["side"],
+                                                   f["price"], f["amount"], f["fee"], f["fee_currency"], int(f["is_maker"]), at))
+    return True
+
+
+def ledger_position(db: DB, symbol: str) -> Decimal:
+    """Our position as our own recorded fills add up to: buys minus sells, in USD for an inverse contract."""
+    total = Decimal(0)
+    for side, qty in db.query("SELECT side, qty FROM fills WHERE symbol = ?", (symbol,)):
+        total += Decimal(str(qty)) if side == "buy" else -Decimal(str(qty))
+    return total
+
+
+def record_equity(db: DB, equity_btc: Decimal, price: Decimal | None, position_usd: Decimal | None) -> None:
+    db.execute("INSERT INTO equity_snapshots (at, equity_btc, price, position_usd) VALUES (?,?,?,?)", (now_iso(), equity_btc, price, position_usd))
+
+
+def record_decision(db: DB, strategy: str, symbol: str, signal: int, action: str, target_qty, arrival_price, reason: str, params_hash: str) -> None:
+    db.execute("INSERT INTO decisions (at, strategy, symbol, signal, action, target_qty, arrival_price, reason, params_hash) VALUES (?,?,?,?,?,?,?,?,?)",
+               (now_iso(), strategy, symbol, signal, action, target_qty, arrival_price, reason, params_hash))
+
+
+def order_exists(db: DB, client_order_id: str) -> bool:
+    return bool(db.query("SELECT 1 FROM orders WHERE client_order_id = ?", (client_order_id,)))
