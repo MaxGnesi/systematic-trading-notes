@@ -18,8 +18,11 @@ if __name__ == "__main__":
     s = g.account_summary("BTC")
     perms = sorted(x for x in g.scope.split() if ":" in x and not x.startswith(("session:", "name:")))
     log.info("logged in by signature on the %s; permissions: %s", g.env, ", ".join(perms))
-    extra = [x for x in perms if x not in ("account:read", "trade:read_write")]
-    if extra:
-        log.warning("the key has more permissions than the bot needs: %s; narrow them on the exchange's API page", ", ".join(extra))
+    # the rule: no write permission beyond trading, and no wallet access at all (reading elsewhere is harmless)
+    risky = [x for x in perms if (x.endswith("read_write") and not x.startswith("trade:")) or x.startswith("wallet:")]
+    if risky:
+        log.warning("the key can do more than the bot needs: %s; narrow it on the exchange's API page", ", ".join(risky))
+    else:
+        log.info("permissions minimal for the bot: trading, and reading only elsewhere; no wallet access")
     log.info("account (BTC): %s", {k: str(v) for k, v in s.items()})
     log.info("position BTC-PERPETUAL: %s", {k: str(v) for k, v in g.position("BTC-PERPETUAL").items()})
