@@ -18,6 +18,22 @@ Part II · Pipeline stage: signal generation (the trend machinery)
 
 ---
 
+# A lesson in measurement: log returns make a smile
+
+> Profit computed from log returns adds a payoff that grows with the square of the move: on a short position it looks like crisis convexity.
+
+| Design | Smile, simple returns (t) | Smile, log returns (t) |
+|---|---|---|
+| 12-month short or flat | 0.44 (2.9) | 0.65 (4.3) |
+| 12-month long and short | 0.32 (1.0) | 0.46 (1.5) |
+| 3-month long and short | 0.33 (1.1) | 0.57 (1.8) |
+
+- ln(1 + r) ≈ r − r²/2: a short position earns an extra r²/2 in every large month, up or down
+- Our earlier version reported a significant smile (t = 2.0) for long and short; measured correctly it is not (t = 1.0)
+- Rule: log returns for an asset's history, simple returns for profit (toolkit card 1)
+
+---
+
 # Three families
 
 > Trend rules come from three families with distinct literatures; the boundaries blur.

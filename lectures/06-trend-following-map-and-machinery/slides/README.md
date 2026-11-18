@@ -27,3 +27,5 @@
 ![Slide 12](pages/06_slide_12.png)
 
 ![Slide 13](pages/06_slide_13.png)
+
+![Slide 14](pages/06_slide_14.png)

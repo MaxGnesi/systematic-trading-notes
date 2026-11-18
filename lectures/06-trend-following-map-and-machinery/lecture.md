@@ -164,6 +164,18 @@ Lecture 5 found that a single-asset trend rule is usually still long when a cras
 - **The smile comes from the short side.** Short or flat loses a little on average and pays in the worst months, the profile of insurance ([chart E.1](#e1-what-each-design-earns-in-spys-worst-and-best-months-31)). Combined with the long side, the smile halves and is no longer significant on these 16 ETFs (t = 1.0): the long side's losses in crashes offset much of it. Moskowitz, Ooi and Pedersen (2012) found a clearer smile on futures, a broader universe with more short-able trends.
 - **Speed decides which crises are caught.** The 3-month rule turned short in time for March 2020; the 12-month rule did not.
 
+**A lesson in measurement: log returns make a smile.** An earlier version of this table computed each asset's profit as position × monthly **log** return. A log return is about the simple return minus half its square, $`\ln(1+r) \approx r - \tfrac12 r^2`$, so a position $`s`$ earns about $`s\,r - \tfrac12 s\,r^2`$ instead of $`s\,r`$. For a short position the second term is **positive in every large month, up or down**: it adds a payoff that grows with the square of the move, which is exactly what the smile regression looks for. The same designs and data, with only the profit computed differently (notebook §3.2):
+
+| Design | Smile, simple returns (t-statistic) | Smile, log returns (t-statistic) |
+|---|---|---|
+| 12-month short or flat | 0.44 (2.9) | 0.65 (4.3) |
+| 12-month long and short | 0.32 (1.0) | 0.46 (1.5) |
+| 3-month long and short | 0.33 (1.1) | 0.57 (1.8) |
+
+<sub><b>How to read the table.</b> One row per design: the coefficient on SPY's squared monthly return, with profit from simple returns (correct) and from log returns (the error). Our earlier version also measured SPY in log returns and reported 0.61 (t = 2.0) for the 12-month long-and-short design: significant, and an artefact.</sub>
+
+The error inflates the smile by about half and turns an insignificant result into a significant one. The rule of toolkit card 1 avoids it: log returns for an asset's history, simple returns for profit.
+
 "Crisis alpha", the gains of trend followers in prolonged sell-offs, is therefore not a property of trend following as such. It belongs to designs that hold short positions and react fast enough for the crisis at hand.
 
 ### 3.2 The other choices
