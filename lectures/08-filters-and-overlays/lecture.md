@@ -275,7 +275,7 @@ Filters that our daily ETF data cannot test, each with its mechanism and the dat
 | Trade breakouts only on high volume | Bar data | A break on heavy volume reflects real buying or selling | Volume (available) |
 | Trend in the futures curve | Cross-market | Backwardation signals scarcity that tends to persist | Futures term structures |
 | Positioning extremes | Flows and positioning | When speculators are crowded on one side, trends are prone to reverse | Commitments of Traders reports |
-| Dealer gamma | Flows and positioning | When dealers are short gamma, their hedging pushes prices in the direction they move, as in Baltussen et al. (Lecture 5, §2.4) | Options open interest |
+| Dealer gamma | Flows and positioning | When dealers are short gamma, their hedging pushes prices in the direction they move, as in Baltussen et al. (Lecture 5, §2.5) | Options open interest |
 | Index events | Calendar | Index additions and rebalances move prices at known dates | Index calendars |
 | Growth surprises | Macro | Trends in bonds and currencies follow surprises in growth and inflation | Real-time macro data, as first published |
 

@@ -1,6 +1,6 @@
 # Lecture 5: What Trend Following Captures
 
-> Trend profits have two sources, drift and timing; markets differ in how much of each they offer.
+> A trend rule captures the drift of a market and the persistence of its moves; moves persist because information diffuses slowly and frictions make trading slow.
 
 Part II · Pipeline stage: signal generation (what a trend signal captures)
 
@@ -10,7 +10,7 @@ Part II · Pipeline stage: signal generation (what a trend signal captures)
 
 > On 16 ETFs, both sources matter about equally: of the median 5.2% a year, 2.8 points come from drift and 2.2 from timing.
 
-- **SPY:** 6.6 points from drift, long 82% of the time
+- **Drift is the asset class's risk premium,** collected in proportion to net long exposure: SPY long 82% of the time, 6.6 points of its 10.2%
 - **USO:** drift −5.3% a year, yet the rule earned 7.6%, almost all timing
 - **SLV, EFA, VNQ:** timing can be negative
 
@@ -45,28 +45,29 @@ After a 12-month downtrend, volatility is about 60% higher: the short side lives
 
 ---
 
-# Timing comes in episodes
+# Where the timing profit is made
 
-> Almost all of the timing profit comes from one month in ten: the months with the largest moves.
+> Almost all of the timing profit comes from one month in ten, partly by construction: the largest months carry most of any covariance.
 
-- Linear autocorrelation is close to zero: median −0.03
-- Largest 10% of months: **2.0** of the 2.2% a year
-- The other 90%: **0.1**
+- Largest 10% of months: **2.0** of the 2.2% a year; the other 90%: **0.1**
+- Linear autocorrelation is near zero (median −0.03), yet the rule earns: it bets on the **direction** of the past year, not its size
+- Imprecise for any one ETF: a t-statistic of roughly 0.5
 
 ![Median timing contribution by decile of the month's absolute return](../figures/05_02_timing_episodes.png)
 
 ---
 
-# What causes the episodes
+# Why moves persist: slow information and slow trading
 
-> The literature points to frictions that make prices move in the same direction for a while.
+> Prices adjust over time, not at once, in buying waves and selling waves alike.
 
-| Mechanism | What happens | Evidence |
+| Family | Mechanism | Evidence |
 |---|---|---|
-| Slow diffusion of information | Prices underreact, then momentum traders push them past fair value | Hong and Stein (1999) |
-| Forced selling | Funds facing outflows sell together; the pressure lasts about two quarters | Coval and Stafford (2007) |
-| Liquidity spirals | Falling prices raise margins and cut capital, pushing prices further | Brunnermeier and Pedersen (2009) |
-| Hedging flows | Dealers buy after rises and sell after falls | Baltussen, Da, Lammers and Martens (2021) |
+| Slow information | News reaches investors gradually; prices underreact | Hong and Stein (1999) |
+| Slow trading | Large orders spread over days; fund flows move gradually | Lillo, Mike and Farmer (2005); Vayanos and Woolley (2013); Lou (2012) |
+| Slow trading | Capital is slow to arrive | Duffie (2010) |
+| Slow trading | Deleveraging: fire sales, margin spirals | Coval and Stafford (2007); Brunnermeier and Pedersen (2009) |
+| Slow trading | Hedging flows push prices the way they move | Baltussen et al. (2021) |
 
 ---
 
@@ -80,7 +81,7 @@ After a 12-month downtrend, volatility is about 60% higher: the short side lives
 | Three to twelve months | Continuation |
 | Three to five years | Reversal |
 
-- **Over days, a shock overshoots:** after a large weekly move, the next week had the same sign 46% of the time at the median
+- **Over a week, a slight tendency to reverse:** after a large weekly move, the next week had the same sign 46% of the time at the median, against 49% after normal weeks
 - But 63% of the time for oil (USO) and 56% for silver (SLV)
 
 ---
@@ -92,7 +93,7 @@ After a 12-month downtrend, volatility is about 60% higher: the short side lives
 | Question | Why it matters for a trend rule |
 |---|---|
 | 1. Is there a drift? | It feeds the long side, and it is what the short side pays |
-| 2. Which frictions create persistence? | They feed the timing part, which is earned in episodes |
+| 2. Which frictions create persistence? | Slow information and slow trading feed the timing part |
 | 3. How fast can it fall, and how liquid is it? | A rule on daily bars cannot act inside a gap |
 | 4. How mature is the market, and is the edge decaying? | Patterns that are learned and crowded tend to fade |
 | 5. How much intervention is there? | Policy can cut moves short, or create them |
@@ -147,7 +148,7 @@ After a 12-month downtrend, volatility is about 60% higher: the short side lives
 
 | | Trend | Reversion |
 |---|---|---|
-| Captures | The drift, and persistence in episodes | The overshoot after shocks and the pull back towards a level |
+| Captures | The drift, and persistence from slow information and slow trading | The overshoot after shocks and the pull back towards a level |
 | Risk profile | Many small losses, a few large gains: a long option | Many small gains, occasional large losses: a short option |
 
 - The same tools serve either choice: a band around a moving average can be traded as a breakout or as a fade
@@ -168,7 +169,7 @@ After a 12-month downtrend, volatility is about 60% higher: the short side lives
 # Takeaways
 
 1. **Trend profits have two sources:** drift and timing, about equally on 16 ETFs (2.8 and 2.2 points of a median 5.2% a year)
-2. **Timing is episodic, not linear:** almost all of it comes from the largest tenth of months
+2. **Moves persist because information and trading are slow:** the timing profit comes from the largest tenth of months, for a rule that bets on direction
 3. **The long and short sides live in different markets:** the long side collects drift; the short side pays it
 4. **Understand the market first:** drift, frictions, gaps, maturity, intervention
 5. **Choose what should last:** a durable mechanism matters more than a strong backtest
