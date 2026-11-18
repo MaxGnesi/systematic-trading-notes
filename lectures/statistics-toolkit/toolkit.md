@@ -246,7 +246,7 @@ A published example reports both. Levine, Ooi, Richardson and Sasseville (2018),
 - **Count the tries** and raise the bar: the deflated Sharpe ratio asks whether the best result beats the best of that many zero-edge tries (Bailey and López de Prado, 2014; Lecture 1 §5.2; Lecture 10).
 - **Benjamini–Hochberg** (1995), for many tests at once: sort the p-values from smallest to largest and compare the $`k`$-th of $`m`$ with $`k/m`$ times the accepted error rate; keep everything up to the last one that passes. It controls the share of false discoveries among the results kept (from Lecture 12 on).
 
-**On our data.** In Lecture 7, the 31 luckiest of 1,000 zero-edge strategies had a Sharpe ratio of 0.60 in 2000–2012 and −0.01 afterwards.
+**On our data.** In Lecture 7, the 31 luckiest of 1,000 zero-edge strategies had a Sharpe ratio of 0.60 in 2000–2012 and −0.08 afterwards.
 
 **Watch out for:**
 - **Uncounted tries.** Looking at a chart before choosing a rule, rerunning with a different start date, dropping a market that hurt: each is a try.
