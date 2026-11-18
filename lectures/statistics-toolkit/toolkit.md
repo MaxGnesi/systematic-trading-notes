@@ -188,7 +188,17 @@ The four classic mistakes, one per step: adding log returns across assets (step 
   ```
 
   so money shrinks once volatility exceeds twice the Sharpe ratio. For a trend portfolio (Sharpe ratio 0.5 a year, volatility 10%) the drag is half a point a year and the Sharpe ratio tells the story; for a strategy run at 100% volatility it does not. Judge growth on log returns and drawdowns (card 11), the bet on the Sharpe ratio.
-- **Why not a Sharpe ratio built on growth?** Dividing the compound annual return by the volatility gives $`\mathrm{SR} - 	frac12\sigma`$, which mixes two decisions: how good the bet is, and how large it is held. The same strategy scores 0.45 at 10% volatility, 0.40 at 20% and 0 at 100%, so it cannot compare strategies run at different sizes, and its standard error has no simple form. Keep the two apart: the Sharpe ratio for the quality of the bet, the compound annual return and the worst drawdown for what a given size delivers. Choosing the size is the job of Lecture 9.
+- **Why not a Sharpe ratio built on growth?** Some reports divide the compound annual return, not the simple average, by the volatility: a "geometric" Sharpe ratio. Since the compound return is about the simple average minus $`	frac12\sigma^2`$, this measure equals $`\mathrm{SR} - 	frac12\sigma`$, and it mixes two decisions: how good the bet is, and how large it is held. The same strategy scores:
+
+  | Held at volatility | Sharpe ratio | Sharpe ratio built on growth |
+  |---|---|---|
+  | 10% | 0.50 | 0.45 |
+  | 20% | 0.50 | 0.40 |
+  | 100% | 0.50 | 0.00 |
+
+  <sub><b>How to read the table.</b> One strategy with a Sharpe ratio of 0.5, held at three sizes: the ordinary Sharpe ratio stays the same, the growth-based one falls as the position grows.</sub>
+
+  It therefore cannot compare strategies run at different sizes, and its standard error has no simple form. Practitioners use the ordinary Sharpe ratio for this reason: AQR's note on high-volatility alternatives (2024) rests on it staying the same under leverage, and places the volatility drag at the level of the whole portfolio, not of each component. Keep the two apart: the Sharpe ratio for the quality of the bet; the compound annual return and the worst drawdown for what a chosen size delivers. At the 10% volatility of our trend portfolios, the two differ by 0.05. Choosing the size is the job of Lecture 9.
 - **Leverage raises the drag with the square.** Doubling the position doubles the simple average but quadruples the drag; past a point, more leverage lowers the median outcome. The leverage that maximises it is the Kelly leverage, excess return over variance (Lecture 9).
 
 ## 6. Many tries
@@ -352,6 +362,7 @@ The worst drawdown keeps growing with the length of history, slowly for a good s
 
 - Bailey, D. and López de Prado, M. (2014). The deflated Sharpe ratio: correcting for selection bias, backtest overfitting, and non-normality. *Journal of Portfolio Management* 40(5), 94–107. — the luck of the best of many tries (card 6).
 - Benjamini, Y. and Hochberg, Y. (1995). Controlling the false discovery rate: a practical and powerful approach to multiple testing. *Journal of the Royal Statistical Society, Series B* 57(1), 289–300. — the correction for many tests (card 6).
+- AQR Capital Management (2024). *In praise of high-volatility alternatives.* AQR Perspective, September 2024, https://www.aqr.com/Insights/Perspectives/In-Praise-of-High-Volatility-Alternatives. — the Sharpe ratio under leverage; volatility drag at portfolio level (card 5).
 - Booth, D. G. and Fama, E. F. (1992). Diversification returns and asset contributions. *Financial Analysts Journal* 48(3), 26–32. — the diversification return (card 5).
 - Campbell, J. Y. and Thompson, S. B. (2008). Predicting excess stock returns out of sample: can anything beat the historical average? *Review of Financial Studies* 21(4), 1509–1531. — small R² can be economically large; most forecasts fail out of sample (card 10).
 - Forbes, K. J. and Rigobon, R. (2002). No contagion, only interdependence: measuring stock market comovements. *Journal of Finance* 57(5), 2223–2261. — correlation rises with volatility (card 9).
