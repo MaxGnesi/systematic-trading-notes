@@ -168,7 +168,7 @@ The median follows the log average because log returns add up over time, and a s
 |---|---|---|
 | 1. An asset's history: signals, lookbacks, volatility | Log returns | They add over time (a 12-month return is the sum of 12 monthly ones) and treat rises and falls symmetrically |
 | 2. The portfolio's return on one day | Simple returns, weighted: $`r_p = \sum_i w_i r_i`$, with the weights held at the start of the day | Only simple returns add across positions |
-| 3. The equity curve | Compound the portfolio's simple returns: $`\prod (1 + r_p)`$ | It is the money that is actually there |
+| 3. The equity curve | Compound the portfolio's simple returns: $`\prod (1 + r_p)`$. For an account that keeps its capital fixed and does not reinvest, add them instead: profits in money add up | It is the money that is actually there; state which of the two accounts a curve shows |
 | 4. Sharpe ratio, volatility, t-test of the average | Simple (excess) returns of the portfolio | They describe the average bet; the Sharpe ratio is the same at any leverage |
 | 5. Growth (compound annual return) | Log returns of the portfolio: the average of $`\ln(1 + r_p)`$ | What is left after the volatility drag; below step 4's average by about $`	frac12\sigma^2`$ |
 | 6. Drawdowns | The equity curve of step 3 | A drawdown is a fall in money, not a sum of returns |
