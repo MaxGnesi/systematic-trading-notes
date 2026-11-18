@@ -11,7 +11,7 @@ Part II · Pipeline stage: signal generation (the trend machinery)
 > Whether a trend system protects in a crisis is a design choice, and two choices decide it: direction and speed.
 
 - **Long or flat** keeps a market beta of about 0.2 and loses in crashes
-- **Short or flat** earns about nothing on average: insurance
+- **Short or flat** loses a little on average and pays in crashes: insurance
 - **Speed:** the 3-month rule turned short in time for March 2020
 
 ![Average return of four trend designs in SPY's worst and best fifth of months](../figures/06_01_direction_speed.png)
@@ -69,7 +69,7 @@ Recent changes count most.
 > At equal trading frequency the families are close; speed dominates.
 
 - EWMAC and the Donchian breakout correlate **0.91**: similar speed
-- Sharpe ratio within a family: about −0.2 fast, 0.45–0.55 slow
+- Sharpe ratio within a family: about −0.2 fast, 0.45–0.6 slow
 - Gaps between families, about 0.1–0.3, are far smaller
 
 ![Sharpe ratio before costs of five trend families across their parameters, against changes of direction per year](../figures/06_03_sharpe_vs_trades.png)
@@ -109,8 +109,8 @@ $$\text{position}_t \;=\; \text{forecast}_t \times \frac{\sigma_{\text{target}}}
 
 | Sizing, 12-month rule, same overall volatility | Return (% a year) | Sharpe ratio | Worst month |
 |---|---|---|---|
-| Equal notional | 5.8 | 0.50 | −11.2% |
-| Volatility-scaled | 8.9 | 0.75 | −9.0% |
+| Equal notional | 5.9 | 0.51 | −10.2% |
+| Volatility-scaled | 9.3 | 0.80 | −8.7% |
 
 The machinery is part of the result: credit it as machinery, not as signal.
 
@@ -134,13 +134,13 @@ The machinery is part of the result: credit it as machinery, not as signal.
 
 | Rule | Sharpe ratio | Skewness | Share of months positive |
 |---|---|---|---|
-| TSMOM-12 | 0.61 | −0.05 | 57% |
-| SMA-200 | 0.46 | 0.09 | 56% |
-| EWMAC 16/64 | 0.37 | 0.74 | 52% |
-| Donchian 55/20 | 0.21 | 0.86 | 50% |
-| Chandelier 55 | 0.20 | 0.99 | 51% |
+| TSMOM-12 | 0.65 | −0.06 | 58% |
+| SMA-200 | 0.48 | 0.07 | 56% |
+| EWMAC 16/64 | 0.37 | 0.68 | 51% |
+| Donchian 55/20 | 0.21 | 0.77 | 50% |
+| Chandelier 55 | 0.20 | 0.91 | 51% |
 
-The average win is only 12–23% larger than the average loss: the edge is small and must be compounded over many markets and years.
+The average win is only 10–25% larger than the average loss: the edge is small and must be compounded over many markets and years.
 
 ---
 
@@ -163,8 +163,8 @@ The average win is only 12–23% larger than the average loss: the edge is small
 1. **Design decides what a trend system captures:** the same signal collects drift, buys protection, or both
 2. **Crisis protection is built, not given:** it needs the short side and enough speed
 3. **Horizon matters more than family:** compare families at equal trading frequency
-4. **The machinery is part of the result:** volatility targeting lifted the Sharpe ratio from 0.50 to 0.75 at the same risk
+4. **The machinery is part of the result:** volatility targeting lifted the Sharpe ratio from 0.51 to 0.80 at the same risk
 5. **Costs select the survivors:** at 20 basis points only the slow rule stayed positive
-6. **The payoff profile is a design outcome too:** monthly win rates were 50–57%
+6. **The payoff profile is a design outcome too:** monthly win rates were 50–58%
 
 > Design decides what is captured: direction and speed choose between drift and crisis protection; horizon matters more than the family of the rule.
