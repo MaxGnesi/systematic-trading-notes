@@ -7,6 +7,7 @@ Verified live (17 November 2026), mainnet and testnet alike: BTC-PERPETUAL is an
 contract settled in BTC and quoted in USD; tick 0.5 USD; order amounts are in USD, in steps of the
 contract size, 10 USD, with a minimum of 10 USD.
 """
+import time
 from dataclasses import dataclass
 from decimal import Decimal
 
@@ -20,8 +21,16 @@ class DeribitError(Exception):
     pass
 
 
-def _get(env: str, method: str, params: dict) -> dict | list:
-    r = requests.get(f"{BASE[env]}/{method}", params=params, timeout=TIMEOUT)
+def _get(env: str, method: str, params: dict, attempts: int = 3) -> dict | list:
+    """A public read, retried on timeouts and dropped connections (1 s, then 2 s): reading twice is harmless."""
+    for i in range(attempts):
+        try:
+            r = requests.get(f"{BASE[env]}/{method}", params=params, timeout=TIMEOUT)
+            break
+        except (requests.Timeout, requests.ConnectionError):
+            if i == attempts - 1:
+                raise
+            time.sleep(2 ** i)
     body = r.json()
     if "error" in body:
         raise DeribitError(f"{method}: {body['error'].get('code')} {body['error'].get('message')}")

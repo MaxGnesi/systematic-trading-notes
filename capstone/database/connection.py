@@ -10,6 +10,7 @@ as `Decimal`, never as `float`.
 """
 import os
 import sqlite3
+import threading
 from decimal import Decimal
 from pathlib import Path
 
@@ -24,12 +25,14 @@ def database_url() -> str:
 class DB:
     def __init__(self, url: str | None = None):
         self.url = url or database_url()
+        self.lock = threading.RLock()                     # one statement at a time, whichever thread asks
         if self.url.startswith("sqlite:///"):
             self.kind = "sqlite"
             path = self.url[len("sqlite:///"):]
             if path != ":memory:":
                 Path(path).parent.mkdir(parents=True, exist_ok=True)
-            self.conn = sqlite3.connect(path)
+            # the live bot uses the database from its worker threads too: allowed, with a lock (below)
+            self.conn = sqlite3.connect(path, check_same_thread=False)
             self.conn.execute("PRAGMA foreign_keys = ON")
             self.conn.execute("PRAGMA journal_mode = WAL")      # the dashboard can read while the bot writes
         elif self.url.startswith(("postgresql://", "postgres://")):
@@ -45,15 +48,18 @@ class DB:
     def execute(self, sql: str, params: tuple = ()):
         if self.kind == "postgres":
             sql = sql.replace("?", "%s")
-        cur = self.conn.cursor()
-        cur.execute(sql, params)
-        return cur
+        with self.lock:
+            cur = self.conn.cursor()
+            cur.execute(sql, params)
+            return cur
 
     def query(self, sql: str, params: tuple = ()) -> list[tuple]:
-        return self.execute(sql, params).fetchall()
+        with self.lock:
+            return self.execute(sql, params).fetchall()
 
     def commit(self):
-        self.conn.commit()
+        with self.lock:
+            self.conn.commit()
 
     def close(self):
         self.conn.close()

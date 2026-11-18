@@ -46,11 +46,22 @@ class Gateway:
         self.scope = res.get("scope", "")
 
     def call(self, method: str, params: dict | None = None):
-        """A private call; logs in (again) when the token is missing or about to expire."""
+        """A private call; logs in (again) when the token is missing or about to expire.
+        Reads (private/get_...) are retried on a timeout. Orders are NEVER retried automatically: after a
+        timeout we do not know whether the order arrived, and sending it again could trade twice. The caller
+        records the failure and the next reconciliation shows what really happened."""
         if self._token is None or time.time() > self._expires:
             self._login()
-        r = requests.get(f"{BASE[self.env]}/{method}", params=params or {}, timeout=TIMEOUT,
-                         headers={"Authorization": f"bearer {self._token}"})
+        attempts = 3 if method.startswith("private/get_") else 1
+        for i in range(attempts):
+            try:
+                r = requests.get(f"{BASE[self.env]}/{method}", params=params or {}, timeout=TIMEOUT,
+                                 headers={"Authorization": f"bearer {self._token}"})
+                break
+            except (requests.Timeout, requests.ConnectionError):
+                if i == attempts - 1:
+                    raise
+                time.sleep(2 ** i)
         body = r.json()
         if "error" in body:
             raise DeribitError(scrub(f"{method}: {body['error'].get('code')} {body['error'].get('message')}"))
