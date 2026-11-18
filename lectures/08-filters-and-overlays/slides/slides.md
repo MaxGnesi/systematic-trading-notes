@@ -74,12 +74,12 @@ Example (§4.8): a take-profit at four to five units of a speed's risk left the 
 
 # What the four filters did
 
-> None added significantly to the unfiltered rule, which earned a Sharpe ratio of 0.60.
+> None added significantly on data it was not found in; the unfiltered rule earned a Sharpe ratio of 0.63.
 
 - **The efficiency-ratio gate hurts at every threshold:** large moves often begin in choppy markets
 - **The correlation scale does nothing:** its returns correlate 0.97 with the unfiltered rule's
-- **The zero-rate regime looks best, and is the trap:** 0.66, but its idea came from the same data, and its alpha, at t = 1.5, is not significant
-- **The VIX regime beats the curve but not the rule:** 0.51 against 0.39 at the same turnover, but less than the 12-month rule itself
+- **The zero-rate regime looks best, and is the trap:** 0.72 and an alpha at t = 2.1, but its idea came from the same data
+- **The VIX regime beats the curve but not the rule:** 0.53 against 0.40 at the same turnover, but less than the 12-month rule itself
 
 ---
 
@@ -89,9 +89,9 @@ Example (§4.8): a take-profit at four to five units of a speed's risk left the 
 
 | Regime | Sharpe ratio | Hypothesis |
 |---|---|---|
-| Asset volatility above / below its median | 0.59 / 0.65 | Rejected |
-| Cross-asset-class correlation above / below its median | 0.51 / **0.88** | Rejected, and reversed |
-| Stock–bond correlation positive / negative | **0.97** / 0.45 | Supported |
+| Asset volatility above / below its median | 0.60 / 0.70 | Rejected |
+| Cross-asset-class correlation above / below its median | 0.59 / **0.91** | Rejected, and reversed |
+| Stock–bond correlation positive / negative | **1.10** / 0.49 | Supported |
 
 - Trend did better when asset classes moved independently, the direction Baltas and Kosowski had found
 - A large gap between regimes did not, so far, make a better filter
@@ -104,7 +104,7 @@ Example (§4.8): a take-profit at four to five units of a speed's risk left the 
 
 - **A. Independent:** the filter opens and closes positions itself
 - **C. Joining the trend:** closed only when the trend signal turns
-- Efficiency-ratio gate: 0.22 attached as A, 0.51 as C
+- Efficiency-ratio gate: 0.23 attached as A, 0.54 as C
 
 ![Positions of the unfiltered rule and of the same filter attached two ways, on GLD 2018-2020](../figures/08_04_attachment_example.png)
 
@@ -114,7 +114,7 @@ Example (§4.8): a take-profit at four to five units of a speed's risk left the 
 
 > A filter has parameters as a rule has speeds: judge it by its whole curve, not its best point.
 
-- Cross-asset-class correlation gate: 0.58 to 0.60 over a range of thresholds
+- Cross-asset-class correlation gate: 0.63 to 0.65 over a range of thresholds
 - VIX switch: above the speed curve at all five thresholds
 - Gated filters trade less than any unfiltered rule: they need another yardstick
 
@@ -128,8 +128,8 @@ Example (§4.8): a take-profit at four to five units of a speed's risk left the 
 
 | Filter (attached as C) | Real filter | Random filters: median | Random filters: 95th percentile | Random filters beaten |
 |---|---|---|---|---|
-| Cross-asset-class correlation low | 0.58 | 0.50 | 0.60 | 88% |
-| Stock–bond correlation positive | 0.50 | 0.38 | 0.55 | 88% |
+| Cross-asset-class correlation low | 0.63 | 0.54 | 0.64 | 90% |
+| Stock–bond correlation positive | 0.59 | 0.42 | 0.62 | 92% |
 
 - Both variables carry some information about when trend works; neither clears the 95th percentile: suggestive, not conclusive
 - Part of the gain is simply being out of the market at random times
@@ -142,11 +142,11 @@ Example (§4.8): a take-profit at four to five units of a speed's risk left the 
 
 | | 2006–2015 (choice) | 2016–2026 (test) |
 |---|---|---|
-| Unfiltered rule, Sharpe ratio | 0.64 | 0.40 |
-| Filter at the threshold chosen in 2006–2015 | 0.68 | 0.37 |
-| Unfiltered rule when correlation is low / high | 0.87 / 0.37 | 0.56 / 0.36 |
+| Unfiltered rule, Sharpe ratio | 0.67 | 0.48 |
+| Filter at the threshold chosen in 2006–2015 | 0.71 | 0.44 |
+| Unfiltered rule when correlation is low / high | 0.89 / 0.41 | 0.59 / 0.45 |
 
-- The gap between low and high correlation shrank from 0.50 to 0.20
+- The gap between low and high correlation shrank from 0.48 to 0.14
 
 ---
 
@@ -168,7 +168,7 @@ Example (§4.8): a take-profit at four to five units of a speed's risk left the 
 2. **Two purposes, one test:** explore or confirm; then equal speed, information known at the time, marginal contribution after costs, counted tries, data the idea was not found in
 3. **The examples teach the method, not a verdict:** none added significantly
 4. **How a filter attaches matters as much as its regime:** attaching it to the trend's entries and exits recovered most of the loss
-5. **Judge filters by curves, against random filters, and out of sample:** the best candidate beat 88% of random filters but did not survive out of sample
+5. **Judge filters by curves, against random filters, and out of sample:** the best candidate beat 90% of random filters but did not survive out of sample
 6. **Exits are overlays too:** a take-profit is an option with known trade-offs, not an improvement
 7. **The most promising filters work through mechanisms with a known timing**
 
