@@ -151,20 +151,26 @@ def main():
         fig.add_scatter(x=slip.time, y=slip.avg_fill, mode="markers", name="fill (average price)", marker=dict(symbol="x", size=11, color=INK),
                         customdata=np.c_[slip.slippage_bp, slip.usd], hovertemplate="%{x}<br>fill %{y:,.2f}<br>%{customdata[1]:,.0f} USD"
                         "<br>slippage %{customdata[0]:+.2f} bp<extra></extra>", row=1, col=1)
+    fig.add_hline(y=0, line=dict(color=MUTED, width=1), row=2, col=1, exclude_empty_subplots=False)
     for j, days in enumerate(p.fast_spans_days):
-        c = f"f{days:g}d"
-        fig.add_scatter(x=sg.index, y=sg[c], name=f"forecast, {days:g}-day speed", mode="lines", line=dict(color=SERIES[2 + j], width=1.3), row=2, col=1)
+        c, col = f"f{days:g}d", SERIES[2 + j]
         tp = sg[f"tp{days:g}d"].astype(bool)
         if tp.any():
-            fig.add_scatter(x=sg.index[tp], y=np.zeros(int(tp.sum())), mode="markers", name=f"take profit taken: {days:g}-day speed flat",
-                            marker=dict(symbol="square", size=5, color=SERIES[2 + j]), row=2, col=1)
-    fig.add_scatter(x=sg.index, y=sg.blend, name="blend", mode="lines", line=dict(color=INK, width=2.2), row=2, col=1)
+            runs = (tp != tp.shift()).cumsum()[tp]                                     # each period in which this speed is flat
+            for _, g in tp[tp].groupby(runs):
+                fig.add_vrect(x0=g.index[0], x1=g.index[-1], fillcolor=col, opacity=0.12, line_width=0, row=2, col=1, exclude_empty_subplots=False,
+                              annotation_text=f"{days:g}-day speed: take profit taken, flat", annotation_position="top right",
+                              annotation_font=dict(size=11, color=INK))
+        fig.add_scatter(x=sg.index, y=sg[c], name=f"forecast, {days:g}-day speed", mode="lines",
+                        line=dict(color=col, width=1.6), row=2, col=1)
+    fig.add_scatter(x=sg.index, y=sg.blend, name="blend (the position follows it)", mode="lines",
+                    line=dict(color=INK, width=2.4), row=2, col=1)
     fig.add_scatter(x=sg.index, y=100 * sg.ann_vol, name="annual volatility", mode="lines", line=dict(color=INK, width=1.6), showlegend=False, row=3, col=1)
     fig.update_layout(height=1150, hovermode="x unified", margin=dict(t=70, l=80, r=30, b=60), legend=dict(orientation="h", y=-0.06, x=0))
-    fig.update_xaxes(rangeslider_visible=False)
+    fig.update_xaxes(rangeslider_visible=False, range=[start, hourly.index[-1]])
     lo, hi = min([candles.low.min()] + levels), max([candles.high.max()] + levels)
     fig.update_yaxes(range=[lo - 0.03 * (hi - lo), hi + 0.03 * (hi - lo)], row=1, col=1)
-    for r, t in ((1, "USD"), (2, "forecast"), (3, "% a year")):
+    for r, t in ((1, "USD"), (2, "forecast (below 0 = short)"), (3, "% a year")):
         fig.update_yaxes(title_text=t, row=r, col=1)
 
     # since the bot started: its own time axis, so a young account is not squeezed into the edge of a month
@@ -199,7 +205,7 @@ def main():
     tbl = slip.assign(time=slip.time.dt.strftime("%Y-%m-%d %H:%M")).round({"arrival_mid": 2, "avg_fill": 2, "slippage_bp": 2, "fee_btc": 8}).to_html(index=False) if len(slip) else "<p>No fills yet.</p>"
     ev = db["events"].to_html(index=False) if len(db["events"]) else "<p>None.</p>"
     dbview = inspect_db()
-    page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="refresh" content="60">
 <title>Trend bot dashboard</title><style>
 body{{font-family:system-ui,Segoe UI,sans-serif;margin:16px;background:#fff;color:#1f2328}} h1{{font-size:20px;margin:0 0 8px}} h2{{font-size:16px}}
 .banner{{padding:10px 14px;border-radius:6px;margin:8px 0 12px}} .calm{{background:#eef2f6}}
@@ -208,7 +214,7 @@ body{{font-family:system-ui,Segoe UI,sans-serif;margin:16px;background:#fff;colo
 .k{{color:#57606a;font-size:12px}} .v{{font-size:18px;font-weight:600}}
 table{{border-collapse:collapse;font-size:13px}} td,th{{border-bottom:1px solid #d8dee4;padding:4px 10px;text-align:right}} th{{color:#57606a}}
 .note{{color:#57606a;font-size:13px;max-width:950px}}</style></head><body>
-<h1>Trend bot: market, signal, sizing, position, P&amp;L</h1><div class="note">Written {now:%Y-%m-%d %H:%M} UTC from the bot's database and Deribit's public prices; the last {a.days} days. Testnet account: the signal uses mainnet prices, the trades fill on the testnet. Rerun <code>python -X utf8 -m capstone.tools.dashboard</code> to refresh.</div>
+<h1>Trend bot: market, signal, sizing, position, P&amp;L</h1><div class="note">Written {now:%Y-%m-%d %H:%M} UTC from the bot's database and Deribit's public prices; the last {a.days} days. Testnet account: the signal uses mainnet prices, the trades fill on the testnet. The page reloads every minute; a scheduled task rewrites it every five minutes (README), or rerun <code>python -X utf8 -m capstone.tools.dashboard</code>.</div>
 {banner}<div class="tiles">{tiles}</div>{fig.to_html(full_html=False, include_plotlyjs="cdn")}<h2>Since the bot started</h2>{fig2.to_html(full_html=False, include_plotlyjs=False)}
 <h2>Trades and slippage</h2><div class="note">Slippage: the average fill against the order book's mid when the decision was taken, in basis points; positive is a cost. Fees are separate.</div>{tbl}
 <h2>Recent warnings</h2>{ev}
