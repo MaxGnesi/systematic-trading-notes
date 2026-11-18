@@ -109,7 +109,7 @@ So the account, live and in the backtest, is kept in BTC. Checked live on 17 Nov
 
 **An IP restriction** limits a key to one internet address. On a home computer, whose address the provider changes from time to time, it would lock us out at random; on a server with a fixed address it should be switched on (§10). The exchange's page also warned that IP restrictions do not cover private WebSocket requests: another reason to keep permissions minimal.
 
-**Check what you were given.** Our first login reported more permissions than we had asked for: reading and writing on the account, and block trading. The bot's account check now warns whenever a key holds more than the bot needs, until the permissions are narrowed on the exchange's page: the program cannot, and should not, change its own permissions.
+**Check what you were given.** Our first login reported more permissions than we had asked for: writing on the account, and block trading and block quotes. Block trades are private trades with a chosen counterparty at an agreed price, away from the book: a known way to move money out of an account without any withdrawal permission, by trading with an accomplice at a deliberately bad price. We narrowed the key on the exchange's page to trading plus reading elsewhere. The bot's account check now applies one rule, no write permission beyond trading and no wallet access at all, and warns until it holds: the program cannot, and should not, change its own permissions.
 
 ## 4. The architecture
 
