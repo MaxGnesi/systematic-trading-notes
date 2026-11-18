@@ -177,6 +177,20 @@ The median follows the log average because log returns add up over time, and a s
 
 <sub><b>How to read the table.</b> One row per step of building and judging a portfolio, in order: which return to use and why. Steps 1 and 4 hardly depend on the choice for daily data, where the two kinds differ in the second decimal; steps 2, 3, 5 and 6 do, because they add up across assets or over long periods.</sub>
 
+**Arithmetic or geometric: when to use which.** The choice follows the question being asked:
+
+| The question | Use | Why |
+|---|---|---|
+| How good is the bet? Which strategy is better? Is it significant? | Arithmetic mean, ordinary Sharpe ratio | Independent of the size the bet is held at; has a known standard error (card 3) |
+| What return to expect next period; inputs to a portfolio optimiser | Arithmetic mean | Expected returns add across positions; a portfolio's expected return is the weighted sum |
+| How do assets combine in a portfolio? | Arithmetic (simple) returns | Only they aggregate across assets |
+| What did an investor end with? What will the typical investor end with over many years? | Geometric mean (compound annual return) | It is the growth of money, after the volatility drag; it equals the median outcome (above) |
+| How much does volatility cost? | Both: the gap, about $`	frac12\sigma^2`$ | Large for volatile single assets, small for diversified portfolios |
+
+<sub><b>How to read the table.</b> One row per question: which mean answers it, and why. When volatility is low the two hardly differ; when it is high, report both.</sub>
+
+A published example shows both in one paper. Levine, Ooi, Richardson and Sasseville (2018), on commodity futures since 1877, build their results on arithmetic returns because "the sum of geometric returns of the individual assets does not itself equal a geometric return of the asset portfolio"; they also report geometric means, because for single commodities the two diverge: an average arithmetic mean of 5.0% a year against a geometric mean of 1.1% (NBER working paper version). For the equally weighted index, with 17.6% volatility, the arithmetic mean is 4.8%; diversification shrinks the gap, as the diversification return above predicts. This is the debate of Lecture 5 §3.1 about whether commodities pay a premium at all: Erb and Harvey (2006) look at single commodities, where the geometric mean is near zero; Gorton and Rouwenhorst (2006) at an index.
+
 The four classic mistakes, one per step: adding log returns across assets (step 2: it loses the diversification return, 1.7 points a year on our ETFs); adding simple returns over time (step 3: +100% then −50% becomes +50%); quoting a Sharpe ratio as growth (steps 4 and 5); and computing a drawdown from summed returns instead of the equity curve (step 6).
 
 **Watch out for:**
@@ -367,6 +381,7 @@ The worst drawdown keeps growing with the length of history, slowly for a good s
 - Campbell, J. Y. and Thompson, S. B. (2008). Predicting excess stock returns out of sample: can anything beat the historical average? *Review of Financial Studies* 21(4), 1509–1531. — small R² can be economically large; most forecasts fail out of sample (card 10).
 - Forbes, K. J. and Rigobon, R. (2002). No contagion, only interdependence: measuring stock market comovements. *Journal of Finance* 57(5), 2223–2261. — correlation rises with volatility (card 9).
 - Efron, B. (1979). Bootstrap methods: another look at the jackknife. *Annals of Statistics* 7(1), 1–26. — the bootstrap (card 7).
+- Levine, A., Ooi, Y. H., Richardson, M. and Sasseville, C. (2018). Commodities for the long run. *Financial Analysts Journal* 74(2), 55–68; NBER working paper 22793. — arithmetic and geometric means of commodity futures since 1877 (card 5).
 - Lo, A. W. (2002). The statistics of Sharpe ratios. *Financial Analysts Journal* 58(4), 36–52. — the standard error of a Sharpe ratio, and how autocorrelation biases it (card 3).
 - Magdon-Ismail, M., Atiya, A. F., Pratap, A. and Abu-Mostafa, Y. S. (2004). On the maximum drawdown of a Brownian motion. *Journal of Applied Probability* 41(1), 147–161. — the expected worst drawdown from drift, volatility and time (card 11).
 - Willenbrock, S. (2011). Diversification return, portfolio rebalancing, and the commodity return puzzle. *Financial Analysts Journal* 67(4), 42–49. — what the diversification return is, and is not (card 5).
