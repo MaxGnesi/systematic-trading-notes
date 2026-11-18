@@ -1,6 +1,7 @@
 """Read-only check of the testnet account: log in by signature, read the balance and the position.
 Sends no order. Prints only non-secret numbers. Usage: python -m capstone.tools.check_account"""
 import logging
+import os
 
 from capstone.configs.settings import load_env
 from capstone.executors.gateway import Gateway
@@ -11,8 +12,8 @@ log = logging.getLogger("check_account")
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
     install_log_scrubbing()
-    if not load_env():
-        raise SystemExit("capstone/configs/.env not found: see configs/env.example")
+    if not load_env() and "DERIBIT_CLIENT_ID" not in os.environ:      # a container gets them from its environment
+        raise SystemExit("no settings: create capstone/configs/.env (see configs/env.example) or set them in the environment")
     g = Gateway()
     s = g.account_summary("BTC")
     perms = sorted(x for x in g.scope.split() if ":" in x and not x.startswith(("session:", "name:")))
