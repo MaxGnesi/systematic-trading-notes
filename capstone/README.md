@@ -21,8 +21,8 @@ only `connectors/` knows the exchange; swapping it leaves everything else unchan
 | `database/` | Remember everything and make it checkable: numbered migrations; orders, their history, fills, positions, reconciliation, decisions, bot events, bars. SQLite by default, Postgres by changing `DATABASE_URL` | Step 1, done |
 | `security/` | Keep secrets out of every log line and message (`scrub()`, `install_log_scrubbing()`) | Step 1, done |
 | `executors/` | Sign in by signature (Ed25519) and send, amend and cancel orders, with our own labels; read balance, position and open orders | Step 2, done |
-| `strategies/trend/` | The strategy: a simple signal, stop loss, take profit, time limit, trailing stop, cooldown, kill switch; settings in `params.toml` | Step 3 |
-| `backtest/` | The same strategy code run on recorded bars | Step 3 |
+| `strategies/trend/` | The strategy: an hourly trend at two speeds (2 and 7 days), sized by six months of volatility, a 5-sigma take profit per speed, decisions at 23 minutes past the hour plus a random delay; settings in `params.toml`, checked by `params.py` | Step 3, done |
+| `backtest/` | Download Deribit's history (one-minute candles, funding) and replay the strategy's own code on it, hour by hour, with the rivals of the hypotheses | Step 3, done |
 | `run_bot.py` | The live loop: reconcile at start, heartbeat, reconnect, kill switch | Step 4 |
 | `dashboard/` | Read-only pages: health, position, strategy, orders and fills, reconciliation, live against backtest | Step 5 |
 
@@ -67,6 +67,21 @@ python -m capstone.tests.test_step2           # signature, safety rules, history
 
 The safe test prices its buy about 2.5% below the best bid: inside Deribit's price band (about +-3% of the
 mark), so it is accepted, and far enough below the market not to fill in the seconds it lives.
+
+## Step 3: the strategy and its backtest (no account needed)
+
+The strategy and its rivals were fixed before any result: `lectures/24-a-live-trend-bot/results/hypotheses.md`.
+
+```
+python -m capstone.backtest.download --start 2019-01 --end 2026-10   # about 20 minutes, resumable
+python -m capstone.backtest.run_backtest                             # strategy and rivals, about a minute
+python -m capstone.tests.test_step3                                  # settings, take profit, inverse accounting
+```
+
+The account is kept in BTC, as the testnet account is: BTC-PERPETUAL is inverse, so a position of `A` USD
+from price `p0` to `p1` earns `A x (1/p0 - 1/p1)` BTC. Fees (taker 3.5 bp), half a tick of spread and
+Deribit's recorded funding are charged. Change any value in `strategies/trend/params.toml` and run again:
+that is the student's job, within the ranges `params.py` allows.
 
 ## Rules that hold in every file
 
