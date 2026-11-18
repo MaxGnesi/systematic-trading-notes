@@ -6,6 +6,7 @@ Measures: (1) how many of the five streams lose in the same month, against chanc
 (3) descriptive: average pairwise correlation in the book's worst and best fifth of months.
 Output: results/lose_together.json. Usage: python l27_lose_together.py"""
 import json
+import os
 from pathlib import Path
 
 import numpy as np
@@ -13,7 +14,7 @@ import pandas as pd
 
 import l27_regimes as G
 
-RES = Path(__file__).resolve().parent.parent / "results"
+RES = Path(os.environ.get("L27_RESULTS", Path(__file__).resolve().parent.parent / "results"))
 rng = np.random.default_rng(0)
 S = G.trend_streams(G.classes()).loc[:"2024-12"].dropna()
 X = S.to_numpy(); T, n = X.shape

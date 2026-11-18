@@ -1,6 +1,7 @@
 """Lecture 13 §2.4 figure: inside a bunch (50, 60, 70 days and 200), how each method's weights move when one correlation inside the
 bunch (50 against 60 days) shifts from -0.02 to +0.02 around its value. Output: figures/27_bunch_stability.png. Usage: python l27_bunch_stability_chart.py"""
 import sys
+import os
 from pathlib import Path
 
 import numpy as np
@@ -40,5 +41,5 @@ if __name__ == "__main__":
     f.update_yaxes(range=[-2, 52], ticksuffix="%", row=1, col=1)
     f.update_layout(title="Inside a bunch: how the weights move when one correlation shifts slightly<br><sup>speeds of 50, 60 and 70 days (a bunch) and 200 days; the correlation of 50 and 60 days (0.933) moved by up to 0.02</sup>",
                     height=450, width=1250, margin=dict(t=110, l=60, r=20, b=110), legend=dict(orientation="h", y=-0.3, x=0))
-    save_figure(f, "27_bunch_stability", HERE.parent / "figures")
+    save_figure(f, os.environ.get("L27_PREFIX", "") + "27_bunch_stability", HERE.parent / "figures")
     print("ok")

@@ -4,6 +4,7 @@ level; Lecture 11's highlights the markets (which enter), Lecture 12's the speed
 Output: figures/27_build.png, ../11-choosing-the-markets/figures/build_markets.png, ../12-trend-speeds-by-asset-class/figures/build_speeds.png.
 Usage: python l27_build_diagram.py"""
 import sys
+import os
 from pathlib import Path
 
 import plotly.graph_objects as go
@@ -59,7 +60,7 @@ def draw(focus=None):
 if __name__ == "__main__":
     apply_theme()
     L = HERE.parents[1]
-    save_figure(draw(), "27_build", HERE.parent / "figures")
-    save_figure(draw(2), "build_markets", L / "11-choosing-the-markets" / "figures")
-    save_figure(draw(1), "build_speeds", L / "12-trend-speeds-by-asset-class" / "figures")
+    save_figure(draw(), os.environ.get("L27_PREFIX", "") + "27_build", HERE.parent / "figures")
+    save_figure(draw(2), os.environ.get("L27_PREFIX", "") + "build_markets", L / "11-choosing-the-markets" / "figures")
+    save_figure(draw(1), os.environ.get("L27_PREFIX", "") + "build_speeds", L / "12-trend-speeds-by-asset-class" / "figures")
     print("ok")

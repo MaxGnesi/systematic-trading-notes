@@ -5,6 +5,7 @@ At every year end 2012-2025 each method sets risk weights on the in-sample windo
 applied the following year. Output: results/optimisers.json, figures/27_optimisers_weights.png, figures/27_optimisers_end.png.
 Usage: python l27_optimisers.py"""
 import json, sys, warnings
+import os
 from pathlib import Path
 
 import numpy as np
@@ -18,7 +19,7 @@ sys.path[:0] = [str(REPO), str(REPO / "lectures" / "12-trend-speeds-by-asset-cla
 import l26 as L26                                                                                     # noqa: E402
 from trading_models.allocation import EqualRiskContribution, HRPAllocator, NCO, SpectralRiskParity  # noqa: E402
 
-RES, FIG = HERE.parent / "results", HERE.parent / "figures"
+RES, FIG = Path(os.environ.get("L27_RESULTS", HERE.parent / "results")), HERE.parent / "figures"
 SPEEDS, RULE = (43, 89, 179), "ewma"
 MARKETS = ("SPY", "USO", "TLT")
 YEARS = range(2012, 2026)
@@ -135,7 +136,7 @@ def charts(R):
     f.update_yaxes(range=[-0.6, 1.1], tickformat=".0%")
     f.update_layout(title="How each method weights the three speeds on SPY, review by review<br><sup>risk weights set at each year end 2012-2025 on data up to that date; EWMA crossover at 43, 89 and 179 days</sup>",
                     height=260 * rows + 140, width=1100, legend=dict(orientation="h", y=1.03, x=0), margin=dict(t=120))
-    save_figure(f, "27_optimisers_weights", FIG)
+    save_figure(f, os.environ.get("L27_PREFIX", "") + "27_optimisers_weights", FIG)
 
 
 if __name__ == "__main__":

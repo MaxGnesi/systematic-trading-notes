@@ -1,6 +1,7 @@
 """Lecture 24's figures. 24_architecture: the bot's layers and what flows between them (a diagram, not
 data). 24_backtest: equity in BTC of the strategy and its rivals on Deribit, 2019-2026, from the capstone's
 own backtest engine. Usage: python lectures/24-a-live-trend-bot/scripts/l24_charts.py"""
+import os
 import sys
 from pathlib import Path
 
@@ -47,7 +48,7 @@ def architecture():
     f.update_xaxes(visible=False, range=[-0.3, 13.7]); f.update_yaxes(visible=False, range=[0.9, 4.5])
     f.update_layout(title="The plumbing of a live trend bot<br><sup>data in from the exchange, decisions in the middle, signed orders out, and every step "
                           "recorded and checked against the exchange</sup>", height=470, width=1250, margin=dict(t=90, l=20, r=20, b=20), showlegend=False)
-    save_figure(f, "24_architecture", FIG)
+    save_figure(f, os.environ.get("L24_PREFIX", "") + "24_architecture", FIG)
 
 
 def backtest():
@@ -64,7 +65,7 @@ def backtest():
     f.update_layout(title="The strategy on Deribit, 2019-2026, out of sample for its settings<br><sup>BTC-PERPETUAL, hourly decisions at :23, "
                           "account in BTC; taker fee 3.5 bp, half a tick, recorded funding</sup>", height=520, width=1100,
                     margin=dict(t=90, l=70, r=30, b=110), legend=dict(orientation="h", y=-0.2, x=0))
-    save_figure(f, "24_backtest", FIG)
+    save_figure(f, os.environ.get("L24_PREFIX", "") + "24_backtest", FIG)
 
 
 if __name__ == "__main__":

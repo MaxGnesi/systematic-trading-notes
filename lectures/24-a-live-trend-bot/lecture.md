@@ -63,6 +63,18 @@ The gap between the two columns is where live systems lose money without the str
 | $`A`$ | the position in USD, positive long, negative short |
 | $`p_0, p_1`$ | the price when the position was opened, and now |
 
+**What "inverse" means.** The price is quoted in dollars per bitcoin, but the collateral and every payment are in bitcoin: the contract is the inverse of an ordinary, **linear** one (a USDT-settled perpetual, say), which is quoted, margined and paid in dollars. It exists so that a trader who holds only bitcoin can trade without ever holding dollars. **Why the 1/p.** The inverse payoff makes hedging bitcoin static. Hold $`N`$ bitcoin and short an inverse contract of $`A = N p_0`$ dollars: at any later price $`p_1`$ the bitcoin is worth $`N p_1`$ dollars and the short pays $`-N p_0 (1/p_0 - 1/p_1)`$ BTC, worth $`-N p_1 + N p_0`$ dollars, so the total is $`N p_0`$ whatever the price. The contract's convexity in bitcoin is the mirror image of the bitcoin holding's convexity in dollars, and the hedge is set once and never adjusted. A contract that paid a fixed number of bitcoin per dollar of price move would leave the hedge convex, its ratio drifting with the price, to be rebalanced at a cost; a linear USDT contract is static only because it is paid in dollars, which needs dollar collateral. Three consequences matter for a bot:
+
+| Consequence | Example | Why it matters |
+|---|---|---|
+| The same dollar move pays different amounts of bitcoin | Long 10,000 USD from 50,000: at 55,000 it earns +0.018182 BTC, at 45,000 it loses −0.022222 BTC; both are 1,000 USD at the exit price | Profit in BTC is not linear in the price; the backtest must use the formula, not position × return |
+| The collateral moves with the position | A long holds bitcoin twice, the position and the margin, so its margin shrinks exactly when it loses; a short of the same size as the margin cancels the bitcoin exposure, a synthetic dollar | Liquidation comes sooner for longs and later for shorts, because the collateral is bitcoin; with dollar collateral it would be symmetric. With collateral worth 1/L of the position, a long on dollar collateral is wiped out after a fall of 1/L, a long on bitcoin collateral (any inverse contract, or a linear one margined in bitcoin) after a fall of 1/(L+1) (50% instead of 100% at 1×, 9.1% instead of 10% at 10×), a short on bitcoin collateral after a rise of 1/(L−1); exchanges liquidate earlier still, at the maintenance margin; the hard limit of §7, 3 times equity, is measured in BTC |
+| The account is measured in bitcoin | The backtest's Sharpe ratio of 0.99 is a Sharpe ratio in BTC; in dollars the account also rises and falls with the bitcoin price | Compare it with other strategies only in the same unit, or convert |
+
+<sub><b>How to read the table.</b> One row per consequence of settling in bitcoin, with a worked example (notebook §2) and what it changes for the bot.</sub>
+
+**What counts as collateral depends on the margin mode.** By default Deribit margins each currency separately (segregated margin), so a bitcoin contract is backed by the bitcoin in the account, the case above. With cross collateral, other currencies such as USDC can back it too, at a haircut, and a mixed account lies between the dollar and the bitcoin case; the profit and loss of an inverse contract is still settled in bitcoin, so the account needs bitcoin to settle a loss. Deribit has no isolated margin for a single position: to give a strategy its own margin, use a subaccount, as the bot does (§3). Margin modes and their names differ between exchanges and change over time; check the exchange's own documentation (Deribit, *Margin types and usage*, consulted 18 November 2026).
+
 So the account, live and in the backtest, is kept in BTC. Checked live on 17 November 2026: tick 0.5 USD, contract 10 USD, minimum 10 USD, on the real exchange and the testnet alike.
 
 ## 2. How a program talks to an exchange
@@ -340,6 +352,7 @@ Three habits run through all of it. **Fix the question before the answer:** hypo
 
 - Bernstein, D. J., Duif, N., Lange, T., Schwabe, P. and Yang, B.-Y. (2012). High-speed high-security signatures. *Journal of Cryptographic Engineering* 2(2), 77-89. — Ed25519 (§3).
 - Deribit (2026). API documentation, docs.deribit.com, and live checks of 17-18 November 2026 recorded in the capstone's code. — the exchange's methods, channels and contract details (§1-§3).
+- Deribit (2026). *Margin types and usage* and *Isolated margin availability*, support.deribit.com (consulted 18 November 2026). — segregated and cross margin; subaccounts as the way to isolate a strategy's margin (§1).
 - Fette, I. and Melnikov, A. (2011). *The WebSocket Protocol*. RFC 6455, IETF. — the protocol of the streaming connection (§2).
 - Fielding, R. T. (2000). *Architectural Styles and the Design of Network-based Software Architectures*. Doctoral dissertation, University of California, Irvine. — REST (§2).
 - Krawczyk, H., Bellare, M. and Canetti, R. (1997). *HMAC: Keyed-Hashing for Message Authentication*. RFC 2104, IETF. — the shared-secret signature (§3).

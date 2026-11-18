@@ -27,6 +27,22 @@ Capstone · Pipeline stage: all five stages at once, in production
 
 ---
 
+# The contract: inverse
+
+> Quoted in dollars per bitcoin, but margined and paid in bitcoin: profit = A × (1/p0 − 1/p1) BTC for a position of A dollars.
+
+| | Long 10,000 USD from 50,000 |
+|---|---|
+| To 55,000 | +0.018182 BTC (+1,000 USD) |
+| To 45,000 | −0.022222 BTC (−1,000 USD) |
+
+- **Not linear in bitcoin:** the backtest uses the formula, not position × return
+- **Why 1/p: a static hedge.** N bitcoin plus a short of N × p0 dollars is worth N × p0 at any price; no rebalancing
+- **The margin is bitcoin too:** a long holds bitcoin twice and is liquidated sooner
+- **The account is in BTC:** the Sharpe ratio of 0.99 is measured in bitcoin
+
+---
+
 # REST and WebSocket
 
 > REST asks one question and gets one answer; a WebSocket stays open and streams.
