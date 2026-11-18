@@ -1,0 +1,8 @@
+# the capstone's local database and recordings
+data/
+# secrets: never in the repository
+.env
+*.env
+*.pem
+*.key
+.keys/

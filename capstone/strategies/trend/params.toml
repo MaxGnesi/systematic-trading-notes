@@ -1,0 +1,31 @@
+# The trend strategy's settings (Lecture 24 §8). Values only; the allowed ranges and checks are in
+# params.py. A value outside its range stops the bot with a message: it is never corrected silently.
+# Fixed with the hypotheses on 18 November 2026 (lectures/24-a-live-trend-bot/results/hypotheses.md).
+
+instrument = "BTC-PERPETUAL"
+
+[signal]
+fast_spans_days = [2, 7]        # the speeds, blended with equal weights
+slow_over_fast = 4              # slow span = 4 x fast span
+dp_vol_span_days = 25           # span of the volatility of price changes that scales the signal
+
+[size]
+target_vol = 0.10               # annual volatility the position aims for, as a share of equity
+vol_window_days = 182           # volatility of hourly returns over the past 6 months
+buffer = 0.10                   # trade only when the target is this share of its average size away
+
+[take_profit]
+enabled = true
+sigmas = 5.0                    # a speed goes flat once its open gain reaches this many sigma
+
+[timing]
+decision_minute = 23            # decide at 23 minutes past each hour, away from round times
+jitter_seconds = 120            # plus a random delay of 0 to this many seconds
+
+[execution]
+mode = "taker"                  # "taker": market orders; "patient": post-only first, then market
+
+[kill_switch]                   # for the plumbing only: no drawdown stop (a trend follower's drawdowns are how it earns)
+max_feed_silence_s = 60         # stop trading when the market feed has been silent this long
+max_order_errors = 3            # stop after this many failed orders in a row
+max_position_x_equity = 3.0     # hard limit: the position never exceeds this multiple of equity (a guard against bugs)

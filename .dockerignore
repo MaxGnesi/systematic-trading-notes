@@ -1,0 +1,7 @@
+# only the capstone code goes into the image: no data, no secrets, no lectures
+*
+!capstone
+capstone/data
+capstone/configs/.env
+capstone/configs/*.env
+**/__pycache__

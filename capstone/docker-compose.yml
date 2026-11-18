@@ -1,0 +1,25 @@
+# Run the bot 24 hours a day, restarted after a crash (Lecture 24 §11).
+#   docker compose -f capstone/docker-compose.yml up -d --build     start in the background
+#   docker compose -f capstone/docker-compose.yml logs -f           follow the log
+#   docker compose -f capstone/docker-compose.yml down              stop
+# Put the container's settings in capstone/configs/docker.env (git-ignored), with
+#   DERIBIT_ENV=testnet, DERIBIT_CLIENT_ID=..., DERIBIT_PRIVATE_KEY_PATH=/run/secrets/deribit_key.pem
+# and set DERIBIT_KEY_FILE to the path of your private key on the host before starting.
+services:
+  bot:
+    build:
+      context: ..
+      dockerfile: capstone/Dockerfile
+    restart: unless-stopped           # a crash restarts the bot; so does a reboot, once Docker starts with the machine
+    env_file: configs/docker.env      # settings and the client id; never baked into the image
+    volumes:
+      - ./data:/app/capstone/data                                      # database, history, STOP file: outlive the container
+      - ${DERIBIT_KEY_FILE:?set DERIBIT_KEY_FILE to your private key}:/run/secrets/deribit_key.pem:ro
+    healthcheck:                      # unhealthy if the bot's minute heartbeat stops
+      test: ["CMD", "python", "-m", "capstone.tools.healthcheck"]
+      interval: 2m
+      timeout: 20s
+      retries: 3
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "5"}   # logs rotate instead of filling the disk

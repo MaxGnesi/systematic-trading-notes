@@ -1,0 +1,6 @@
+requests
+websockets
+cryptography
+numpy
+pandas
+pyarrow
