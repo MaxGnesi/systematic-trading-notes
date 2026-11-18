@@ -46,7 +46,9 @@ The split is exact. A six-month toy series shows it:
 | Return $`r_t`$ (%) | 2 | 1 | −3 | −2 | 1 | 3 | 0.333 |
 | $`s_t r_t`$ (%) | 2 | 1 | −3 | 2 | −1 | 3 | 0.667 |
 
-The rule earns 0.667% a month. The drift part is 0.333 × 0.333 = 0.111%; the timing part is the remaining 0.556%, the covariance of the two rows (notebook §2.1). Moskowitz, Ooi and Pedersen use a decomposition of this kind, following Lo and MacKinlay (1990), and find that positive autocovariance of returns drives most of time-series momentum in futures.
+The rule earns 0.667% a month. The drift part is 0.333 × 0.333 = 0.111%; the timing part is the remaining 0.556%, the covariance of the two rows (notebook §2.1).
+
+**Time on the drift's side is drift, not timing.** The share of months spent long sets the average position, and so the drift part; timing asks *when* the rule is long. A rule that is long in a random four of the six months, short in the other two, has the same average position. Over the 15 ways to place its two short months, it earns 0.111% a month on average, exactly the drift part, with nothing left for timing. The same holds for SPY: a rule long in a random 82% of months would earn the drift part of 6.6 points a year on average; the trend rule's further 4.1 points come from being long and short in the right months. So a rule long half the time can have large timing, if it picks the right halves, and a rule long 90% of the time can have negative timing, if its short months are rising ones. Moskowitz, Ooi and Pedersen use a decomposition of this kind, following Lo and MacKinlay (1990), and find that positive autocovariance of returns drives most of time-series momentum in futures.
 
 ### 2.2 What a trend rule earned on 16 ETFs
 

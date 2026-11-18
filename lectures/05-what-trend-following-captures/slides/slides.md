@@ -24,8 +24,9 @@ Part II · Pipeline stage: signal generation (what a trend signal captures)
 
 $$\overline{s\,r} \;=\; \underbrace{\overline{(s-\bar s)(r-\bar r)}}_{\text{timing}} \;+\; \underbrace{\bar s\;\bar r}_{\text{drift}}$$
 
-- **Drift:** average position × average return; a buy-and-hold investor with the same average exposure would earn it too
+- **Drift:** average position × average return; buy-and-hold with the same exposure earns it too
 - **Timing:** the covariance of position and return; it pays only if returns persist
+- **Time long is drift, not timing:** long in a random 82% of months earns SPY's 6.6 drift points, no timing
 - The split is exact; Moskowitz, Ooi and Pedersen (2012) use a decomposition of this kind
 
 ---
