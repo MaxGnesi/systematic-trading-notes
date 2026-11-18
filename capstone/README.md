@@ -114,6 +114,7 @@ The supervisor writes `capstone/data/supervisor.log` (each start and exit) and t
 - hourly candles with the fast and slow averages of each speed, the decisions (holds, and every time the signal fired), the fills and the current take-profit level of each speed;
 - the forecasts of each speed and their blend, and the annual volatility that scales the position;
 - since the bot started: the target and the position held, and the profit and loss in BTC;
+- the page reloads itself every minute; a Task Scheduler task can rewrite it every five minutes (`pythonw.exe -X utf8 -m capstone.tools.dashboard`, repeating every 5 minutes; it exits after each run, so it takes no memory in between);
 - a banner that flashes when a trade was decided in the last two hours, tiles with the current numbers, the slippage of every trade against the arrival mid, recent warnings, and the latest rows of every table of the database.
 
 ## Rules that hold in every file
