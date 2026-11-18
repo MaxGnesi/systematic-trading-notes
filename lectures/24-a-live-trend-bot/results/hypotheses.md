@@ -27,12 +27,14 @@ trade when it has gained 5 sigma; a kill switch stops everything on a 10% drawdo
 1. Each speed alone: 2 days, 7 days.
 2. The blend without the take profit.
 3. The blend with the patient entry instead of market orders.
+4. **Timing inside the delay window** (the user, 18 Nov 2026): after the decision, trade at the end of the first minute if the price has moved in our favour by at least x bp (x = 2, 5, 10), else at the end of the second minute; market orders both ways; one-minute closes only, so nothing ahead is seen.
 
 ## Expectations
 
 1. The blend's Sharpe ratio after costs lies between the two single speeds', with a milder worst month than either.
 2. The 5-sigma take profit leaves the Sharpe ratio about unchanged (within its 90% band) and raises the skew of monthly returns, as in Lecture 8.
 3. On Deribit's fees the patient entry changes the result by less than its 90% band: the 2 bp fee gap is small, and the fills it misses are the trend's best.
+4. Timing inside the window changes the average fill price by less than its 90% band: if the price over two minutes is a fair game, no rule for when to trade within the window improves the expected price (optional stopping); any gain would need short-term predictability, of which Lecture 19 found little.
 
 ## Data and samples
 
@@ -54,3 +56,5 @@ fills, reconciliation, uptime of the feed, and the gap between live and backtest
   hours (Lectures 21 and 23), fills in the first seconds of :00 and :30 were worse (Lecture 22, H5), and many
   bots act at the quarter hours; Lecture 20 found the signal insensitive to when it looks. Settings
   `decision_minute` and `jitter_seconds`. Made before the strategy was coded or run.
+- **18 November 2026, the user: look for a better price inside the delay window.** Added as rival 4 with
+  expectation 4, before any result. A proper test at the level of seconds needs tick data: an exercise.
