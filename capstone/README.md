@@ -107,6 +107,15 @@ Register-ScheduledTask -TaskName "Capstone trend bot" -Action $action -Trigger $
 
 The supervisor writes `capstone/data/supervisor.log` (each start and exit) and the bot's own log to `capstone/data/bot.out.log`. Never run two of these ways at once on the same account: the lock stops a second bot on the same machine, not one on another machine or in a container with its own data folder.
 
+## Watching it: the dashboard
+
+`python -X utf8 -m capstone.tools.dashboard [--days 30]` writes `capstone/data/dashboard.html` (not committed: it shows account data). It reads the bot's database read-only and recomputes the signal with the bot's own code, so the indicators are exactly the bot's:
+
+- hourly candles with the fast and slow averages of each speed, the decisions (holds, and every time the signal fired), the fills and the current take-profit level of each speed;
+- the forecasts of each speed and their blend, and the annual volatility that scales the position;
+- since the bot started: the target and the position held, and the profit and loss in BTC;
+- a banner that flashes when a trade was decided in the last two hours, tiles with the current numbers, the slippage of every trade against the arrival mid, recent warnings, and the latest rows of every table of the database.
+
 ## Rules that hold in every file
 
 1. **Verify every claim about the exchange live**, and write down when it was checked. The docstrings say
