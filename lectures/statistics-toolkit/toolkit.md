@@ -141,7 +141,15 @@ An example of each:
 - **Over time.** A stock rises 10% on day 1 and falls 10% on day 2: 100 becomes 110, then 99, a loss of 1%. The simple returns add to 0%, which is wrong; the log returns, +9.53% and −10.54%, add to −1.01%, exactly $`\ln(0.99)`$.
 - **Across assets.** Half the money in A, half in B; on one day A rises 10% and B falls 10%: 50 + 50 becomes 55 + 45, unchanged. The weighted simple returns give 0%, which is right; the weighted log returns give −0.50%, which is wrong.
 
-So the lectures use log returns for an asset's history and simple returns when they add up the positions of a portfolio. The rest of this card is about the two averages.
+So the lectures use log returns for an asset's history and simple returns when they add up the positions of a portfolio. The portfolio code of Lectures 12, 13 and 16 builds each day's portfolio return from simple returns, and compounds it over time.
+
+**The gap has a name: the diversification return** (Booth and Fama, 1992). The log return of a rebalanced portfolio exceeds the weighted average of its assets' log returns by about half the difference between the average variance of the assets and the variance of the portfolio:
+
+```math
+r_{\log,\,\text{portfolio}} \;\approx\; \sum_i w_i\, r_{\log,\,i} \;+\; \tfrac12\Big(\sum_i w_i\,\sigma_i^2 \;-\; \sigma_p^2\Big)
+```
+
+It is the volatility drag that diversification removes. On the 16 ETFs of Lecture 5, equally weighted and rebalanced monthly from mid-2006 to September 2026, the assets average 23% volatility and the portfolio 14%: the portfolio's log return is 8.4% a year, the weighted average of the assets' log returns only 6.7%: a gap of 1.7 points, close to the 1.8 the formula predicts. Adding log returns across assets would have thrown those points away. Whether the gap is a free gain from rebalancing or only the drag avoided is debated (Willenbrock, 2011); either way, the arithmetic is the same. The rest of this card is about the two averages.
 
 ```math
 \bar r_{\text{simple}} \;\approx\; \bar r_{\log} + \tfrac{1}{2}\sigma^2, \qquad \text{median wealth after } T \text{ years} \;\approx\; e^{\,T\,\bar r_{\log}}
@@ -156,6 +164,13 @@ The median follows the log average because log returns add up over time, and a s
 
 **Watch out for:**
 - **Compounding needs the log average.** A strategy that reports its average simple return overstates what a typical investor would end with; the higher its volatility, the more.
+- **A Sharpe ratio describes the average bet, not compounded growth.** It is computed on simple returns, by convention and for a reason: scaling the position scales the simple returns, so the Sharpe ratio stays the same at any leverage. But it can be positive while the money does not grow. Make +100% one day and −50% the next: the simple returns average +25% with a volatility of 75%, a Sharpe ratio of 0.33 a period, yet the money is back where it started (log returns +69% and −69%, average 0). The growth rate is about the simple average minus the drag:
+
+  ```math
+  g \;\approx\; \mu - \tfrac12\sigma^2 \;=\; \sigma\big(\mathrm{SR} - \tfrac12\sigma\big)
+  ```
+
+  so money shrinks once volatility exceeds twice the Sharpe ratio. For a trend portfolio (Sharpe ratio 0.5 a year, volatility 10%) the drag is half a point a year and the Sharpe ratio tells the story; for a strategy run at 100% volatility it does not. Judge growth on log returns and drawdowns (card 11), the bet on the Sharpe ratio.
 - **Leverage raises the drag with the square.** Doubling the position doubles the simple average but quadruples the drag; past a point, more leverage lowers the median outcome. The leverage that maximises it is the Kelly leverage, excess return over variance (Lecture 9).
 
 ## 6. Many tries
@@ -319,10 +334,12 @@ The worst drawdown keeps growing with the length of history, slowly for a good s
 
 - Bailey, D. and López de Prado, M. (2014). The deflated Sharpe ratio: correcting for selection bias, backtest overfitting, and non-normality. *Journal of Portfolio Management* 40(5), 94–107. — the luck of the best of many tries (card 6).
 - Benjamini, Y. and Hochberg, Y. (1995). Controlling the false discovery rate: a practical and powerful approach to multiple testing. *Journal of the Royal Statistical Society, Series B* 57(1), 289–300. — the correction for many tests (card 6).
+- Booth, D. G. and Fama, E. F. (1992). Diversification returns and asset contributions. *Financial Analysts Journal* 48(3), 26–32. — the diversification return (card 5).
 - Campbell, J. Y. and Thompson, S. B. (2008). Predicting excess stock returns out of sample: can anything beat the historical average? *Review of Financial Studies* 21(4), 1509–1531. — small R² can be economically large; most forecasts fail out of sample (card 10).
 - Forbes, K. J. and Rigobon, R. (2002). No contagion, only interdependence: measuring stock market comovements. *Journal of Finance* 57(5), 2223–2261. — correlation rises with volatility (card 9).
 - Efron, B. (1979). Bootstrap methods: another look at the jackknife. *Annals of Statistics* 7(1), 1–26. — the bootstrap (card 7).
 - Lo, A. W. (2002). The statistics of Sharpe ratios. *Financial Analysts Journal* 58(4), 36–52. — the standard error of a Sharpe ratio, and how autocorrelation biases it (card 3).
 - Magdon-Ismail, M., Atiya, A. F., Pratap, A. and Abu-Mostafa, Y. S. (2004). On the maximum drawdown of a Brownian motion. *Journal of Applied Probability* 41(1), 147–161. — the expected worst drawdown from drift, volatility and time (card 11).
+- Willenbrock, S. (2011). Diversification return, portfolio rebalancing, and the commodity return puzzle. *Financial Analysts Journal* 67(4), 42–49. — what the diversification return is, and is not (card 5).
 
 *References checked against Crossref on 18 November 2026. Numbers from the notebook, data to September 2026.*
