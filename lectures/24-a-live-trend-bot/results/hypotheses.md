@@ -11,12 +11,13 @@ trade when it has gained 5 sigma; a kill switch stops everything on a 10% drawdo
 
 | Part | Rule | Source |
 |---|---|---|
-| Data | Hourly closes of BTC-PERPETUAL (Deribit; inverse contract, amounts in USD) | Lecture 20: decide once an hour |
+| Data | Hourly bars of BTC-PERPETUAL (Deribit; inverse contract, amounts in USD), built from one-minute candles and **ending at 23 minutes past the hour** | Lecture 20: decide once an hour; looking from 5 minutes to 4 hours hardly matters |
 | Signal | EWMAC: fast average minus slow average, divided by the volatility of price changes; **fast spans 2 and 7 days**, slow span 4 times the fast; each scaled by its own average absolute size; blended with equal weights | Lecture 20's speed curve (2 days on the plateau, 7 days at its slow edge, still positive in both periods); the user's choice of two speeds about 3.5 times apart |
 | Size | Signal x 10% annual target / the volatility of hourly returns over the past **6 months** (a setting from 6 to 12 months) | The user; Lecture 9 |
 | Take profit | Per speed: once the open gain since that speed's signal last changed reaches **5 sigma** (its risk over its own horizon), that speed goes flat until its signal changes | The user; Lecture 8 §4.8 |
 | Stop | None beyond the signal | Lecture 23: stops inside the noise pay fees |
 | Buffer | Trade only when the target is more than 10% of its average size away from the position | Lecture 20 |
+| Decision time | **23 minutes past each hour, plus a random delay of 0 to 120 s** drawn fresh each hour (the backtest uses the same draws) | Change of 18 Nov 2026 below |
 | Execution | **Market orders (taker)** at the hourly decision; a patient post-only entry is a setting and a rival | The user: trend should take liquidity; Deribit fees checked live 18 Nov 2026: maker 1.5 bp, taker 3.5 bp |
 | Kill switch | Close everything and stop on a drawdown of 10% from the peak of equity, or an unhealthy feed (stale or invalid book); restart by hand | Hummingbot's drawdown kill switch; Lecture 22 §9 |
 | Settings | Every number in `params.toml`, with allowed ranges | The course author's Deribit backend |
@@ -44,3 +45,12 @@ half a tick of spread, and funding as Deribit reports it. Bands from a block boo
 
 On a Deribit testnet subaccount, with the same code. Measured: slippage against the price at the decision,
 fills, reconciliation, uptime of the feed, and the gap between live and backtest over the same days.
+
+## Changes before any result
+
+- **18 November 2026, the user: do not trade at round hours.** Decisions at 23 minutes past the hour, away
+  from the whole hour and the quarter hours, plus a random delay of 0 to 120 s so the timing is not
+  predictable. Reason: volume bursts, quote withdrawals and wider spreads cluster just after whole minutes and
+  hours (Lectures 21 and 23), fills in the first seconds of :00 and :30 were worse (Lecture 22, H5), and many
+  bots act at the quarter hours; Lecture 20 found the signal insensitive to when it looks. Settings
+  `decision_minute` and `jitter_seconds`. Made before the strategy was coded or run.
