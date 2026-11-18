@@ -28,7 +28,9 @@ import argparse
 import asyncio
 import hashlib
 import logging
+import os
 import random
+import sys
 import time
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
@@ -49,6 +51,30 @@ from capstone.strategies.trend import params as P
 from capstone.strategies.trend.signal import targets
 
 STOP_FILE = Path(__file__).resolve().parent / "data" / "STOP"
+LOCK_FILE = Path(__file__).resolve().parent / "data" / "bot.lock"
+_LOCK = None                                                     # kept open for the life of the process
+
+
+def single_instance() -> None:
+    """Take an exclusive lock on data/bot.lock, or exit with code 3 if another bot holds it.
+    Two bots on one account would send every order twice. The operating system releases the lock
+    when the process ends, even after a crash, so a restarted bot is never blocked by a dead one."""
+    global _LOCK
+    LOCK_FILE.parent.mkdir(parents=True, exist_ok=True)
+    f = open(LOCK_FILE, "a+")
+    try:
+        f.seek(0)
+        if os.name == "nt":
+            import msvcrt
+            msvcrt.locking(f.fileno(), msvcrt.LK_NBLCK, 1)
+        else:
+            import fcntl
+            fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        print("another bot is already running on this account (data/bot.lock is held): not starting", file=sys.stderr)
+        sys.exit(3)
+    _LOCK = f
+    (LOCK_FILE.parent / "bot.pid").write_text(str(os.getpid()), encoding="utf-8")
 CONTRACT = Decimal(10)
 log = logging.getLogger("bot")
 
@@ -222,6 +248,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true"); ap.add_argument("--hours", type=int); ap.add_argument("--once", action="store_true")
     a = ap.parse_args()
+    single_instance()
     bot = Bot(a.dry_run)
     try:
         asyncio.run(bot.run(a.hours, a.once))

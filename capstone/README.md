@@ -83,6 +83,30 @@ from price `p0` to `p1` earns `A x (1/p0 - 1/p1)` BTC. Fees (taker 3.5 bp), half
 Deribit's recorded funding are charged. Change any value in `strategies/trend/params.toml` and run again:
 that is the student's job, within the ranges `params.py` allows.
 
+## Step 4: run it 24 hours a day
+
+The bot refuses to start twice: it locks `capstone/data/bot.lock` and exits with code 3 if another copy holds the lock. Every start reconciles with the exchange first.
+
+| Where | How | Memory |
+|---|---|---|
+| Any machine, by hand | `python -X utf8 -m capstone.run_bot` from the repository root; Ctrl+C stops it and leaves the position as it is | the bot only |
+| A Windows PC | `capstone\tools\supervise.bat` restarts the bot a minute after any exit; start it at log-on with Task Scheduler (below); create `capstone\data\NO_RESTART` to stop the loop | a few MB more |
+| A Linux server | a systemd service with `Restart=always` (exercise in Lecture 24) | the bot only |
+| Any machine with Docker | `docker compose -f capstone/docker-compose.yml up -d --build`; `restart: unless-stopped` | 1 to 2 GB for Docker Desktop on a PC |
+
+**Task Scheduler, in PowerShell** (run once; adjust the path):
+
+```powershell
+$repo = "C:\path\to\systematic-trading-notes"
+$bat = Join-Path $repo "capstone\tools\supervise.bat"
+$action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c start `"capstone bot`" /min `"$bat`"" -WorkingDirectory $repo
+$trigger = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME
+$settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit ([TimeSpan]::Zero) -MultipleInstances IgnoreNew
+Register-ScheduledTask -TaskName "Capstone trend bot" -Action $action -Trigger $trigger -Settings $settings
+```
+
+The supervisor writes `capstone/data/supervisor.log` (each start and exit) and the bot's own log to `capstone/data/bot.out.log`. Never run two of these ways at once on the same account: the lock stops a second bot on the same machine, not one on another machine or in a container with its own data folder.
+
 ## Rules that hold in every file
 
 1. **Verify every claim about the exchange live**, and write down when it was checked. The docstrings say
