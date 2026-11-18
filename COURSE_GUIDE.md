@@ -72,10 +72,10 @@ The course follows one pipeline throughout (data → signal → position → eva
 | | E24 | The order book | What an order book is; L1, L2 and L3; why book and trades are both needed; getting the data; reconstructing the book and checking it; what it shows: spread, depth, impact, refill, cancellations | Bybit BTCUSDT perpetual: L2 book (200 levels, 100 ms) and trades, 20 Sep – 3 Nov 2025 (the 10 October cascade); Binance trades | Done |
 | | E25 | Statistics of the book: levels | The state at a moment: book imbalance, the microprice, queue dynamics, markouts of passive fills; liquidity before and in the 10 October cascade | Bybit BTCUSDT perpetual: L2 book (200 levels, 100 ms) and trades, 20 Sep – 3 Nov 2025 (the 10 October cascade); Binance trades | Done |
 | | E26 | Statistics of the flow: deltas | Changes over an interval: order-flow imbalance, toxicity (VPIN and its critique), Hawkes processes, impact per unit of flow, lead and lag between venues; timing the news and the market's reaction | Bybit BTCUSDT perpetual: L2 book (200 levels, 100 ms) and trades, 20 Sep – 3 Nov 2025 (the 10 October cascade); Binance trades | Done |
-| | E27 | Replaying the exchange | Our own orders in the recorded market, which does not react to them: the latency gap, queue position from aggregated books, adverse fills, order sizes and where the replay breaks; how conservative Lecture 23's fill rule was | Bybit BTCUSDT perpetual: L2 book (200 levels, 100 ms) and trades, 20 Sep – 3 Nov 2025 (the 10 October cascade); Binance trades | Done |
+| | E27 | Replaying the exchange | Our own orders in the recorded market, which does not react to them: the latency gap, queue position from aggregated books, adverse fills, order sizes and where the replay breaks; how conservative E23's fill rule was (now Lecture 20) | Bybit BTCUSDT perpetual: L2 book (200 levels, 100 ms) and trades, 20 Sep – 3 Nov 2025 (the 10 October cascade); Binance trades | Done |
 | | E28 | A market that reacts | How players behave alone and together, in calm markets, near a tipping point and in a cascade; a laboratory market of traders with known rules; a hybrid replay (the recorded book plus the measured reaction: impact, refill, triggered trading), tested out of sample; what it means for an algorithm and how to test one in calm and fast markets | Bybit BTCUSDT perpetual: L2 book (200 levels, 100 ms) and trades, 20 Sep – 3 Nov 2025 (the 10 October cascade); Binance trades; a simulated market | Done |
-| | E29 | Trading styles | Footprints of slicers, trend followers, snipers and makers in public data; shares over time and circumstances; tested first where the answer is known | Bybit BTCUSDT perpetual, as Lecture 28; the simulated market of Lecture 28 | Done |
-| | E30 | Market making on one venue | Avellaneda–Stoikov with extras, the grid at the best price and ping-pong quoting, steered by the signals of Lectures 25–26, in the replay and the simulation; every result split into what earned and what cost | Bybit BTCUSDT perpetual: L2 book (200 levels, 100 ms) and trades, 20 Sep – 3 Nov 2025 (the 10 October cascade); Binance trades | Done |
+| | E29 | Trading styles | Footprints of slicers, trend followers, snipers and makers in public data; shares over time and circumstances; tested first where the answer is known | Bybit BTCUSDT perpetual, as E28; the simulated market of E28 | Done |
+| | E30 | Market making on one venue | Avellaneda–Stoikov with extras, the grid at the best price and ping-pong quoting, steered by the signals of E25–E26, in the replay and the simulation; every result split into what earned and what cost | Bybit BTCUSDT perpetual: L2 book (200 levels, 100 ms) and trades, 20 Sep – 3 Nov 2025 (the 10 October cascade); Binance trades | Done |
 | | — | Cross-exchange market making | Quoting on Bybit and hedging on Binance | — | Not covered: the free archives do not hold both venues' books for our period ([order-book roadmap](lectures/ORDER_BOOK_ROADMAP.md)) |
 | — | — | Allocation methods; constraints, capacity and trading | 1/N, inverse volatility, HRP, NCO; risk bands, caps, capacity, no-trade bands | — | Folded into Lecture 16 in brief (decided 15 November 2026): the course ends with the final portfolio |
 | — | — | Prediction markets (Polymarket) | A price is a probability; calibration, Kelly on a bounded payoff | — | Not covered: replaced by the portfolio part (decided 13 November 2026) |
@@ -85,7 +85,7 @@ Threads to keep visible across parts:
 - **Sizing comes back three times:** volatility targeting (Part II), inventory and spread limits (Part V), and the portfolio's weights and constraints (Lectures 11-16), which combine them.
 - **The portfolio part keeps one workflow** (Lecture 11, §1): markets from market data only, weights from the risk of trend-positioned returns only, strategy profits only to evaluate, out of sample; any change after evaluation is dated and judged again.
 - **Lecture 3 sets up Part V:** discrete sampling and bid-ask bounce (Lecture 3, §4.4) are the hook for "what is inside the bar".
-- **Lecture 22 mirrors Lecture 3:** same data with different transformations, versus the same strategy on different data.
+- **Lecture 20 mirrors Lecture 3:** same data with different transformations, versus the same strategy on different data.
 - **Two kinds of trend signal:** a positive-weight moving average always lags below price in a steady rise, while the Kalman level + slope extrapolates and can sit above price while the market still rises (QQQ illustration: above price on 43% of up-market days versus 23% for EMA(20); signals agree on 68% of days; naive rule returns correlate 0.37, one asset, one setting). In the three-state filter, acceleration also moves the level (forecast = level + slope + ½·acceleration), so it changes where the filter sits relative to price. Three signal sources to compare, each from a different mechanism: position (price versus the level of an EMA, the level + slope filter and the three-state filter), slope, and acceleration (early warning of regime change). Each state carries its own signal: position (price versus level), slope (direction), acceleration (strengthening or fading). Prototype on QQQ 1999–2026, models matched to EMA(20) on variance reduction: signals from the same state agree 78–91% (position) and 89% (slope), signals from different states only 45–75%, i.e. three distinct signal families (agreement, not performance). Lecture 4 explains the mechanisms; Part II tested it. On daily futures the Kalman slope trades like EWMAC at equal speed (daily returns correlate 0.93–0.95) and earns less, so Lecture 10 treats it as a variant of EWMAC (Lecture 4, §3: in steady state it is a linear filter).
 - **The research checklist** (Lecture 1, §1.2) is applied in every *How we judge it* section.
 
@@ -100,7 +100,7 @@ The order-book lectures' plot, for readers: [lectures/extended/ORDER_BOOK_ROADMA
 - **Part II: bars that close on the clock.** Daily, weekly or monthly OHLCV, the data available for decades. Daily is the main case; everything holds for weekly or monthly bars too.
 - **Part V: changing the rule, or dropping bars.** Bars that close after a number of trades, an amount of volume or dollars, or an order-flow imbalance (still OHLCV, on a different clock); or the raw events themselves.
 
-Strategy family and data frequency are separate choices: trend and stat arb run on daily bars, minute bars or alternative bars. The dividing line in Part V is whether a strategy needs **aggregated bars** (Lectures 19 and 22) or **individual events and the path between them** (Lectures 20, 21 and 23).
+Strategy family and data frequency are separate choices: trend and stat arb run on daily bars, minute bars or alternative bars. The dividing line in Part V is whether a strategy needs **aggregated bars** (Lecture 18's bars, Lecture 20's trend rule) or **individual events and the path between them** (Lecture 19, Lecture 20's grid, Lectures 21 to 23).
 
 ### 1.1a Before starting Part V
 
@@ -109,28 +109,28 @@ Part V is a step up: the data are billions of trades instead of a few thousand b
 | Need | Why | Where |
 |---|---|---|
 | Lectures 2 and 3 | What a bar compresses; order flow, volatility estimators and their biases, which Part V measures against the tape | Lecture 3, §4 and §7 |
-| Lecture 7 | Comparing systems at equal speed, used again in Lecture 20 | Lecture 7 |
-| Polars basics | Reading data larger than memory: lazy queries, streaming, chunks | Lecture 18, Appendix A |
-| A computer with about 8 GB of free memory and 25 GB of disk | Five years of one market; every stage works in chunks and waits for free memory | Lecture 18, Appendix A.2 |
+| Lecture 7 | Comparing systems at equal speed, used again in Lectures 8 to 10 | Lecture 7 |
+| Polars basics | Reading data larger than memory: lazy queries, streaming, chunks | E18, Appendix A |
+| A computer with about 8 GB of free memory and 25 GB of disk | Five years of one market; every stage works in chunks and waits for free memory | E18, Appendix A.2 |
 
 Each Part V lecture opens with a short *What to take away* box, and marks passages that can be skipped on a first reading.
 
 ### 1.1b Six uses of the tape: the spine of Part V
 
-Part V is organised around what the tape adds to bars. Lectures 19 to 21 each cover two of the six uses; Lectures 22 and 23 apply them to two strategies, trend and an intraday grid. Each lecture names, in its first lines, which uses it covers, and each method lecture ends with *For the two examples*: what the trend rule and the grid take from it.
+Part V is organised around what the tape adds to bars. Lecture 18 covers two of the six uses (the clock and seasonality) and Lecture 19 the other four; Lecture 20 applies them to two strategies, trend and an intraday grid. Each lecture names, in its first lines, which uses it covers, and each method lecture ends with *For the two examples*: what the trend rule and the grid take from it.
 
 | The tape adds… | Used for | Strategy type | Lecture |
 |---|---|---|---|
-| 1. A clock: when trading happens | Bars on other clocks; signals that speed up with the market | Trend and any bar-based rule | 13 |
-| 2. The path between bars | Which order filled first; stop or target first; the worst and best point in a trade | Mean reversion, grids, any rule with stops | 14 |
-| 3. Volatility, measured precisely | Realised variance, jumps, forecasts; sizing; grid spacing; stop distances | All strategies | 14 |
-| 4. Seasonality | When to trade: deep and thin hours, crowded round times, scheduled events (funding, data releases, expiries) | Execution of every strategy; timing of entries | 13 |
-| 5. Order flow: who is pressing | Imbalance and its persistence; absorption; liquidation cascades; as a signal, or as a filter (stop a grid when one-sided selling keeps hitting it) | Short-term reversion; a regime switch for grids | 15 |
-| 6. Costs and capacity | Spread on one's own side, slippage, impact growing with size, fees and funding; how large a strategy can get before costs eat it | Every strategy; deciding the trade size | 15 |
+| 1. A clock: when trading happens | Bars on other clocks; signals that speed up with the market | Trend and any bar-based rule | 18 |
+| 2. The path between bars | Which order filled first; stop or target first; the worst and best point in a trade | Mean reversion, grids, any rule with stops | 19 |
+| 3. Volatility, measured precisely | Realised variance, jumps, forecasts; sizing; grid spacing; stop distances | All strategies | 19 |
+| 4. Seasonality | When to trade: deep and thin hours, crowded round times, scheduled events (funding, data releases, expiries) | Execution of every strategy; timing of entries | 18 |
+| 5. Order flow: who is pressing | Imbalance and its persistence; absorption; liquidation cascades; as a signal, or as a filter (stop a grid when one-sided selling keeps hitting it) | Short-term reversion; a regime switch for grids | 19 |
+| 6. Costs and capacity | Spread on one's own side, slippage, impact growing with size, fees and funding; how large a strategy can get before costs eat it | Every strategy; deciding the trade size | 19 |
 
-For a **trend system**, held for days, the tape gives a different clock and realistic costs (Lecture 20). For **mean reversion and the intraday grid**, held for minutes or hours, the **path** decides, and makes such strategies possible to test at all (Lecture 23). The same reference days recur in every lecture: the Fed decision of 21 September 2022, the quietest day (7 January 2023) and the flash crash of 17 August 2023.
+For a **trend system**, held for days, the tape gives a different clock and realistic costs (Lecture 20). For **mean reversion and the intraday grid**, held for minutes or hours, the **path** decides, and makes such strategies possible to test at all (Lecture 20). The same reference days recur in every lecture: the Fed decision of 21 September 2022, the quietest day (7 January 2023) and the flash crash of 17 August 2023.
 
-### 1.2 Backtesting on bars that are not clock-time (for Lectures 22 and 23)
+### 1.2 Backtesting on bars that are not clock-time (for Lecture 20)
 
 The strategy logic carries over to any bars, since each still has OHLCV. The backtest machinery changes in four places:
 
@@ -139,9 +139,9 @@ The strategy logic carries over to any bars, since each still has OHLCV. The bac
 3. **Asynchronous assets.** Different assets' volume bars close at different moments; baskets and pairs need a common clock (clock-time snapshots or an event-driven backtest).
 4. **P&L and risk in clock time.** Returns, volatility and drawdowns are reported per day, so positions are revalued at common times.
 
-These four points form the *How we judge it* part of Lecture 22.
+These four points form the *How we judge it* part of Lecture 20.
 
-### 1.2a Risk measures on tick data (for Lecture 20)
+### 1.2a Risk measures on tick data (for Lecture 19)
 
 Lecture 3, §11 promises that Part V returns to risk measures beyond clock-time bars. Two routes to cover:
 

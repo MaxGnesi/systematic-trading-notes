@@ -88,7 +88,7 @@ A random walk has no memory: after a move up, the next move is up or down with e
 
 <sub><b>How to read the table.</b> Our measurement for these notes; one-minute closes, October 2021 to September 2026. Continues: the share of steps followed by a step in the same direction; a negative difference means the tape turns back more often than its own shuffled returns.</sub>
 
-At small steps bitcoin turns back slightly more often than a path without memory; at a percent and more there is no difference. That five-year average hides two different markets.
+At small steps bitcoin turns back slightly more often than a path without memory; at one per cent and more there is no difference. That five-year average hides two different markets.
 
 **Two regimes.** The same test, with the days grouped by their realised variance:
 
@@ -103,7 +103,7 @@ At small steps bitcoin turns back slightly more often than a path without memory
 
 <sub><b>How to read the table.</b> Points of continuation, tape minus its own returns shuffled within the same days; the figure shows all groups with their 95% intervals.</sub>
 
-On calm and ordinary days the price turns back clearly more often than chance, at every step size. On the most volatile days the picture reverses at larger steps: moves of half a percent and more tend to carry on. The average of five years describes neither: a grid that relies on it is right on ordinary days and wrong on exactly the days that can ruin it.
+On calm and ordinary days the price turns back clearly more often than chance, at every step size. On the most volatile days the picture reverses at larger steps: moves of half a per cent and more tend to carry on. The average of five years describes neither: a grid that relies on it is right on ordinary days and wrong on exactly the days that can ruin it.
 
 **Can the regime be seen in advance?** Grouped by the *previous* day's volatility, which is known in the morning, the runs disappear: yesterday's volatility does not say whether today will be an explosive day. The regime has to be recognised within the day; §9 looks for such signals.
 
@@ -264,7 +264,7 @@ The path half asked how the price moves; the flow half asks who moved it. When b
 
 <sub><b>How to read the table.</b> Our measurement for these notes; the differences in the second row are 4.5 to 7.7 standard errors from zero, with days as clusters. A negative value in the last two rows means the price came back after the flow.</sub>
 
-Flow moves the price strongly while it happens. Afterwards a small part comes back: about 1 bp after a move of 28 bp in 30 minutes, a few percent of the impact, and almost all of it in volatile hours. The reversal is reliable, but far smaller than what a market order costs (§10): it is not a strategy on its own.
+Flow moves the price strongly while it happens. Afterwards a small part comes back: about 1 bp after a move of 28 bp in 30 minutes, a few per cent of the impact, and almost all of it in volatile hours. The reversal is reliable, but far smaller than what a market order costs (§10): it is not a strategy on its own.
 
 **With or against the trend?** Split by the slower trend (the past three days' return, divided by its typical size), the strongest flow comes back reliably in one corner only: after flow **with** the slower trend, in normal and volatile hours, by 0.2 to 0.5 bp after five-minute windows and 1.7 bp after thirty-minute windows in volatile hours. When the market piles in on the side the trend already favours, at a moment of stress, the price overshoots and gives some back ([E21 §2](../extended/21-order-flow-and-costs/lecture.md) draws the full matrix).
 

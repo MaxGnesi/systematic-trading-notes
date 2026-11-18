@@ -162,7 +162,7 @@ Crude oil in April 2020 shows the problem at its sharpest. The May contract (CLK
 | **Additive series** (back-adjusted, §3.3) | 16.94 | 16.59 | −0.35 |
 | **Ratio series** (back-adjusted, §3.3) | 32.02 | 31.53 | −1.5% |
 
-Over these two days the position was in the May contract, which lost 35 cents. The raw series shows a gain of 6.50 dollars, 29%: the gap of 6.85 dollars between June and May on the roll day, which no position earned. A trend rule on the raw series would read it as a strong rally. Both adjusted series show what the position actually did: the additive series the loss in dollars, the ratio series the loss in percent. Their levels, 16.59 and 31.53, are not prices that ever traded; §3.3 explains why.
+Over these two days the position was in the May contract, which lost 35 cents. The raw series shows a gain of 6.50 dollars, 29%: the gap of 6.85 dollars between June and May on the roll day, which no position earned. A trend rule on the raw series would read it as a strong rally. Both adjusted series show what the position actually did: the additive series the loss in dollars, the ratio series the loss in per cent. Their levels, 16.59 and 31.53, are not prices that ever traded; §3.3 explains why.
 
 A week later, on 20 April, the May contract settled at **−37.63 dollars**, the first negative settlement of a major physically delivered futures contract. CME had prepared its systems for negative prices twelve days earlier (CME Clearing Advisory 20-152, 8 April 2020). The rolled position was already in June and was not exposed. A position still in May would have lost 55.90 dollars a barrel in one day, 306% of the previous price.
 
@@ -208,7 +208,7 @@ The six techniques in use, each shown on the April 2020 roll:
 |---|---|---|---|---|
 | **No adjustment** (raw series) | Chain the price of the contract held each day | The prices that actually traded | Every roll appears as a move: +6.50 dollars on 13 April 2020 | Contract values, position sizes and costs; never for signals or for profit across a roll |
 | **Additive** (difference, or "Panama", adjustment) | At each roll, add the gap (new minus old on the roll day) to all earlier prices: every price before 13 April 2020 rises by 6.85 dollars. The latest contract stays unchanged | Point changes, hence profit in dollars per contract; distances such as channel widths and the average true range | Levels far in the past, which drift by the sum of all later gaps and can fall below zero; percentage returns | Signals in price points; profit in dollars |
-| **Ratio** (proportional adjustment) | At each roll, multiply all earlier prices by new over old: every price before 13 April 2020 is multiplied by 29.26 / 22.41 = 1.306 | Percentage changes, hence compounded returns and the logarithm of the price | Point changes and distances in the past; fails when a price is zero or negative | Signals on returns or log prices; volatility in percent |
+| **Ratio** (proportional adjustment) | At each roll, multiply all earlier prices by new over old: every price before 13 April 2020 is multiplied by 29.26 / 22.41 = 1.306 | Percentage changes, hence compounded returns and the logarithm of the price | Point changes and distances in the past; fails when a price is zero or negative | Signals on returns or log prices; volatility in per cent |
 | **Returns index** | Compound the daily returns of the contract held, starting from 100 | The same as the ratio series, anchored at the start instead of today | As for ratio | Research and portfolio returns; the usual construction in academic studies of trend following, for example Moskowitz, Ooi and Pedersen (2012) |
 | **Rolling over several days** | Move the position in equal parts over several days instead of at once. The S&P GSCI commodity index moves 20% a day from the fifth to the ninth business day of the month | Less dependence on one day's prices; smaller trades in the market | Still needs one of the methods above to build a series | Large positions and indices |
 | **Constant maturity** | Blend the two nearest contracts with weights that keep a fixed time to expiry, for example 60 days | A smooth series, comparable over time | Not one tradable contract: holding it needs two contracts in weights that change every day | Research on the term structure and on carry |
@@ -233,7 +233,7 @@ When the units match, the choice between the two adjusted series hardly matters;
 | Breakout position, additive against ratio series (share of days the same) | 99–100% | 98–100% |
 | EWMAC forecast, additive against **raw** series (correlation) | 0.99–1.00 | 0.93–0.97 |
 | Breakout position, additive against **raw** series (share of days the same) | 96–98% | 85–92% |
-| EWMAC forecast with **mixed units**, a difference in points divided by a volatility in percent of the adjusted price (correlation with the correct forecast) | 0.96–1.00 | 0.81–0.89 |
+| EWMAC forecast with **mixed units**, a difference in points divided by a volatility in per cent of the adjusted price (correlation with the correct forecast) | 0.96–1.00 | 0.81–0.89 |
 
 The raw series and the mixed units do the damage, and they do it where roll gaps are large.
 
@@ -313,7 +313,7 @@ The price alone misses almost the whole return of a bond fund, which comes from 
 | The raw contracts, as downloaded, never changed, with problem rows flagged | The source of everything; the prices actually traded; position sizes and costs |
 | The roll calendar: date, old and new contract, both prices and the gap | Builds both adjusted series; every roll can be checked; the roll yield |
 | The additive series | Signals in points; profit in dollars |
-| The ratio series | Signals on returns or log prices; volatility in percent; compounded returns |
+| The ratio series | Signals on returns or log prices; volatility in per cent; compounded returns |
 | For the bond funds: total and excess returns | Signals and profit |
 
 Both adjusted series are rebuilt from the raw contracts and the roll calendar in seconds. A different roll rule needs no new data, and every number can be traced back to a roll that was observed.
@@ -402,7 +402,7 @@ The level-plus-slope Kalman filter of Lecture 4, run on the log of the ratio ser
 
 What the Kalman filter adds is not a different return stream but two readings EWMAC does not have: the uncertainty around the slope, and the surprises, the gaps between forecast and price, which flag when the model no longer fits. Both are tools for monitoring a system rather than reasons to trade a second one.
 
-**Margin.** Exchange margins are a few percent of the notional value for financial futures and more for commodities. At a 10% volatility target they tie up a small part of the capital and never constrain the positions. The rest of the capital earns the Treasury bill rate, which the excess returns of this lecture leave out.
+**Margin.** Exchange margins are a few per cent of the notional value for financial futures and more for commodities. At a 10% volatility target they tie up a small part of the capital and never constrain the positions. The rest of the capital earns the Treasury bill rate, which the excess returns of this lecture leave out.
 
 ## 6. Breakout
 
@@ -673,7 +673,7 @@ Picking the best of 92 variants would be overfitted one time in ten, and the bes
 
 - [ ] Rebuild the ladder of §5.2 with costs of 10 bp. Which step loses most? (notebook §5)
 - [ ] Rank the cross-sectional markets within three groups instead of across all 14 (financials, commodities, bonds). Does the correlation with EWMAC fall further? (notebook §7)
-- [ ] Replace the additive series by the ratio series in EWMAC, with volatility in percent. Confirm that the forecasts barely change, as §3.4 claims. (notebook §3)
+- [ ] Replace the additive series by the ratio series in EWMAC, with volatility in per cent. Confirm that the forecasts barely change, as §3.4 claims. (notebook §3)
 - [ ] Run the market split of §12.2 with a stricter rule, keeping variants within 80% of the best. Does the kept blend improve or only shrink? (notebook §12)
 
 ### 13.3 Reading

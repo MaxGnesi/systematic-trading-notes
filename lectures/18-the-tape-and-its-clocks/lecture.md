@@ -278,7 +278,7 @@ The last two rows contain the central puzzle of this literature: the flow is pre
 From one trade to the next, returns have a correlation of −0.65: the price alternates between the bid and the ask, so trade-to-trade returns are mostly noise. From one second to the next the bounce has gone (+0.07).
 
 ![The volatility signature plot](figures/12_10_signature.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> Sampling interval, one second to one hour (x, log); annualised volatility, percent (y). Realised volatility averaged over the five years, measured from returns at each interval: from trade prices (blue) and from the mid estimated from the last buy and the last sell of each second (green, dotted). The orange dashed line is the volatility of daily close-to-close returns. A flat curve would mean returns are independent.</sub>
+<sub><b>How to read the figure.</b> <b>Axes.</b> Sampling interval, one second to one hour (x, log); annualised volatility, per cent (y). Realised volatility averaged over the five years, measured from returns at each interval: from trade prices (blue) and from the mid estimated from the last buy and the last sell of each second (green, dotted). The orange dashed line is the volatility of daily close-to-close returns. A flat curve would mean returns are independent.</sub>
 
 Realised volatility adds up squared returns over short intervals. The chart, a **signature plot** (Andersen, Bollerslev, Diebold and Labys, 2000), shows annualised volatility for each interval:
 
@@ -329,7 +329,7 @@ A third of the risk of five years sits in 1% of its minutes. A volatility estima
 Lecture 3, §7 estimated order flow from bars. The **tick rule** gives all of a bar's volume to buyers if the close rose and to sellers if it fell. **Bulk volume classification** (Easley, López de Prado and O'Hara, 2012) splits the volume by the size of the move: the share bought is Φ(return ÷ volatility), with the volatility measured over past bars only. The tape gives the true answer for every bar:
 
 ![Order flow estimated from candles against the truth](figures/12_13_flow_from_candles.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> Left: true net aggressive buying, USD billions (x); estimate from the candle, USD billions (y). Right: percent of the day's dollars bought aggressively (x); number of days (y). One observation per day over the five years. <b>Left:</b> one dot per day, estimated by bulk volume classification (blue) and by the tick rule (light orange); a perfect estimate would lie on the diagonal. <b>Right:</b> histograms of the share bought aggressively, estimated by bulk volume classification (blue) and true from the tape (green); the tick rule is not drawn, since it always gives 0 or 100.</sub>
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: true net aggressive buying, USD billions (x); estimate from the candle, USD billions (y). Right: per cent of the day's dollars bought aggressively (x); number of days (y). One observation per day over the five years. <b>Left:</b> one dot per day, estimated by bulk volume classification (blue) and by the tick rule (light orange); a perfect estimate would lie on the diagonal. <b>Right:</b> histograms of the share bought aggressively, estimated by bulk volume classification (blue) and true from the tape (green); the tick rule is not drawn, since it always gives 0 or 100.</sub>
 
 | Measure | One minute | One hour | One day |
 |---|---|---|---|
