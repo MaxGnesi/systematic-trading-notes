@@ -275,7 +275,7 @@ It is plausible that markets keep evolving, so the useful question is not whethe
 
 **Multiple testing.** The more variants are tried, the stronger the first warning sign. If you test 100 independent strategies with no true edge, about five will show a $`t`$-statistic above 2 by chance alone. Harvey, Liu and Zhu (2016) counted more than 300 factors proposed for US stock returns and argue that, after so many trials, a new factor should clear a $`t`$-statistic of 3.0 rather than 2. The practical rule is to keep a record of everything you tried, not only what worked, and to demand an economic explanation alongside the statistics.
 
-**How to tell noise from an edge.** No single result can prove it is not noise. What can be done is to measure how large the noise is and look for its fingerprints:
+**How to tell noise from an edge.** No single result can prove it is not noise. What can be done is to measure how large the noise is and look for its fingerprints. The statistics used here and throughout the course (standard errors, t-statistics, the luck of many tries, shuffles and bootstraps) are explained with examples on our data in the [statistics toolkit](../statistics-toolkit/toolkit.md):
 
 1. **Size the noise.** A Sharpe ratio measured over $`T`$ years has a standard error of about $`1/\sqrt{T}`$: about 0.32 over ten years, so a Sharpe ratio of 0.5 is only about 1.6 standard errors from zero.
 2. **Count the tries.** The best of many tries is lifted by luck: about two standard errors above the median for 30 tries and about three for 1,000 (Lecture 7 §5.2).
