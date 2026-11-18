@@ -36,7 +36,9 @@ def architecture():
     for x0, y0, x1, y1, lab, c in arrows:
         f.add_annotation(x=x1, y=y1, ax=x0, ay=y0, xref="x", yref="y", axref="x", ayref="y", showarrow=True, arrowhead=3,
                          arrowsize=1.2, arrowwidth=2, arrowcolor=c, text="")
-        f.add_annotation(x=(x0 + x1) / 2, y=(y0 + y1) / 2 + 0.17, text=lab, showarrow=False, font=dict(size=10, color=c))
+        dx, dy = 0.0, (0.17 if x1 > x0 else -0.2)          # labels of left-pointing arrows go below their line
+        dx, dy = {"target": (0.35, 0.0), "record everything": (0.0, -0.33), "our records": (0.0, 0.33)}.get(lab, (dx, dy))
+        f.add_annotation(x=(x0 + x1) / 2 + dx, y=(y0 + y1) / 2 + dy, text=lab, showarrow=False, font=dict(size=10, color=c))
     f.add_shape(type="rect", x0=3.4, x1=10.0, y0=1.35, y1=4.35, line=dict(color=MUTED, width=1, dash="dot"))
     f.add_annotation(x=6.7, y=1.15, text="the bot: each folder one job; only connectors/ and executors/ know the exchange",
                      showarrow=False, font=dict(size=11, color=MUTED))
