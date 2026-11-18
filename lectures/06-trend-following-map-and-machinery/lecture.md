@@ -92,7 +92,7 @@ Recent changes count most. The 12-month return sign weights the last 252 returns
 
 **A fairer comparison: across parameters, at equal trading frequency.** Table 2.1 compares one setting per rule, which mixes the family with the speed that setting happens to give it. Running each family over a range of parameters and plotting its Sharpe ratio against how often it changes direction separates the two ([chart E.2](#e2-sharpe-ratio-against-trading-frequency-23)):
 
-- **Speed dominates.** Within each family, the Sharpe ratio before costs ranges from about −0.2 at 30–45 changes of direction a year to 0.45–0.55 at one to six.
+- **Speed dominates.** Within each family, the Sharpe ratio before costs ranges from about −0.2 at 30–45 changes of direction a year to 0.45–0.6 at one to six.
 - **At equal frequency, the families are close.** The gaps between families, about 0.1–0.3, are far smaller than the spread across parameters within any one of them.
 - **How trading frequency is counted is itself a choice.** EWMAC adjusts its position continuously between changes of sign, and a Donchian system passes through flat; a change of direction is not the same trade in every family.
 
@@ -155,13 +155,13 @@ Lecture 5 found that a single-asset trend rule is usually still long when a cras
 
 | Design | Return (% a year) | Beta to SPY | Smile (t-statistic) | In SPY's worst fifth of months (% a year) | 2008 | March 2020 |
 |---|---|---|---|---|---|---|
-| 12-month long or flat | 4.3 | 0.22 | 0.01 (0.1) | −16.1 | −3.7% | −4.9% |
-| 12-month short or flat | 0.2 | −0.19 | 0.60 (4.1) | +13.9 | +12.4% | +4.0% |
-| 12-month long and short | 4.5 | 0.03 | 0.61 (2.0) | −2.3 | +8.7% | −0.9% |
-| 3-month long and short | 2.3 | −0.08 | 0.69 (2.3) | +3.4 | +10.1% | **+8.0%** |
+| 12-month long or flat | 5.0 | 0.22 | −0.12 (−0.6) | −15.2 | −2.7% | −4.5% |
+| 12-month short or flat | −0.3 | −0.19 | 0.44 (2.9) | +13.0 | +10.9% | +3.2% |
+| 12-month long and short | 4.7 | 0.03 | 0.32 (1.0) | −2.2 | +8.1% | −1.3% |
+| 3-month long and short | 2.2 | −0.08 | 0.33 (1.1) | +3.1 | +9.0% | **+6.9%** |
 
 - **Long or flat collects drift and has no smile.** It keeps a market beta of about 0.2 and loses in crashes; it is a way of holding the asset with less exposure in downtrends, not a hedge.
-- **The smile comes from the short side.** Short or flat earns about nothing on average and pays in the worst months, the profile of insurance ([chart E.1](#e1-what-each-design-earns-in-spys-worst-and-best-months-31)).
+- **The smile comes from the short side.** Short or flat loses a little on average and pays in the worst months, the profile of insurance ([chart E.1](#e1-what-each-design-earns-in-spys-worst-and-best-months-31)). Combined with the long side, the smile halves and is no longer significant on these 16 ETFs (t = 1.0): the long side's losses in crashes offset much of it. Moskowitz, Ooi and Pedersen (2012) found a clearer smile on futures, a broader universe with more short-able trends.
 - **Speed decides which crises are caught.** The 3-month rule turned short in time for March 2020; the 12-month rule did not.
 
 "Crisis alpha", the gains of trend followers in prolonged sell-offs, is therefore not a property of trend following as such. It belongs to designs that hold short positions and react fast enough for the crisis at hand.
@@ -201,14 +201,14 @@ Sizing by volatility makes each asset contribute similar risk: without it, a por
 
 ### 5.2 What volatility scaling adds
 
-**Table 5.1. The 12-month rule with equal notional and with volatility scaling** (monthly, 16 ETFs, 2000–2026; the scaled version is set to the same overall volatility; notebook §5.2)
+**Table 5.1. The 12-month rule with equal notional and with volatility scaling** (monthly, 16 ETFs, 2000–2026; the scaled version is set to the same overall volatility; maximum drawdown of compounded wealth; notebook §5.2)
 
 | Sizing | Return (% a year) | Volatility | Sharpe ratio | Worst month | Maximum drawdown |
 |---|---|---|---|---|---|
-| Equal notional | 5.8 | 11.8% | 0.50 | −11.2% | −29.4% |
-| Volatility-scaled | 8.9 | 11.8% | 0.75 | −9.0% | −26.2% |
+| Equal notional | 5.9 | 11.6% | 0.51 | −10.2% | −28.2% |
+| Volatility-scaled | 9.3 | 11.6% | 0.80 | −8.7% | −23.5% |
 
-At the same overall risk, volatility scaling lifts the Sharpe ratio by half and cuts the worst month. This is the result of Kim, Tse and Wald (2016) seen on our data: a large part of what is credited to trend following comes from sizing positions by volatility. It is part of the machinery, and it should be credited as such.
+At the same overall risk, volatility scaling lifts the Sharpe ratio by more than half and cuts the worst month and the worst drawdown. This is the result of Kim, Tse and Wald (2016) seen on our data: a large part of what is credited to trend following comes from sizing positions by volatility. It is part of the machinery, and it should be credited as such.
 
 ## 6. Costs and turnover
 
@@ -218,33 +218,33 @@ Every change of position is a trade. Faster rules change position more often and
 
 | Rule | Turnover per year | Sharpe ratio, no costs | 5 bp | 20 bp |
 |---|---|---|---|---|
-| TSMOM-12 | 9.9 | 0.56 | 0.47 | 0.20 |
-| SMA-200 | 13.8 | 0.42 | 0.29 | −0.09 |
-| EWMAC 16/64 | 12.0 | 0.32 | 0.24 | 0.01 |
-| Donchian 55/20 | 8.0 | 0.19 | 0.10 | −0.16 |
+| TSMOM-12 | 9.9 | 0.60 | 0.51 | 0.24 |
+| SMA-200 | 13.8 | 0.43 | 0.30 | −0.08 |
+| EWMAC 16/64 | 12.0 | 0.33 | 0.25 | 0.02 |
+| Donchian 55/20 | 7.9 | 0.19 | 0.10 | −0.16 |
 | Chandelier 55 | 8.2 | 0.18 | 0.08 | −0.20 |
 
 - **Volatility targeting itself creates turnover.** Even the slow 12-month rule trades about ten times its capital a year, because positions are resized every day as volatility changes; SMA-200 trades more, because price crosses its average often.
-- **Costs decide which rules survive.** At 5 basis points per unit traded, roughly the cost of trading liquid ETFs, every rule keeps most of its Sharpe ratio; at 20 basis points, only the 12-month rule stays positive.
+- **Costs decide which rules survive.** At 5 basis points per unit traded, roughly the cost of trading liquid ETFs, every rule keeps most of its Sharpe ratio; at 20 basis points, only the 12-month rule keeps a Sharpe ratio worth having (0.24); EWMAC is at zero and the others turn negative.
 - **Across parameters the pattern is the same.** After costs of 5 basis points, every family's Sharpe ratio turns negative above about 20–25 changes of direction a year ([chart E.3](#e3-after-costs-6)).
 - **Turnover can be reduced without changing the signal**, by trading only when the desired position moves far enough from the current one. Later lectures return to this.
 
 ## 7. The payoff profile
 
-**Table 7.1. Monthly returns of each rule's portfolio** (2000–2026; notebook §7)
+**Table 7.1. Monthly returns of each rule's portfolio** (2000–2026; months compounded from daily returns; maximum drawdown of compounded wealth; notebook §7)
 
 | Rule | Sharpe ratio | Skewness | Share of months positive | Average win / average loss | Worst month | Maximum drawdown |
 |---|---|---|---|---|---|---|
-| TSMOM-12 | 0.61 | −0.05 | 57% | 1.15 | −3.9% | −12.2% |
-| SMA-200 | 0.46 | 0.09 | 56% | 1.12 | −4.2% | −9.7% |
-| EWMAC 16/64 | 0.37 | 0.74 | 52% | 1.23 | −5.0% | −16.0% |
-| Donchian 55/20 | 0.21 | 0.86 | 50% | 1.19 | −2.6% | −10.9% |
-| Chandelier 55 | 0.20 | 0.99 | 51% | 1.13 | −2.8% | −11.5% |
+| TSMOM-12 | 0.65 | −0.06 | 58% | 1.16 | −3.9% | −11.4% |
+| SMA-200 | 0.48 | 0.07 | 56% | 1.10 | −4.0% | −8.9% |
+| EWMAC 16/64 | 0.37 | 0.68 | 51% | 1.25 | −4.9% | −15.2% |
+| Donchian 55/20 | 0.21 | 0.77 | 50% | 1.16 | −2.5% | −11.1% |
+| Chandelier 55 | 0.20 | 0.91 | 51% | 1.13 | −2.7% | −11.6% |
 
 Each rule here is one setting, one point on its curve in chart E.2; the profile changes with speed. The portfolio volatility is 4–7% a year although each asset targets 10%, because the 16 assets diversify each other.
 
-- **Positive skewness belongs to the faster and breakout rules.** Their monthly returns have skewness of 0.7 to 1.0: many small losses and occasional large gains, the long-option profile of Lecture 5, §4.4. The slow 12-month rule, diversified over 16 assets, has none.
-- **Trend systems do not win most of the time, nor lose most of the time.** Half to 57% of months are positive, and the average win is only 12–23% larger than the average loss. The edge is small and must be compounded over many markets and years.
+- **Positive skewness belongs to the faster and breakout rules.** Their monthly returns have skewness of 0.7 to 0.9: many small losses and occasional large gains, the long-option profile of Lecture 5, §4.4. The slow 12-month rule, diversified over 16 assets, has none.
+- **Trend systems do not win most of the time, nor lose most of the time.** Half to 58% of months are positive, and the average win is only 10–25% larger than the average loss. The edge is small and must be compounded over many markets and years.
 - **The textbook profile is a design outcome.** Like crisis protection in §3.1, positive skewness depends on speed, signal shape and exits; it has to be built, not assumed.
 
 ## 8. Side by side, and what to watch out for
@@ -265,7 +265,7 @@ Each rule here is one setting, one point on its curve in chart E.2; the profile 
 1. **Design decides what a trend system captures.** The same signal collects drift, buys protection, or both, depending on direction.
 2. **Crisis protection is built, not given.** It comes from the short side and from enough speed for the crisis at hand: the 3-month rule caught March 2020, the 12-month rule did not.
 3. **Horizon matters more than family.** A linear rule and a breakout at similar speed correlate 0.91; across parameters, the Sharpe ratio varies far more with speed than between families at equal speed. Compare families at equal trading frequency, never one setting against another.
-4. **The machinery is part of the result.** Volatility targeting lifted the Sharpe ratio from 0.50 to 0.75 at the same risk; credit it as machinery, not as signal.
+4. **The machinery is part of the result.** Volatility targeting lifted the Sharpe ratio from 0.51 to 0.80 at the same risk; credit it as machinery, not as signal.
 5. **Costs select the survivors.** Faster rules and volatility targeting create turnover; at 20 basis points per unit traded only the slow rule stayed positive.
 6. **The payoff profile is a design outcome too.** Positive skewness came from fast and breakout rules; monthly win rates were 50–57% with small win-to-loss ratios.
 
