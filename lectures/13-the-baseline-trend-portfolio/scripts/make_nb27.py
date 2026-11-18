@@ -71,7 +71,7 @@ close, high, low, dv, rf = L26.load_daily(); D = pd.read_parquet(M.OUT / "l27_da
 print(f"{close.shape[1]} ETFs to {close.index.max().date()}; baseline daily returns {D.index.min().date()} to {D.index.max().date()}, Sharpe ratio {L26.sharpe(D['rule']):.3f}")"""),
 M("""**Running everything.** With `RUN_ALL` the cell below reruns every analysis of the lecture, one at a time: the baseline and its rivals, the tests, the speed blends, timing, scaling the total, the futures test, crises, take-profit and the stress test. The futures scripts need the capstone futures of Lecture 10 (`data/interim/l11_series99.pkl`); without them they are skipped."""),
 C("""if RUN_ALL:
-    for s in ("l27.py", "l27_tests.py", "l27_speeds.py", "l26_timing.py", "l27_leverage.py", "l27_states.py"): run(s)
+    for s in ("l27.py", "l27_tests.py", "l27_speeds.py", "l26_timing.py", "l27_leverage.py"): run(s)
     if (M.REPO / "data" / "interim" / "l11_series99.pkl").exists():
         for s in ("l27_futures_test.py", "l26_crisis.py", "takeprofit.py", "l27_stress.py"): run(s)
     else: print("capstone futures not found: futures checks skipped")
