@@ -52,7 +52,7 @@ After a 12-month downtrend, volatility is about 60% higher: the short side lives
 
 - Largest 10% of months: **2.0** of the 2.2% a year; the other 90%: **0.1**
 - Linear autocorrelation is near zero (median −0.03), yet the rule earns: it bets on the **direction** of the past year, not its size
-- Imprecise for any one ETF: a t-statistic of roughly 0.5
+- Imprecise for any one ETF: a t-statistic of 0.8 at the median, at most 1.5
 
 ![Median timing contribution by decile of the month's absolute return](../figures/05_02_timing_episodes.png)
 

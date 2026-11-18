@@ -97,7 +97,7 @@ After a 12-month downtrend, volatility is about 60% higher than after an uptrend
 
 ### 2.4 Where the timing profit is made
 
-Linear autocorrelation of monthly returns is close to zero: summed over twelve lags, its median across the 16 ETFs is −0.03. Yet the rule earns 2.2% a year from timing. The two fit together because the rule is not linear: it bets on the **direction** of the past twelve months, not on their size. A linear autocorrelation lets a few huge past moves dominate, and a crash followed by a rebound pulls it negative; the rule caps every past year at one unit of position, long or short, and earns when the direction carries on. Two cautions come with the number. It is imprecise: with volatility near 20% a year and about 25 years of data, a typical ETF's timing part of 2% a year has a t-statistic of roughly 0.5, so the median across 16 ETFs says more than any one of them. And it is earned in a few months, as the next table shows.
+Linear autocorrelation of monthly returns is close to zero: summed over twelve lags, its median across the 16 ETFs is −0.03. Yet the rule earns 2.2% a year from timing. The two fit together because the rule is not linear: it bets on the **direction** of the past twelve months, not on their size. A linear autocorrelation lets a few huge past moves dominate, and a crash followed by a rebound pulls it negative; the rule caps every past year at one unit of position, long or short, and earns when the direction carries on. Two cautions come with the number. It is imprecise: measured on each ETF's own months, the timing part has a t-statistic of 0.8 at the median and at most 1.5 (SPY; notebook §2.4), so the median across 16 ETFs says more than any one of them. And it is earned in a few months, as the next table shows.
 
 **Table 2.3. Where the timing part is earned** (% a year, median across 16 ETFs; notebook §2.4)
 
@@ -129,7 +129,7 @@ Both work in either direction: buying waves and selling waves. The table lists t
 
 **Over days, a slight tendency to reverse.** The persistence that a monthly rule earns from is not the immediate reaction to a shock.
 
-**Table 2.4. The week after a large weekly move** (weekly returns standardised by trailing 52-week volatility; median across 16 ETFs; notebook §2.4)
+**Table 2.4. The week after a large weekly move** (weekly returns standardised by trailing 52-week volatility; median across 16 ETFs; notebook §2.5)
 
 | | After a week beyond 2 standard deviations | After a normal week |
 |---|---|---|
@@ -150,7 +150,7 @@ Trend following and mean reversion use the same estimate, the past return, and a
 | Three to twelve months | Continuation | US stocks, ranked against each other (Jegadeesh and Titman, 1993); 58 futures markets, each against its own past (Moskowitz, Ooi and Pedersen, 2012) |
 | Three to five years | Reversal | US stocks (De Bondt and Thaler, 1985); partial reversal of time-series momentum beyond a year in futures (Moskowitz, Ooi and Pedersen) |
 
-These are tendencies, not rules that every market obeys. Our own weekly data show how much they vary (Table 2.4, notebook §2.4): after a large weekly move, the next week had the same sign 46% of the time at the median, a mild tendency to reverse, but 63% of the time for oil (USO) and 56% for silver (SLV), where large moves tended to continue.
+These are tendencies, not rules that every market obeys. Our own weekly data show how much they vary (Table 2.4, notebook §2.5): after a large weekly move, the next week had the same sign 46% of the time at the median, a mild tendency to reverse, but 63% of the time for oil (USO) and 56% for silver (SLV), where large moves tended to continue.
 
 Which behaviour to exploit is therefore a choice, not a fact of the market. It is made after understanding the market (§3) and deciding what to capture (§4).
 
