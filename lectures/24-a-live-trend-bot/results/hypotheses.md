@@ -28,6 +28,7 @@ trade when it has gained 5 sigma; a kill switch stops everything on a 10% drawdo
 2. The blend without the take profit.
 3. The blend with the patient entry instead of market orders.
 4. **Timing inside the delay window** (the user, 18 Nov 2026): after the decision, trade at the end of the first minute if the price has moved in our favour by at least x bp (x = 10, 20, 30, 40; the user suggested 30 to 40), else at the end of the second minute; market orders both ways; one-minute closes only, so nothing ahead is seen.
+5. **A volatility switch** (the user, 18 Nov 2026: "a smart vol indicator that works"): Lecture 20's volatility ratio, the last hour's realised variance (sum of squared one-minute log returns) over its median of the previous 672 hours; K = 1.5, 2, 3. Two versions: *pause*, no trading while the ratio is at least K, the position kept; *flatten*, flat while the ratio is at least K.
 
 ## Expectations
 
@@ -35,6 +36,10 @@ trade when it has gained 5 sigma; a kill switch stops everything on a 10% drawdo
 2. The 5-sigma take profit leaves the Sharpe ratio about unchanged (within its 90% band) and raises the skew of monthly returns, as in Lecture 8.
 3. On Deribit's fees the patient entry changes the result by less than its 90% band: the 2 bp fee gap is small, and the fills it misses are the trend's best.
 4. Timing inside the window changes the average fill price by less than its 90% band: if the price over two minutes is a fair game, no rule for when to trade within the window improves the expected price (optional stopping); any gain would need short-term predictability, of which Lecture 19 found little.
+
+5. The volatility switch was tested on the grid (Lecture 20 §12), which loses in violent hours; a trend rule
+   often earns in them. *Pause* changes the Sharpe ratio by less than its 90% band and lowers costs a little;
+   *flatten* lowers the Sharpe ratio, because it exits during the moves the trend lives on.
 
 ## Data and samples
 
@@ -58,3 +63,5 @@ fills, reconciliation, uptime of the feed, and the gap between live and backtest
   `decision_minute` and `jitter_seconds`. Made before the strategy was coded or run.
 - **18 November 2026, the user: look for a better price inside the delay window.** Added as rival 4 with
   expectation 4, before any result. A proper test at the level of seconds needs tick data: an exercise.
+- **18 November 2026, the user: a volatility indicator as a kill switch.** Added as rival 5 with expectation 5,
+  before any result of the strategy; the indicator and its K values are Lecture 20's, not chosen on this data.

@@ -47,6 +47,12 @@ def hourly_frame(c: pd.DataFrame, f: pd.DataFrame, minute: int) -> pd.DataFrame:
         t = dec + pd.Timedelta(minutes=k)
         h[f"close{k}"] = m.reindex(t).to_numpy()
         h[f"low{k}"] = c["low"].reindex(t).to_numpy(); h[f"high{k}"] = c["high"].reindex(t).to_numpy()
+    # volatility ratio (Lecture 20 §12): the variance of the hour before the decision, from one-minute log
+    # returns, over its median of the previous 672 hours (28 days); known at the decision
+    lr2 = np.log(m).diff() ** 2
+    hv = lr2.rolling("60min").sum().reindex(dec - pd.Timedelta(minutes=1))
+    hv.index = dec
+    h["vol_ratio"] = (hv / hv.rolling(672, min_periods=336).median().shift(1)).to_numpy()
     fund = f["interest_1h"].reindex(dec.floor("h"))
     h["funding"] = fund.fillna(0.0).to_numpy()
     return h.dropna(subset=["price", "close0", "close1"])
@@ -58,13 +64,18 @@ class Result:
     stats: dict
 
 
-def run(h: pd.DataFrame, p: Params, rival: str = "base", x_bp: float = 0.0, seed: int = 7, tx_override=None) -> Result:
+def run(h: pd.DataFrame, p: Params, rival: str = "base", x_bp: float = 0.0, seed: int = 7, tx_override=None,
+        vol_switch: str = "off", vol_k: float = 2.0) -> Result:
     """`tx_override` (tests only): a fixed target, as a multiple of equity, instead of the strategy's."""
     sig = targets(h["price"], p) if tx_override is None else pd.DataFrame({"target_x_equity": tx_override}, index=h.index)
     rng = np.random.default_rng(seed)
     jitter_min = (rng.uniform(0, p.jitter_seconds, len(h)) // 60).astype(int).clip(0, 1)   # 0: first minute, 1: second
     price, c0, c1, lo0, hi0 = (h[k].to_numpy() for k in ("price", "close0", "close1", "low0", "high0"))
-    fund, tx = h["funding"].to_numpy(), sig["target_x_equity"].to_numpy()
+    fund, tx = h["funding"].to_numpy(), sig["target_x_equity"].to_numpy().copy()
+    vr = h["vol_ratio"].to_numpy() if "vol_ratio" in h else np.full(len(h), np.nan)
+    violent = vr >= vol_k
+    if vol_switch == "flatten":
+        tx[violent] = 0.0
     avg_abs = pd.Series(np.abs(tx)).expanding().mean().to_numpy()
     n = len(h)
     eq, pos, last_fill = 1.0, 0.0, np.nan
@@ -80,7 +91,7 @@ def run(h: pd.DataFrame, p: Params, rival: str = "base", x_bp: float = 0.0, seed
             fcost = 0.0
         last_fill = mark
         traded = fee = 0.0; maker = 0
-        if not np.isnan(tx[t]):
+        if not np.isnan(tx[t]) and not (vol_switch == "pause" and violent[t]):
             target = tx[t] * eq * price[t]
             band = p.buffer * avg_abs[t] * eq * price[t]
             if abs(target - pos) > band:

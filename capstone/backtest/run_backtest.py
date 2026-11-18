@@ -7,6 +7,7 @@ Variants, all on the same hours and the same random delays:
   no_tp           rival 2: without the take profit
   patient         rival 3: post-only at the decision price, market order after a minute if not filled
   window_10..40   rival 4: trade after one minute if the price moved our way by 10-40 bp, else after two
+  volpause_K, volflat_K  rival 5: Lecture 20's volatility ratio at K = 1.5, 2, 3; pause trading, or go flat
   check_phase_00  robustness check added after the hypotheses (18 Nov 2026, labelled as such): the same
                   strategy deciding at round hours (:00) instead of :23, to see whether the phase matters
 Reported: Sharpe ratio, return, volatility, worst month, monthly skew, drawdown, fees and funding, by year;
@@ -68,13 +69,20 @@ def main():
                 "patient": (p, "patient", 0)}
     for x in (10, 20, 30, 40):
         variants[f"window_{x}"] = (p, "window", x)
+    for k in (1.5, 2.0, 3.0):
+        variants[f"volpause_{k:g}"] = (p, "base", 0, "pause", k)
+        variants[f"volflat_{k:g}"] = (p, "base", 0, "flatten", k)
     variants["check_phase_00"] = (p.replace(decision_minute=0), "base", 0)
     frames = {p.decision_minute: h, 0: engine.hourly_frame(c, f, 0)}
     res, mon = {}, {}
-    for name, (pp, rival, x) in variants.items():
-        r = engine.run(frames[pp.decision_minute], pp, rival=rival, x_bp=x)
+    for name, spec in variants.items():
+        pp, rival, x = spec[:3]
+        vs, vk = (spec[3], spec[4]) if len(spec) > 3 else ("off", 2.0)
+        r = engine.run(frames[pp.decision_minute], pp, rival=rival, x_bp=x, vol_switch=vs, vol_k=vk)
         mon[name] = monthly(r.hourly)
         extra = {}
+        if vs != "off":
+            extra["share_of_hours_switched"] = round(float((frames[pp.decision_minute]["vol_ratio"] >= vk).mean()), 4)
         if rival in ("patient", "window"):
             traded = r.hourly["traded"] != 0
             extra["share_of_trades_flagged"] = round(float(r.hourly.loc[traded, "flag"].mean()), 4)
