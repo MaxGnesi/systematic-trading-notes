@@ -7,6 +7,8 @@ Variants, all on the same hours and the same random delays:
   no_tp           rival 2: without the take profit
   patient         rival 3: post-only at the decision price, market order after a minute if not filled
   window_10..40   rival 4: trade after one minute if the price moved our way by 10-40 bp, else after two
+  check_phase_00  robustness check added after the hypotheses (18 Nov 2026, labelled as such): the same
+                  strategy deciding at round hours (:00) instead of :23, to see whether the phase matters
 Reported: Sharpe ratio, return, volatility, worst month, monthly skew, drawdown, fees and funding, by year;
 for each rival, the difference against base with a 90% band from a block bootstrap of months.
 Output: lectures/24-a-live-trend-bot/results/backtest.json. Usage: python -m capstone.backtest.run_backtest
@@ -66,9 +68,11 @@ def main():
                 "patient": (p, "patient", 0)}
     for x in (10, 20, 30, 40):
         variants[f"window_{x}"] = (p, "window", x)
+    variants["check_phase_00"] = (p.replace(decision_minute=0), "base", 0)
+    frames = {p.decision_minute: h, 0: engine.hourly_frame(c, f, 0)}
     res, mon = {}, {}
     for name, (pp, rival, x) in variants.items():
-        r = engine.run(h, pp, rival=rival, x_bp=x)
+        r = engine.run(frames[pp.decision_minute], pp, rival=rival, x_bp=x)
         mon[name] = monthly(r.hourly)
         extra = {}
         if rival in ("patient", "window"):
