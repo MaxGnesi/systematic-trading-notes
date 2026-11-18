@@ -127,3 +127,17 @@ Account in BTC; taker fee, half a tick and recorded funding charged.
   The strategy is unchanged; an open question.
 - **By year:** 1.41, 1.80, 0.29, 0.26, 2.06, 1.01, -0.26 (2025), 1.34 (2026 to October). Funding cost more than
   fees (0.014 against 0.009 BTC a year).
+
+## Live, first decision, 18 November 2026 (capstone/run_bot.py --once, testnet subaccount)
+
+- Dry run first (no order): the plumbing failed twice and was fixed: a Deribit read timed out with no retry
+  (reads now retried; orders never retried automatically), and the database refused use from the worker
+  thread (now shared with a lock).
+- Live: decision for 15:23 UTC, sell 22,720 USD at market (label cap-2026111815); one fill at 63,522.0 against
+  an arrival mid of 63,523.75 from the live market's feed: 0.28 bp (the testnet's price tracks the live
+  market closely but is not the same book). Our records and the exchange agree: position -22,720 USD both,
+  no open orders.
+- **The fee charged was 5 bp, not the 3.5 bp listed in Deribit's instrument details** that the backtest used:
+  the account's fee tier differs from the published rate. At 5 bp the backtest gives a Sharpe ratio of 0.97
+  instead of 0.99 (fees 0.012 instead of 0.009 BTC a year). A lesson for the lecture: check the fee actually
+  charged, not the one published.
