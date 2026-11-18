@@ -12,11 +12,11 @@ Part II · Pipeline stage: portfolio construction and risk management (how much 
 
 | Method | Correlation with the base | Sharpe ratio | Where it differs |
 |---|---|---|---|
-| Base: inverse volatility per asset | 1 | 0.56 | — |
-| Expected shortfall per asset | 0.98 | 0.52 | Nowhere |
-| Partial trading, λ = 0.25 | 0.98 | 0.57 | **Costs** |
-| Drawdown control | 0.97 | 0.42 | **Tails** |
-| Volatility-managed | 0.81 | 0.73 | **Returns** |
+| Base: inverse volatility per asset | 1 | 0.60 | — |
+| Expected shortfall per asset | 0.98 | 0.55 | Nowhere |
+| Partial trading, λ = 0.25 | 0.98 | 0.61 | **Costs** |
+| Drawdown control | 0.97 | 0.47 | **Tails** |
+| Volatility-managed | 0.81 | 0.77 | **Returns** |
 
 TSMOM-12 on the 16 ETFs, 2000–2026. Stop distance and expected-shortfall sizing are inverse volatility measured another way.
 
@@ -54,11 +54,11 @@ TSMOM-12 on the 16 ETFs, 2000–2026. Stop distance and expected-shortfall sizin
 
 | Signal and sizing | Sharpe ratio | Maximum drawdown |
 |---|---|---|
-| TSMOM-12, equal notional | 0.31 | −15.6% |
-| TSMOM-12, inverse volatility | **0.56** | −13.6% |
-| Breakout, equal notional | 0.02 | −12.3% |
-| Breakout, inverse volatility | 0.18 | −13.6% |
-| Breakout, stop distance (1% at risk per trade) | 0.26 | −13.6% |
+| TSMOM-12, equal notional | 0.28 | −17.4% |
+| TSMOM-12, inverse volatility | **0.60** | −13.0% |
+| Breakout, equal notional | −0.03 | −12.8% |
+| Breakout, inverse volatility | 0.18 | −13.3% |
+| Breakout, stop distance (1% at risk per trade) | 0.27 | −13.2% |
 
 - Without it, the most volatile assets, oil, silver and gold miners, dominate the portfolio
 - Each evening: the signal times target volatility divided by the asset's volatility estimate
@@ -71,10 +71,10 @@ TSMOM-12 on the 16 ETFs, 2000–2026. Stop distance and expected-shortfall sizin
 
 | Method | Sharpe ratio | Maximum drawdown | Average multiplier |
 |---|---|---|---|
-| Base | 0.56 | −13.6% | 1 |
-| Portfolio volatility target (10%, leverage capped at 3) | 0.61 | −15.9% | 2.0 |
-| Volatility-managed: inverse of trailing variance | **0.73** | −15.1% | 1.0 |
-| Drawdown control (exposure falls to zero at a 20% drawdown) | 0.42 | **−11.1%** | 0.7 |
+| Base | 0.60 | −13.0% | 1 |
+| Portfolio volatility target (10%, leverage capped at 3) | 0.66 | −14.7% | 2.0 |
+| Volatility-managed: inverse of trailing variance | **0.77** | −14.0% | 1.0 |
+| Drawdown control (exposure falls to zero at a 20% drawdown) | 0.47 | **−10.9%** | 0.7 |
 
 - **A portfolio target levers a diversified book:** drawdowns deepen when correlations rise
 - **Drawdown control changes the tails:** cutting exposure after losses misses part of the large gains that end a drawdown
@@ -87,7 +87,7 @@ TSMOM-12 on the 16 ETFs, 2000–2026. Stop distance and expected-shortfall sizin
 
 - Twice the volatility means a quarter of the exposure
 - It cut exposure to 0.38 of normal in late 2008
-- Sharpe ratio 0.73 and positive skewness, on our sample
+- Sharpe ratio 0.77 and positive skewness, on our sample
 
 ![Exposure multipliers and drawdowns, 2000-2026](../figures/09_01_over_time.png)
 
@@ -99,9 +99,9 @@ TSMOM-12 on the 16 ETFs, 2000–2026. Stop distance and expected-shortfall sizin
 
 | Rule on the rolling 1-year Sharpe ratio | Sharpe ratio | Maximum drawdown |
 |---|---|---|
-| Constant size | 0.56 | −24.7% |
-| Contrarian: add after a poor year | 0.63 to 0.68 | −27.2% to −28.6% |
-| Momentum: cut after a poor year | 0.35 to 0.47 | −23.6% to −24.0% |
+| Constant size | 0.60 | −22.6% |
+| Contrarian: add after a poor year | 0.65 to 0.68 | −23.7% to −24.7% |
+| Momentum: cut after a poor year | 0.42 to 0.52 | −21.3% to −22.1% |
 
 $$\text{standard error of a Sharpe ratio over } T \text{ years} \approx \sqrt{(1 + \text{SR}^2/2)/T}$$
 
@@ -133,15 +133,15 @@ $$\text{standard error of a Sharpe ratio over } T \text{ years} \approx \sqrt{(1
 
 # Partial trading: the result after costs
 
-> Closing a tenth of the gap each day cut turnover by three-quarters and more than doubled the Sharpe ratio after 20 basis points, from 0.20 to 0.46.
+> Closing a tenth of the gap each day cut turnover by three-quarters and more than doubled the Sharpe ratio after 20 basis points, from 0.24 to 0.51.
 
 | Signal | Trading rule | Turnover per year | Sharpe ratio, no costs | 20 bp |
 |---|---|---|---|---|
-| TSMOM-12 | Every day, in full | 9.9 | 0.56 | 0.20 |
-| | Partial, λ = 0.1 | 2.4 | 0.55 | **0.46** |
-| | Band of 50% of a typical position | 6.6 | 0.54 | 0.27 |
-| EWMAC 8/32 | Every day, in full | 21.3 | 0.12 | −0.43 |
-| | Partial, λ = 0.1 | 8.4 | 0.25 | **0.01** |
+| TSMOM-12 | Every day, in full | 9.9 | 0.60 | 0.24 |
+| | Partial, λ = 0.1 | 2.4 | 0.60 | **0.51** |
+| | Band of 50% of a typical position | 6.6 | 0.57 | 0.30 |
+| EWMAC 8/32 | Every day, in full | 21.3 | 0.10 | −0.45 |
+| | Partial, λ = 0.1 | 8.3 | 0.26 | **0.01** |
 
 - For a fast rule it is the difference between losing and breaking even
 - Partial trading beat no-trade bands: bands trade the whole gap when they trade
@@ -154,7 +154,7 @@ $$\text{standard error of a Sharpe ratio over } T \text{ years} \approx \sqrt{(1
 
 $$f = \mu/\sigma^2$$
 
-- **Conviction:** EWMAC 32/128 continuous earned 0.46 against 0.54 for its sign, with the same turnover
+- **Conviction:** EWMAC 32/128 continuous earned 0.49 against 0.57 for its sign, with the same turnover
 - **Kelly:** on the base strategy it asked for leverage of about six, with a worst loss of 79% of wealth, 53% at half Kelly
 - The edge is estimated with large errors and returns are fat-tailed
 

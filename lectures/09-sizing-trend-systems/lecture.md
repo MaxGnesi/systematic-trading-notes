@@ -49,14 +49,14 @@ Many methods look different on paper and change little in practice. The test: ap
 
 | Method | Correlation with the base | Sharpe ratio | Maximum drawdown | Where it differs |
 |---|---|---|---|---|
-| Base: inverse volatility per asset | 1 | 0.56 | −13.6% | — |
-| Expected shortfall per asset | 0.98 | 0.52 | −13.5% | Nowhere: sizes correlate 0.94 with inverse volatility |
+| Base: inverse volatility per asset | 1 | 0.60 | −13.0% | — |
+| Expected shortfall per asset | 0.98 | 0.55 | −12.5% | Nowhere: sizes correlate 0.94 with inverse volatility |
 | Stop distance (breakout signal) | Sizes correlate 0.97 with inverse volatility | | | Nowhere: a stop in ATRs is a volatility measure |
-| Partial trading, λ = 0.25 | 0.98 | 0.57 | −13.6% | **Costs** (§6) |
-| Drawdown control | 0.97 | 0.42 | **−11.1%** | **Tails** (§5) |
-| Portfolio volatility target | 0.96 | 0.61 | −15.9% | Leverage over time (§5) |
-| Equal notional, no risk sizing | 0.87 | 0.31 | −15.6% | **Returns** (§4) |
-| Volatility-managed | 0.81 | 0.73 | −15.1% | **Returns** (§5) |
+| Partial trading, λ = 0.25 | 0.98 | 0.61 | −12.5% | **Costs** (§6) |
+| Drawdown control | 0.97 | 0.47 | **−10.9%** | **Tails** (§5) |
+| Portfolio volatility target | 0.96 | 0.66 | −14.7% | Leverage over time (§5) |
+| Equal notional, no risk sizing | 0.87 | 0.28 | −17.4% | **Returns** (§4) |
+| Volatility-managed | 0.81 | 0.77 | −14.0% | **Returns** (§5) |
 
 "Different" depends on the dimension. Expected-shortfall sizing and stop distance change nothing: they are inverse volatility measured another way. Partial trading leaves gross returns almost unchanged but transforms the returns after costs. Drawdown control changes the tails, volatility management and risk sizing change the returns themselves. The rest of the lecture explains these four.
 
@@ -66,11 +66,11 @@ Many methods look different on paper and change little in practice. The test: ap
 
 | Signal and sizing | Sharpe ratio | Monthly skewness | Maximum drawdown |
 |---|---|---|---|
-| TSMOM-12, equal notional | 0.31 | 0.27 | −15.6% |
-| TSMOM-12, inverse volatility | **0.56** | −0.05 | −13.6% |
-| Breakout (55-day, chandelier stop), equal notional | 0.02 | 1.28 | −12.3% |
-| Breakout, inverse volatility | 0.18 | 0.99 | −13.6% |
-| Breakout, stop distance (1% at risk per trade) | 0.26 | 0.84 | −13.6% |
+| TSMOM-12, equal notional | 0.28 | −0.04 | −17.4% |
+| TSMOM-12, inverse volatility | **0.60** | −0.06 | −13.0% |
+| Breakout (55-day, chandelier stop), equal notional | −0.03 | 0.62 | −12.8% |
+| Breakout, inverse volatility | 0.18 | 0.91 | −13.3% |
+| Breakout, stop distance (1% at risk per trade) | 0.27 | 0.81 | −13.2% |
 
 **How it works.** Each evening: (1) estimate each asset's daily volatility from its recent returns, here an exponential average of squared returns with a 60-day span; (2) set the position to the signal times target volatility divided by that estimate, here 10% a year per asset; (3) trade the difference from yesterday's position at the next open or close. Nothing else is needed: the signal says which way, the volatility estimate says how big.
 
@@ -92,14 +92,14 @@ The methods of §4 decide the relative size of positions; the methods here decid
 
 | Method | Sharpe ratio | Monthly skewness | Worst month | Maximum drawdown | Average multiplier |
 |---|---|---|---|---|---|
-| Base | 0.56 | −0.05 | −3.9% | −13.6% | 1 |
-| Portfolio volatility target (10%, leverage capped at 3) | 0.61 | 0.05 | −4.4% | −15.9% | 2.0 |
-| Volatility-managed: inverse of trailing variance | **0.73** | 1.20 | −4.7% | −15.1% | 1.0 |
-| Drawdown control (exposure falls to zero at a 20% drawdown) | 0.42 | 0.25 | −3.8% | **−11.1%** | 0.7 |
+| Base | 0.60 | −0.06 | −3.9% | −13.0% | 1 |
+| Portfolio volatility target (10%, leverage capped at 3) | 0.66 | 0.08 | −4.4% | −14.7% | 2.0 |
+| Volatility-managed: inverse of trailing variance | **0.77** | 1.28 | −4.7% | −14.0% | 1.0 |
+| Drawdown control (exposure falls to zero at a 20% drawdown) | 0.47 | 0.19 | −3.7% | **−10.9%** | 0.7 |
 
 - **A portfolio target levers a diversified book.** The 16 assets diversify each other, so the book runs below its target and the rule doubles it on average ([chart H.1](#h1-sizing-over-time-5)); leverage is highest when correlations are low, and drawdowns deepen when correlations rise.
 - **Volatility management changes the returns most, and is the most fragile.** It cut exposure to 0.38 of normal in late 2008 and gained a high Sharpe ratio and positive skewness here; the literature reports that such gains weaken out of sample and after costs.
-- **Drawdown control changes the tails.** It cut the worst drawdown from 13.6% to 11.1% at the cost of Sharpe ratio: a trend system recovers through a few large gains (Lecture 5, §2.4), and cutting exposure after losses misses part of them.
+- **Drawdown control changes the tails.** It cut the worst drawdown from 13.0% to 10.9% at the cost of Sharpe ratio: a trend system recovers through a few large gains (Lecture 5, §2.4), and cutting exposure after losses misses part of them.
 
 ### Sizing on the strategy's own performance: contrarian or momentum?
 
@@ -116,11 +116,11 @@ A related family of rules sizes the strategy by its own recent results, measured
 
 | Rule | Sharpe ratio | Maximum drawdown |
 |---|---|---|
-| Constant size | 0.56 | −24.7% |
-| Contrarian, k = 0.25 to 0.5 | 0.63 to 0.68 | −27.2% to −28.6% |
-| Momentum, k = 0.25 to 0.5 | 0.35 to 0.47 | −23.6% to −24.0% |
+| Constant size | 0.60 | −22.6% |
+| Contrarian, k = 0.25 to 0.5 | 0.65 to 0.68 | −23.7% to −24.7% |
+| Momentum, k = 0.25 to 0.5 | 0.42 to 0.52 | −21.3% to −22.1% |
 
-On this strategy the contrarian rule raised the Sharpe ratio at the cost of deeper drawdowns, and the momentum rule lowered it, consistent with drawdown control above. The reason is that performance mean-reverted: the rolling 1-year Sharpe ratio correlated −0.35 with the next year's return. The evidence is thin, for a structural reason. For independent returns, the standard error of a Sharpe ratio estimated over $`T`$ years is about $`\sqrt{(1 + \text{SR}^2/2)/T}`$ (Lo, 2002), roughly 1 for a single year; here the rolling 1-year Sharpe ratio had a standard deviation of 0.88, as large as the edge itself, and the correlation rests on 26 independent years. Both rules are bets on the predictability of performance, and that predictability is weak and must be tested for each strategy.
+On this strategy the contrarian rule raised the Sharpe ratio at the cost of deeper drawdowns, and the momentum rule lowered it, consistent with drawdown control above. The reason is that performance mean-reverted: the rolling 1-year Sharpe ratio correlated −0.34 with the next year's return. The evidence is thin, for a structural reason. For independent returns, the standard error of a Sharpe ratio estimated over $`T`$ years is about $`\sqrt{(1 + \text{SR}^2/2)/T}`$ (Lo, 2002), roughly 1 for a single year; here the rolling 1-year Sharpe ratio had a standard deviation of 0.91, as large as the edge itself, and the correlation rests on 26 independent years. Both rules are bets on the predictability of performance, and that predictability is weak and must be tested for each strategy.
 
 **Watch out for** overlays that change the system's speed. A trend system already has a stop built in: its signal reverses. An extra stop, or an equity-curve rule, is itself a trend rule on the system's returns, and it changes the system's trading frequency and average holding period. Before crediting the overlay, compare it with the same system at another parameter, at equal speed (Lecture 6, §2.3; Lecture 7, §2). If the overlay helps, the original speed may simply have been wrong.
 
@@ -134,17 +134,17 @@ The target position is recomputed every day; the question is how much of the gap
 
 | Signal | Trading rule | Turnover per year | Sharpe ratio, no costs | 5 bp | 20 bp |
 |---|---|---|---|---|---|
-| TSMOM-12 | Every day, in full | 9.9 | 0.56 | 0.47 | 0.20 |
-| | Partial, λ = 0.25 | 3.9 | 0.57 | 0.53 | 0.42 |
-| | Partial, λ = 0.1 | 2.4 | 0.55 | 0.53 | **0.46** |
-| | Band of 50% of a typical position | 6.6 | 0.54 | 0.47 | 0.27 |
-| EWMAC 8/32 | Every day, in full | 21.3 | 0.12 | −0.02 | −0.43 |
+| TSMOM-12 | Every day, in full | 9.9 | 0.60 | 0.51 | 0.24 |
+| | Partial, λ = 0.25 | 3.9 | 0.61 | 0.58 | 0.46 |
+| | Partial, λ = 0.1 | 2.4 | 0.60 | 0.58 | **0.51** |
+| | Band of 50% of a typical position | 6.6 | 0.57 | 0.50 | 0.30 |
+| EWMAC 8/32 | Every day, in full | 21.3 | 0.10 | −0.03 | −0.45 |
 | | Partial, λ = 0.25 | 12.8 | 0.21 | 0.12 | −0.14 |
-| | Partial, λ = 0.1 | 8.4 | 0.25 | 0.19 | **0.01** |
-| | Band of 50% of a typical position | 12.7 | 0.15 | 0.06 | −0.19 |
+| | Partial, λ = 0.1 | 8.3 | 0.26 | 0.20 | **0.01** |
+| | Band of 50% of a typical position | 12.7 | 0.13 | 0.05 | −0.21 |
 
-- **Partial trading removes most of the turnover at almost no cost.** For the 12-month rule, closing a tenth of the gap each day cut turnover by three-quarters and more than doubled the Sharpe ratio after costs of 20 basis points, from 0.20 to 0.46, while the Sharpe ratio before costs barely moved.
-- **For a fast rule it is the difference between losing and breaking even.** EWMAC 8/32 went from −0.43 to 0.01 after 20 basis points; its Sharpe ratio before costs rose too, because partial trading smooths the position and slows the rule down.
+- **Partial trading removes most of the turnover at almost no cost.** For the 12-month rule, closing a tenth of the gap each day cut turnover by three-quarters and more than doubled the Sharpe ratio after costs of 20 basis points, from 0.24 to 0.51, while the Sharpe ratio before costs barely moved.
+- **For a fast rule it is the difference between losing and breaking even.** EWMAC 8/32 went from −0.45 to 0.01 after 20 basis points; its Sharpe ratio before costs rose too, because partial trading smooths the position and slows the rule down.
 - **Partial trading beat no-trade bands.** Bands cut less turnover for the same loss of signal, because they trade the whole gap when they trade.
 
 This is the method with the most practical value in the lecture, and the one the literature treats most rigorously: Gârleanu and Pedersen (2013) derive it as the optimal policy under transaction costs.
@@ -153,7 +153,7 @@ This is the method with the most practical value in the lecture, and the one the
 
 | Method | Why not in depth |
 |---|---|
-| Conviction | Sizing by forecast strength did not beat the signal's sign here: EWMAC 32/128 continuous earned a Sharpe ratio of 0.46 against 0.54 for its sign, with the same turnover (notebook §3.3). It pays only if stronger forecasts are followed by larger moves, which has to be tested market by market |
+| Conviction | Sizing by forecast strength did not beat the signal's sign here: EWMAC 32/128 continuous earned a Sharpe ratio of 0.49 against 0.57 for its sign, with the same turnover (notebook §3.3). It pays only if stronger forecasts are followed by larger moves, which has to be tested market by market |
 | Kelly | Growth-optimal leverage $`f = \mu/\sigma^2`$; a strategy run at full Kelly has volatility equal to its Sharpe ratio. On the base strategy it asked for leverage of about six, with a worst loss of 79% of wealth, 53% at half Kelly (notebook §7). Systematic managers rarely size by Kelly in practice: the edge is estimated with large errors and returns are fat-tailed; it is a ceiling on leverage, and Part V returns to it |
 | Further refinements | Volatility forecasting models (GARCH, or the Kalman filter on log ranges of Lecture 4), risk budgets in expected shortfall, bet sizing from a predicted probability of success, correlation-aware budgets (Lecture 13); regime-dependent sizing is a filter (Lecture 8) |
 
