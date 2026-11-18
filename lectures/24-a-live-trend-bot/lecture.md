@@ -123,6 +123,8 @@ So the account, live and in the backtest, is kept in BTC. Checked live on 17 Nov
 
 **Check what you were given.** Our first login reported more permissions than we had asked for: writing on the account, and block trading and block quotes. Block trades are private trades with a chosen counterparty at an agreed price, away from the book: a known way to move money out of an account without any withdrawal permission, by trading with an accomplice at a deliberately bad price. We narrowed the key on the exchange's page to trading plus reading elsewhere. The bot's account check now applies one rule, no write permission beyond trading and no wallet access at all, and warns until it holds: the program cannot, and should not, change its own permissions.
 
+**Limits in our code protect against our bugs, not against a thief.** The gateway's limits, such as the cap of 3 times equity (§7) or a list of allowed instruments, stop our own program from sending a wrong order. Someone who steals the key sends requests straight to the exchange and never runs our code, so only the exchange's limits count: the key's permissions, the IP restriction where there is a fixed address, and above all **how much the subaccount holds**. Even a key that can only trade can move money out: the thief posts bad prices on a thinly traded instrument, a far-dated option say, and trades against them from an account of their own. So the bot's subaccount holds only the money the strategy needs, and the rest stays elsewhere. Reconciliation (§6) flags a change in the bot's own position that the bot did not make; it does not look at other instruments or at orders without the bot's label, so a theft through an option would go unnoticed until the equity fell (exercise 11.2).
+
 ## 4. The architecture
 
 **Key message.** One job per folder, and each folder may call only the ones below it. That makes each part testable alone, and makes the exchange replaceable.
@@ -337,6 +339,7 @@ Each lecture of Part V ended with one idea for the base layer of Lectures 1 to 1
 - [ ] **Your fills, your costs.** After a week of running, compare each fill with the arrival price, using the testnet's own book rather than the real exchange's. What is the slippage, and what fee was charged?
 - [ ] **The private feed.** Replace the fill polling with Deribit's private WebSocket for orders and trades. What changes in the plumbing, and what must be reconciled?
 - [ ] **A service.** Run the bot as a systemd service on a Linux machine (or in WSL), with `Restart=always`, and kill it on purpose. Check that it comes back and reconciles.
+- [ ] **An alarm for a stolen key.** Extend `reconcile()` so that it also lists every open order and position on the subaccount, on any instrument and with or without the bot's label, and compares the equity with the last snapshot; any order, position or fall in equity the bot cannot explain stops the bot and alerts a person. Test it on the testnet by placing an order by hand.
 
 ### 11.3 Reading
 
