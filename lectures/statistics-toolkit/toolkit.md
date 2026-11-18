@@ -88,8 +88,8 @@ r_{\log,\,\text{portfolio}} \;\approx\; \sum_i w_i\, r_{\log,\,i} \;+\; \tfrac12
 | Step | Statement | Why |
 |---|---|---|
 | 1 | Log wealth after $`T`$ years is the sum of the yearly log returns: $`\ln W_T = \sum_t r_{\log,t}`$ | Log returns add up over time (card 1) |
-| 2 | The median of $`\ln W_T`$ is its mean, $`T\,ar r_{\log}`$ | A sum of many returns is close to a symmetric bell curve, and the middle of a symmetric distribution is its average |
-| 3 | The median of $`W_T`$ is $`e^{\,T\,ar r_{\log}}`$ | Taking the exponential keeps the order of the outcomes, so the middle path in logs is the middle path in money |
+| 2 | The median of $`\ln W_T`$ is its mean, $`T\,\bar r_{\log}`$ | A sum of many returns is close to a symmetric bell curve, and the middle of a symmetric distribution is its average |
+| 3 | The median of $`W_T`$ is $`e^{\,T\,\bar r_{\log}}`$ | Taking the exponential keeps the order of the outcomes, so the middle path in logs is the middle path in money |
 
 <sub><b>How to read the table.</b> Three steps from log returns to the median investor's wealth. The mean of $`W_T`$ does not follow the same way: the exponential stretches the good paths more than it shrinks the bad ones, which is why the mean ends above the median.</sub>
 

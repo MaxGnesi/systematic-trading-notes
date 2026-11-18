@@ -250,8 +250,8 @@ The number of bets of §1 asks how many unrelated markets would give the same di
 | Step | Calculation | Meaning |
 |---|---|---|
 | Risk if nothing diversified | $`\sum_i w_i`$ | Each market's risk added up, as if all moved together |
-| Risk actually held | $`\sqrt{w^{	op} C w}`$ | The portfolio's risk, with the correlations |
-| Diversification ratio | $`\sum_i w_i / \sqrt{w^{	op} C w}`$ | How much the correlations cut the risk (Choueifaty and Coignard, 2008) |
+| Risk actually held | $`\sqrt{w^{\top} C w}`$ | The portfolio's risk, with the correlations |
+| Diversification ratio | $`\sum_i w_i / \sqrt{w^{\top} C w}`$ | How much the correlations cut the risk (Choueifaty and Coignard, 2008) |
 | Number of bets | the diversification ratio squared | 1 if all markets move as one; $`N`$ for $`N`$ unrelated markets with equal risk |
 | Trend follower's view | the same with every correlation replaced by its absolute value | A mirror image counts as the same bet, not as a hedge |
 
@@ -261,8 +261,8 @@ A better-known measure gives a very different answer here. Meucci's **effective 
 
 | Step | Calculation | Meaning |
 |---|---|---|
-| Exposure to factor $`k`$ | $`e_k^{	op} w`$ | How much of factor $`k`$ the portfolio holds |
-| Risk from factor $`k`$ | $`(e_k^{	op} w)^2 \lambda_k`$ | Exposure squared times the factor's size |
+| Exposure to factor $`k`$ | $`e_k^{\top} w`$ | How much of factor $`k`$ the portfolio holds |
+| Risk from factor $`k`$ | $`(e_k^{\top} w)^2 \lambda_k`$ | Exposure squared times the factor's size |
 | Risk share $`p_k`$ | risk from factor $`k`$ over the sum over all factors | Which factors the portfolio's risk comes from |
 | Effective bets | $`\exp\left(-\sum_k p_k \ln p_k
 ight)`$ | 1 if all risk comes from one factor; $`N`$ if it is spread evenly over $`N`$ |

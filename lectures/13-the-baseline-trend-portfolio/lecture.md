@@ -435,20 +435,17 @@ Losses cluster only a little more than chance, and gains cluster more than losse
 
 The case left is a sharp reversal right after a strong trend: positions are full, the trends turn at once and the streams lose together, as in 2020 (−18% in the replay of §6). That is a question of speed and exits (Lecture 12 §8, Lecture 8 §4.8), not of weights. So the build keeps to the literature: equal risk for the weights, correlations only to check and scale the total.
 
-**Where correlation does raise the Sharpe ratio: choosing the markets.** None of this makes correlation unimportant. What lifts a trend book's Sharpe ratio is breadth: many markets whose trend streams are unrelated. With $`N`$ streams of the same Sharpe ratio $`\mathrm{SR}`$ and average correlation $`ar
-ho`$, the book's Sharpe ratio is about
+**Where correlation does raise the Sharpe ratio: choosing the markets.** None of this makes correlation unimportant. What lifts a trend book's Sharpe ratio is breadth: many markets whose trend streams are unrelated. With $`N`$ streams of the same Sharpe ratio $`\mathrm{SR}`$ and average correlation $`\bar\rho`$, the book's Sharpe ratio is about
 
 ```math
-\mathrm{SR}_p pprox \mathrm{SR}\,\sqrt{rac{N}{1 + (N-1)\,ar
-ho}}
+\mathrm{SR}_p \approx \mathrm{SR}\,\sqrt{\frac{N}{1 + (N-1)\,\bar\rho}}
 ```
 
 | Symbol | Meaning |
 |---|---|
 | $`\mathrm{SR}`$ | Sharpe ratio of one market's trend stream, the same for every market |
 | $`N`$ | Number of markets in the book |
-| $`ar
-ho`$ | Average correlation between the markets' trend streams (positioned returns, not the assets) |
+| $`\bar\rho`$ | Average correlation between the markets' trend streams (positioned returns, not the assets) |
 
 Twenty markets that each trend with a Sharpe ratio of 0.3 give 1.34 if their streams are unrelated, 0.79 at an average correlation of 0.1 and 0.52 at 0.3: the first tenth of correlation costs the most. Equal Sharpe ratios are an illustration, not an estimate. This decision is made in the first step, when the markets are chosen (Lecture 11 §3.6-§4: bets counted on the markets' correlations with the sign ignored, markets that share their trend phases treated as the same bet, and the overlap of the chosen markets' trend-positioned returns checked out of sample), not in the weights. Choose the least related markets **that have a reason to trend** (Lecture 11 §2.2): a market that is unrelated but does not trend adds costs and noise, not Sharpe ratio, because the formula assumes every stream earns. For earning, the sign of the assets' correlation does not matter: if equities and bonds move together (+1), trend makes money when both rise and when both fall; if they move against each other (−1), it makes money long one and short the other. Any combination of markets works as long as they trend. For breadth, the sign does not matter either, but the opposite way from a long-only portfolio: at −1 the trend follower holds the mirror image, short one and long the other, and its two streams then move together as much as at +1. The two markets are one bet, not a hedge. So what counts is how far the markets' moves are unrelated, the size of the correlation whatever its sign, and a negative correlation, the long-only investor's diversifier, adds no breadth to a trend book. Correlation decides **which markets** to hold; once they are chosen, equal risk weighs them and correlation checks the total.
 
