@@ -107,6 +107,8 @@ t \;=\; \frac{\bar r}{\sigma/\sqrt{n}} \;=\; \mathrm{SR}\,\sqrt{\text{years}} \q
 | $`\rho_k`$ | Autocorrelation at lag $`k`$: do returns $`k`$ periods apart move together (+) or against each other (−)? |
 | The bracket | 1 when returns are independent; above 1 when they trend, below 1 when they revert |
 
+The rule is the same for log and simple returns: for log returns it is exact when days are independent, because they add up over time; for simple returns, which compound, it is an approximation that is negligible at daily moves of about 1%. Means scale by the number of periods (252 or 12), so a Sharpe ratio scales by the square root: annual = daily × √252. A mean of simple returns scaled this way is the arithmetic annual mean, not the compound one (card 6).
+
 **On our data.** Volatility in % a year, measured three ways:
 
 | ETF | Daily × √252 | Monthly × √12 | Yearly returns |
