@@ -162,6 +162,23 @@ The median follows the log average because log returns add up over time, and a s
 - **The classic case:** +50% then −50% averages 0% in simple returns, but leaves 0.75 of the money; the average log return, −14.4% a period, tells the truth.
 - **Twenty years, 7% log return, 20% volatility, 20,000 simulated paths:** the median path ends at 4.08 times its start, matching $`e^{20 \times 0.07} = 4.06`$. The mean ends at 6.05, and two paths in three end below the mean.
 
+**Which return where: a recipe.** Both kinds are needed, each for its own job; the mistakes come from using one where the other belongs.
+
+| Step | Use | Why |
+|---|---|---|
+| 1. An asset's history: signals, lookbacks, volatility | Log returns | They add over time (a 12-month return is the sum of 12 monthly ones) and treat rises and falls symmetrically |
+| 2. The portfolio's return on one day | Simple returns, weighted: $`r_p = \sum_i w_i r_i`$, with the weights held at the start of the day | Only simple returns add across positions |
+| 3. The equity curve | Compound the portfolio's simple returns: $`\prod (1 + r_p)`$ | It is the money that is actually there |
+| 4. Sharpe ratio, volatility, t-test of the average | Simple (excess) returns of the portfolio | They describe the average bet; the Sharpe ratio is the same at any leverage |
+| 5. Growth (compound annual return) | Log returns of the portfolio: the average of $`\ln(1 + r_p)`$ | What is left after the volatility drag; below step 4's average by about $`	frac12\sigma^2`$ |
+| 6. Drawdowns | The equity curve of step 3 | A drawdown is a fall in money, not a sum of returns |
+| 7. Who earned what, on one day | Simple contributions $`w_i r_i`$ | They add up exactly to the portfolio's return |
+| 8. The same contributions over a year | The sum of the daily contributions, as an approximation | Contributions do not compound neatly; exact versions need a linking method, and over a year the error is small |
+
+<sub><b>How to read the table.</b> One row per step of building and judging a portfolio, in order: which return to use and why. Steps 1 and 4 hardly depend on the choice for daily data, where the two kinds differ in the second decimal; steps 2, 3, 5 and 6 do, because they add up across assets or over long periods.</sub>
+
+The four classic mistakes, one per step: adding log returns across assets (step 2: it loses the diversification return, 1.7 points a year on our ETFs); adding simple returns over time (step 3: +100% then −50% becomes +50%); quoting a Sharpe ratio as growth (steps 4 and 5); and computing a drawdown from summed returns instead of the equity curve (step 6).
+
 **Watch out for:**
 - **Compounding needs the log average.** A strategy that reports its average simple return overstates what a typical investor would end with; the higher its volatility, the more.
 - **A Sharpe ratio describes the average bet, not compounded growth.** It is computed on simple returns, by convention and for a reason: scaling the position scales the simple returns, so the Sharpe ratio stays the same at any leverage. But it can be positive while the money does not grow. Make +100% one day and −50% the next: the simple returns average +25% with a volatility of 75%, a Sharpe ratio of 0.33 a period, yet the money is back where it started (log returns +69% and −69%, average 0). The growth rate is about the simple average minus the drag:
@@ -171,6 +188,7 @@ The median follows the log average because log returns add up over time, and a s
   ```
 
   so money shrinks once volatility exceeds twice the Sharpe ratio. For a trend portfolio (Sharpe ratio 0.5 a year, volatility 10%) the drag is half a point a year and the Sharpe ratio tells the story; for a strategy run at 100% volatility it does not. Judge growth on log returns and drawdowns (card 11), the bet on the Sharpe ratio.
+- **Why not a Sharpe ratio built on growth?** Dividing the compound annual return by the volatility gives $`\mathrm{SR} - 	frac12\sigma`$, which mixes two decisions: how good the bet is, and how large it is held. The same strategy scores 0.45 at 10% volatility, 0.40 at 20% and 0 at 100%, so it cannot compare strategies run at different sizes, and its standard error has no simple form. Keep the two apart: the Sharpe ratio for the quality of the bet, the compound annual return and the worst drawdown for what a given size delivers. Choosing the size is the job of Lecture 9.
 - **Leverage raises the drag with the square.** Doubling the position doubles the simple average but quadruples the drag; past a point, more leverage lowers the median outcome. The leverage that maximises it is the Kelly leverage, excess return over variance (Lecture 9).
 
 ## 6. Many tries
