@@ -30,6 +30,18 @@ Part V · Pipeline stage: execution (our own orders in the recorded market, and 
 
 ---
 
+# The queue: one dial for the unknown
+
+> A resting order fills only when everything ahead of it has traded or left; the book shows how long the line is, not who leaves it.
+
+- Who cancelled, ahead of us or behind? One dial spans the answers, from an even split to "never ahead"
+- Published models differ by a factor of ten on the same order
+- On our data the dial barely matters: most fills come as the price runs through
+
+![The queue on an invented book](../figures/21_05_queue_card.png)
+
+---
+
 # The fills we get are mostly the bad ones
 
 > When the price runs through a resting order it is filled for certain; when it moves away, only by chance. So fills lean towards losses.
@@ -89,6 +101,19 @@ $$E[d \mid \text{fill}] = \frac{R\,P(U) - P(D)}{P(D) + R\,P(U)} < 0 \quad \text{
 
 - **Chain reaction:** total effect about $1/(1-n)$ for a branching ratio $n$
 - **Run on liquidity:** pulling is rational for each maker, fragile for all
+
+---
+
+# Who reacts to our order
+
+> Each type of trader meets our order differently, depending on whether we take liquidity or provide it.
+
+| Trader | Our market order | Our resting order |
+|---|---|---|
+| Market maker | Fills us, then leans; if it pulled, a thin book | Pulls in a fast move: we are filled just before the run |
+| Arbitrageur | Trades the price back: our push fades | Fills us when the price is about to return |
+| Sniper | Faster after news: we pay the moved price | Takes our quote the moment it is stale |
+| Stops | Our order sets them off: we pay for their move too | Filled by the cascade, at prices that keep running |
 
 ---
 
