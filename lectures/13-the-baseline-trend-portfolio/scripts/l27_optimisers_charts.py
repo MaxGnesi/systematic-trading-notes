@@ -3,6 +3,7 @@ figures/27_opt_resampled.png: how far each method's weights move when the in-sam
 figures/27_opt_distribution.png: each method's out-of-sample Sharpe ratio minus equal risk contributions', across 86 markets (median and middle half).
 Usage: python l27_optimisers_charts.py"""
 import json, sys
+import os
 from pathlib import Path
 
 import plotly.graph_objects as go
@@ -12,7 +13,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parents[2]))
 from trading_models.plotting import INK, MUTED, SERIES, apply_theme, save_figure  # noqa: E402
 
-RES, FIG = HERE.parent / "results", HERE.parent / "figures"
+RES, FIG = Path(os.environ.get("L27_RESULTS", HERE.parent / "results")), HERE.parent / "figures"
 D = json.loads((RES / "optimisers_many.json").read_text(encoding="utf-8"))
 ORDER = ["Equal weight", "Equal risk contributions", "HRP", "NCO (equal risk contributions)", "Minimum variance, long only",
          "Maximum Sharpe, shrunk, long only", "Maximum Sharpe, long only", "Spectral risk parity, long only"]
@@ -36,7 +37,7 @@ if __name__ == "__main__":
     f.update_yaxes(autorange="reversed")
     f.update_layout(title="How far the weights move when history is resampled<br><sup>risk weights on three trend speeds of one market (SPY, history to 2025 resampled 200 times in 21-day blocks): dot = average, bar = 5th to 95th percentile</sup>",
                     height=520, width=1150, margin=dict(t=110, l=190, r=30, b=60), font=dict(size=14))
-    save_figure(f, "27_opt_resampled", FIG)
+    save_figure(f, os.environ.get("L27_PREFIX", "") + "27_opt_resampled", FIG)
 
     # 2. distribution across markets of the out-of-sample Sharpe ratio difference with equal risk contributions
     S = D["summary"]; order2 = [m for m in ORDER if m != "Equal risk contributions"]
@@ -50,5 +51,5 @@ if __name__ == "__main__":
     g.update_yaxes(autorange="reversed"); g.update_xaxes(title_text="Sharpe ratio minus equal risk contributions', out of sample 2013-2026")
     g.update_layout(title="Across 86 markets: each method against equal risk contributions<br><sup>three trend speeds per market; dot = median difference, bar = middle half of the markets</sup>",
                     height=460, width=1000, margin=dict(t=100, l=190, r=30, b=80), font=dict(size=14), showlegend=False)
-    save_figure(g, "27_opt_distribution", FIG)
+    save_figure(g, os.environ.get("L27_PREFIX", "") + "27_opt_distribution", FIG)
     print("ok")

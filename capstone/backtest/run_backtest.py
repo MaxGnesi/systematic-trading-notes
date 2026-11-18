@@ -15,6 +15,7 @@ Output: lectures/24-a-live-trend-bot/results/backtest.json. Usage: python -m cap
 """
 import json
 import logging
+import os
 from pathlib import Path
 
 import numpy as np
@@ -24,7 +25,7 @@ from capstone.backtest import engine
 from capstone.security.redact import install_log_scrubbing
 from capstone.strategies.trend import params as P
 
-OUT = Path(__file__).resolve().parents[2] / "lectures" / "24-a-live-trend-bot" / "results" / "backtest.json"
+OUT = Path(os.environ.get("L24_BACKTEST_OUT", Path(__file__).resolve().parents[2] / "lectures" / "24-a-live-trend-bot" / "results" / "backtest.json"))   # the notebook may redirect
 log = logging.getLogger("run_backtest")
 
 

@@ -4,6 +4,7 @@ Methods: equal weight, equal risk contributions, minimum variance long only, gro
 Measures: each region's share of the risk, and how far the weights move (largest change, points) when one correlation inside a region
 moves by 0.01 up or down. Illustrative, not estimates. Output: results/edge_cases.json. Usage: python l27_edge_cases.py"""
 import json
+import os
 from pathlib import Path
 
 import numpy as np
@@ -68,7 +69,7 @@ if __name__ == "__main__":
                                 max_move=round(max(moves), 4) if moves else None)
             print(f"{name:44s} {m:28s} weights {np.round(w * 100, 1)}  region risk {np.round(np.array(shares(w, C, R)) * 100).astype(int)}"
                   + (f"  max move {100 * max(moves):.1f} pts" if moves else ""))
-    (Path(__file__).resolve().parent.parent / "results" / "edge_cases.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+    (Path(os.environ.get("L27_RESULTS", Path(__file__).resolve().parent.parent / "results")) / "edge_cases.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
 
 
 # --- how to space the speeds: same ratio, same day difference, U-shaped, erratic (40 to 400 days, six speeds) -------------------------
@@ -87,7 +88,7 @@ def spacing():
                      ("Grouped by third", lambda C: grouped(C, [g for g in R if g]))]:
             w = f(C); rc = w * (C @ w); rc = rc / rc.sum()
             out[name][m] = [round(float(rc[g].sum()), 3) if g else 0.0 for g in R]
-    (Path(__file__).resolve().parent.parent / "results" / "spacing.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+    (Path(os.environ.get("L27_RESULTS", Path(__file__).resolve().parent.parent / "results")) / "spacing.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
     return out
 
 
@@ -125,7 +126,7 @@ def matrix():
             if g:
                 C2 = C.copy(); i, j = g[0], g[1]; C2[i, j] = C2[j, i] = min(0.999, C[i, j] + 0.01); move = float(np.abs(f(C2) - w).max())
             out[name][m] = dict(region_risk=[round(float(rc[q].sum()), 3) if q else 0.0 for q in R], max_move=round(move, 4) if move is not None else None)
-    (Path(__file__).resolve().parent.parent / "results" / "bunching.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+    (Path(os.environ.get("L27_RESULTS", Path(__file__).resolve().parent.parent / "results")) / "bunching.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
     return out
 
 
@@ -162,7 +163,7 @@ def random_grids(n=500, seed=13):
     out = {m: dict(median_gap=float(np.median(v["gap"])), p90_gap=float(np.percentile(v["gap"], 90)),
                    median_move=float(np.median(v["move"])), p90_move=float(np.percentile(v["move"], 90)),
                    median_whole=float(np.median(v["whole"])), p90_whole=float(np.percentile(v["whole"], 90))) for m, v in res.items()}
-    (Path(__file__).resolve().parent.parent / "results" / "random_grids.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+    (Path(os.environ.get("L27_RESULTS", Path(__file__).resolve().parent.parent / "results")) / "random_grids.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
     return out
 
 

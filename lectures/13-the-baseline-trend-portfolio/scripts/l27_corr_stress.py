@@ -19,7 +19,7 @@ REPO = HERE.parents[2]
 sys.path[:0] = [str(REPO), str(REPO / "lectures" / "12-trend-speeds-by-asset-class" / "scripts"), str(REPO / "lectures" / "11-choosing-the-markets" / "scripts")]
 import l26 as L26  # noqa: E402
 
-RES, FIG = HERE.parent / "results", HERE.parent / "figures"
+RES, FIG = Path(os.environ.get("L27_RESULTS", HERE.parent / "results")), HERE.parent / "figures"
 UNI = json.loads((REPO / "lectures" / "11-choosing-the-markets" / "results" / "fill.json").read_text(encoding="utf-8"))["reviews"]
 CORE = [f"{r}_{s}" for r in ("ewma", "breakout", "return") for s in (61, 89, 127, 179)] + ["ewma_251"]
 CALM, AVG = ("2017-01-01", "2017-12-31"), ("2008-09-01", "2025-12-31")

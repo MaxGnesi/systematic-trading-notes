@@ -12,12 +12,13 @@ Each method is scaled to 10% on the blended matrix, then its risk is read under 
 Illustrative: all windows are used at once, so this is hindsight; a real review may use only past windows.
 Output: results/unstable_corr.json. Usage: python l27_unstable_corr.py"""
 import json
+import os
 from pathlib import Path
 import numpy as np
 from scipy.optimize import minimize
 
 HERE = Path(__file__).resolve().parent.parent
-R = json.loads((HERE / "results" / "regimes.json").read_text(encoding="utf-8"))
+R = json.loads((Path(os.environ.get("L27_RESULTS", HERE / "results")) / "regimes.json").read_text(encoding="utf-8"))
 W = R["windows"]
 names = [n for n in W if not n.startswith("2023-2025")]           # the eight regimes; the baseline's own years excluded
 CL = list(W[names[0]]["corr_trend"].keys())
@@ -69,7 +70,7 @@ for m, w in methods.items():
     risk = {n: float(scale * np.sqrt(w @ mat[n] @ w)) for n in names}
     out["methods"][m] = {"weights": dict(zip(CL, map(float, w))), "risk_by_window": risk,
                          "worst": max(risk.values()), "best": min(risk.values()), "worst_window": max(risk, key=risk.get)}
-(HERE / "results" / "unstable_corr.json").write_text(json.dumps(out, indent=1, default=float), encoding="utf-8")
+(Path(os.environ.get("L27_RESULTS", HERE / "results")) / "unstable_corr.json").write_text(json.dumps(out, indent=1, default=float), encoding="utf-8")
 print("classes", CL, "| crisis window:", crisis, "| average correlation in the blend %.2f" % rho_bar)
 print("stock-bond trend by window:", {n[:9]: round(v, 2) for n, v in out["stock_bond_trend"].items()}, "blend %.2f" % out["stock_bond_trend_blend"])
 import sys

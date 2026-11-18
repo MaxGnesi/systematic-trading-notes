@@ -16,12 +16,13 @@ By default the notebook downloads what is missing, builds the 36 daily trend str
 |---|---|---|
 | 0 | Settings and data | §3 |
 | 1 | The key chart | §1 |
-| 2 | The streams, with hand checks: signals, positions, returns over cash, costs | §3 |
+| 2 | The streams, with hand checks: signals, positions, returns over cash, costs; streams that are not always in the market | §3 |
 | 3 | The rule, with one random split by hand; markets that disagree | §4 |
 | 4 | The areas and what the rule holds | §5 |
 | 5 | Super-long speeds in US equity | §6 |
 | 6 | Out of sample | §7 |
-| 7 | A test of your own | |"""),
+| 7 | Static or dynamic speeds: following recent performance; speeds in crises | §8 |
+| 8 | A test of your own | |"""),
 M("## 0. Settings and data"),
 C("""import json, os, shutil, subprocess, sys, time
 from pathlib import Path
@@ -42,7 +43,7 @@ print("data:", L.L25.DATA, "| streams:", L.OUT / "streams", "| shipped results:"
 def run(script, *args, show=False):
     "Run a script of this lecture or of Lecture 11 in a fresh process; figures as nb_*, results to WORK."
     t0 = time.time(); path = SCRIPTS / script if (SCRIPTS / script).exists() else L.REPO / "lectures" / "11-choosing-the-markets" / "scripts" / script
-    env = {**os.environ, "PORTFOLIO_DATA": str(L.L25.DATA), "L26_RESULTS": str(WORK), "L26_PREFIX": "nb_", "PYTHONIOENCODING": "utf-8"}
+    env = {**os.environ, "PORTFOLIO_DATA": str(L.L25.DATA), "L26_RESULTS": str(WORK), "L26_PREFIX": "nb_", "L27_RESULTS": str(WORK), "L27_PREFIX": "nb_", "PYTHONIOENCODING": "utf-8"}
     p = subprocess.run([sys.executable, str(path), *args], capture_output=True, text=True, encoding="utf-8", env=env)
     if p.returncode:
         print(p.stdout[-2000:], p.stderr[-4000:]); raise RuntimeError(f"{script} failed")
@@ -68,9 +69,11 @@ if len(list((L.OUT / "streams").glob("*.parquet"))) < 100: run("l26_streams.py",
 close, high, low, dv, rf = L.load_daily()
 print(f"{close.shape[1]} ETFs, {close.index.min().date()} to {close.index.max().date()}; bill rate on the last day {rf.iloc[-1] * 252:.2%} a year")
 print("speeds:", L.SPEEDS, "| rules:", L.RULES, "| cost", L.COST_BP, "bp | volatility span", L.VOL_SPAN, "days")"""),
-M("""**Running everything.** With `RUN_ALL` the cell below reruns the long steps: the choice of speeds at every year end 2012-2025 with 500 random halves for each version (§4, §7), then the out-of-sample tests with 2,000 bootstrap resamples (§7). Otherwise the shipped results are used."""),
+M("""**Running everything.** With `RUN_ALL` the cell below reruns the long steps: the choice of speeds at every year end 2012-2025 with 500 random halves for each version (§4, §7), the out-of-sample tests with 2,000 bootstrap resamples (§7), the timing tilts and the crisis speeds (§8; the crisis study also needs the capstone futures of Lecture 10). Otherwise the shipped results are used."""),
 C("""if RUN_ALL:
-    run("l26_select.py"); run("l26_tests.py")"""),
+    run("l26_select.py"); run("l26_tests.py"); run("l26_timing.py")
+    if (L.REPO / "data" / "interim" / "l11_series99.pkl").exists(): run("l26_crisis.py")
+    else: print("capstone futures not found: crisis speeds not rerun")"""),
 M("""## 1. The key chart
 
 Left: the share of 500 random halves in which each stream works on both halves, at the end-2025 review. Right: the Sharpe ratio after costs out of sample, per class and in total."""),
@@ -107,6 +110,23 @@ Sharpe ratio before and after costs, and the yearly cost, of IEF's EWMA crossove
 C("""G, N = L.net(S, 0)[L.START:], L.net(S)[L.START:]
 pd.DataFrame({h: {"Sharpe before costs": L.sharpe(G[f"ewma_{h}"]), "cost a year": 5e-4 * S[f"t_ewma_{h}"][L.START:].mean() * 252, "Sharpe after costs": L.sharpe(N[f"ewma_{h}"])}
               for h in (11, 89, 251)}).T.round(4)"""),
+M(r"""### 2.4 Streams that are not always in the market (lecture §3.3)
+
+The held breakout streams of Lecture 11's end-2025 markets: the share of days with a signal, and the Sharpe ratio after costs over all days and on the days with a signal (the signal of the day before, which sets the position held), 2007 to 13 November 2026 (the end of the shipped results; a later download adds days and Yahoo's revisions), median over markets; then Lecture 7's link, Sharpe while active times the square root of the share of time active."""),
+C(r"""SEL25 = json.loads((L.RESULTS / "select.json").read_text(encoding="utf-8"))["reviews"]["2025"]["weights"]["one_set"]
+UNI25 = json.loads((L.REPO / "lectures" / "11-choosing-the-markets" / "results" / "fill.json").read_text(encoding="utf-8"))["reviews"]["2025"]["sc_div"]
+names = sorted({t for m in UNI25.values() for t in m}); bk = [k for k, v in SEL25.items() if k.startswith("breakout") and v >= 0.2]
+rows = []
+for t in names:
+    c = close[t].dropna(); x, xh, xl = L.excess(c, high[t].reindex(c.index), low[t].reindex(c.index), rf)
+    r = L.net(pd.read_parquet(L.OUT / "streams" / f"{t}.parquet")[L.START:]).loc[:"2026-11-13"]   # the end of the shipped results
+    for k in bk:
+        s = L.signals(x.to_frame("x"), xh.to_frame("x"), xl.to_frame("x"), int(k.split("_")[1]))["breakout"]["x"].shift(1)
+        rr = r[k].dropna(); on = s.reindex(rr.index).fillna(0) != 0
+        rows.append(dict(market=t, stream=k, share=on.mean(), all_days=L.sharpe(rr), active=L.sharpe(rr[on])))
+PT = pd.DataFrame(rows); med = PT[["share", "all_days", "active"]].median()
+display(PT.groupby("stream")[["share", "all_days", "active"]].median().round(2))
+print(f"median: in the market {med.share:.0%} of days; Sharpe {med.all_days:.3f} on all days, {med.active:.3f} while active; {med.active:.2f} x sqrt({med.share:.2f}) = {med.active * np.sqrt(med.share):.2f}")"""),
 M("""## 3. The rule
 
 ### 3.1 One random split by hand
@@ -162,7 +182,9 @@ display(tab.round(2))
 display(pd.DataFrame({f"against {names[v]}": {"difference": T["tests"][f"rule_vs_{v}_total"]["diff"], "band 5%": T["tests"][f"rule_vs_{v}_total"]["ci90"][0],
                                                "band 95%": T["tests"][f"rule_vs_{v}_total"]["ci90"][1]} for v in ("all36", "class", "one_set", "union")}).T.round(2))
 print("a class beats the rule after Benjamini-Hochberg:", T["bh_class_beats_rule"])
-O = pd.read_parquet(L.OUT / "oos.parquet"); print(f"the rule's total Sharpe ratio from the daily returns: {L.sharpe(O[O.variant == 'union20']['total']):.4f}; results file: {T['sharpe']['union20']['total']:.4f}")"""),
+if (L.OUT / "oos.parquet").exists():
+    O = pd.read_parquet(L.OUT / "oos.parquet"); print(f"the rule's total Sharpe ratio from the daily returns: {L.sharpe(O[O.variant == 'union20']['total']):.4f}; results file: {T['sharpe']['union20']['total']:.4f}")
+else: print("daily out-of-sample returns not built yet: set RUN_ALL = True to run l26_select.py (about an hour)")"""),
 M("""**Shipped against recomputed.** With `RUN_ALL`, the rerun's key numbers against the shipped results. With the same download they match exactly; a later download can differ slightly, since Yahoo revises adjusted prices when funds pay distributions."""),
 C("""rows = []
 for v in ("union20", "class", "all36"):
@@ -170,7 +192,23 @@ for v in ("union20", "class", "all36"):
 a, b = result("select.json", SHIPPED)["reviews"]["2025"]["weights"]["one_set"], result("select.json")["reviews"]["2025"]["weights"]["one_set"]
 rows.append(dict(number="streams held at the end-2025 review", shipped=sum(v >= 0.2 for v in a.values()), recomputed=sum(v >= 0.2 for v in b.values())))
 pd.DataFrame(rows)"""),
-M("""## 7. A test of your own
+M(r"""## 7. Static or dynamic speeds? (lecture §8)
+
+### 7.1 Following recent performance
+
+Momentum and reversal tilts of the speed weights inside every market, each quarter, against the static equal weights (90% bands from a block bootstrap over calendar months). The rest of the portfolio is Lecture 13's baseline."""),
+C(r"""T = result("timing.json")
+pd.DataFrame({k: {"Sharpe": v["sharpe"], "difference": v["diff"], "band 5%": (v["ci90"] or [np.nan])[0], "band 95%": (v["ci90"] or [np.nan, np.nan])[1]} for k, v in T.items()}).T.round(3)"""),
+M(r"""### 7.2 Which speeds work in crises?
+
+Each speed's return in each S&P 500 fall of more than 15%, and the share of the falls in which it beat the held set; a speed works in crises if it does so in two thirds of them on both datasets."""),
+C(r"""run("l26_crisis_chart.py")
+pictures("26_crisis_speeds")
+CR = result("crisis.json")
+display(pd.DataFrame({f"{e['peak'][:7]} ({e['spx_fall']:.0%})": e["etf"]["by_speed"] | {"held set": e["etf"]["held"]} for e in CR["episodes"] if e.get("etf")}).T.round(3))
+display(pd.DataFrame(CR["beat_share"]).drop(columns=["etf_n", "futures_n"], errors="ignore").round(2).T)
+print("speeds that work in crises:", CR["works"] or "none")"""),
+M("""## 8. A test of your own
 
 Change one setting and see what moves: the 20% bar in `scripts/l26_select.py` (the `union20` line), the volatility window (`L26_VOL_SPAN`, then rebuild the streams), the cost (`COST_BP` in `scripts/l26.py`). Rerun with `RUN_ALL`. Any change made after looking at results should be dated in `results/hypotheses.md` before it is judged on later data, as every change of this lecture was."""),
 ]

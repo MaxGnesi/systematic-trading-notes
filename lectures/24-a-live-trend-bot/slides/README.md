@@ -31,3 +31,5 @@
 ![Slide 14](pages/24_slide_14.png)
 
 ![Slide 15](pages/24_slide_15.png)
+
+![Slide 16](pages/24_slide_16.png)

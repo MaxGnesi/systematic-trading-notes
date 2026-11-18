@@ -19,7 +19,7 @@ sys.path[:0] = [str(REPO)]
 from trading_models.data.fred import load_fred  # noqa: E402
 
 RAW = Path(os.environ["PORTFOLIO_DATA"]).parent if "PORTFOLIO_DATA" in os.environ else REPO.parent / "data" / "raw"   # long series sit next to the portfolio data
-RES, FIG = HERE.parent / "results", HERE.parent / "figures"
+RES, FIG = Path(os.environ.get("L27_RESULTS", HERE.parent / "results")), HERE.parent / "figures"
 WINDOWS = {"1973-1982 high inflation": ("1973-01", "1982-12"), "1983-1999 disinflation": ("1983-01", "1999-12"),
            "2000-2002 equity bear market": ("2000-01", "2002-12"), "2003-2006 calm": ("2003-01", "2006-12"),
            "2007-2009 financial crisis": ("2007-01", "2009-12"), "2010-2019 low rates": ("2010-01", "2019-12"),
