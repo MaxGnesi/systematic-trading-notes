@@ -27,7 +27,7 @@ trade when it has gained 5 sigma; a kill switch stops everything on a 10% drawdo
 1. Each speed alone: 2 days, 7 days.
 2. The blend without the take profit.
 3. The blend with the patient entry instead of market orders.
-4. **Timing inside the delay window** (the user, 18 Nov 2026): after the decision, trade at the end of the first minute if the price has moved in our favour by at least x bp (x = 2, 5, 10), else at the end of the second minute; market orders both ways; one-minute closes only, so nothing ahead is seen.
+4. **Timing inside the delay window** (the user, 18 Nov 2026): after the decision, trade at the end of the first minute if the price has moved in our favour by at least x bp (x = 10, 20, 30, 40; the user suggested 30 to 40), else at the end of the second minute; market orders both ways; one-minute closes only, so nothing ahead is seen.
 
 ## Expectations
 
