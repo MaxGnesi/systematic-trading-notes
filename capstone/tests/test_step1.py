@@ -83,6 +83,26 @@ def test_conformance():
             assert "print(os.environ" not in s and "print(os.getenv" not in s, f"{f.name} prints the environment"
 
 
+
+def test_single_instance():
+    """A second bot must refuse to start while the first holds the lock (exit code 3); a temporary lock file, never the live one."""
+    import sys, tempfile, textwrap
+    lock = Path(tempfile.mkdtemp()) / "bot.lock"
+    code = textwrap.dedent(f"""
+        import sys, time; sys.path.insert(0, {str(ROOT.parent)!r})
+        from pathlib import Path
+        from capstone import run_bot as R
+        R.LOCK_FILE = Path({str(lock)!r})
+        R.single_instance(); print("locked", flush=True); time.sleep(float(sys.argv[1]))
+    """)
+    first = subprocess.Popen([sys.executable, "-I", "-c", code, "8"], stdout=subprocess.PIPE, text=True)
+    assert first.stdout.readline().strip() == "locked"
+    second = subprocess.run([sys.executable, "-I", "-c", code, "0"], capture_output=True, text=True)
+    first.wait()
+    assert second.returncode == 3, second.returncode
+    third = subprocess.run([sys.executable, "-I", "-c", code, "0"], capture_output=True, text=True)
+    assert third.returncode == 0, third.stderr[-500:]
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):

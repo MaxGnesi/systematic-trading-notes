@@ -288,6 +288,8 @@ A restart is safe by design, because every start begins with reconciliation and 
 
 Is a container worth it? On a server, yes: the same environment everywhere, a restart policy in one line, and an image that moves between machines. On a laptop, not necessarily: Docker Desktop runs a virtual machine that takes 1 to 2 GB of memory, for a bot that needs about 100 MB. On a Linux server there is also a lighter way: a **service** of the operating system (systemd) with `Restart=always`, which restarts the program after a crash with no container at all.
 
+**Without a container, on a Windows PC.** What we run now, at a few megabytes instead of Docker's gigabytes: a supervisor, [`tools/supervise.bat`](../../capstone/tools/supervise.bat), a loop that starts the bot and starts it again a minute after it exits, started at log-on by the Windows **Task Scheduler**. Two details make it safe. The bot takes an exclusive **lock** on `data/bot.lock` when it starts and refuses to run if another copy holds it, so a restart loop can never create a second bot sending every order twice; the operating system releases the lock when a process dies, so a crash never blocks the restart. And a file `data/NO_RESTART` stops the loop when the bot should stay off. Sleep needs nothing: the process survives it, and the bot catches up on waking (§7).
+
 **Before going to a server**, a short checklist:
 
 | Item | Why |
