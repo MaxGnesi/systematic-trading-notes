@@ -23,8 +23,9 @@ RANGES = {  # (section, key): (type, low, high)
     ("timing", "decision_minute"): (int, 0, 59),
     ("timing", "jitter_seconds"): (int, 0, 600),
     ("execution", "mode"): (str, ("taker", "patient"), None),
-    ("kill_switch", "max_drawdown"): (float, 0.02, 0.5),
     ("kill_switch", "max_feed_silence_s"): (float, 5, 600),
+    ("kill_switch", "max_order_errors"): (int, 1, 20),
+    ("kill_switch", "max_position_x_equity"): (float, 0.5, 10),
 }
 
 
@@ -46,8 +47,9 @@ class Params:
     decision_minute: int
     jitter_seconds: int
     execution: str
-    max_drawdown: float
     max_feed_silence_s: float
+    max_order_errors: int
+    max_position_x_equity: float
 
     def replace(self, **kw) -> "Params":
         d = {**self.__dict__, **kw}
@@ -97,4 +99,5 @@ def load(path: Path = FILE) -> Params:
                   buffer=vals[("size", "buffer")], take_profit=vals[("take_profit", "enabled")],
                   tp_sigmas=vals[("take_profit", "sigmas")], decision_minute=vals[("timing", "decision_minute")],
                   jitter_seconds=vals[("timing", "jitter_seconds")], execution=vals[("execution", "mode")],
-                  max_drawdown=vals[("kill_switch", "max_drawdown")], max_feed_silence_s=vals[("kill_switch", "max_feed_silence_s")])
+                  max_feed_silence_s=vals[("kill_switch", "max_feed_silence_s")], max_order_errors=vals[("kill_switch", "max_order_errors")],
+                  max_position_x_equity=vals[("kill_switch", "max_position_x_equity")])

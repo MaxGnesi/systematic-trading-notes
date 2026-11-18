@@ -7,7 +7,7 @@ a result is dated and labelled below, never made silently.
 
 Hold Deribit's BTC perpetual long or short in the direction of an hourly trend, blended from two speeds
 in the region Lecture 20 found working, sized by volatility over the past six months, and cut a speed's
-trade when it has gained 5 sigma; a kill switch stops everything on a 10% drawdown or an unhealthy feed.
+trade when it has gained 5 sigma. No strategy kill switch: a kill switch guards the plumbing only.
 
 | Part | Rule | Source |
 |---|---|---|
@@ -19,7 +19,8 @@ trade when it has gained 5 sigma; a kill switch stops everything on a 10% drawdo
 | Buffer | Trade only when the target is more than 10% of its average size away from the position | Lecture 20 |
 | Decision time | **23 minutes past each hour, plus a random delay of 0 to 120 s** drawn fresh each hour (the backtest uses the same draws) | Change of 18 Nov 2026 below |
 | Execution | **Market orders (taker)** at the hourly decision; a patient post-only entry is a setting and a rival | The user: trend should take liquidity; Deribit fees checked live 18 Nov 2026: maker 1.5 bp, taker 3.5 bp |
-| Kill switch | Close everything and stop on a drawdown of 10% from the peak of equity, or an unhealthy feed (stale or invalid book); restart by hand | Hummingbot's drawdown kill switch; Lecture 22 §9 |
+| Kill switch | **For the plumbing only**: stop trading when the feed is silent or the book invalid, when our records disagree with the exchange, when orders keep failing, or on a person's command. No drawdown stop | Change of 18 Nov 2026 below |
+| Hard limit | The position never exceeds 3 times equity, whatever the signal: a guard against bugs, not a market view | Lecture 22 §9: limits that need no model |
 | Settings | Every number in `params.toml`, with allowed ranges | The course author's Deribit backend |
 
 ## Rivals in the backtest
@@ -40,6 +41,24 @@ trade when it has gained 5 sigma; a kill switch stops everything on a 10% drawdo
 5. The volatility switch was tested on the grid (Lecture 20 §12), which loses in violent hours; a trend rule
    often earns in them. *Pause* changes the Sharpe ratio by less than its 90% band and lowers costs a little;
    *flatten* lowers the Sharpe ratio, because it exits during the moves the trend lives on.
+
+## Where does the strategy earn? A volatility filter, chosen honestly (the user, 18 Nov 2026)
+
+**Part A, descriptive.** Each hour is labelled by the state at its decision; the strategy's (base) Sharpe
+ratio, its share of hours and a 90% band are reported per state:
+- *Extreme volatility:* Lecture 20's volatility ratio in buckets: below 1.5, 1.5 to 2, 2 to 3, 3 and above.
+- *The volatility quadrant:* level, 30-day volatility above or below its median of the past 365 days;
+  direction, 30-day volatility above or below its value 30 days earlier. Four states: low-falling,
+  low-rising, high-falling, high-rising.
+
+**Part B, a filter.** The quadrant with the lowest Sharpe ratio on 2019-2022 only is chosen; "go flat in that
+quadrant" is then judged on 2023-2026, which plays no part in the choice. If that quadrant's Sharpe ratio is
+not below the others' by more than its 90% band on 2019-2022, no filter is chosen.
+
+**Expectations.** (6) The strategy earns most when volatility is high and rising, least when it is low and
+falling. (7) In extreme volatility (ratio 2 and above) its Sharpe ratio is no worse than in normal hours.
+(8) The filter's gain on 2023-2026 lies within its 90% band (Lecture 14: regime filters rarely beat staying
+in); it is adopted only if the gain lies above the band.
 
 ## Data and samples
 
@@ -65,3 +84,10 @@ fills, reconciliation, uptime of the feed, and the gap between live and backtest
   expectation 4, before any result. A proper test at the level of seconds needs tick data: an exercise.
 - **18 November 2026, the user: a volatility indicator as a kill switch.** Added as rival 5 with expectation 5,
   before any result of the strategy; the indicator and its K values are Lecture 20's, not chosen on this data.
+- **18 November 2026, the user: trend following usually uses no kill switch.** The 10% drawdown stop is dropped:
+  a trend follower's drawdowns are part of how it earns, and a stop would often exit before the recovery
+  (Lecture 14: switching trend off rarely beats staying in). The kill switch now guards the plumbing only
+  (silent feed, invalid book, reconciliation drift, repeated order errors, manual stop), and a hard limit of
+  3 times equity on the position guards against bugs. Drawdowns are reported, not acted on. Before any result.
+- **18 November 2026, the user: check whether trend works better in extreme volatility, and the volatility
+  quadrant (level x direction).** Added as Part A, Part B and expectations 6 to 8, before any result.

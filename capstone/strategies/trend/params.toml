@@ -25,6 +25,7 @@ jitter_seconds = 120            # plus a random delay of 0 to this many seconds
 [execution]
 mode = "taker"                  # "taker": market orders; "patient": post-only first, then market
 
-[kill_switch]
-max_drawdown = 0.10             # close everything and stop at this drawdown from the peak of equity
-max_feed_silence_s = 60         # or when the market feed has been silent this long
+[kill_switch]                   # for the plumbing only: no drawdown stop (a trend follower's drawdowns are how it earns)
+max_feed_silence_s = 60         # stop trading when the market feed has been silent this long
+max_order_errors = 3            # stop after this many failed orders in a row
+max_position_x_equity = 3.0     # hard limit: the position never exceeds this multiple of equity (a guard against bugs)

@@ -9,8 +9,8 @@ profit and loss in BTC), starting at 1 BTC. Each hour, at `decision_minute` past
      plus half a tick against us, and pays the taker fee (or the maker fee, for the patient rival);
   4. profit and loss from one fill to the next, in BTC: amount x (1/price_before - 1/price_after);
      funding each hour as Deribit recorded it.
-Only the past is used at each hour. The kill switch is recorded (when equity would have fallen 10% below
-its peak), not applied, so the strategy's own record stays complete; the live bot applies it.
+Only the past is used at each hour. Drawdowns are reported, not acted on: the strategy has no drawdown stop.
+The hard limit on the position (`max_position_x_equity`) is applied, as live.
 """
 from dataclasses import dataclass
 from pathlib import Path
@@ -93,6 +93,8 @@ def run(h: pd.DataFrame, p: Params, rival: str = "base", x_bp: float = 0.0, seed
         traded = fee = 0.0; maker = 0
         if not np.isnan(tx[t]) and not (vol_switch == "pause" and violent[t]):
             target = tx[t] * eq * price[t]
+            cap = p.max_position_x_equity * eq * price[t]          # hard limit, a guard against bugs
+            target = max(-cap, min(cap, target))
             band = p.buffer * avg_abs[t] * eq * price[t]
             if abs(target - pos) > band:
                 new = np.round(target / CONTRACT) * CONTRACT
@@ -134,4 +136,4 @@ def summarise(o: pd.DataFrame, p: Params) -> dict:
     return dict(sharpe=float(r.mean() / r.std() * np.sqrt(24 * 365)), ann_return=float((eq.iloc[-1] / eq[live].iloc[0]) ** (1 / years) - 1),
                 ann_vol=float(r.std() * np.sqrt(24 * 365)), max_drawdown=float(dd.min()), worst_month=float(m.min()),
                 month_skew=float(m.skew()), fees_per_year=float(o["fee"].sum() / years), funding_per_year=float(o["funding"].sum() / years),
-                kill_switch_hours=int((dd <= -p.max_drawdown).sum()), months=int(len(m)))
+                hours_at_limit=0, months=int(len(m)))
