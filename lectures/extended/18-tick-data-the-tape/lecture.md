@@ -139,7 +139,7 @@ Every row of the tape is the meeting of two orders, and the kind of order a trad
 | **Stop-market** | Waits, unseen in the book, until a trigger price is reached, then becomes a market order | Taker | `Market` with a `triggerPrice` | `STOP_MARKET` | L9, L10, L20 §4.3, L21 |
 | **Stop-limit** | On the trigger, becomes a limit order: the price is capped, the fill is not guaranteed | Taker or maker | `Limit` with a `triggerPrice` | `STOP` | L20 §4.3 |
 | **Take-profit** | A stop triggered by a move in the position's favour | As the stop | `takeProfit` on an order or a position | `TAKE_PROFIT`, `TAKE_PROFIT_MARKET` | |
-| **Trailing stop** | A stop whose trigger follows the best price reached, at a set distance; on the trigger, a market order | Taker | On a position only, as a closing order: `trailingStop` | `TRAILING_STOP_MARKET`, distance in percent | L9 |
+| **Trailing stop** | A stop whose trigger follows the best price reached, at a set distance; on the trigger, a market order | Taker | On a position only, as a closing order: `trailingStop` | `TRAILING_STOP_MARKET`, distance in per cent | L9 |
 | **Reduce-only** | Can only shrink a position, never open or reverse one | As the order | `reduceOnly`; `closeOnTrigger` for stops | `reduceOnly`, `closePosition` | L29, L30 |
 | **Iceberg, TWAP** | Not order types but strategies run by the exchange's servers: slices placed one after another, or at fixed intervals | Per slice | Strategy tools, also through the API | Not used here | L25 §2.4 |
 | **Liquidation** | When the mark price reaches a position's liquidation price, the exchange reduces or takes over the position and closes it at the market | Forced | Settled at the bankruptcy price; insurance fund, then auto-deleveraging | The same chain | L21, L24 §1.3, L25 §4 |
@@ -367,7 +367,7 @@ Activity and volatility jump at every full hour, and more at the funding times t
 ### 6.3 Time between trades
 
 ![Distribution of the time to the next trade, against trades arriving at random with the same average wait](figures/12_09_durations.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> Time to the next trade, milliseconds (x, log); percent of waits in each bin (y, log). All waits between consecutive trades over the five years (blue) against the waits that trades arriving at random would give with the same 60-millisecond average (orange, dashed). Waits of 0 or 1 millisecond, 54% of the total, fall off the log axis and are not shown; waits of 0 alone, trades in the same millisecond, are the 51% of the table below.</sub>
+<sub><b>How to read the figure.</b> <b>Axes.</b> Time to the next trade, milliseconds (x, log); per cent of waits in each bin (y, log). All waits between consecutive trades over the five years (blue) against the waits that trades arriving at random would give with the same 60-millisecond average (orange, dashed). Waits of 0 or 1 millisecond, 54% of the total, fall off the log axis and are not shown; waits of 0 alone, trades in the same millisecond, are the 51% of the table below.</sub>
 
 | Measure | What we measure, in plain words | Benchmark: trades arriving at random | Result | What it means |
 |---|---|---|---|---|
@@ -381,7 +381,7 @@ Random arrival, a Poisson process, would put most waits near the average and alm
 ### 6.4 Trade sizes
 
 ![Share of trades and of dollars by trade size, and the share of trades at least a given size on log-log axes](figures/12_06_trade_sizes.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> Left: trade size in USD (x, log), percent (y). Right: trade size in USD (x, log), share of trades at least that large (y, log). All 2.6 billion trades of the five years. <b>Left:</b> the share of trades (blue) and the share of dollars (orange) in each size bin. <b>Right:</b> the share of trades of at least each size (blue), with a straight line fitted above USD 100,000 (pink, dashed); on log-log axes its slope is the tail exponent.</sub>
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: trade size in USD (x, log), per cent (y). Right: trade size in USD (x, log), share of trades at least that large (y, log). All 2.6 billion trades of the five years. <b>Left:</b> the share of trades (blue) and the share of dollars (orange) in each size bin. <b>Right:</b> the share of trades of at least each size (blue), with a straight line fitted above USD 100,000 (pink, dashed); on log-log axes its slope is the tail exponent.</sub>
 
 | Measure | What we measure, in plain words | Benchmark | Result | What it means |
 |---|---|---|---|---|
@@ -394,7 +394,7 @@ The left-hand chart is the most important picture of this section. The blue curv
 ### 6.5 Who is aggressive
 
 ![Daily share of aggressive buying, and the day's return against it](figures/12_07_aggressor.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> Left: aggressive buying, percent of the day's dollars (x); number of days (y). Right: the same share (x); the day's return, percent (y). One observation per day over the five years. <b>Left:</b> histogram of the daily share of dollars bought aggressively; 50% means buying and selling aggressors balanced. <b>Right:</b> one dot per day.</sub>
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: aggressive buying, per cent of the day's dollars (x); number of days (y). Right: the same share (x); the day's return, per cent (y). One observation per day over the five years. <b>Left:</b> histogram of the daily share of dollars bought aggressively; 50% means buying and selling aggressors balanced. <b>Right:</b> one dot per day.</sub>
 
 | Measure | What we measure, in plain words | Benchmark | Result | What it means |
 |---|---|---|---|---|
@@ -453,7 +453,7 @@ This section only describes. Lecture 21 asks whether the unexpected part of the 
 | Bounce, one second | The same for returns from one second to the next, using the last price of each second | 0 | +0.07 | The bounce has gone; a small positive correlation remains: moves continue for a few seconds |
 
 ![Annualised realised volatility measured from returns over intervals from one second to one hour](figures/12_10_signature.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> Sampling interval, one second to one hour (x, log); annualised volatility, percent (y). Realised volatility averaged over the five years, measured from returns at each interval: from trade prices (blue) and from the mid estimated from the last buy and the last sell of each second (green, dotted). The orange dashed line is the volatility of daily close-to-close returns. A flat curve would mean returns are independent.</sub>
+<sub><b>How to read the figure.</b> <b>Axes.</b> Sampling interval, one second to one hour (x, log); annualised volatility, per cent (y). Realised volatility averaged over the five years, measured from returns at each interval: from trade prices (blue) and from the mid estimated from the last buy and the last sell of each second (green, dotted). The orange dashed line is the volatility of daily close-to-close returns. A flat curve would mean returns are independent.</sub>
 
 Realised volatility adds up squared returns over short intervals. In theory, the shorter the interval, the more precise the estimate; in practice, the answer depends on the interval. The chart, a **signature plot** (Andersen, Bollerslev, Diebold and Labys, 2000), shows annualised volatility for each interval, averaged over the five years:
 
@@ -578,7 +578,7 @@ As hourly candles, the two are almost identical. On the tape they are opposites.
 Lecture 3, §7 estimated order flow from bars. The **tick rule**, the signed volume behind on-balance volume, gives all of a bar's volume to buyers if the close rose and to sellers if it fell. **Bulk volume classification** (Easley, López de Prado and O'Hara, 2012) splits the volume by the size of the move: the share bought is the probability of the move under a normal distribution, Φ(return ÷ volatility), with the volatility measured over past bars only. The tape gives the true answer for every bar:
 
 ![Daily net aggressive buying estimated from the candle against the true value; and the share of each day's dollars bought aggressively, estimated and true](figures/12_13_flow_from_candles.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> Left: true net aggressive buying, USD billions (x); estimate from the candle, USD billions (y). Right: percent of the day's dollars bought aggressively (x); number of days (y). One observation per day over the five years. <b>Left:</b> one dot per day, estimated by bulk volume classification (blue) and by the tick rule (light orange); a perfect estimate would lie on the diagonal. <b>Right:</b> histograms of the share bought aggressively, estimated by bulk volume classification (blue) and true from the tape (green); the tick rule is not drawn, since it always gives 0 or 100.</sub>
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: true net aggressive buying, USD billions (x); estimate from the candle, USD billions (y). Right: per cent of the day's dollars bought aggressively (x); number of days (y). One observation per day over the five years. <b>Left:</b> one dot per day, estimated by bulk volume classification (blue) and by the tick rule (light orange); a perfect estimate would lie on the diagonal. <b>Right:</b> histograms of the share bought aggressively, estimated by bulk volume classification (blue) and true from the tape (green); the tick rule is not drawn, since it always gives 0 or 100.</sub>
 
 | Measure | What we measure, in plain words | One minute | One hour | One day |
 |---|---|---|---|---|
@@ -637,7 +637,7 @@ A candle reports four prices. The tape shows where the trading actually happened
 |---|---|---|
 | Open | $18,867 | |
 | High | $20,154 | Touched for a few seconds after the decision at 18:00 UTC, on little volume |
-| Most traded price | $18,990 | The center of the day's trading |
+| Most traded price | $18,990 | The centre of the day's trading |
 | VWAP | $19,073 | |
 | Low | $18,084 | |
 | Close | $18,448 | Below most of the day's trading |

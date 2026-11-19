@@ -45,7 +45,7 @@ When buyers hurry, the price rises: they take the offers in the book, one level 
 
 *Our measurement for these notes; the differences in the second row are 4.5 to 7.7 standard errors from zero, with days as clusters.*
 
-Flow moves the price strongly while it happens. Afterwards a small part comes back: about 1 bp after a move of 28 bp in 30 minutes, a few percent of the impact, and almost all of it in volatile hours. The reversal is reliable, but far smaller than what a market order costs (§5): it is not a strategy on its own. It is the trace of impact that is partly temporary, as the literature describes for stocks and for bitcoin.
+Flow moves the price strongly while it happens. Afterwards a small part comes back: about 1 bp after a move of 28 bp in 30 minutes, a few per cent of the impact, and almost all of it in volatile hours. The reversal is reliable, but far smaller than what a market order costs (§5): it is not a strategy on its own. It is the trace of impact that is partly temporary, as the literature describes for stocks and for bitcoin.
 
 **With or against the trend?** The reversal could depend on what the flow pushes against. The same test, now only on the strongest flow (the top and bottom fifths), split by the slower trend known at the time (the past three days' return, divided by its typical size: up, down, or no clear trend beyond half a standard deviation) and by the volatility regime:
 
@@ -67,7 +67,7 @@ In November 2022 buyers sent $118 million of net buying in the first minute and 
 |---|---|---|
 | Order flow moves the price strongly and linearly within the same interval (Cont, Kukanov and Stoikov, 2014; for the BitMEX bitcoin perpetual, Silantyev, 2019) | ±28 bp during 30-minute windows, more in volatile hours | in line |
 | The impact of trades is partly transient: it decays and partly reverses (Bouchaud, Gefen, Potters and Wyart, 2004; Bouchaud, Farmer and Lillo, 2009; for bitcoin, Donier and Bonart, 2015) | A small part comes back in the next window | in line |
-| Daily price pressure in bitcoin is mostly permanent (Makarov and Schoar, 2020) | Only a few percent of the impact comes back | in line |
+| Daily price pressure in bitcoin is mostly permanent (Makarov and Schoar, 2020) | Only a few per cent of the impact comes back | in line |
 | Forecasting from order flow fades within about two average price changes (Kolm, Turiel and Westray, 2023, on stocks) | Reliable but a fraction of a basis point at minutes, below the cost of trading | in line |
 | On stocks, trade imbalance explains price changes about half as well as the imbalance of the whole book (Cont, Kukanov and Stoikov, 2014); on the BitMEX bitcoin perpetual, trade imbalance explained them better (Silantyev, 2019) | At releases, the move predicts what follows and the flow does not | mixed: on BTCUSDT at releases the book, not the trades, carried the information |
 | — | The reversal is reliable only after flow with the slower trend, in normal and volatile hours | not found in the literature; a result on this sample |

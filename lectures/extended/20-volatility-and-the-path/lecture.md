@@ -79,7 +79,7 @@ A random walk has no memory: after a move up, the next move is up or down with e
 
 *Our measurement for these notes; one-minute closes, October 2021 to September 2026.*
 
-At small steps bitcoin turns back slightly more often than a path without memory; at a percent and more there is no difference. That is the five-year average. It hides two different markets.
+At small steps bitcoin turns back slightly more often than a path without memory; at a per cent and more there is no difference. That is the five-year average. It hides two different markets.
 
 **Two regimes.** The same test, with the days grouped by their realised variance:
 
@@ -94,7 +94,7 @@ At small steps bitcoin turns back slightly more often than a path without memory
 
 *Points of continuation, tape minus its own returns shuffled within the same days; the figure shows all groups with their 95% intervals.*
 
-On calm and ordinary days the price turns back clearly more often than chance, at every step size. On the most volatile days the picture reverses at larger steps: moves of half a percent and more tend to carry on. The average of five years describes neither: a grid that relies on it is right on ordinary days and wrong on exactly the days that can ruin it.
+On calm and ordinary days the price turns back clearly more often than chance, at every step size. On the most volatile days the picture reverses at larger steps: moves of half a per cent and more tend to carry on. The average of five years describes neither: a grid that relies on it is right on ordinary days and wrong on exactly the days that can ruin it.
 
 **Can the regime be seen in advance?** Grouped by the *previous* day's volatility, which is known in the morning, the runs disappear: yesterday's volatility does not say whether today will be an explosive day. The regime has to be recognised within the day, from what the market is doing now. Lecture 21 looks for such signals in the order flow, and Lecture 23 uses them to decide when a grid steps aside.
 
@@ -305,7 +305,7 @@ The results above hold on BTCUSDT from 2021 to 2026. These questions are open, a
 
 1. **A candle records neither the order nor the distance travelled.** The better guess at the order is wrong on one bar in eight, as for any random walk; a typical hour travels four times its range.
 2. **Test the path against itself.** Counted naively, the path looks as if it trends; compared with its own shuffled returns, BTCUSDT turns back slightly at small steps.
-3. **Two regimes, not one average.** On ordinary days the price turns back more often than chance; on explosive days, moves of half a percent and more carry on.
+3. **Two regimes, not one average.** On ordinary days the price turns back more often than chance; on explosive days, moves of half a per cent and more carry on.
 4. **√t is an assumption.** From minutes to a day it overstates BTCUSDT's variance by 5% to 13%.
 5. **Levels are reached less often and passed more violently than variance suggests:** fewer crossings, a fat tail of excursions, and stops cheap in the median but expensive in the tail.
 6. **Each volatility measure has its own best interval and captures its own shade of risk;** any measure from inside the bar forecasts the next bars better than the bar's own returns, provided the forecast is judged against a yardstick not built like itself.

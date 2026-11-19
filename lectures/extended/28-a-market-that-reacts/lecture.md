@@ -260,7 +260,7 @@ The pieces add up to a replay that keeps the recorded book as its background:
 
 ## 4. Does the hybrid replay tell the truth?
 
-The hybrid replay predicts single orders better than the plain one, but as fixed it overstates what a run of orders costs. Every curve, fit and boundary comes from the in-sample days; the tests use the 24 days from 11 October to 3 November 2025, with one-sided p-values from 2,000 resamples of days and Benjamini-Hochberg at 5% over the ten primary tests (H1 to H7, H9, H20a, H20b).
+The hybrid replay predicts single orders better than the plain one, but as fixed it overstates what a run of orders costs. Every curve, fit and boundary comes from the in-sample days; the tests use the 24 days from 11 October to 3 November 2025, with one-sided p-values from 2,000 resamples of days and Benjamini–Hochberg at 5% over the ten primary tests (H1 to H7, H9, H20a, H20b).
 
 | Question | Hypothesis | Result | p | Corrected | Verdict |
 |---|---|---|---|---|---|
@@ -275,7 +275,7 @@ The hybrid replay predicts single orders better than the plain one, but as fixed
 | Is the tail of the cost fatter after quote pulls? | H20a | 90th percentile 1.62 bp against 0.72 | < 0.001 | 0.001 | Holds |
 | Does a push last longer when Bybit is far from Binance? | H20b | 0.93 of the 1 s move left at 60 s against 0.89 | 0.33 | 0.42 | Fails |
 
-<sub><b>How to read the table.</b> One row per test, in the plain question it answers; the wording of each hypothesis is in [results/hypotheses.md](results/hypotheses.md). p: one-sided, from resampled days ("< 0.001": none of the 2,000 resamples on the wrong side). Corrected: Benjamini-Hochberg over the ten tests. Our measurement for these notes.</sub>
+<sub><b>How to read the table.</b> One row per test, in the plain question it answers; the wording of each hypothesis is in [results/hypotheses.md](results/hypotheses.md). p: one-sided, from resampled days ("< 0.001": none of the 2,000 resamples on the wrong side). Corrected: Benjamini–Hochberg over the ten tests. Our measurement for these notes.</sub>
 
 ![Does the hybrid replay tell the truth? Out of sample](figures/22_s4_replay.png)
 <sub><b>How to read the figure.</b> <b>Axes.</b> Left: order size (x), mid move at 10 s in the order's direction, net of controls, bp (y). Right: one row per replay (y), predicted average price of a run less its actual average price, bp (x); above 0 the replay makes the run too dear. BTCUSDT, 11 October to 3 November 2025. Left: real orders (black), the hybrid replay's prediction fitted in sample (blue) and the plain replay's (orange, zero). Right: 7,200 runs of same-side orders adding up to 5 BTC or more within 10 s, 300 sampled a day; boxes: quartiles; whiskers: 1.5 times the box.</sub>
