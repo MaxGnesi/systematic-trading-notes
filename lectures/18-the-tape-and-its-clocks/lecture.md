@@ -577,7 +577,7 @@ Each slot is measured against its control on activity and the size of moves (bot
 ### 12.2 The results
 
 ![Activity and size of moves by calendar slot](figures/13_08_h1_h2_activity_volatility.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> Left: activity ÷ control (x, log), one slot per row (y). Right: size of moves ÷ control (x, log), same rows. Each dot is a slot's ratio to its control, with its 95% interval as a horizontal bar; the dotted line at 1 means the slot is like its control. Colours group the slots by rhythm: time of day (blue), week (orange), round times (green), releases (pink) and option expiries (yellow). A filled dot survives the Benjamini-Hochberg correction for the 120 tests at 5%, a hollow one does not.</sub>
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: activity ÷ control (x, log), one slot per row (y). Right: size of moves ÷ control (x, log), same rows. Each dot is a slot's ratio to its control, with its 95% interval as a horizontal bar; the dotted line at 1 means the slot is like its control. Colours group the slots by rhythm: time of day (blue), week (orange), round times (green), releases (pink) and option expiries (yellow). A filled dot survives the Benjamini–Hochberg correction for the 120 tests at 5%, a hollow one does not.</sub>
 
 | Hypothesis | The plain question | Verdict | Where it holds, with the key numbers |
 |---|---|---|---|

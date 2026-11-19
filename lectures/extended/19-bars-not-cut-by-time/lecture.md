@@ -483,7 +483,7 @@ H1 and H2 concern when to trade and how much risk a slot carries; H3 to H5 conce
 ### 7.2 H1 and H2: when the market is busy, and how much it moves
 
 ![Activity and the size of moves in each slot, against its control, with 95% intervals](figures/13_08_h1_h2_activity_volatility.png)
-<sub><b>How to read the figure.</b> <b>Axes.</b> Left: activity ÷ control (x, log), one slot per row (y). Right: size of moves ÷ control (x, log), same rows. Each dot is a slot's ratio to its control, with its 95% interval as a horizontal bar; the dotted line at 1 means the slot is like its control. Colours group the slots by rhythm: time of day (blue), week (orange), round times (green), releases (pink) and option expiries (yellow). A filled dot survives the Benjamini-Hochberg correction for the 120 tests at 5%, a hollow one does not.</sub>
+<sub><b>How to read the figure.</b> <b>Axes.</b> Left: activity ÷ control (x, log), one slot per row (y). Right: size of moves ÷ control (x, log), same rows. Each dot is a slot's ratio to its control, with its 95% interval as a horizontal bar; the dotted line at 1 means the slot is like its control. Colours group the slots by rhythm: time of day (blue), week (orange), round times (green), releases (pink) and option expiries (yellow). A filled dot survives the Benjamini–Hochberg correction for the 120 tests at 5%, a hollow one does not.</sub>
 
 **How to read the chart.** Each row is a slot, each dot its ratio to the control: 2 means twice as busy, 0.5 half. The horizontal axis is logarithmic, so doubling and halving are the same distance from the line at 1. The bars are 95% intervals; a filled dot survives the correction for the 120 tests, a hollow one does not.
 

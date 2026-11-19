@@ -171,7 +171,7 @@ The makers' **adverse move** on a taker order is its size times the mid's move i
 | H11b | Makers widen before a whole minute? | 1.00 | 1.00 | Fails |
 | H14 | More clock-like flow in volatile hours? | 1.00 | 1.00 | Fails |
 
-<sub><b>How to read the table.</b> All twelve p-values of Lecture 29, out of sample, sorted. q: the Benjamini-Hochberg adjusted p-value over the twelve; a test holds if q is below 0.05. A bootstrap p of zero is entered as 1/2,000. Our calculation.</sub>
+<sub><b>How to read the table.</b> All twelve p-values of Lecture 29, out of sample, sorted. q: the Benjamini–Hochberg adjusted p-value over the twelve; a test holds if q is below 0.05. A bootstrap p of zero is entered as 1/2,000. Our calculation.</sub>
 
 Five tests hold, and four of them are about one style: the trader who takes Bybit's quotes just after Binance has moved. It is found (H10), it gets more frequent when markets move (H14), it carries a third of what the makers lose (H21), and it is usually faster than a quote can be pulled (H22). The fifth is the slicer, the makers' best counterparty (H12). The clock and the time of day, which looked promising in the laboratory and in sample, did not hold.
 
